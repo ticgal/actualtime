@@ -36,6 +36,7 @@
       	<en>
 		<tag>Ticket</tag>
     		<tag>Task</tag>
+		<tag>Statistics</tag>
 	</en>
 	<es>
 		<tag>Peticiones</tag>
@@ -43,7 +44,9 @@
 	</es>
    </tags>
    <screenshots>
-      <screenshot></screenshot>
-      <screenshot></screenshot>
+      <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-1.png</screenshot>
+      <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-2.png</screenshot>
+      <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-3.png</screenshot>
+      <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-4.png</screenshot>
    </screenshots>
 </root>
