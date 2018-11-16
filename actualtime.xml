@@ -1,0 +1,49 @@
+<root>
+   <name>ActualTime</name>
+   <key>ActualTime</key>
+   <state>stable</state> <!-- stable | unstable | beta | alpha -->
+   <logo>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/actualtime.png</logo>
+   <description>
+      <short>
+		<en>Adds actual time tracking for GLPI tasks</en>
+		<es>Registrar el tiempo real de ejecución de cada tarea para GLPI</es>
+      </short>
+      <long>
+		<en>ActualTime plugin helps your organisation adds actual time tracking for GLPI tasks.</en>
+		<es>El módulo ActualTime se alinea con tu organización añadiendo la posibilidad de registrar el tiempo real de ejecución de cada tarea en GLPI</es>
+      </long>
+   </description>
+   <homepage>https://tic.gal/en/project/actualtime-plugin-glpi/</homepage>
+   <download>https://github.com/ticgal/actualtime/releases</download>
+   <issues>https://github.com/ticgal/actualtime/issues</issues>
+   <readme>https://github.com/ticgal/actualtime/blob/master/README.md</readme>
+   <authors>
+      <author>TICgal</author>
+   </authors>
+   <versions>
+      <version>
+	<num>1.0.0</num>
+	<compatibility>9.3</compatibility>
+      </version>
+   </versions>
+   <langs>
+      <lang>en_GB</lang>
+      <lang>gl_ES</lang>
+      <lang>es_ES</lang>
+   </langs>
+   <license>AGPL v3+</license>
+   <tags>
+      	<en>
+		<tag>Ticket</tag>
+    		<tag>Task</tag>
+	</en>
+	<es>
+		<tag>Peticiones</tag>
+    		<tag>Tareas</tag>
+	</es>
+   </tags>
+   <screenshots>
+      <screenshot></screenshot>
+      <screenshot></screenshot>
+   </screenshots>
+</root>
