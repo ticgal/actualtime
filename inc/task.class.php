@@ -398,8 +398,11 @@ JAVASCRIPT;
             $color='black';
          }
          $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")."</td><td style='color:".$color."'>".HTML::timestampToString($diff)."</td></tr>";
-
-         $diffpercent=100*($total_time-$actual_totaltime)/$total_time;
+         if ($total_time==0) {
+            $diffpercent=0;
+         }else{
+            $diffpercent=100*($total_time-$actual_totaltime)/$total_time; 
+         }
          $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")." (%)</td><td style='color:".$color."'>".round($diffpercent, 2)."%</td></tr>";
 
          $html.="</table>";
@@ -429,6 +432,7 @@ JAVASCRIPT;
             ],
             'ORDER'=>'glpi_users.id',
          ];
+         $list=[];
          foreach ($DB->request($query) as $id => $row) {
             $list[$row['id']]['name']=$row['name'];
             if (self::findKey($list[$row['id']], 'total')) {
@@ -465,8 +469,11 @@ JAVASCRIPT;
                $color='black';
             }
             $html.="<td style='color:".$color."'>".HTML::timestampToString($value['total']-$value['actual_total'])."</td>";
-
-            $html.="<td style='color:".$color."'>".round(100*($value['total']-$value['actual_total'])/$value['total'])."%</td></tr>";
+            if ($value['total']==0) {
+               $html.="<td style='color:".$color."'>0%</td></tr>";
+            }else{
+               $html.="<td style='color:".$color."'>".round(100*($value['total']-$value['actual_total'])/$value['total'])."%</td></tr>";
+            }
          }
          $html.="</table>";
 
