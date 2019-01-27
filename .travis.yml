@@ -16,6 +16,7 @@ env:
 
 before_script:
   - composer self-update
+  - composer require atoum/atoum
   - git clone --depth=1 https://github.com/glpi-project/glpi -b $GLPIVER ../glpi && cd ../glpi
   - composer install --no-dev
   - mysql -u root -e 'create database glpitest;'
