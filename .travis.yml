@@ -6,28 +6,29 @@ php:
   - 7.2
   - nightly
 
-#env:
-#  global:
-#    - DB=mysql
-#  matrix:
-#    - GLPIVER=9.1/bugfixes
-#    - GLPIVER=master
+env:
+  global:
+    - DB=mysql
+  matrix:
+    - GLPIVER=9.3/bugfixes
+    - GLPIVER=9.2/bugfixes
+    - GLPIVER=master
 
 before_script:
   - composer self-update
-#  - git clone --depth=1 https://github.com/glpi-project/glpi -b $GLPIVER ../glpi && cd ../glpi
-#  - composer install --no-dev
-#  - mysql -u root -e 'create database glpitest;'
-#  - php tools/cliinstall.php --db=glpi-test --user=travis --tests
-#  - mv ../actualtime plugins/{LNAME}
-#  - cd plugins/actualtime
+  - git clone --depth=1 https://github.com/glpi-project/glpi -b $GLPIVER ../glpi && cd ../glpi
+  - composer install --no-dev
+  - mysql -u root -e 'create database glpitest;'
+  - php tools/cliinstall.php --db=glpi-test --user=travis --tests
+  - mv ../actualtime plugins/actualtime
+  - cd plugins/actualtime
   - composer install -o
 
 
 script:
   - vendor/bin/robo --no-interaction code:cs
-#  - mysql -u root -e 'select version();'
-#  - ./vendor/bin/atoum -bf tests/bootstrap.php -d tests/units/
+  - mysql -u root -e 'select version();'
+  - ./vendor/bin/atoum -bf tests/bootstrap.php -d tests/units/
 
 
 matrix:
