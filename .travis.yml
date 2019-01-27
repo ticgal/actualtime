@@ -19,7 +19,7 @@ before_script:
   - git clone --depth=1 https://github.com/glpi-project/glpi -b $GLPIVER ../glpi && cd ../glpi
   - composer install --no-dev
   - mysql -u root -e 'create database glpitest;'
-  - php tools/cliinstall.php --db=glpi-test --user=travis --tests
+  - php scripts/cliinstall.php --db=glpi-test --user=travis --tests
   - mv ../actualtime plugins/actualtime
   - cd plugins/actualtime
   - composer install -o
