@@ -400,8 +400,8 @@ JAVASCRIPT;
          $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")."</td><td style='color:".$color."'>".HTML::timestampToString($diff)."</td></tr>";
          if ($total_time==0) {
             $diffpercent=0;
-         } else {
-            $diffpercent=100*($total_time-$actual_totaltime)/$total_time;
+         }else{
+            $diffpercent=100*($total_time-$actual_totaltime)/$total_time; 
          }
          $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")." (%)</td><td style='color:".$color."'>".round($diffpercent, 2)."%</td></tr>";
 
@@ -471,7 +471,7 @@ JAVASCRIPT;
             $html.="<td style='color:".$color."'>".HTML::timestampToString($value['total']-$value['actual_total'])."</td>";
             if ($value['total']==0) {
                $html.="<td style='color:".$color."'>0%</td></tr>";
-            } else {
+            }else{
                $html.="<td style='color:".$color."'>".round(100*($value['total']-$value['actual_total'])/$value['total'])."%</td></tr>";
             }
          }
