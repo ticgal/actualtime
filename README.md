@@ -33,3 +33,12 @@ No es necesaria configuración adicional.
 Cuando un técnico tiene una tarea **pendiente** en una petición, debe pulsar el botón **Inicio** para arrancar el temporizador.
 Para pararlo simplemente pulse el botón **Fin**.
 Pueden visualizarse estadísticas adicionales en la pestaña correspondiente de la petición.
+## Português
+Adiciona a possibilidade de registrar o tempo real de execução de cada tarefa no GLPI.
+### Configuração
+Instalar como qualquer outro plugin para GLPI. 
+Não é necessária configuração adicional.
+### Instruções
+Quando um técnico tem uma tarefa **pendente** em um chamado, deve clicar no botão **Início** para acionar o temporizador.
+Para pará-lo simplemente clique no botão **Fim**.
+Pode-se visualizar-se estatísticas adicionais na guia correspondente do chamado.
