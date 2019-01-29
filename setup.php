@@ -14,8 +14,8 @@ function plugin_version_actualtime() {
       'requirements'   => [
          'glpi'   => [
             'min' => PLUGIN_ACTUALTIME_MIN_GLPI,
-            'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
-            'dev' => true
+            // Allow all version from PLUGIN_ACTUALTIME_MIN_GLPI
+            //'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
          ]
       ]];
 }
@@ -25,17 +25,25 @@ function plugin_version_actualtime() {
  */
 function plugin_actualtime_check_prerequisites() {
    $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
-   $matchMinGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MIN_GLPI, '>=');
-   $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, '<=');
+   // Devel version allowed
+   if ($version == '10.0.0') {
+      return true;
+   }
+   $matchMinGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MIN_GLPI, 'ge');
+   $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, 'lt');
    if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
-      echo vsprintf(
-         'This plugin requires GLPI >= %1$s and <= %2$s (%3$s).',
-         [
-            PLUGIN_ACTUALTIME_MIN_GLPI,
-            PLUGIN_ACTUALTIME_MAX_GLPI,
-            $version,
-         ]
-      );
+      if (method_exists('Plugin', 'messageIncompatible')) {
+         //since GLPI 9.2
+         Plugin::messageIncompatible('core', PLUGIN_ACTUALTIME_MIN_GLPI, PLUGIN_ACTUALTIME_MAX_GLPI);
+      } else {
+         echo vsprintf(
+            'This plugin requires GLPI >= %1$s and <= %2$s.',
+            [
+               PLUGIN_ACTUALTIME_MIN_GLPI,
+               PLUGIN_ACTUALTIME_MAX_GLPI,
+            ]
+         );
+      }
       return false;
    }
    return true;
