@@ -22,12 +22,9 @@ if (!plugin_actualtime_check_prerequisites()) {
 }
 
 if (!$plugin->isInstalled('actualtime')) {
-   echo "tem que instalar\n";
    call_user_func([$plugin, 'install'], $plugin->getID());
 }
-echo "instalado\n";
+
 if (!$plugin->isActivated('actualtime')) {
-   echo "tem que ativar\n";
    call_user_func([$plugin, 'activate'], $plugin->getID());
 }
-echo "ativado\n";
