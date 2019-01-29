@@ -37,7 +37,7 @@ function plugin_actualtime_check_prerequisites() {
          Plugin::messageIncompatible('core', PLUGIN_ACTUALTIME_MIN_GLPI, PLUGIN_ACTUALTIME_MAX_GLPI);
       } else {
          echo vsprintf(
-            'This plugin requires GLPI >= %1$s and <= %2$s.',
+            'This plugin requires GLPI >= %1$s and < %2$s.',
             [
                PLUGIN_ACTUALTIME_MIN_GLPI,
                PLUGIN_ACTUALTIME_MAX_GLPI,
