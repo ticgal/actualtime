@@ -25,10 +25,10 @@ function plugin_version_actualtime() {
 function plugin_actualtime_check_prerequisites() {
    $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
    $matchMinGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MIN_GLPI, '>=');
-   $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, '<');
+   $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, '<=');
    if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
       echo vsprintf(
-         'This plugin requires GLPI >= %1$s and < %2$s.',
+         'This plugin requires GLPI >= %1$s and <= %2$s.',
          [
             PLUGIN_ACTUALTIME_MIN_GLPI,
             PLUGIN_ACTUALTIME_MAX_GLPI,
