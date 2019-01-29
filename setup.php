@@ -15,6 +15,7 @@ function plugin_version_actualtime() {
          'glpi'   => [
             'min' => PLUGIN_ACTUALTIME_MIN_GLPI,
             'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
+            'dev' => true
          ]
       ]];
 }
@@ -28,10 +29,11 @@ function plugin_actualtime_check_prerequisites() {
    $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, '<=');
    if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
       echo vsprintf(
-         'This plugin requires GLPI >= %1$s and <= %2$s.',
+         'This plugin requires GLPI >= %1$s and <= %2$s (%3$s).',
          [
             PLUGIN_ACTUALTIME_MIN_GLPI,
             PLUGIN_ACTUALTIME_MAX_GLPI,
+            $version,
          ]
       );
       return false;
