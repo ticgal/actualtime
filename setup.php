@@ -10,8 +10,7 @@ function plugin_version_actualtime() {
       'version'        => PLUGIN_ACTUALTIME_VERSION,
       'author'         => '<a href="https://tic.gal">TICgal</a>',
       'homepage'       => 'https://tic.gal',
-      'license'        => 'GPLv3+',
-      'minGlpiVersion' => "9.2",
+      'license'        => 'AGPLv3+',
       'requirements'   => [
          'glpi'   => [
             'min' => PLUGIN_ACTUALTIME_MIN_GLPI,
@@ -25,21 +24,18 @@ function plugin_version_actualtime() {
  */
 function plugin_actualtime_check_prerequisites() {
    $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
-   if (version_compare($version, '9.2', '<')) {
-      $matchMinGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MIN_GLPI, '>=');
-      $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, '<');
-      if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
-         echo vsprintf(
-            'This plugin requires GLPI >= %1$s and < %2$s.',
-            [
-               PLUGIN_ACTUALTIME_MIN_GLPI,
-               PLUGIN_ACTUALTIME_MAX_GLPI,
-            ]
-         );
-         return false;
-      }
+   $matchMinGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MIN_GLPI, '>=');
+   $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, '<');
+   if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
+      echo vsprintf(
+         'This plugin requires GLPI >= %1$s and < %2$s.',
+         [
+            PLUGIN_ACTUALTIME_MIN_GLPI,
+            PLUGIN_ACTUALTIME_MAX_GLPI,
+         ]
+      );
+      return false;
    }
-
    return true;
 }
 
