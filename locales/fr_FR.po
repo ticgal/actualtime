@@ -1,22 +1,22 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# ActualTime Glpi Plugin.
+# Copyright (C) 2019 TICgal
+# This file is distributed under the same license as the Actualtime Plugin package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-15 17:32+0100\n"
+"Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
+"POT-Creation-Date: 2019-02-08 18:29-0200\n"
 "PO-Revision-Date: 2019-01-24 10:38+0100\n"
+"Last-Translator: \n"
 "Language-Team: \n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Last-Translator: \n"
-"Language: fr_FR\n"
 
 #: ajax/timer.php:15
 msgid "A user is already performing the task"
@@ -54,10 +54,10 @@ msgstr "Durée partielle de l'acton"
 msgid "Actual Duration"
 msgstr "Durée actuelle"
 
-#: inc/task.class.php:395 inc/task.class.php:398 inc/task.class.php:404
+#: inc/task.class.php:400 inc/task.class.php:406 inc/task.class.php:412
 msgid "Duration Diff"
 msgstr "Différence de durée"
 
-#: inc/task.class.php:551
+#: inc/task.class.php:567
 msgid "Timer started on"
 msgstr "Compteur démarré à"
