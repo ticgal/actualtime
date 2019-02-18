@@ -3,6 +3,7 @@ if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access directly to this file");
 }
 
+include_once('config.class.php');
 /**
 *
 */
@@ -15,6 +16,7 @@ class PluginActualtimeTask extends CommonDBTM{
    }
 
    static public function postForm($params) {
+
       global $CFG_GLPI;
       $item = $params['item'];
       $text_start=__("Start");

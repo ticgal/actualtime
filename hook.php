@@ -20,6 +20,10 @@ function plugin_actualtime_install() {
          }
       }
    }
+
+   // Execute the whole migration
+   $migration->executeMigration();
+
    return true;
 }
 
@@ -30,6 +34,7 @@ function plugin_activetime_item_stats($item) {
 function plugin_activetime_item_update($item) {
    PluginActualtimeTask::preUpdate($item);
 }
+
 /**
  * Uninstall previously installed elements of the plugin
  *
@@ -51,6 +56,9 @@ function plugin_actualtime_uninstall() {
          }
       }
    }
+
+   // Execute the whole migration
+   $migration->executeMigration();
 
    return true;
 }
