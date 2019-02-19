@@ -1,14 +1,14 @@
 # ActualTime Glpi Plugin.
 # Copyright (C) 2019 TICgal
 # This file is distributed under the same license as the Actualtime Plugin package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Helvio Pichamone <helvio@multiconecta.com.br>, 2019
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
 "POT-Creation-Date: 2019-02-08 19:04-0200\n"
-"PO-Revision-Date: 2019-01-25 01:50-0300\n"
+"PO-Revision-Date: 2019-02-19 15:50-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -44,16 +44,15 @@ msgstr "A tarefa não foi inicializada"
 
 #: inc/config.class.php:57
 msgid "Task timer configuration"
-msgstr ""
+msgstr "Configuração do cronômetro de tarefas"
 
 #: inc/config.class.php:70
 msgid "Enable timer on tasks"
-msgstr ""
+msgstr "Habilitar cronômetro nas tarefas"
 
 #: inc/config.class.php:103
-#, fuzzy
 msgid "Actual time"
-msgstr "TempoReal"
+msgstr "Tempo real"
 
 #: inc/task.class.php:15
 msgid "ActualTime"

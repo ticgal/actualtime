@@ -68,10 +68,13 @@ function plugin_init_actualtime() {
       $PLUGIN_HOOKS['config_page']['actualtime'] = 'front/config.form.php';
       Plugin::registerClass('PluginActualtimeConfig', ['addtabon' => 'Config']);
 
-      $config = new PluginActualtimeConfig;
-      if (!$config->isEnabled()) {
-         return;
-      }
+      // Disabling the timer (that means, disabling the plugin's hooks) is
+      // currently not available. For testing only. This setting will
+      // probably be eliminated.
+      //$config = new PluginActualtimeConfig;
+      //if (!$config->isEnabled()) {
+      //   return;
+      //}
 
       $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
       $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket'=> 'plugin_activetime_item_stats'];
