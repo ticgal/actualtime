@@ -149,7 +149,7 @@ class PluginActualtimeConfig extends CommonDBTM {
 
          // Create default record (if it does not exist)
          $reg = $DB->request($table);
-         if (! count($req)) {
+         if (! count($reg)) {
             $DB->insert(
                $table, [
                   'enable' => 1
