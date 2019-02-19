@@ -10,7 +10,7 @@ if (!defined('GLPI_ROOT')) {
 class PluginActualtimeConfig extends CommonDBTM {
 
    static $rightname = 'config';
-   static private $_config = NULL;
+   static private $_config = null;
 
    /**
     * @param bool $update
@@ -97,7 +97,7 @@ class PluginActualtimeConfig extends CommonDBTM {
       $this->showFormButtons(['candel'=>false]);
    }
 
-   function getTabNameForItem(CommonGLPI $item, $withtemplate=0) {
+   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
 
       if ($item->getType()=='Config') {
             return __("Actual time", "actualtime");
@@ -106,7 +106,7 @@ class PluginActualtimeConfig extends CommonDBTM {
    }
 
 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum=1, $withtemplate=0) {
+   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
 
       if ($item->getType()=='Config') {
          $instance = self::getConfig();
