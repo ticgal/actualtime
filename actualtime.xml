@@ -9,7 +9,7 @@
 		<es>Registrar el tiempo real de ejecución de cada tarea para GLPI</es>
       </short>
       <long>
-		<en>ActualTime plugin helps your organisation adds actual time tracking for GLPI tasks.</en>
+		<en>ActualTime tracks actual task time tracking for GLPI ticket tasks and compares it to planned time.</en>
 		<es>El módulo ActualTime se alinea con tu organización añadiendo la posibilidad de registrar el tiempo real de ejecución de cada tarea en GLPI</es>
       </long>
    </description>
