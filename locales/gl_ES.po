@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
-"POT-Creation-Date: 2019-02-08 18:29-0200\n"
+"POT-Creation-Date: 2019-02-08 19:04-0200\n"
 "PO-Revision-Date: 2018-11-15 17:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -42,22 +42,35 @@ msgstr "Só o usuario que iniciou a tarefa pode pechala"
 msgid "The task had not been initialized"
 msgstr "Non se inicializou a tarefa"
 
-#: inc/task.class.php:14
+#: inc/config.class.php:57
+msgid "Task timer configuration"
+msgstr ""
+
+#: inc/config.class.php:70
+msgid "Enable timer on tasks"
+msgstr ""
+
+#: inc/config.class.php:103
+#, fuzzy
+msgid "Actual time"
+msgstr "ActualTime"
+
+#: inc/task.class.php:15
 msgid "ActualTime"
 msgstr "ActualTime"
 
-#: inc/task.class.php:49 inc/task.class.php:200
+#: inc/task.class.php:51 inc/task.class.php:202
 msgid "Partial actual duration"
 msgstr "Duración real parcial"
 
-#: inc/task.class.php:50 inc/task.class.php:201
+#: inc/task.class.php:52 inc/task.class.php:203
 msgid "Actual Duration"
 msgstr "Duración real"
 
-#: inc/task.class.php:400 inc/task.class.php:406 inc/task.class.php:412
+#: inc/task.class.php:402 inc/task.class.php:408 inc/task.class.php:414
 msgid "Duration Diff"
 msgstr "Desviación"
 
-#: inc/task.class.php:567
+#: inc/task.class.php:569
 msgid "Timer started on"
 msgstr "Comezou o temporizador na"

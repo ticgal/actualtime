@@ -1,14 +1,14 @@
 # ActualTime Glpi Plugin.
 # Copyright (C) 2019 TICgal
 # This file is distributed under the same license as the Actualtime Plugin package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Helvio Pichamone <helvio@multiconecta.com.br>, 2019
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
-"POT-Creation-Date: 2019-02-08 18:29-0200\n"
-"PO-Revision-Date: 2019-01-25 01:50-0300\n"
+"POT-Creation-Date: 2019-02-08 19:04-0200\n"
+"PO-Revision-Date: 2019-02-19 15:50-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: pt_BR\n"
@@ -42,22 +42,34 @@ msgstr "Somente o usuário que iniciou a tarefa por encerrá-la"
 msgid "The task had not been initialized"
 msgstr "A tarefa não foi inicializada"
 
-#: inc/task.class.php:14
+#: inc/config.class.php:57
+msgid "Task timer configuration"
+msgstr "Configuração do cronômetro de tarefas"
+
+#: inc/config.class.php:70
+msgid "Enable timer on tasks"
+msgstr "Habilitar cronômetro nas tarefas"
+
+#: inc/config.class.php:103
+msgid "Actual time"
+msgstr "Tempo real"
+
+#: inc/task.class.php:15
 msgid "ActualTime"
 msgstr "TempoReal"
 
-#: inc/task.class.php:49 inc/task.class.php:200
+#: inc/task.class.php:51 inc/task.class.php:202
 msgid "Partial actual duration"
 msgstr "Duração real parcial"
 
-#: inc/task.class.php:50 inc/task.class.php:201
+#: inc/task.class.php:52 inc/task.class.php:203
 msgid "Actual Duration"
 msgstr "Duração real"
 
-#: inc/task.class.php:400 inc/task.class.php:406 inc/task.class.php:412
+#: inc/task.class.php:402 inc/task.class.php:408 inc/task.class.php:414
 msgid "Duration Diff"
 msgstr "Diferença"
 
-#: inc/task.class.php:567
+#: inc/task.class.php:569
 msgid "Timer started on"
 msgstr "Cronômetro iniciado na"
