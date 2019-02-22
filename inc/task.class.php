@@ -49,7 +49,9 @@ class PluginActualtimeTask extends CommonDBTM{
                   $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
                   $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
                   $html.="</tr>";
+                  $html.="<tr id='actualtimeseg{$rand}'>";
                   $html.=self::getSegment($item->getID());
+                  $html.="</tr>";
                   echo $html;
 
                   $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
@@ -135,6 +137,8 @@ class PluginActualtimeTask extends CommonDBTM{
 											$("table:has(#actualtime{$rand}) select[name='state']").val(2).trigger('change');
 											$('#actualtime{$rand}').remove();
 											endCount();
+											// Refresh table of partial time periods for this task
+											$('#actualtimeseg{$rand}').html(result['html']);
 										}else{
 											if (val=='start' && result['class']=='info_msg') {
 												$('#actualtime{$rand}').attr('action','end');
@@ -200,7 +204,9 @@ JAVASCRIPT;
                   $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
                   $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
                   $html.="</div></td></tr>";
+                  $html.="<tr id='actualtimeseg{$rand}'>";
                   $html.=self::getSegment($item->getID());
+                  $html.="</tr>";
                   echo $html;
                }
             }
@@ -512,11 +518,11 @@ JAVASCRIPT;
             ],
          ]
       ];
-      $html="<tr><td colspan='2'><table class='tab_cadre_fixe'>";
+      $html="<td colspan='2'><table class='tab_cadre_fixe'>";
       foreach ($DB->request($query) as $id => $row) {
          $html.="<tr class='tab_bg_2'><td>".$row['actual_begin']."</td><td>".HTML::timestampToString($row['actual_actiontime'])."</td></tr>";
       }
-      $html.="</table></td></tr>";
+      $html.="</table></td>";
       return $html;
    }
 

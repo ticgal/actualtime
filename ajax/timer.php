@@ -71,6 +71,7 @@ if (isset($_POST["action"])) {
                   'mensage'=>__("Timer completed", 'actualtime'),
                   'title' => __s('Information'),
                   'class' => 'info_msg',
+                  'html' => PluginActualtimeTask::getSegment($task_id),
                ];
             } else {
                $result=[
