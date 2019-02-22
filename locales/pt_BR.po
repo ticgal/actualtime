@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
-"POT-Creation-Date: 2019-02-08 19:04-0200\n"
+"POT-Creation-Date: 2019-03-02 22:00-0300\n"
 "PO-Revision-Date: 2019-02-19 15:50-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -26,19 +26,23 @@ msgstr "Outro usuário já está realizando a tarefa"
 msgid "You are already doing a task"
 msgstr "Você já está realizando uma tarefa"
 
-#: ajax/timer.php:36
+#: ajax/timer.php:31 ajax/timer.php:129
+msgid "You are not assigned to this task"
+msgstr "Você não está designado para esta tarefa"
+
+#: ajax/timer.php:44
 msgid "Timer started"
 msgstr "Cronômetro iniciado"
 
-#: ajax/timer.php:71
+#: ajax/timer.php:84
 msgid "Timer completed"
 msgstr "Cronômetro finalizado"
 
-#: ajax/timer.php:77
+#: ajax/timer.php:92
 msgid "Only the user who initiated the task can close it"
-msgstr "Somente o usuário que iniciou a tarefa por encerrá-la"
+msgstr "Somente o usuário que iniciou a tarefa pode encerrá-la"
 
-#: ajax/timer.php:84
+#: ajax/timer.php:103
 msgid "The task had not been initialized"
 msgstr "A tarefa não foi inicializada"
 
@@ -58,18 +62,26 @@ msgstr "Tempo real"
 msgid "ActualTime"
 msgstr "TempoReal"
 
-#: inc/task.class.php:51 inc/task.class.php:202
+#: inc/task.class.php:22
+msgid "Restart"
+msgstr "Reinício"
+
+#: inc/task.class.php:23
+msgid "Pause"
+msgstr "Pausa"
+
+#: inc/task.class.php:82
 msgid "Partial actual duration"
 msgstr "Duração real parcial"
 
-#: inc/task.class.php:52 inc/task.class.php:203
+#: inc/task.class.php:83
 msgid "Actual Duration"
 msgstr "Duração real"
 
-#: inc/task.class.php:402 inc/task.class.php:408 inc/task.class.php:414
+#: inc/task.class.php:436 inc/task.class.php:442 inc/task.class.php:448
 msgid "Duration Diff"
 msgstr "Diferença"
 
-#: inc/task.class.php:569
+#: inc/task.class.php:603
 msgid "Timer started on"
-msgstr "Cronômetro iniciado na"
+msgstr "Cronômetro iniciado no"
