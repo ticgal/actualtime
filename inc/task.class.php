@@ -137,6 +137,7 @@ class PluginActualtimeTask extends CommonDBTM{
 									success: function (result) {
 										if (val=='end' && result['class']=='info_msg') {
 											$("table:has(#actualtime{$rand}) select[name='state']").val(2).trigger('change');
+											$('#actualtime{$rand}').parentsUntil('.h_item','.h_content.TicketTask').find('span.state.state_1').toggleClass('state_1 state_2');
 											$('#actualtime{$rand}').remove();
 											endCount(result['realclock']);
 											// Refresh table of partial time periods for this task
