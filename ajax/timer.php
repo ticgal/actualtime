@@ -72,6 +72,7 @@ if (isset($_POST["action"])) {
                   'title' => __s('Information'),
                   'class' => 'info_msg',
                   'html' => PluginActualtimeTask::getSegment($task_id),
+                  'realclock' => HTML::timestampToString(PluginActualtimeTask::totalEndTime($task_id)),
                ];
             } else {
                $result=[

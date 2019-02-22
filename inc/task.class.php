@@ -117,8 +117,10 @@ class PluginActualtimeTask extends CommonDBTM{
 								});
 							}
 
-							function endCount(){
+							function endCount(realclk){
 								clearInterval(x);
+								// Correct real time clock with the actual data in database
+								$('#real_clock{$rand}').html(realclk);
 								$('#real_clock{$rand}').css('color','black');
 							}
 
@@ -136,7 +138,7 @@ class PluginActualtimeTask extends CommonDBTM{
 										if (val=='end' && result['class']=='info_msg') {
 											$("table:has(#actualtime{$rand}) select[name='state']").val(2).trigger('change');
 											$('#actualtime{$rand}').remove();
-											endCount();
+											endCount(result['realclock']);
 											// Refresh table of partial time periods for this task
 											$('#actualtimeseg{$rand}').html(result['html']);
 										}else{
