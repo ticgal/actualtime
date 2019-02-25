@@ -12,7 +12,7 @@ class PluginActualtimeTask extends CommonDBTM{
    public static $rightname = 'task';
 
    static function getTypeName($nb = 0) {
-      return __('ActualTime', 'Actualtime');
+      return __('ActualTime', 'actualtime');
    }
 
    static public function postForm($params) {
