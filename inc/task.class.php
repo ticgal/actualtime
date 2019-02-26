@@ -399,19 +399,19 @@ JAVASCRIPT;
          } else {
             $color='black';
          }
-         $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")."</td><td style='color:".$color."'>".HTML::timestampToString($diff)."</td></tr>";
+         $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actualtime")."</td><td style='color:".$color."'>".HTML::timestampToString($diff)."</td></tr>";
          if ($total_time==0) {
             $diffpercent=0;
          } else {
             $diffpercent=100*($total_time-$actual_totaltime)/$total_time;
          }
-         $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")." (%)</td><td style='color:".$color."'>".round($diffpercent, 2)."%</td></tr>";
+         $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actualtime")." (%)</td><td style='color:".$color."'>".round($diffpercent, 2)."%</td></tr>";
 
          $html.="</table>";
 
          $html.="<table class='tab_cadre_fixe'>";
          $html.="<tr><th colspan='5'>ActualTime - ".__("Technician")."</th></tr>";
-         $html.="<tr><th>".__("Technician")."</th><th>".__("Total duration")."</th><th>ActualTime - ".__("Total duration")."</th><th>".__("Duration Diff", "actiontime")."</th><th>".__("Duration Diff", "actiontime")." (%)</th></tr>";
+         $html.="<tr><th>".__("Technician")."</th><th>".__("Total duration")."</th><th>ActualTime - ".__("Total duration")."</th><th>".__("Duration Diff", "actualtime")."</th><th>".__("Duration Diff", "actualtime")." (%)</th></tr>";
 
          $query=[
             'SELECT'=>[
