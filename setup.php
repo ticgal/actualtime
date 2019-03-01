@@ -6,7 +6,7 @@ define("PLUGIN_ACTUALTIME_MIN_GLPI", "9.3.0");
 define("PLUGIN_ACTUALTIME_MAX_GLPI", "9.5");
 
 function plugin_version_actualtime() {
-   return ['name'       => __('ActualTime','actualtime'),
+   return ['name'       => __('ActualTime', 'actualtime'),
       'version'        => PLUGIN_ACTUALTIME_VERSION,
       'author'         => '<a href="https://tic.gal">TICgal</a>',
       'homepage'       => 'https://tic.gal',
