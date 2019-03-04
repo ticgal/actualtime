@@ -16,8 +16,8 @@ class PluginActualtimeTask extends CommonDBTM{
    }
 
    static public function postForm($params) {
-
       global $CFG_GLPI;
+
       $item = $params['item'];
 
       switch ($item->getType()) {
@@ -450,14 +450,17 @@ JAVASCRIPT;
 
    static function afterAdd(TicketTask $item) {
       global $DB;
-      if ($item->getField('state')==1 && $item->fields['id']) {
-         // Empty record means just added task (for postShowItem)
-         $DB->insert(
-            'glpi_plugin_actualtime_tasks', [
-               'tasks_id' => $item->fields['id'],
-               'users_id' => Session::getLoginUserID(), 
-            ]
-         );
+      $config = new PluginActualtimeConfig;
+      if ($config->autoOpenNew()) {
+         if ($item->getField('state')==1 && $item->fields['id']) {
+            // Empty record means just added task (for postShowItem)
+            $DB->insert(
+               'glpi_plugin_actualtime_tasks', [
+                  'tasks_id' => $item->fields['id'],
+                  'users_id' => Session::getLoginUserID(),
+               ]
+            );
+         }
       }
    }
 
@@ -503,15 +506,18 @@ JAVASCRIPT;
          // Sometimes, params['item'] is just an array, like 'Solution'
          return;
       }
-      $task_id = $item->getID();
       switch ($item->getType()) {
          case 'TicketTask':
 
-            $rand = mt_rand();
             $config = new PluginActualtimeConfig;
+            $task_id = $item->getID();
+            // Auto open needs to use correct item randomic number
+            $rand = $params['options']['rand'];
 
             // Verify if this is a new task just created now
-            if ($item->fields['state']==1 && $task_id) {
+            $autoopennew = false;
+            if ($config->autoOpenNew() && $item->fields['state']==1 && $task_id) {
+               // New created task opens automatically
                $query=[
                   'FROM'=>self::getTable(),
                   'WHERE'=>[
@@ -523,33 +529,42 @@ JAVASCRIPT;
                ];
                $req = $DB->request($query);
                if ($row = $req->next()) {
-                  // Just added task. Open edition window
-                  $ticket_id = $item->fields['tickets_id'];
-                  $item_rand = $params['options']['rand'];
-                  $div = "<div id='autoEditNew$item_rand' onclick='javascript:viewEditSubitem$ticket_id$item_rand(event, \"TicketTask\", $task_id, this, \"viewitemTicketTask$task_id$item_rand\")'></div>";
-                  echo $div;
-                  $script=<<<JAVASCRIPT
+                  $autoopennew = true;
+               }
+            }
+            if ($autoopennew || ($config->autoOpenRunning() && self::checkUser($task_id, Session::getLoginUserID()))) {
+               // New created task or user has running timer on this task
+               // Open edit window automatically
+               $ticket_id = $item->fields['tickets_id'];
+               $div = "<div id='actualtime_autoEdit_{$task_id}_{$rand}' onclick='javascript:viewEditSubitem$ticket_id$rand(event, \"TicketTask\", $task_id, this, \"viewitemTicketTask$task_id$rand\")'></div>";
+               echo $div;
+               $script=<<<JAVASCRIPT
 $(document).ready(function(){
-   $("#autoEditNew{$item_rand}").click();
-   function waitForFormLoad(i){
-      if($("#viewitemTicketTask$task_id$item_rand textarea[name='content']").length){
-         $([document.documentElement, document.body]).animate({
-            scrollTop: $("#viewitemTicketTask$task_id$item_rand").siblings("div.h_info").offset().top
-         }, 1000);
-         $("#viewitemTicketTask$task_id$item_rand textarea[name='content']").focus();
-      } else if(i>10) {
-         return;
-      } else {
-         setTimeout(function() {
-            waitForFormLoad(++i)
-         }, 500);
+   $("#actualtime_autoEdit_{$task_id}_{$rand}").click();
+   if ($("[id^='actualtime_autoEdit_']").attr('id') == "actualtime_autoEdit_{$task_id}_{$rand}") {
+      // Only scroll the first task if two (first=newly opened, second=timer running)
+      function waitForFormLoad(i){
+         if ($("#viewitemTicketTask$task_id$rand textarea[name='content']").length) {
+            $([document.documentElement, document.body]).animate({
+               scrollTop: $("#viewitemTicketTask$task_id$rand").siblings("div.h_info").offset().top
+            }, 1000);
+            $("#viewitemTicketTask$task_id$rand textarea[name='content']").focus();
+         } else if (i > 10) {
+            return;
+         } else {
+            setTimeout(function() {
+               waitForFormLoad(++i)
+            }, 500);
+         }
       }
+      waitForFormLoad(0);
    }
-   waitForFormLoad(0);
 });
 JAVASCRIPT;
-                  print_r(Html::scriptBlock($script));
-                  // And remove empty record
+
+               print_r(Html::scriptBlock($script));
+               if ($autoopennew) {
+                  // Remove empty record
                   $DB->delete(
                      'glpi_plugin_actualtime_tasks', [
                         'id'           => $row['id'],

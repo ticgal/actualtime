@@ -88,6 +88,7 @@ function plugin_init_actualtime() {
       }
 
       if ($config->autoOpenNew()) {
+          // This hook is not needed if not opening new tasks automatically
           $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
       }
 
