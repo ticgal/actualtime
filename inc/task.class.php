@@ -448,6 +448,19 @@ JAVASCRIPT;
       return $html;
    }
 
+   static function afterAdd(TicketTask $item) {
+      global $DB;
+      if ($item->getField('state')==1 && $item->fields['id']) {
+         // Empty record means just added task (for postShowItem)
+         $DB->insert(
+            'glpi_plugin_actualtime_tasks', [
+               'tasks_id' => $item->fields['id'],
+               'users_id' => Session::getLoginUserID(), 
+            ]
+         );
+      }
+   }
+
    static function preUpdate(TicketTask $item) {
       global $DB;
 
@@ -479,6 +492,76 @@ $(document).ready(function(){
 });
 JAVASCRIPT;
          echo Html::scriptBlock($script);
+      }
+   }
+
+   static function postShowItem($params) {
+      global $DB;
+
+      $item = $params['item'];
+      if (! is_object($item) || ! method_exists($item, 'getType')) {
+         // Sometimes, params['item'] is just an array, like 'Solution'
+         return;
+      }
+      $task_id = $item->getID();
+      switch ($item->getType()) {
+         case 'TicketTask':
+
+            $rand = mt_rand();
+            $config = new PluginActualtimeConfig;
+
+            // Verify if this is a new task just created now
+            if ($item->fields['state']==1 && $task_id) {
+               $query=[
+                  'FROM'=>self::getTable(),
+                  'WHERE'=>[
+                     'tasks_id'     => $task_id,
+                     'actual_begin' => null,
+                     'actual_end'   => null,
+                     'users_id'     => Session::getLoginUserID(),
+                  ]
+               ];
+               $req = $DB->request($query);
+               if ($row = $req->next()) {
+                  // Just added task. Open edition window
+                  $ticket_id = $item->fields['tickets_id'];
+                  $item_rand = $params['options']['rand'];
+                  $div = "<div id='autoEditNew$item_rand' onclick='javascript:viewEditSubitem$ticket_id$item_rand(event, \"TicketTask\", $task_id, this, \"viewitemTicketTask$task_id$item_rand\")'></div>";
+                  echo $div;
+                  $script=<<<JAVASCRIPT
+$(document).ready(function(){
+   $("#autoEditNew{$item_rand}").click();
+   function waitForFormLoad(i){
+      if($("#viewitemTicketTask$task_id$item_rand textarea[name='content']").length){
+         $([document.documentElement, document.body]).animate({
+            scrollTop: $("#viewitemTicketTask$task_id$item_rand").siblings("div.h_info").offset().top
+         }, 1000);
+         $("#viewitemTicketTask$task_id$item_rand textarea[name='content']").focus();
+      } else if(i>10) {
+         return;
+      } else {
+         setTimeout(function() {
+            waitForFormLoad(++i)
+         }, 500);
+      }
+   }
+   waitForFormLoad(0);
+});
+JAVASCRIPT;
+                  print_r(Html::scriptBlock($script));
+                  // And remove empty record
+                  $DB->delete(
+                     'glpi_plugin_actualtime_tasks', [
+                        'id'           => $row['id'],
+                        'actual_begin' => null,
+                        'actual_end'   => null,
+                        'users_id'     => Session::getLoginUserID(),
+                     ]
+                  );
+               }
+            }
+            break;
+
       }
    }
 
