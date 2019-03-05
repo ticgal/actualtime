@@ -27,7 +27,7 @@ if (isset($_POST["action"])) {
                // action=start, timer=off, current user is alerady using timer
                $opcional=PluginActualtimeTask::getTicket(Session::getLoginUserID());
                $result=[
-                  'mensage' => __("You are already doing a task", 'actualtime')." <a href='/front/ticket.form.php?id=".$opcional."'>".__("Ticket")."&forcetab=Ticket%241</a>",
+                  'mensage' => __("You are already doing a task", 'actualtime')." <a href='/front/ticket.form.php?id=".$opcional."&forcetab=Ticket\$1'>".__("Ticket")."</a>",
                   'title'   => __('Warning'),
                   'class'   => 'warn_msg',
                ];

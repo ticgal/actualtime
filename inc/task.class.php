@@ -600,7 +600,7 @@ JAVASCRIPT;
          $seconds=self::totalEndTime($row['tasks_id']);
          $ticket_id=self::getTicket(Session::getLoginUserID());
 
-         $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
+         $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."&forcetab=Ticket\$1'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
          $script=<<<JAVASCRIPT
             $(document).ready(function(){
                if ($("#timer{$rand}").length) {
