@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
-"POT-Creation-Date: 2019-03-02 22:00-0300\n"
+"POT-Creation-Date: 2019-03-05 14:04-0300\n"
 "PO-Revision-Date: 2018-11-15 17:42+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,31 +18,31 @@ msgstr ""
 "X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ajax/timer.php:15
+#: setup.php:9 inc/task.class.php:15
+msgid "ActualTime"
+msgstr ""
+
+#: ajax/timer.php:17
 msgid "A user is already performing the task"
 msgstr "Un usuario ya está realizando la tarea"
 
-#: ajax/timer.php:23
+#: ajax/timer.php:30
 msgid "You are already doing a task"
 msgstr "Ya está realizando una tarea"
 
-#: ajax/timer.php:31 ajax/timer.php:129
-msgid "You are not assigned to this task"
-msgstr ""
-
-#: ajax/timer.php:44
+#: ajax/timer.php:46
 msgid "Timer started"
 msgstr "Temporizador iniciado"
 
-#: ajax/timer.php:84
+#: ajax/timer.php:88
 msgid "Timer completed"
 msgstr "Temporizador finalizado"
 
-#: ajax/timer.php:92
+#: ajax/timer.php:97
 msgid "Only the user who initiated the task can close it"
 msgstr "Sólo el usuario que inició la tarea puede cerrarla"
 
-#: ajax/timer.php:103
+#: ajax/timer.php:111
 msgid "The task had not been initialized"
 msgstr "La tarea no se había inicializado"
 
@@ -56,10 +56,6 @@ msgstr ""
 
 #: inc/config.class.php:103
 msgid "Actual time"
-msgstr ""
-
-#: inc/task.class.php:15
-msgid "ActualTime"
 msgstr ""
 
 #: inc/task.class.php:22

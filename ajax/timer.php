@@ -11,41 +11,43 @@ if (isset($_POST["action"])) {
    switch ($_POST["action"]) {
       case 'start':
          if (PluginActualtimeTask::checkTimerActive($task_id)) {
+
+            // action=start, timer=on
             $result=[
                'mensage' => __("A user is already performing the task", 'actualtime'),
                'title'   => __('Warning'),
                'class'   => 'warn_msg',
             ];
+
          } else {
+
+            // action=start, timer=off
             if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
+
+               // action=start, timer=off, current user is alerady using timer
                $opcional=PluginActualtimeTask::getTicket(Session::getLoginUserID());
                $result=[
                   'mensage' => __("You are already doing a task", 'actualtime')." <a href='/front/ticket.form.php?id=".$opcional."'>".__("Ticket")."&forcetab=Ticket%241</a>",
                   'title'   => __('Warning'),
                   'class'   => 'warn_msg',
                ];
+
             } else {
-               if (! PluginActualtimeTask::checkTech($task_id)) {
-                  // covering all bases, buttons would not show anyway
-                  $result=[
-                     'mensage' => __("You are not assigned to this task", 'actualtime'),
-                     'title'   => __('Warning'),
-                     'class'   => 'warn_msg',
-                  ];
-               } else {
-                  $DB->insert(
-                     'glpi_plugin_actualtime_tasks', [
-                        'tasks_id'     => $task_id,
-                        'actual_begin' => date("Y-m-d H:i:s"),
-                        'users_id'     => Session::getLoginUserID(),
-                     ]
-                  );
-                  $result=[
-                     'mensage' => __("Timer started", 'actualtime'),
-                     'title'   => __('Information'),
-                     'class'   => 'info_msg',
-                  ];
-               }
+
+               // action=start, timer=off, current user is free
+               $DB->insert(
+                  'glpi_plugin_actualtime_tasks', [
+                     'tasks_id'     => $task_id,
+                     'actual_begin' => date("Y-m-d H:i:s"),
+                     'users_id'     => Session::getLoginUserID(),
+                  ]
+               );
+               $result=[
+                  'mensage' => __("Timer started", 'actualtime'),
+                  'title'   => __('Information'),
+                  'class'   => 'info_msg',
+               ];
+
             }
          }
          echo json_encode($result);
@@ -55,8 +57,10 @@ if (isset($_POST["action"])) {
       case 'pause':
          if (PluginActualtimeTask::checkTimerActive($task_id)) {
 
+            // action=end or pause, timer=on
             if (PluginActualtimeTask::checkUser($task_id, Session::getLoginUserID())) {
 
+               // action=end or pause, timer=on, timer start by current user
                $actual_begin=PluginActualtimeTask::getActualBegin($task_id);
                $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
                $DB->update(
@@ -88,6 +92,7 @@ if (isset($_POST["action"])) {
 
             } else {
 
+               // action=end or pause, timer=on, timer start by other user
                $result=[
                   'mensage' => __("Only the user who initiated the task can close it", 'actualtime'),
                   'title'   => __('Warning'),
@@ -98,7 +103,10 @@ if (isset($_POST["action"])) {
 
          } else {
 
+            // action=end or pause, timer=off
             if ($_POST['action']=='pause') {
+
+               // action=pause, timer=off
                $result=[
                   'mensage' => __("The task had not been initialized", 'actualtime'),
                   'title'   => __('Warning'),
@@ -106,33 +114,20 @@ if (isset($_POST["action"])) {
                ];
             } else {
 
-               if (PluginActualtimeTask::checkTech($task_id)) {
+               // action=end, timer=off
+               $DB->update(
+                  'glpi_tickettasks', [
+                     'state' => 2,
+                  ], [
+                     'id' => $task_id,
+                  ]
+               );
+               $result=[
+                  'mensage' => __("Task completed."),
+                  'title'   => __('Information'),
+                  'class'   => 'info_msg',
+               ];
 
-                  if ($_POST["action"]=='end') {
-
-                     $DB->update(
-                        'glpi_tickettasks', [
-                           'state' => 2,
-                        ], [
-                           'id' => $task_id,
-                        ]
-                     );
-                     $result=[
-                        'mensage' => __("Task completed."),
-                        'title'   => __('Information'),
-                        'class'   => 'info_msg',
-                     ];
-
-                  } else {
-
-                     $result=[
-                        'mensage' => __("You are not assigned to this task", 'actualtime'),
-                        'title'   => __('Warning'),
-                        'class'   => 'warn_msg',
-                     ];
-
-                  }
-               }
             }
          }
          echo json_encode($result);
