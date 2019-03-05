@@ -388,10 +388,10 @@ JAVASCRIPT;
             $actual_totaltime+=self::totalEndTime($row['id']);
          }
          $html="<table class='tab_cadre_fixe'>";
-         $html.="<tr><th colspan='2'>ActualTime</th></tr>";
+         $html.="<tr><th colspan='2'>".__("ActualTime", "actualtime")."</th></tr>";
 
          $html.="<tr class='tab_bg_2'><td>".__("Total duration")."</td><td>".HTML::timestampToString($total_time)."</td></tr>";
-         $html.="<tr class='tab_bg_2'><td>ActualTime - ".__("Total duration")."</td><td>".HTML::timestampToString($actual_totaltime)."</td></tr>";
+         $html.="<tr class='tab_bg_2'><td>".__("ActualTime", "actualtime")." - ".__("Total duration")."</td><td>".HTML::timestampToString($actual_totaltime)."</td></tr>";
 
          $diff=$total_time-$actual_totaltime;
          if ($diff<0) {
@@ -410,8 +410,8 @@ JAVASCRIPT;
          $html.="</table>";
 
          $html.="<table class='tab_cadre_fixe'>";
-         $html.="<tr><th colspan='5'>ActualTime - ".__("Technician")."</th></tr>";
-         $html.="<tr><th>".__("Technician")."</th><th>".__("Total duration")."</th><th>ActualTime - ".__("Total duration")."</th><th>".__("Duration Diff", "actualtime")."</th><th>".__("Duration Diff", "actualtime")." (%)</th></tr>";
+         $html.="<tr><th colspan='5'>".__("ActualTime", "actualtime")." - ".__("Technician")."</th></tr>";
+         $html.="<tr><th>".__("Technician")."</th><th>".__("Total duration")."</th><th>".__("ActualTime", "actualtime")." - ".__("Total duration")."</th><th>".__("Duration Diff", "actualtime")."</th><th>".__("Duration Diff", "actualtime")." (%)</th></tr>";
 
          $query=[
             'SELECT'=>[
