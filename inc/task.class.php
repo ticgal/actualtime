@@ -75,17 +75,12 @@ class PluginActualtimeTask extends CommonDBTM{
                   $html.="<div><input type='button' id='actualtime1$rand' name='update' task_id='".$item->getID()."'action='".$action1."' value='".$value1."' class='x-button x-button-main' style='background-color:".$color1.";color:white' $disabled1></div>";
                   $html.="<div><input type='button' id='actualtime2$rand' name='update' task_id='".$item->getID()."'action='".$action2."' value='".__('End')."' class='x-button x-button-main' style='background-color:".$color2.";color:white' $disabled2></div>";
                   $html.="</td></tr>";
-
-               }
-
-               $html.="<tr class='tab_bg_2'>";
-               $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
-               $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
-               $html.="</tr>";
-               $html.=self::getSegment($item->getID());
-               echo $html;
-
-               if ($buttons) {
+                  $html.="<tr class='tab_bg_2'>";
+                  $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
+                  $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
+                  $html.="</tr>";
+                  $html.=self::getSegment($item->getID());
+                  echo $html;
 
                   $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
 
