@@ -666,7 +666,7 @@ JAVASCRIPT;
                      `tasks_id` int(11) NOT NULL,
                      `actual_begin` datetime DEFAULT NULL,
                      `actual_end` datetime DEFAULT NULL,
-                     `users_id` tinyint(1) NOT NULL,
+                     `users_id` smallint(2) NOT NULL,
                      `actual_actiontime` int(11) NOT NULL DEFAULT 0,
                      PRIMARY KEY (`id`),
                      KEY `tasks_id` (`tasks_id`),
