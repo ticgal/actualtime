@@ -11,80 +11,124 @@ if (isset($_POST["action"])) {
    switch ($_POST["action"]) {
       case 'start':
          if (PluginActualtimeTask::checkTimerActive($task_id)) {
+
+            // action=start, timer=on
             $result=[
-               'mensage'=>__("A user is already performing the task", 'actualtime'),
-               'title' => __s('Warning'),
-               'class' => 'warn_msg',
+               'mensage' => __("A user is already performing the task", 'actualtime'),
+               'title'   => __('Warning'),
+               'class'   => 'warn_msg',
             ];
+
          } else {
-            if (PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
+
+            // action=start, timer=off
+            if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
+
+               // action=start, timer=off, current user is alerady using timer
                $opcional=PluginActualtimeTask::getTicket(Session::getLoginUserID());
                $result=[
-                  'mensage'=>__("You are already doing a task", 'actualtime')." <a href='/front/ticket.form.php?id=".$opcional."'>".__("Ticket")."</a>",
-                  'title' => __s('Warning'),
-                  'class' => 'warn_msg',
+                  'mensage' => __("You are already doing a task", 'actualtime')." <a href='/front/ticket.form.php?id=".$opcional."&forcetab=Ticket\$1'>".__("Ticket")."</a>",
+                  'title'   => __('Warning'),
+                  'class'   => 'warn_msg',
                ];
+
             } else {
+
+               // action=start, timer=off, current user is free
                $DB->insert(
                   'glpi_plugin_actualtime_tasks', [
-                     'tasks_id'      => $task_id,
+                     'tasks_id'     => $task_id,
                      'actual_begin' => date("Y-m-d H:i:s"),
-                     'users_id'=>Session::getLoginUserID(),
+                     'users_id'     => Session::getLoginUserID(),
                   ]
                );
                $result=[
-                  'mensage'=>__("Timer started", 'actualtime'),
-                  'title' => __s('Information'),
-                  'class' => 'info_msg',
+                  'mensage' => __("Timer started", 'actualtime'),
+                  'title'   => __('Information'),
+                  'class'   => 'info_msg',
                ];
+
             }
          }
          echo json_encode($result);
          break;
 
       case 'end':
+      case 'pause':
          if (PluginActualtimeTask::checkTimerActive($task_id)) {
+
+            // action=end or pause, timer=on
             if (PluginActualtimeTask::checkUser($task_id, Session::getLoginUserID())) {
+
+               // action=end or pause, timer=on, timer start by current user
                $actual_begin=PluginActualtimeTask::getActualBegin($task_id);
                $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
                $DB->update(
                   'glpi_plugin_actualtime_tasks', [
-                     'actual_end'      => date("Y-m-d H:i:s"),
-                     'actual_actiontime'      => $seconds,
+                     'actual_end'        => date("Y-m-d H:i:s"),
+                     'actual_actiontime' => $seconds,
                   ], [
-                     'tasks_id'=>$task_id,
+                     'tasks_id' => $task_id,
                      [
                         'NOT' => ['actual_begin' => null],
                      ],
-                     'actual_end'=>null,
+                     'actual_end' => null,
                   ]
                );
-               $DB->update(
-                  'glpi_tickettasks', [
-                     'state'=>2,
-                  ], [
-                     'id'=>$task_id,
-                  ]
-               );
-
+               if ($_POST['action']=='end') {
+                  $DB->update(
+                     'glpi_tickettasks', [
+                        'state' => 2,
+                     ], [
+                        'id' => $task_id,
+                     ]
+                  );
+               }
                $result=[
-                  'mensage'=>__("Timer completed", 'actualtime'),
-                  'title' => __s('Information'),
-                  'class' => 'info_msg',
+                  'mensage' => __("Timer completed", 'actualtime'),
+                  'title'   => __('Information'),
+                  'class'   => 'info_msg',
+               ];
+
+            } else {
+
+               // action=end or pause, timer=on, timer start by other user
+               $result=[
+                  'mensage' => __("Only the user who initiated the task can close it", 'actualtime'),
+                  'title'   => __('Warning'),
+                  'class'   => 'warn_msg',
+               ];
+
+            }
+
+         } else {
+
+            // action=end or pause, timer=off
+            if ($_POST['action']=='pause') {
+
+               // action=pause, timer=off
+               $result=[
+                  'mensage' => __("The task had not been initialized", 'actualtime'),
+                  'title'   => __('Warning'),
+                  'class'   => 'warn_msg',
                ];
             } else {
+
+               // action=end, timer=off
+               $DB->update(
+                  'glpi_tickettasks', [
+                     'state' => 2,
+                  ], [
+                     'id' => $task_id,
+                  ]
+               );
                $result=[
-                  'mensage'=>__("Only the user who initiated the task can close it", 'actualtime'),
-                  'title' => __s('Warning'),
-                  'class' => 'warn_msg',
+                  'mensage' => __("Task completed."),
+                  'title'   => __('Information'),
+                  'class'   => 'info_msg',
                ];
+
             }
-         } else {
-            $result=[
-               'mensage'=>__("The task had not been initialized", 'actualtime'),
-               'title' => __s('Warning'),
-               'class' => 'warn_msg',
-            ];
          }
          echo json_encode($result);
          break;

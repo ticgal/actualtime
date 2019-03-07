@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Actualtime Plugin 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
-"POT-Creation-Date: 2019-02-08 19:04-0200\n"
+"POT-Creation-Date: 2019-03-05 14:04-0300\n"
 "PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,27 +17,31 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ajax/timer.php:15
+#: setup.php:9 inc/task.class.php:15
+msgid "ActualTime"
+msgstr ""
+
+#: ajax/timer.php:17
 msgid "A user is already performing the task"
 msgstr ""
 
-#: ajax/timer.php:23
+#: ajax/timer.php:30
 msgid "You are already doing a task"
 msgstr ""
 
-#: ajax/timer.php:36
+#: ajax/timer.php:46
 msgid "Timer started"
 msgstr ""
 
-#: ajax/timer.php:71
+#: ajax/timer.php:88
 msgid "Timer completed"
 msgstr ""
 
-#: ajax/timer.php:77
+#: ajax/timer.php:97
 msgid "Only the user who initiated the task can close it"
 msgstr ""
 
-#: ajax/timer.php:84
+#: ajax/timer.php:111
 msgid "The task had not been initialized"
 msgstr ""
 
@@ -53,22 +57,26 @@ msgstr ""
 msgid "Actual time"
 msgstr ""
 
-#: inc/task.class.php:15
-msgid "ActualTime"
+#: inc/task.class.php:22
+msgid "Restart"
 msgstr ""
 
-#: inc/task.class.php:51 inc/task.class.php:202
+#: inc/task.class.php:23
+msgid "Pause"
+msgstr ""
+
+#: inc/task.class.php:82
 msgid "Partial actual duration"
 msgstr ""
 
-#: inc/task.class.php:52 inc/task.class.php:203
+#: inc/task.class.php:83
 msgid "Actual Duration"
 msgstr ""
 
-#: inc/task.class.php:402 inc/task.class.php:408 inc/task.class.php:414
+#: inc/task.class.php:436 inc/task.class.php:442 inc/task.class.php:448
 msgid "Duration Diff"
 msgstr ""
 
-#: inc/task.class.php:569
+#: inc/task.class.php:603
 msgid "Timer started on"
 msgstr ""
