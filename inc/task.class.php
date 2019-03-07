@@ -85,6 +85,18 @@ class PluginActualtimeTask extends CommonDBTM{
                   $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
 
                   $script=<<<JAVASCRIPT
+   function showtaskform(e){
+      e.preventDefault();
+      $('<div>')
+      .dialog({
+         modal:  true,
+         width:  'auto',
+         height: 'auto',
+      })
+      .load('{$ajax_url}?showform=true', function() {
+         $(this).dialog('option', 'position', ['center', 'center'] );
+      });
+   }
 	$(document).ready(function(){
 		var x;
 		if (!$("#message_result").length) {
@@ -382,6 +394,24 @@ JAVASCRIPT;
       return $task->fields['tickets_id'];
    }
 
+   static function getTask($user_id) {
+      global $DB;
+
+      $query=[
+         'FROM'=>self::getTable(),
+         'WHERE'=>[
+            [
+               'NOT' => ['actual_begin' => null],
+            ],
+            'actual_end'=>null,
+            'users_id'=>$user_id,
+         ]
+      ];
+      $req=$DB->request($query);
+      $row=$req->next();
+      return $row['tasks_id'];
+   }
+
    static function getActualBegin($task_id) {
       global $DB;
 
@@ -594,9 +624,22 @@ JAVASCRIPT;
          $warning=__s('Warning');
          $seconds=self::totalEndTime($row['tasks_id']);
          $ticket_id=self::getTicket(Session::getLoginUserID());
+         $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
 
-         $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."&forcetab=Ticket\$1'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
+         $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a onclick='showtaskform(event)' href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
          $script=<<<JAVASCRIPT
+            function showtaskform(e){
+               e.preventDefault();
+               $('<div>')
+               .dialog({
+                  modal:  true,
+                  width:  'auto',
+                  height: 'auto',
+               })
+               .load('{$ajax_url}?showform=true', function() {
+                  $(this).dialog('option', 'position', ['center', 'center'] );
+               });
+            }
             $(document).ready(function(){
                if ($("#timer{$rand}").length) {
                   $("#timer{$rand}").remove();
