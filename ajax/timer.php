@@ -27,7 +27,7 @@ if (isset($_POST["action"])) {
                // action=start, timer=off, current user is alerady using timer
                $opcional=PluginActualtimeTask::getTicket(Session::getLoginUserID());
                $result=[
-                  'mensage' => __("You are already doing a task", 'actualtime')." <a href='/front/ticket.form.php?id=".$opcional."&forcetab=Ticket\$1'>".__("Ticket")."</a>",
+                  'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='showtaskform(event)' href='/front/ticket.form.php?id=".$opcional."'>".__("Ticket")."</a>",
                   'title'   => __('Warning'),
                   'class'   => 'warn_msg',
                ];
@@ -136,5 +136,20 @@ if (isset($_POST["action"])) {
       case 'count':
          echo abs(PluginActualtimeTask::totalEndTime($task_id));
          break;
+   }
+}else{
+   $parts = parse_url($_SERVER['REQUEST_URI']);
+   parse_str($parts['query'], $query);
+   if (isset($query['showform'])) {
+      $task_id=PluginActualtimeTask::getTask(Session::getLoginUserID());
+      $rand = mt_rand();
+      $options = [
+         'from_planning_edit_ajax' => true,
+         'formoptions'             => "id='edit_event_form$rand'"
+      ];
+      $options['parent'] = getItemForItemtype("Ticket");
+      $options['parent']->getFromDB(PluginActualtimeTask::getTicket(Session::getLoginUserID()));
+      $item = getItemForItemtype("TicketTask");
+      $item->showForm($task_id,$options);
    }
 }
