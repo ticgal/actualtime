@@ -123,9 +123,17 @@ if (isset($_POST["action"])) {
                   ]
                );
                $result=[
-                  'mensage' => __("Task completed."),
-                  'title'   => __('Information'),
-                  'class'   => 'info_msg',
+                  'mensage'=>__("Timer completed", 'actualtime'),
+                  'title' => __('Information'),
+                  'class' => 'info_msg',
+                  'html' => PluginActualtimeTask::getSegment($task_id),
+                  'realclock' => HTML::timestampToString(PluginActualtimeTask::totalEndTime($task_id)),
+               ];
+            } else {
+               $result=[
+                  'mensage'=>__("Only the user who initiated the task can close it", 'actualtime'),
+                  'title' => __('Warning'),
+                  'class' => 'warn_msg',
                ];
 
             }

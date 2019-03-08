@@ -79,10 +79,13 @@ class PluginActualtimeTask extends CommonDBTM{
                   $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
                   $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
                   $html.="</tr>";
+                  $html.="<tr id='actualtimeseg{$rand}'>";
                   $html.=self::getSegment($item->getID());
+                  $html.="</tr>";
                   echo $html;
 
                   $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
+                  $done=__('Done');
 
                   $script=<<<JAVASCRIPT
    function showtaskform(e){
@@ -203,32 +206,85 @@ class PluginActualtimeTask extends CommonDBTM{
 								_at = 'right top-' + (10 + _this.outerHeight());
 							}
 						});
-
-						$('#message_result').dialog({
-							dialogClass: 'message_after_redirect '+result['class'],
-							minHeight: 40,
-							minWidth: 200,
-							position: {
-								my: 'right bottom',
-								at: _at,
-								of: _of,
-								collision: 'none'
-							},
-							autoOpen: false,
-							show: {
-								effect: 'slide',
-								direction: 'down',
-								'duration': 800
+							function endCount(realclk){
+								clearInterval(x);
+								// Correct real time clock with the actual data in database
+								$('#real_clock{$rand}').html(realclk);
+								$('#real_clock{$rand}').css('color','black');
 							}
-						})
-						.dialog('open');
 
-						$(document.body).on('click', function(e){
-							if ($('#message_result').dialog('isOpen') && !$(e.target).is('.ui-dialog, a') && !$(e.target).closest('.ui-dialog').length) {
-								$('#message_result').dialog('close');
-								// redo focus on initial element
-								e.target.focus();
-							}
+							$("#actualtime{$rand}").click(function(event){
+								var id=$(this).attr("task_id");
+								var val=$(this).attr("action");
+								var time={$time};
+
+								jQuery.ajax({
+									type: "POST",
+									url: '{$ajax_url}',
+									dataType: 'json',
+									data: {action: val, task_id: id},
+									success: function (result) {
+										if (val=='end' && result['class']=='info_msg') {
+											$("table:has(#actualtime{$rand}) select[name='state']").val(2).trigger('change');
+											$('#actualtime{$rand}').parentsUntil('.h_item','.h_content.TicketTask').find('span.state.state_1').toggleClass('state_1 state_2').attr('title','$done');
+											$('#actualtime{$rand}').remove();
+											endCount(result['realclock']);
+											// Refresh table of partial time periods for this task
+											$('#actualtimeseg{$rand}').html(result['html']);
+										}else{
+											if (val=='start' && result['class']=='info_msg') {
+												$('#actualtime{$rand}').attr('action','end');
+												$('#actualtime{$rand}').attr('value','{$text_end}');
+												$('#actualtime{$rand}').css('background-color','red');
+												startCount(id);
+											}
+										}
+										$('#message_result').html(result['mensage']);
+										$('#message_result').attr('title', result['title']);
+										$(function() {
+					                  var _of = window;
+					                  var _at = 'right-20 bottom-20';
+					                  //calculate relative dialog position
+					                  $('.message_result').each(function() {
+					                     var _this = $(this);
+					                     if (_this.attr('aria-describedby') != 'message_result') {
+					                        _of = _this;
+					                        _at = 'right top-' + (10 + _this.outerHeight());
+					                     }
+					                  });
+
+					                  $('#message_result').dialog({
+					                     dialogClass: 'message_after_redirect '+result['class'],
+					                     minHeight: 40,
+					                     minWidth: 200,
+					                     position: {
+					                        my: 'right bottom',
+					                        at: _at,
+					                        of: _of,
+					                        collision: 'none'
+					                     },
+					                     autoOpen: false,
+					                     show: {
+					                       effect: 'slide',
+					                       direction: 'down',
+					                       'duration': 800
+					                     }
+					                  })
+					                  .dialog('open');
+
+					                  $(document.body).on('click', function(e){
+					                     if ($('#message_result').dialog('isOpen')
+					                         && !$(e.target).is('.ui-dialog, a')
+					                         && !$(e.target).closest('.ui-dialog').length) {
+					                        $('#message_result').dialog('close');
+					                        // redo focus on initial element
+					                        e.target.focus();
+					                     }
+	                  				});
+					               });
+									},
+								});
+							});
 						});
 					});
 				},
@@ -237,6 +293,17 @@ class PluginActualtimeTask extends CommonDBTM{
 	});
 JAVASCRIPT;
                   echo Html::scriptBlock($script);
+               } else {
+                  $time=self::totalEndTime($item->getID());
+
+                  $html="<tr class='tab_bg_2'>";
+                  $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
+                  $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
+                  $html.="</div></td></tr>";
+                  $html.="<tr id='actualtimeseg{$rand}'>";
+                  $html.=self::getSegment($item->getID());
+                  $html.="</tr>";
+                  echo $html;
                }
             }
             break;
@@ -573,11 +640,11 @@ JAVASCRIPT;
             ],
          ]
       ];
-      $html="<tr><td colspan='2'><table class='tab_cadre_fixe'>";
+      $html="<td colspan='2'><table class='tab_cadre_fixe'>";
       foreach ($DB->request($query) as $id => $row) {
          $html.="<tr class='tab_bg_2'><td>".$row['actual_begin']."</td><td>".HTML::timestampToString($row['actual_actiontime'])."</td></tr>";
       }
-      $html.="</table></td></tr>";
+      $html.="</table></td>";
       return $html;
    }
 
@@ -730,14 +797,20 @@ JAVASCRIPT;
                      `tasks_id` int(11) NOT NULL,
                      `actual_begin` datetime DEFAULT NULL,
                      `actual_end` datetime DEFAULT NULL,
-                     `users_id` tinyint(1) NOT NULL,
+                     `users_id` int(11) NOT NULL,
                      `actual_actiontime` int(11) NOT NULL DEFAULT 0,
                      PRIMARY KEY (`id`),
                      KEY `tasks_id` (`tasks_id`),
                      KEY `users_id` (`users_id`)
 			         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
          $DB->query($query) or die($DB->error());
-      }
+      } else {
+		  $fields = $DB->list_fields($table, false);
+		  if ($fields["users_id"]["Type"] != "int(11)") {
+			  $query = "ALTER TABLE $table MODIFY `users_id` int(11) NOT NULL";
+			  $DB->query($query) or die($DB->error());
+		  }
+	  }
    }
 
    static function uninstall(Migration $migration) {
