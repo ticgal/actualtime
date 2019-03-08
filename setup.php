@@ -57,13 +57,29 @@ function plugin_actualtime_check_config($verbose = false) {
 }
 
 function plugin_init_actualtime() {
-   global $PLUGIN_HOOKS;
+   global $PLUGIN_HOOKS, $CFG_GLPI;
 
    $PLUGIN_HOOKS['csrf_compliant']['actualtime'] = true;
 
-   $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
-   $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket'=> 'plugin_activetime_item_stats'];
-   $PLUGIN_HOOKS['pre_item_update']['actualtime'] = ['TicketTask'=>'plugin_activetime_item_update'];
-   $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
+   $plugin = new Plugin();
 
+   if ($plugin->isActivated('actualtime')) { //is plugin active?
+
+      // Standard settings link, on Setup - Plugins page
+      $PLUGIN_HOOKS['config_page']['actualtime'] = 'front/config.form.php';
+      // Add settings form as a tab on Setup - General page
+      Plugin::registerClass('PluginActualtimeConfig', ['addtabon' => 'Config']);
+
+      // If settings disable timers, just don't load any hook
+      $config = new PluginActualtimeConfig;
+      if (!$config->isEnabled()) {
+         return;
+      }
+
+      $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
+      $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket'=> 'plugin_activetime_item_stats'];
+      $PLUGIN_HOOKS['pre_item_update']['actualtime'] = ['TicketTask'=>'plugin_activetime_item_update'];
+      $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
+
+   }
 }

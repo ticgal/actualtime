@@ -3,6 +3,7 @@ if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access directly to this file");
 }
 
+include_once('config.class.php');
 /**
 *
 */
@@ -15,36 +16,65 @@ class PluginActualtimeTask extends CommonDBTM{
    }
 
    static public function postForm($params) {
+
       global $CFG_GLPI;
       $item = $params['item'];
-      $text_start=__("Start");
-      $text_end=__("End");
+      $text_restart = __('Restart', 'actualtime');
+      $text_pause = __('Pause', 'actualtime');
 
       switch ($item->getType()) {
          case 'TicketTask':
             if ($item->getID()) {
 
                $rand = mt_rand();
+               $buttons = self::checkTech($item->getID());
+               $time=self::totalEndTime($item->getID());
 
-               if ($item->getField('state')==1 && self::checkTech($item->getID())) {
+               if ($buttons) {
 
-                  $time=self::totalEndTime($item->getID());
+                  $value1 = __('Start');
+                  $action1 = '';
+                  $color1 = 'gray';
+                  $disabled1 = 'disabled';
+                  $action2 = '';
+                  $color2 = 'gray';
+                  $disabled2 = 'disabled';
 
-                  if (self::checkTimerActive($item->getID())) {
-                     $value=__("End");
-                     $action="end";
-                     $color="red";
-                  } else {
-                     $value=__("Start");
-                     $action="start";
-                     $color="green";
+                  if ($item->getField('state')==1) {
+
+                     if (self::checkTimerActive($item->getID())) {
+
+                        $value1 = $text_pause;
+                        $action1 = 'pause';
+                        $color1 = 'orange';
+                        $disabled1 = '';
+                        $action2 = 'end';
+                        $color2 = 'red';
+                        $disabled2 = '';
+
+                     } else {
+
+                        if ($time > 0) {
+                           $value1 = $text_restart;
+                           $action2 = 'end';
+                           $color2 = 'red';
+                           $disabled2 = '';
+                        }
+
+                        $action1 = 'start';
+                        $color1 = 'green';
+                        $disabled1 = '';
+
+                     }
+
                   }
 
                   $html="<tr class='tab_bg_2'>";
                   $html.="<td colspan='2'></td>";
-                  $html.="<td colspan='2'><div class='x-split-button'>";
-                  $html.="<input type='button' id='actualtime$rand' name='update' task_id='".$item->getID()."'action='".$action."' value='".$value."' class='x-button x-button-main' style='background-color:".$color.";color:white'>";
-                  $html.="</div></td></tr>";
+                  $html.="<td colspan='2'>";
+                  $html.="<div><input type='button' id='actualtime1$rand' name='update' task_id='".$item->getID()."'action='".$action1."' value='".$value1."' class='x-button x-button-main' style='background-color:".$color1.";color:white' $disabled1></div>";
+                  $html.="<div><input type='button' id='actualtime2$rand' name='update' task_id='".$item->getID()."'action='".$action2."' value='".__('End')."' class='x-button x-button-main' style='background-color:".$color2.";color:white' $disabled2></div>";
+                  $html.="</td></tr>";
                   $html.="<tr class='tab_bg_2'>";
                   $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
                   $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
@@ -58,66 +88,124 @@ class PluginActualtimeTask extends CommonDBTM{
                   $done=__('Done');
 
                   $script=<<<JAVASCRIPT
-						$(document).ready(function(){
-							var x;
-							if (!$("#message_result").length) {
-								$("body").append("<div id='message_result'></div>");
+   function showtaskform(e){
+      e.preventDefault();
+      $('<div>')
+      .dialog({
+         modal:  true,
+         width:  'auto',
+         height: 'auto',
+      })
+      .load('{$ajax_url}?showform=true', function() {
+         $(this).dialog('option', 'position', ['center', 'center'] );
+      });
+   }
+	$(document).ready(function(){
+		var x;
+		if (!$("#message_result").length) {
+			$("body").append("<div id='message_result'></div>");
+		}
+
+		if ($("#timer{$rand}").length) {
+			$("#timer{$rand}").remove();
+		}
+
+		if ($("#actualtime1{$rand}").attr("action")=='pause') {
+			startCount($("#actualtime1{$rand}").attr("task_id"));
+		}
+
+		function startCount(id) {
+			$('#real_clock{$rand}').css('color','red');
+			jQuery.ajax({
+				type: "POST",
+				url: '{$ajax_url}',
+				dataType: 'json',
+				data: {action: 'count', task_id: id},
+				success: function (result) {
+					var time=result;
+					x=setInterval(function(){
+						time+=1;
+						var text;
+						var distance=time;
+						var seconds = 0;
+						var minutes = 0;
+						var hours = 0;
+						var days = 0;
+						seconds = distance % 60;
+						distance-=seconds;
+						text=seconds + " s";
+						if (distance>0) {
+							minutes = (distance % 3600) / 60;
+							distance-=minutes*60;
+							text= minutes + " m " +seconds + " s";
+							if (distance>0) {
+								hours = (distance % 86400) / 3600;
+								distance-=hours*3600;
+								text= hours + " h " +minutes + " m " +seconds + " s";
+								if (distance>0) {
+									days = distance / 86400;
+									text= days + " d " +hours + " h " +minutes + " m " +seconds + " s";
+								}
 							}
+						}
+						$('#real_clock{$rand}').text(text);
+					},1000);
+				},
+			});
+		}
 
-                     if ($("#timer{$rand}").length) {
-                        $("#timer{$rand}").remove();
-                     }
+		function endCount(){
+			clearInterval(x);
+			$('#real_clock{$rand}').css('color','black');
+		}
 
-							if ($("#actualtime{$rand}").attr("action")=='end') {
-								startCount($("#actualtime{$rand}").attr("task_id"));
+		$("#actualtime1{$rand}").click(function(event){
+			buttonPressed($(this));
+		});
+
+		$("#actualtime2{$rand}").click(function(event){
+			buttonPressed($(this));
+		});
+
+		function buttonPressed(btnobj){
+			var id=btnobj.attr("task_id");
+			var val=btnobj.attr("action");
+			var time={$time};
+			jQuery.ajax({
+				type: "POST",
+				url: '{$ajax_url}',
+				dataType: 'json',
+				data: {action: val, task_id: id},
+				success: function (result) {
+					if (result['class']=='info_msg') {
+						if (val=='end' || val=='pause') {
+							if (val=='end') {
+								$("table:has(#actualtime2{$rand}) select[name='state']").val(2).trigger('change');
+								$('#actualtime1{$rand}').attr('action','').css('background-color','gray').prop('disabled',true);
+								$('#actualtime2{$rand}').attr('action','').css('background-color','gray').prop('disabled',true);
+							} else {
+								$('#actualtime1{$rand}').attr('value','$text_restart').attr('action','start').css('background-color','green').prop('disabled',false);
 							}
-
-							function startCount(id) {
-								$('#real_clock{$rand}').css('color','red');
-								jQuery.ajax({
-									type: "POST",
-									url: '{$ajax_url}',
-									dataType: 'json',
-									data: {action: 'count', task_id: id},
-									success: function (result) {
-										var time=result;
-										x=setInterval(function(){
-											time+=1;
-
-											var text;
-											var distance=time;
-											var seconds = 0;
-											var minutes = 0;
-											var hours = 0;
-											var days = 0;
-
-											seconds = distance % 60;
-											distance-=seconds;
-											text=seconds + " s";
-
-											if (distance>0) {
-												minutes = (distance % 3600) / 60;
-												distance-=minutes*60;
-												text= minutes + " m " +seconds + " s";
-
-												if (distance>0) {
-													hours = (distance % 86400) / 3600;
-													distance-=hours*3600;
-													text= hours + " h " +minutes + " m " +seconds + " s";
-
-													if (distance>0) {
-														days = distance / 86400;
-														text= days + " d " +hours + " h " +minutes + " m " +seconds + " s";
-
-													}
-												}
-											}
-											$('#real_clock{$rand}').text(text);
-										},1000);
-									},
-								});
+							endCount();
+						} else if (val=='start') {
+							$('#actualtime1{$rand}').attr('value','$text_pause').attr('action','pause').css('background-color','orange').prop('disabled',false);
+							$('#actualtime2{$rand}').attr('action','end').css('background-color','red').prop('disabled',false);
+							startCount(id);
+						}
+					}
+					$('#message_result').html(result['mensage']);
+					$('#message_result').attr('title', result['title']);
+					$(function() {
+						var _of = window;
+						var _at = 'right-20 bottom-20';
+						//calculate relative dialog position
+						$('.message_result').each(function() {
+							var _this = $(this);
+							if (_this.attr('aria-describedby') != 'message_result') {
+								_of = _this;
+								_at = 'right top-' + (10 + _this.outerHeight());
 							}
-
+						});
 							function endCount(realclk){
 								clearInterval(x);
 								// Correct real time clock with the actual data in database
@@ -197,8 +285,12 @@ class PluginActualtimeTask extends CommonDBTM{
 									},
 								});
 							});
-
 						});
+					});
+				},
+			});
+		};
+	});
 JAVASCRIPT;
                   echo Html::scriptBlock($script);
                } else {
@@ -320,6 +412,14 @@ JAVASCRIPT;
       }
    }
 
+   /**
+    * Check if the technician is free (= not active in any task)
+    *
+    * @param $user_id  Long  ID of technitian logged in
+    *
+    * @return Boolean (true if technitian IS NOT ACTIVE in any task)
+    * (opposite behaviour from original version until 1.1.0)
+   **/
    static function checkUserFree($user_id) {
       global $DB;
 
@@ -335,9 +435,9 @@ JAVASCRIPT;
       ];
       $req=$DB->request($query);
       if ($row=$req->next()) {
-         return true;
-      } else {
          return false;
+      } else {
+         return true;
       }
    }
 
@@ -359,6 +459,24 @@ JAVASCRIPT;
       $task=new TicketTask();
       $task->getFromDB($row['tasks_id']);
       return $task->fields['tickets_id'];
+   }
+
+   static function getTask($user_id) {
+      global $DB;
+
+      $query=[
+         'FROM'=>self::getTable(),
+         'WHERE'=>[
+            [
+               'NOT' => ['actual_begin' => null],
+            ],
+            'actual_end'=>null,
+            'users_id'=>$user_id,
+         ]
+      ];
+      $req=$DB->request($query);
+      $row=$req->next();
+      return $row['tasks_id'];
    }
 
    static function getActualBegin($task_id) {
@@ -573,9 +691,22 @@ JAVASCRIPT;
          $warning=__s('Warning');
          $seconds=self::totalEndTime($row['tasks_id']);
          $ticket_id=self::getTicket(Session::getLoginUserID());
+         $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
 
-         $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
+         $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a onclick='showtaskform(event)' href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
          $script=<<<JAVASCRIPT
+            function showtaskform(e){
+               e.preventDefault();
+               $('<div>')
+               .dialog({
+                  modal:  true,
+                  width:  'auto',
+                  height: 'auto',
+               })
+               .load('{$ajax_url}?showform=true', function() {
+                  $(this).dialog('option', 'position', ['center', 'center'] );
+               });
+            }
             $(document).ready(function(){
                if ($("#timer{$rand}").length) {
                   $("#timer{$rand}").remove();

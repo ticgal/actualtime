@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
-"POT-Creation-Date: 2019-02-08 18:29-0200\n"
+"POT-Creation-Date: 2019-03-05 14:04-0300\n"
 "PO-Revision-Date: 2018-11-15 17:37+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,46 +18,66 @@ msgstr ""
 "X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ajax/timer.php:15
+#: setup.php:9 inc/task.class.php:15
+msgid "ActualTime"
+msgstr ""
+
+#: ajax/timer.php:17
 msgid "A user is already performing the task"
 msgstr "Un usuario xa está a realizar a tarefa"
 
-#: ajax/timer.php:23
+#: ajax/timer.php:30
 msgid "You are already doing a task"
 msgstr "Xa estás facendo unha tarefa"
 
-#: ajax/timer.php:36
+#: ajax/timer.php:46
 msgid "Timer started"
 msgstr "Comezou o temporizador"
 
-#: ajax/timer.php:71
+#: ajax/timer.php:88
 msgid "Timer completed"
 msgstr "Temporizador completado"
 
-#: ajax/timer.php:77
+#: ajax/timer.php:97
 msgid "Only the user who initiated the task can close it"
 msgstr "Só o usuario que iniciou a tarefa pode pechala"
 
-#: ajax/timer.php:84
+#: ajax/timer.php:111
 msgid "The task had not been initialized"
 msgstr "Non se inicializou a tarefa"
 
-#: inc/task.class.php:14
-msgid "ActualTime"
-msgstr "ActualTime"
+#: inc/config.class.php:57
+msgid "Task timer configuration"
+msgstr ""
 
-#: inc/task.class.php:49 inc/task.class.php:200
+#: inc/config.class.php:70
+msgid "Enable timer on tasks"
+msgstr ""
+
+#: inc/config.class.php:103
+msgid "Actual time"
+msgstr ""
+
+#: inc/task.class.php:22
+msgid "Restart"
+msgstr ""
+
+#: inc/task.class.php:23
+msgid "Pause"
+msgstr ""
+
+#: inc/task.class.php:82
 msgid "Partial actual duration"
 msgstr "Duración real parcial"
 
-#: inc/task.class.php:50 inc/task.class.php:201
+#: inc/task.class.php:83
 msgid "Actual Duration"
 msgstr "Duración real"
 
-#: inc/task.class.php:400 inc/task.class.php:406 inc/task.class.php:412
+#: inc/task.class.php:436 inc/task.class.php:442 inc/task.class.php:448
 msgid "Duration Diff"
 msgstr "Desviación"
 
-#: inc/task.class.php:567
+#: inc/task.class.php:603
 msgid "Timer started on"
 msgstr "Comezou o temporizador na"
