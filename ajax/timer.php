@@ -95,4 +95,25 @@ if (isset($_POST["action"])) {
          echo abs(PluginActualtimeTask::totalEndTime($task_id));
          break;
    }
+
+} else {
+
+   // GET method. Looking for current user active timer
+   if ($ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID())) {
+      global $CFG_GLPI;
+      $rand = mt_rand();
+
+      $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
+      $time = abs(PluginActualtimeTask::totalEndTime($task_id));
+      $result = [
+         'time' => $time,
+         'rand' => $rand,
+         'title' => __('Warning'),
+         'div' => "<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($time)."</span></div>",
+      ];
+   } else {
+      $result = ['time' => 0];
+   }
+   echo json_encode($result);
+
 }

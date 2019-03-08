@@ -341,7 +341,7 @@ JAVASCRIPT;
       }
    }
 
-   static function getTicket($user_id) {
+   static function getTask($user_id) {
       global $DB;
 
       $query=[
@@ -356,8 +356,12 @@ JAVASCRIPT;
       ];
       $req=$DB->request($query);
       $row=$req->next();
+      return $row['tasks_id'];
+   }
+
+   static function getTicket($user_id) {
       $task=new TicketTask();
-      $task->getFromDB($row['tasks_id']);
+      $task->getFromDB(self::getTask($user_id));
       return $task->fields['tickets_id'];
    }
 
@@ -550,106 +554,6 @@ JAVASCRIPT;
                ]
             );
          }
-      }
-   }
-
-   static public function postShowItem($params) {
-      global $DB,$CFG_GLPI;
-
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            [
-               'NOT' => ['actual_begin' => null],
-            ],
-            'actual_end'=>null,
-            'users_id'=>Session::getLoginUserID(),
-         ]
-      ];
-      $req=$DB->request($query);
-      if ($row=$req->next()) {
-
-         $rand = mt_rand();
-         $warning=__s('Warning');
-         $seconds=self::totalEndTime($row['tasks_id']);
-         $ticket_id=self::getTicket(Session::getLoginUserID());
-
-         $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
-         $script=<<<JAVASCRIPT
-            $(document).ready(function(){
-               if ($("#timer{$rand}").length) {
-                  $("#timer{$rand}").remove();
-               }
-               $("body").append("{$div}");
-               var time={$seconds};
-               timer=setInterval(function(){
-                  time+=1;
-
-                  var text;
-                  var distance=time;
-                  var seconds = 0;
-                  var minutes = 0;
-                  var hours = 0;
-                  var days = 0;
-
-                  seconds = distance % 60;
-                  distance-=seconds;
-                  text=seconds + " s";
-
-                  if (distance>0) {
-                     minutes = (distance % 3600) / 60;
-                     distance-=minutes*60;
-                     text= minutes + " m " +seconds + " s";
-
-                     if (distance>0) {
-                        hours = (distance % 86400) / 3600;
-                        distance-=hours*3600;
-                        text= hours + " h " +minutes + " m " +seconds + " s";
-
-                        if (distance>0) {
-                           days = distance / 86400;
-                           text= days + " d " +hours + " h " +minutes + " m " +seconds + " s";
-
-                        }
-                     }
-                  }
-                  $('#timer{$rand} span').text(text);
-               },1000);
-               $('#timer{$rand}').attr('title', '{$warning}');
-               $(function() {
-                  var _of = window;
-                  var _at = 'right-20 bottom-20';
-                  //calculate relative dialog position
-                  $('.message_result').each(function() {
-                     var _this = $(this);
-                     if (_this.attr('aria-describedby') != 'message_result') {
-                        _of = _this;
-                        _at = 'right top-' + (10 + _this.outerHeight());
-                     }
-                  });
-
-                  $('#timer{$rand}').dialog({
-                     dialogClass: 'message_after_redirect warn_msg',
-                     minHeight: 40,
-                     minWidth: 200,
-                     position: {
-                        my: 'right bottom',
-                        at: _at,
-                        of: _of,
-                        collision: 'none'
-                     },
-                     autoOpen: false,
-                     show: {
-                       effect: 'slide',
-                       direction: 'down',
-                       'duration': 800
-                     }
-                  })
-                  .dialog('open');
-               });
-            });
-JAVASCRIPT;
-         print_r(Html::scriptBlock($script));
       }
    }
 
