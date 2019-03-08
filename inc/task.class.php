@@ -49,10 +49,13 @@ class PluginActualtimeTask extends CommonDBTM{
                   $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
                   $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
                   $html.="</tr>";
+                  $html.="<tr id='actualtimeseg{$rand}'>";
                   $html.=self::getSegment($item->getID());
+                  $html.="</tr>";
                   echo $html;
 
                   $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
+                  $done=__('Done');
 
                   $script=<<<JAVASCRIPT
 						$(document).ready(function(){
@@ -115,8 +118,10 @@ class PluginActualtimeTask extends CommonDBTM{
 								});
 							}
 
-							function endCount(){
+							function endCount(realclk){
 								clearInterval(x);
+								// Correct real time clock with the actual data in database
+								$('#real_clock{$rand}').html(realclk);
 								$('#real_clock{$rand}').css('color','black');
 							}
 
@@ -133,8 +138,11 @@ class PluginActualtimeTask extends CommonDBTM{
 									success: function (result) {
 										if (val=='end' && result['class']=='info_msg') {
 											$("table:has(#actualtime{$rand}) select[name='state']").val(2).trigger('change');
+											$('#actualtime{$rand}').parentsUntil('.h_item','.h_content.TicketTask').find('span.state.state_1').toggleClass('state_1 state_2').attr('title','$done');
 											$('#actualtime{$rand}').remove();
-											endCount();
+											endCount(result['realclock']);
+											// Refresh table of partial time periods for this task
+											$('#actualtimeseg{$rand}').html(result['html']);
 										}else{
 											if (val=='start' && result['class']=='info_msg') {
 												$('#actualtime{$rand}').attr('action','end');
@@ -200,7 +208,9 @@ JAVASCRIPT;
                   $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
                   $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
                   $html.="</div></td></tr>";
+                  $html.="<tr id='actualtimeseg{$rand}'>";
                   $html.=self::getSegment($item->getID());
+                  $html.="</tr>";
                   echo $html;
                }
             }
@@ -400,8 +410,8 @@ JAVASCRIPT;
          $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")."</td><td style='color:".$color."'>".HTML::timestampToString($diff)."</td></tr>";
          if ($total_time==0) {
             $diffpercent=0;
-         }else{
-            $diffpercent=100*($total_time-$actual_totaltime)/$total_time; 
+         } else {
+            $diffpercent=100*($total_time-$actual_totaltime)/$total_time;
          }
          $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")." (%)</td><td style='color:".$color."'>".round($diffpercent, 2)."%</td></tr>";
 
@@ -471,7 +481,7 @@ JAVASCRIPT;
             $html.="<td style='color:".$color."'>".HTML::timestampToString($value['total']-$value['actual_total'])."</td>";
             if ($value['total']==0) {
                $html.="<td style='color:".$color."'>0%</td></tr>";
-            }else{
+            } else {
                $html.="<td style='color:".$color."'>".round(100*($value['total']-$value['actual_total'])/$value['total'])."%</td></tr>";
             }
          }
@@ -512,11 +522,11 @@ JAVASCRIPT;
             ],
          ]
       ];
-      $html="<tr><td colspan='2'><table class='tab_cadre_fixe'>";
+      $html="<td colspan='2'><table class='tab_cadre_fixe'>";
       foreach ($DB->request($query) as $id => $row) {
          $html.="<tr class='tab_bg_2'><td>".$row['actual_begin']."</td><td>".HTML::timestampToString($row['actual_actiontime'])."</td></tr>";
       }
-      $html.="</table></td></tr>";
+      $html.="</table></td>";
       return $html;
    }
 

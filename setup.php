@@ -9,13 +9,13 @@ function plugin_version_actualtime() {
    return ['name'       => 'ActualTime',
       'version'        => PLUGIN_ACTUALTIME_VERSION,
       'author'         => '<a href="https://tic.gal">TICgal</a>',
-      'homepage'       => 'https://tic.gal',
-      'license'        => 'GPLv3+',
-      'minGlpiVersion' => "9.2",
+      'homepage'       => 'https://tic.gal/en/project/actualtime-plugin-glpi/',
+      'license'        => 'AGPLv3+',
       'requirements'   => [
          'glpi'   => [
             'min' => PLUGIN_ACTUALTIME_MIN_GLPI,
-            'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
+            // Allow all version from PLUGIN_ACTUALTIME_MIN_GLPI
+            //'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
          ]
       ]];
 }
@@ -25,10 +25,17 @@ function plugin_version_actualtime() {
  */
 function plugin_actualtime_check_prerequisites() {
    $version = preg_replace('/^((\d+\.?)+).*$/', '$1', GLPI_VERSION);
-   if (version_compare($version, '9.2', '<')) {
-      $matchMinGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MIN_GLPI, '>=');
-      $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, '<');
-      if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
+   // Devel version allowed
+   if ($version == '10.0.0') {
+      return true;
+   }
+   $matchMinGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MIN_GLPI, 'ge');
+   $matchMaxGlpiReq = version_compare($version, PLUGIN_ACTUALTIME_MAX_GLPI, 'lt');
+   if (!$matchMinGlpiReq || !$matchMaxGlpiReq) {
+      if (method_exists('Plugin', 'messageIncompatible')) {
+         //since GLPI 9.2
+         Plugin::messageIncompatible('core', PLUGIN_ACTUALTIME_MIN_GLPI, PLUGIN_ACTUALTIME_MAX_GLPI);
+      } else {
          echo vsprintf(
             'This plugin requires GLPI >= %1$s and < %2$s.',
             [
@@ -36,10 +43,9 @@ function plugin_actualtime_check_prerequisites() {
                PLUGIN_ACTUALTIME_MAX_GLPI,
             ]
          );
-         return false;
       }
+      return false;
    }
-
    return true;
 }
 

@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/ticgal/actualtime/multimedia/actualtime-logo-trans.png" alt="ActualTime Logo" height="250px" width="250px" class="js-lazy-loaded">
 
-[![License](https://img.shields.io/badge/License-GNU%20AGPLv3-blue.svg?style=flat-square)](https://gitlab.com/TICgal/gdrive/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-GNU%20AGPLv3-blue.svg?style=flat-square)](https://github.com/ticgal/actualtime/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/badge/Twitter-TICgal-blue.svg?style=flat-square)](https://twitter.com/ticgalcom)
 [![Web](https://img.shields.io/badge/Web-TICgal-blue.svg?style=flat-square)](https://tic.gal/)
 
@@ -33,3 +33,12 @@ No es necesaria configuración adicional.
 Cuando un técnico tiene una tarea **pendiente** en una petición, debe pulsar el botón **Inicio** para arrancar el temporizador.
 Para pararlo simplemente pulse el botón **Fin**.
 Pueden visualizarse estadísticas adicionales en la pestaña correspondiente de la petición.
+## Português
+Adiciona a possibilidade de registrar o tempo real de execução de cada tarefa no GLPI.
+### Configuração
+Instalar como qualquer outro plugin para GLPI. 
+Não é necessária configuração adicional.
+### Instruções
+Quando um técnico tem uma tarefa **pendente** em um chamado, deve clicar no botão **Início** para acionar o temporizador.
+Para pará-lo simplemente clique no botão **Fim**.
+Pode-se visualizar-se estatísticas adicionais na guia correspondente do chamado.
