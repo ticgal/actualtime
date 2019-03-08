@@ -666,14 +666,20 @@ JAVASCRIPT;
                      `tasks_id` int(11) NOT NULL,
                      `actual_begin` datetime DEFAULT NULL,
                      `actual_end` datetime DEFAULT NULL,
-                     `users_id` tinyint(1) NOT NULL,
+                     `users_id` int(11) NOT NULL,
                      `actual_actiontime` int(11) NOT NULL DEFAULT 0,
                      PRIMARY KEY (`id`),
                      KEY `tasks_id` (`tasks_id`),
                      KEY `users_id` (`users_id`)
 			         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
          $DB->query($query) or die($DB->error());
-      }
+      } else {
+		  $fields = $DB->list_fields($table, false);
+		  if ($fields["users_id"]["Type"] != "int(11)") {
+			  $query = "ALTER TABLE $table MODIFY `users_id` int(11) NOT NULL";
+			  $DB->query($query) or die($DB->error());
+		  }
+	  }
    }
 
    static function uninstall(Migration $migration) {
