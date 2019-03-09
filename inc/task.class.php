@@ -88,9 +88,9 @@ class PluginActualtimeTask extends CommonDBTM{
                   $done=__('Done');
 
                   $script=<<<JAVASCRIPT
-   function showtaskform(e){
-      e.preventDefault();
-      $('<div>')
+function showtaskform(e){
+   e.preventDefault();
+   $('<div>')
       .dialog({
          modal:  true,
          width:  'auto',
@@ -99,198 +99,197 @@ class PluginActualtimeTask extends CommonDBTM{
       .load('{$ajax_url}?showform=true', function() {
          $(this).dialog('option', 'position', ['center', 'center'] );
       });
+}
+$(document).ready(function(){
+   var x;
+   if (!$("#message_result").length) {
+      $("body").append("<div id='message_result'></div>");
    }
-	$(document).ready(function(){
-		var x;
-		if (!$("#message_result").length) {
-			$("body").append("<div id='message_result'></div>");
-		}
 
-		if ($("#timer{$rand}").length) {
-			$("#timer{$rand}").remove();
-		}
+   if ($("#timer{$rand}").length) {
+      $("#timer{$rand}").remove();
+   }
 
-		if ($("#actualtime1{$rand}").attr("action")=='pause') {
-			startCount($("#actualtime1{$rand}").attr("task_id"));
-		}
+   if ($("#actualtime1{$rand}").attr("action")=='pause') {
+      startCount($("#actualtime1{$rand}").attr("task_id"));
+   }
 
-		function startCount(id) {
-			$('#real_clock{$rand}').css('color','red');
-			jQuery.ajax({
-				type: "POST",
-				url: '{$ajax_url}',
-				dataType: 'json',
-				data: {action: 'count', task_id: id},
-				success: function (result) {
-					var time=result;
-					x=setInterval(function(){
-						time+=1;
-						var text;
-						var distance=time;
-						var seconds = 0;
-						var minutes = 0;
-						var hours = 0;
-						var days = 0;
-						seconds = distance % 60;
-						distance-=seconds;
-						text=seconds + " s";
-						if (distance>0) {
-							minutes = (distance % 3600) / 60;
-							distance-=minutes*60;
-							text= minutes + " m " +seconds + " s";
-							if (distance>0) {
-								hours = (distance % 86400) / 3600;
-								distance-=hours*3600;
-								text= hours + " h " +minutes + " m " +seconds + " s";
-								if (distance>0) {
-									days = distance / 86400;
-									text= days + " d " +hours + " h " +minutes + " m " +seconds + " s";
-								}
-							}
-						}
-						$('#real_clock{$rand}').text(text);
-					},1000);
-				},
-			});
-		}
+   function startCount(id) {
+      $('#real_clock{$rand}').css('color','red');
+      jQuery.ajax({
+         type:     "POST",
+         url:      '{$ajax_url}',
+         dataType: 'json',
+         data:     {action: 'count', task_id: id},
+         success:  function (result) {
+            var time=result;
+            x=setInterval(function() {
+               time += 1;
+               var text;
+               var distance = time;
+               var seconds = 0;
+               var minutes = 0;
+               var hours = 0;
+               var days = 0;
+               seconds = distance % 60;
+               distance -= seconds;
+               text = seconds + " s";
+               if (distance > 0) {
+                  minutes = (distance % 3600) / 60;
+                  distance -= minutes * 60;
+                  text = minutes + " m " + seconds + " s";
+                  if (distance > 0) {
+                     hours = (distance % 86400) / 3600;
+                     distance -= hours * 3600;
+                     text = hours + " h " + minutes + " m " + seconds + " s";
+                     if (distance > 0) {
+                        days = distance / 86400;
+                        text = days + " d " + hours + " h " + minutes + " m " + seconds + " s";
+                     }
+                  }
+               }
+               $('#real_clock{$rand}').text(text);
+            },1000);
+         },
+      });
+   }
 
-		function endCount(){
-			clearInterval(x);
-			$('#real_clock{$rand}').css('color','black');
-		}
+   function endCount(){
+      clearInterval(x);
+      $('#real_clock{$rand}').css('color','black');
+   }
 
-		$("#actualtime1{$rand}").click(function(event){
-			buttonPressed($(this));
-		});
+   $("#actualtime1{$rand}").click(function(event){
+      buttonPressed($(this));
+   });
 
-		$("#actualtime2{$rand}").click(function(event){
-			buttonPressed($(this));
-		});
+   $("#actualtime2{$rand}").click(function(event){
+      buttonPressed($(this));
+   });
 
-		function buttonPressed(btnobj){
-			var id=btnobj.attr("task_id");
-			var val=btnobj.attr("action");
-			var time={$time};
-			jQuery.ajax({
-				type: "POST",
-				url: '{$ajax_url}',
-				dataType: 'json',
-				data: {action: val, task_id: id},
-				success: function (result) {
-					if (result['class']=='info_msg') {
-						if (val=='end' || val=='pause') {
-							if (val=='end') {
-								$("table:has(#actualtime2{$rand}) select[name='state']").val(2).trigger('change');
-								$('#actualtime1{$rand}').attr('action','').css('background-color','gray').prop('disabled',true);
-								$('#actualtime2{$rand}').attr('action','').css('background-color','gray').prop('disabled',true);
-							} else {
-								$('#actualtime1{$rand}').attr('value','$text_restart').attr('action','start').css('background-color','green').prop('disabled',false);
-							}
-							endCount();
-						} else if (val=='start') {
-							$('#actualtime1{$rand}').attr('value','$text_pause').attr('action','pause').css('background-color','orange').prop('disabled',false);
-							$('#actualtime2{$rand}').attr('action','end').css('background-color','red').prop('disabled',false);
-							startCount(id);
-						}
-					}
-					$('#message_result').html(result['mensage']);
-					$('#message_result').attr('title', result['title']);
-					$(function() {
-						var _of = window;
-						var _at = 'right-20 bottom-20';
-						//calculate relative dialog position
-						$('.message_result').each(function() {
-							var _this = $(this);
-							if (_this.attr('aria-describedby') != 'message_result') {
-								_of = _this;
-								_at = 'right top-' + (10 + _this.outerHeight());
-							}
-						});
-							function endCount(realclk){
-								clearInterval(x);
-								// Correct real time clock with the actual data in database
-								$('#real_clock{$rand}').html(realclk);
-								$('#real_clock{$rand}').css('color','black');
-							}
+   function buttonPressed(btnobj){
+      var id = btnobj.attr("task_id");
+      var val = btnobj.attr("action");
+      var time = {$time};
+      jQuery.ajax({
+         type:     "POST",
+         url:      '{$ajax_url}',
+         dataType: 'json',
+         data:     {action: val, task_id: id},
+         success:  function (result) {
+            if (result['class'] == 'info_msg') {
+               if (val == 'end' || val == 'pause') {
+                  if (val == 'end') {
+                     $("table:has(#actualtime2{$rand}) select[name='state']").val(2).trigger('change');
+                     $('#actualtime1{$rand}').attr('action','').css('background-color','gray').prop('disabled',true);
+                     $('#actualtime2{$rand}').attr('action','').css('background-color','gray').prop('disabled',true);
+                  } else {
+                     $('#actualtime1{$rand}').attr('value','$text_restart').attr('action','start').css('background-color','green').prop('disabled',false);
+                  }
+                  endCount();
+               } else if (val == 'start') {
+                  $('#actualtime1{$rand}').attr('value','$text_pause').attr('action','pause').css('background-color','orange').prop('disabled',false);
+                  $('#actualtime2{$rand}').attr('action','end').css('background-color','red').prop('disabled',false);
+                  startCount(id);
+               }
+            }
+            $('#message_result').html(result['mensage']);
+            $('#message_result').attr('title', result['title']);
+            $(function() {
+               var _of = window;
+               var _at = 'right-20 bottom-20';
+               //calculate relative dialog position
+               $('.message_result').each(function() {
+                  var _this = $(this);
+                  if (_this.attr('aria-describedby') != 'message_result') {
+                     _of = _this;
+                     _at = 'right top-' + (10 + _this.outerHeight());
+                  }
+               });
+                  function endCount(realclk){
+                     clearInterval(x);
+                     // Correct real time clock with the actual data in database
+                     $('#real_clock{$rand}').html(realclk);
+                     $('#real_clock{$rand}').css('color','black');
+                  }
 
-							$("#actualtime{$rand}").click(function(event){
-								var id=$(this).attr("task_id");
-								var val=$(this).attr("action");
-								var time={$time};
+                  $("#actualtime{$rand}").click(function(event){
+                     var id = $(this).attr("task_id");
+                     var val = $(this).attr("action");
+                     var time = {$time};
 
-								jQuery.ajax({
-									type: "POST",
-									url: '{$ajax_url}',
-									dataType: 'json',
-									data: {action: val, task_id: id},
-									success: function (result) {
-										if (val=='end' && result['class']=='info_msg') {
-											$("table:has(#actualtime{$rand}) select[name='state']").val(2).trigger('change');
-											$('#actualtime{$rand}').parentsUntil('.h_item','.h_content.TicketTask').find('span.state.state_1').toggleClass('state_1 state_2').attr('title','$done');
-											$('#actualtime{$rand}').remove();
-											endCount(result['realclock']);
-											// Refresh table of partial time periods for this task
-											$('#actualtimeseg{$rand}').html(result['html']);
-										}else{
-											if (val=='start' && result['class']=='info_msg') {
-												$('#actualtime{$rand}').attr('action','end');
-												$('#actualtime{$rand}').attr('value','{$text_end}');
-												$('#actualtime{$rand}').css('background-color','red');
-												startCount(id);
-											}
-										}
-										$('#message_result').html(result['mensage']);
-										$('#message_result').attr('title', result['title']);
-										$(function() {
-					                  var _of = window;
-					                  var _at = 'right-20 bottom-20';
-					                  //calculate relative dialog position
-					                  $('.message_result').each(function() {
-					                     var _this = $(this);
-					                     if (_this.attr('aria-describedby') != 'message_result') {
-					                        _of = _this;
-					                        _at = 'right top-' + (10 + _this.outerHeight());
-					                     }
-					                  });
-
-					                  $('#message_result').dialog({
-					                     dialogClass: 'message_after_redirect '+result['class'],
-					                     minHeight: 40,
-					                     minWidth: 200,
-					                     position: {
-					                        my: 'right bottom',
-					                        at: _at,
-					                        of: _of,
-					                        collision: 'none'
-					                     },
-					                     autoOpen: false,
-					                     show: {
-					                       effect: 'slide',
-					                       direction: 'down',
-					                       'duration': 800
-					                     }
-					                  })
-					                  .dialog('open');
-
-					                  $(document.body).on('click', function(e){
-					                     if ($('#message_result').dialog('isOpen')
-					                         && !$(e.target).is('.ui-dialog, a')
-					                         && !$(e.target).closest('.ui-dialog').length) {
-					                        $('#message_result').dialog('close');
-					                        // redo focus on initial element
-					                        e.target.focus();
-					                     }
-	                  				});
-					               });
-									},
-								});
-							});
-						});
-					});
-				},
-			});
-		};
-	});
+                     jQuery.ajax({
+                        type:     "POST",
+                        url:      '{$ajax_url}',
+                        dataType: 'json',
+                        data:     {action: val, task_id: id},
+                        success:  function (result) {
+                           if (val == 'end' && result['class'] == 'info_msg') {
+                              $("table:has(#actualtime{$rand}) select[name='state']").val(2).trigger('change');
+                              $('#actualtime{$rand}').parentsUntil('.h_item','.h_content.TicketTask').find('span.state.state_1').toggleClass('state_1 state_2').attr('title','$done');
+                              $('#actualtime{$rand}').remove();
+                              endCount(result['realclock']);
+                              // Refresh table of partial time periods for this task
+                              $('#actualtimeseg{$rand}').html(result['html']);
+                           }else{
+                              if (val == 'start' && result['class'] == 'info_msg') {
+                                 $('#actualtime{$rand}').attr('action','end');
+                                 $('#actualtime{$rand}').attr('value','{$text_end}');
+                                 $('#actualtime{$rand}').css('background-color','red');
+                                 startCount(id);
+                              }
+                           }
+                           $('#message_result').html(result['mensage']);
+                           $('#message_result').attr('title', result['title']);
+                           $(function() {
+                              var _of = window;
+                              var _at = 'right-20 bottom-20';
+                              //calculate relative dialog position
+                              $('.message_result').each(function() {
+                                 var _this = $(this);
+                                 if (_this.attr('aria-describedby') != 'message_result') {
+                                    _of = _this;
+                                    _at = 'right top-' + (10 + _this.outerHeight());
+                                 }
+                              });
+                              $('#message_result').dialog({
+                                 dialogClass:
+                                    'message_after_redirect '+result['class'],
+                                    minHeight: 40,
+                                    minWidth:  200,
+                                    position:  {
+                                       my:        'right bottom',
+                                       at:        _at,
+                                       of:        _of,
+                                       collision: 'none'
+                                    },
+                                    autoOpen:  false,
+                                    show:      {
+                                       effect:     'slide',
+                                       direction:  'down',
+                                       'duration': 800
+                                    }
+                              })
+                              .dialog('open');
+                              $(document.body).on('click', function(e){
+                                 if ($('#message_result').dialog('isOpen')
+                                    && !$(e.target).is('.ui-dialog, a')
+                                    && !$(e.target).closest('.ui-dialog').length) {
+                                    $('#message_result').dialog('close');
+                                    // redo focus on initial element
+                                    e.target.focus();
+                                 }
+                              });
+                           });
+                        },
+                     });
+                  });
+               });
+            });
+         },
+      });
+   };
+});
 JAVASCRIPT;
                   echo Html::scriptBlock($script);
                } else {
@@ -606,9 +605,9 @@ JAVASCRIPT;
          $html.="</table>";
 
          $script=<<<JAVASCRIPT
-				$(document).ready(function(){
-					$("div.dates_timelines:last").append("{$html}");
-				});
+$(document).ready(function(){
+   $("div.dates_timelines:last").append("{$html}");
+});
 JAVASCRIPT;
          echo Html::scriptBlock($script);
       }
@@ -695,90 +694,87 @@ JAVASCRIPT;
 
          $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a onclick='showtaskform(event)' href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
          $script=<<<JAVASCRIPT
-            function showtaskform(e){
-               e.preventDefault();
-               $('<div>')
-               .dialog({
-                  modal:  true,
-                  width:  'auto',
-                  height: 'auto',
-               })
-               .load('{$ajax_url}?showform=true', function() {
-                  $(this).dialog('option', 'position', ['center', 'center'] );
-               });
+function showtaskform(e){
+   e.preventDefault();
+   $('<div>')
+      .dialog({
+         modal:  true,
+         width:  'auto',
+         height: 'auto',
+      })
+      .load('{$ajax_url}?showform=true', function() {
+         $(this).dialog('option', 'position', ['center', 'center'] );
+      });
+}
+$(document).ready(function() {
+   if ($("#timer{$rand}").length) {
+      $("#timer{$rand}").remove();
+   }
+   $("body").append("{$div}");
+   var time = {$seconds};
+   timer = setInterval(function() {
+      time += 1;
+
+      var text;
+      var distance = time;
+      var seconds = 0;
+      var minutes = 0;
+      var hours = 0;
+      var days = 0;
+      seconds = distance % 60;
+      distance -= seconds;
+      text = seconds + " s";
+
+      if (distance > 0) {
+         minutes = (distance % 3600) / 60;
+         distance -= minutes * 60;
+         text = minutes + " m " + seconds + " s";
+         if (distance > 0) {
+            hours = (distance % 86400) / 3600;
+            distance -= hours * 3600;
+            text = hours + " h " + minutes + " m " + seconds + " s";
+            if (distance > 0) {
+               days = distance / 86400;
+               text = days + " d " + hours + " h " + minutes + " m " + seconds + " s";
             }
-            $(document).ready(function(){
-               if ($("#timer{$rand}").length) {
-                  $("#timer{$rand}").remove();
-               }
-               $("body").append("{$div}");
-               var time={$seconds};
-               timer=setInterval(function(){
-                  time+=1;
+         }
+      }
 
-                  var text;
-                  var distance=time;
-                  var seconds = 0;
-                  var minutes = 0;
-                  var hours = 0;
-                  var days = 0;
+      $('#timer{$rand} span').text(text);
+   },1000);
+   $('#timer{$rand}').attr('title', '{$warning}');
+   $(function() {
+      var _of = window;
+      var _at = 'right-20 bottom-20';
+      //calculate relative dialog position
+      $('.message_result').each(function() {
+         var _this = $(this);
+         if (_this.attr('aria-describedby') != 'message_result') {
+            _of = _this;
+            _at = 'right top-' + (10 + _this.outerHeight());
+         }
+      });
 
-                  seconds = distance % 60;
-                  distance-=seconds;
-                  text=seconds + " s";
-
-                  if (distance>0) {
-                     minutes = (distance % 3600) / 60;
-                     distance-=minutes*60;
-                     text= minutes + " m " +seconds + " s";
-
-                     if (distance>0) {
-                        hours = (distance % 86400) / 3600;
-                        distance-=hours*3600;
-                        text= hours + " h " +minutes + " m " +seconds + " s";
-
-                        if (distance>0) {
-                           days = distance / 86400;
-                           text= days + " d " +hours + " h " +minutes + " m " +seconds + " s";
-
-                        }
-                     }
-                  }
-                  $('#timer{$rand} span').text(text);
-               },1000);
-               $('#timer{$rand}').attr('title', '{$warning}');
-               $(function() {
-                  var _of = window;
-                  var _at = 'right-20 bottom-20';
-                  //calculate relative dialog position
-                  $('.message_result').each(function() {
-                     var _this = $(this);
-                     if (_this.attr('aria-describedby') != 'message_result') {
-                        _of = _this;
-                        _at = 'right top-' + (10 + _this.outerHeight());
-                     }
-                  });
-
-                  $('#timer{$rand}').dialog({
-                     dialogClass: 'message_after_redirect warn_msg',
-                     minHeight: 40,
-                     minWidth: 200,
-                     position: {
-                        my: 'right bottom',
-                        at: _at,
-                        of: _of,
-                        collision: 'none'
-                     },
-                     autoOpen: false,
-                     show: {
-                       effect: 'slide',
-                       direction: 'down',
-                       'duration': 800
-                     }
-                  })
-                  .dialog('open');
-               });
-            });
+      $('#timer{$rand}').dialog({
+         dialogClass: 'message_after_redirect warn_msg',
+         minHeight:   40,
+         minWidth:    200,
+         position:    {
+            my:        'right bottom',
+            at:        _at,
+            of:        _of,
+            collision: 'none'
+         },
+         autoOpen:    false,
+         show:        {
+            effect:     'slide',
+            direction:  'down',
+            'duration': 800
+         }
+      })
+      .dialog('open');
+   });
+});
 JAVASCRIPT;
          print_r(Html::scriptBlock($script));
       }
@@ -793,24 +789,24 @@ JAVASCRIPT;
          $migration->displayMessage("Installing $table");
 
          $query = "CREATE TABLE IF NOT EXISTS $table (
-							`id` int(11) NOT NULL auto_increment,
-                     `tasks_id` int(11) NOT NULL,
-                     `actual_begin` datetime DEFAULT NULL,
-                     `actual_end` datetime DEFAULT NULL,
-                     `users_id` int(11) NOT NULL,
-                     `actual_actiontime` int(11) NOT NULL DEFAULT 0,
-                     PRIMARY KEY (`id`),
-                     KEY `tasks_id` (`tasks_id`),
-                     KEY `users_id` (`users_id`)
-			         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+            `id` int(11) NOT NULL auto_increment,
+            `tasks_id` int(11) NOT NULL,
+            `actual_begin` datetime DEFAULT NULL,
+            `actual_end` datetime DEFAULT NULL,
+            `users_id` int(11) NOT NULL,
+            `actual_actiontime` int(11) NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`),
+            KEY `tasks_id` (`tasks_id`),
+            KEY `users_id` (`users_id`)
+         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
          $DB->query($query) or die($DB->error());
       } else {
-		  $fields = $DB->list_fields($table, false);
-		  if ($fields["users_id"]["Type"] != "int(11)") {
-			  $query = "ALTER TABLE $table MODIFY `users_id` int(11) NOT NULL";
-			  $DB->query($query) or die($DB->error());
-		  }
-	  }
+         $fields = $DB->list_fields($table, false);
+         if ($fields["users_id"]["Type"] != "int(11)") {
+            $query = "ALTER TABLE $table MODIFY `users_id` int(11) NOT NULL";
+            $DB->query($query) or die($DB->error());
+         }
+      }
    }
 
    static function uninstall(Migration $migration) {
