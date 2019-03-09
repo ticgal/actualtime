@@ -88,7 +88,7 @@ class PluginActualtimeTask extends CommonDBTM{
                   $done=__('Done');
 
                   $script=<<<JAVASCRIPT
-function showtaskform(e){
+function showtaskform(e) {
    e.preventDefault();
    $('<div>')
       .dialog({
@@ -100,7 +100,7 @@ function showtaskform(e){
          $(this).dialog('option', 'position', ['center', 'center'] );
       });
 }
-$(document).ready(function(){
+$(document).ready(function() {
    var x;
    if (!$("#message_result").length) {
       $("body").append("<div id='message_result'></div>");
@@ -154,20 +154,22 @@ $(document).ready(function(){
       });
    }
 
-   function endCount(){
+   function endCount(realclk){
       clearInterval(x);
+      // Correct real time clock with the actual data in database
+      $('#real_clock{$rand}').html(realclk);
       $('#real_clock{$rand}').css('color','black');
    }
 
-   $("#actualtime1{$rand}").click(function(event){
+   $("#actualtime1{$rand}").click(function(event) {
       buttonPressed($(this));
    });
 
-   $("#actualtime2{$rand}").click(function(event){
+   $("#actualtime2{$rand}").click(function(event) {
       buttonPressed($(this));
    });
 
-   function buttonPressed(btnobj){
+   function buttonPressed(btnobj) {
       var id = btnobj.attr("task_id");
       var val = btnobj.attr("action");
       var time = {$time};
@@ -186,7 +188,8 @@ $(document).ready(function(){
                   } else {
                      $('#actualtime1{$rand}').attr('value','$text_restart').attr('action','start').css('background-color','green').prop('disabled',false);
                   }
-                  endCount();
+                  endCount(result['realclock']);
+                  $('#actualtimeseg{$rand}').html(result['html']);
                } else if (val == 'start') {
                   $('#actualtime1{$rand}').attr('value','$text_pause').attr('action','pause').css('background-color','orange').prop('disabled',false);
                   $('#actualtime2{$rand}').attr('action','end').css('background-color','red').prop('disabled',false);
@@ -206,84 +209,32 @@ $(document).ready(function(){
                      _at = 'right top-' + (10 + _this.outerHeight());
                   }
                });
-                  function endCount(realclk){
-                     clearInterval(x);
-                     // Correct real time clock with the actual data in database
-                     $('#real_clock{$rand}').html(realclk);
-                     $('#real_clock{$rand}').css('color','black');
+               $('#message_result').dialog({
+                  dialogClass: 'message_after_redirect ' + result['class'],
+                  minHeight:   40,
+                  minWidth:    200,
+                  position:    {
+                     my:        'right bottom',
+                     at:        _at,
+                     of:        _of,
+                     collision: 'none'
+                  },
+                  autoOpen:    false,
+                  show:        {
+                     effect:     'slide',
+                     direction:  'down',
+                     'duration': 800
                   }
-
-                  $("#actualtime{$rand}").click(function(event){
-                     var id = $(this).attr("task_id");
-                     var val = $(this).attr("action");
-                     var time = {$time};
-
-                     jQuery.ajax({
-                        type:     "POST",
-                        url:      '{$ajax_url}',
-                        dataType: 'json',
-                        data:     {action: val, task_id: id},
-                        success:  function (result) {
-                           if (val == 'end' && result['class'] == 'info_msg') {
-                              $("table:has(#actualtime{$rand}) select[name='state']").val(2).trigger('change');
-                              $('#actualtime{$rand}').parentsUntil('.h_item','.h_content.TicketTask').find('span.state.state_1').toggleClass('state_1 state_2').attr('title','$done');
-                              $('#actualtime{$rand}').remove();
-                              endCount(result['realclock']);
-                              // Refresh table of partial time periods for this task
-                              $('#actualtimeseg{$rand}').html(result['html']);
-                           }else{
-                              if (val == 'start' && result['class'] == 'info_msg') {
-                                 $('#actualtime{$rand}').attr('action','end');
-                                 $('#actualtime{$rand}').attr('value','{$text_end}');
-                                 $('#actualtime{$rand}').css('background-color','red');
-                                 startCount(id);
-                              }
-                           }
-                           $('#message_result').html(result['mensage']);
-                           $('#message_result').attr('title', result['title']);
-                           $(function() {
-                              var _of = window;
-                              var _at = 'right-20 bottom-20';
-                              //calculate relative dialog position
-                              $('.message_result').each(function() {
-                                 var _this = $(this);
-                                 if (_this.attr('aria-describedby') != 'message_result') {
-                                    _of = _this;
-                                    _at = 'right top-' + (10 + _this.outerHeight());
-                                 }
-                              });
-                              $('#message_result').dialog({
-                                 dialogClass:
-                                    'message_after_redirect '+result['class'],
-                                    minHeight: 40,
-                                    minWidth:  200,
-                                    position:  {
-                                       my:        'right bottom',
-                                       at:        _at,
-                                       of:        _of,
-                                       collision: 'none'
-                                    },
-                                    autoOpen:  false,
-                                    show:      {
-                                       effect:     'slide',
-                                       direction:  'down',
-                                       'duration': 800
-                                    }
-                              })
-                              .dialog('open');
-                              $(document.body).on('click', function(e){
-                                 if ($('#message_result').dialog('isOpen')
-                                    && !$(e.target).is('.ui-dialog, a')
-                                    && !$(e.target).closest('.ui-dialog').length) {
-                                    $('#message_result').dialog('close');
-                                    // redo focus on initial element
-                                    e.target.focus();
-                                 }
-                              });
-                           });
-                        },
-                     });
-                  });
+               })
+               .dialog('open');
+               $(document.body).on('click', function(e) {
+                  if ($('#message_result').dialog('isOpen')
+                     && !$(e.target).is('.ui-dialog, a')
+                     && !$(e.target).closest('.ui-dialog').length) {
+                     $('#message_result').dialog('close');
+                     // redo focus on initial element
+                     e.target.focus();
+                  }
                });
             });
          },
