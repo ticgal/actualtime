@@ -60,7 +60,7 @@ if (isset($_POST["action"])) {
             // action=end or pause, timer=on
             if (PluginActualtimeTask::checkUser($task_id, Session::getLoginUserID())) {
 
-               // action=end or pause, timer=on, timer start by current user
+               // action=end or pause, timer=on, timer started by current user
                $actual_begin=PluginActualtimeTask::getActualBegin($task_id);
                $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
                $DB->update(
@@ -88,11 +88,13 @@ if (isset($_POST["action"])) {
                   'mensage' => __("Timer completed", 'actualtime'),
                   'title'   => __('Information'),
                   'class'   => 'info_msg',
+                  'html' => PluginActualtimeTask::getSegment($task_id),
+                  'realclock' => HTML::timestampToString(PluginActualtimeTask::totalEndTime($task_id)),
                ];
 
             } else {
 
-               // action=end or pause, timer=on, timer start by other user
+               // action=end or pause, timer=on, timer started by other user
                $result=[
                   'mensage' => __("Only the user who initiated the task can close it", 'actualtime'),
                   'title'   => __('Warning'),
@@ -129,12 +131,6 @@ if (isset($_POST["action"])) {
                   'html' => PluginActualtimeTask::getSegment($task_id),
                   'realclock' => HTML::timestampToString(PluginActualtimeTask::totalEndTime($task_id)),
                ];
-            } else {
-               $result=[
-                  'mensage'=>__("Only the user who initiated the task can close it", 'actualtime'),
-                  'title' => __('Warning'),
-                  'class' => 'warn_msg',
-               ];
 
             }
          }
@@ -145,7 +141,7 @@ if (isset($_POST["action"])) {
          echo abs(PluginActualtimeTask::totalEndTime($task_id));
          break;
    }
-}else{
+} else {
    $parts = parse_url($_SERVER['REQUEST_URI']);
    parse_str($parts['query'], $query);
    if (isset($query['showform'])) {
@@ -158,6 +154,6 @@ if (isset($_POST["action"])) {
       $options['parent'] = getItemForItemtype("Ticket");
       $options['parent']->getFromDB(PluginActualtimeTask::getTicket(Session::getLoginUserID()));
       $item = getItemForItemtype("TicketTask");
-      $item->showForm($task_id,$options);
+      $item->showForm($task_id, $options);
    }
 }
