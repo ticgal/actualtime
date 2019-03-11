@@ -63,18 +63,18 @@ function showTimerPopup() {
       url:      ajax_url + '?footer',
       dataType: 'json',
       success: function (result) {
-         symb_d = result['symb_d']; 
-         symb_day = result['symb_day']; 
-         symb_days = result['symb_days']; 
-         symb_h = result['symb_h']; 
-         symb_hour = result['symb_hour']; 
-         symb_hours = result['symb_hours']; 
-         symb_min = result['symb_min']; 
-         symb_minute = result['symb_minute']; 
-         symb_minutes = result['symb_minutes']; 
-         symb_s = result['symb_s']; 
-         symb_second = result['symb_second']; 
-         symb_seconds = result['symb_seconds']; 
+         symb_d = result['symb_d'];
+         symb_day = result['symb_day'];
+         symb_days = result['symb_days'];
+         symb_h = result['symb_h'];
+         symb_hour = result['symb_hour'];
+         symb_hours = result['symb_hours'];
+         symb_min = result['symb_min'];
+         symb_minute = result['symb_minute'];
+         symb_minutes = result['symb_minutes'];
+         symb_s = result['symb_s'];
+         symb_second = result['symb_second'];
+         symb_seconds = result['symb_seconds'];
 
          $("[id^='actualtime_timer']").remove();
 

@@ -143,7 +143,7 @@ if (isset($_POST["action"])) {
          break;
    }
 
-} elseif (isset($_GET["footer"])) {
+} else if (isset($_GET["footer"])) {
 
    // For timer popup windows (called by atualtime.js)
    global $CFG_GLPI;
@@ -152,21 +152,21 @@ if (isset($_POST["action"])) {
    $result = [];
    $result['rand'] = mt_rand();
    //TRANS: d is a symbol for days in a time (displays: 3d)
-   $result['symb_d'] = __("%dd", "actualtime");;
-   $result['symb_day'] = _n("%d day", "%d days", 1); 
-   $result['symb_days'] = _n("%d day", "%d days", 2); 
+   $result['symb_d'] = __("%dd", "actualtime");
+   $result['symb_day'] = _n("%d day", "%d days", 1);
+   $result['symb_days'] = _n("%d day", "%d days", 2);
    //TRANS: h is a symbol for hours in a time (displays: 3h)
-   $result['symb_h'] = __("%dh", "actualtime");;
-   $result['symb_hour'] = _n("%d hour", "%d hours", 1); 
-   $result['symb_hours'] = _n("%d hour", "%d hours", 2); 
+   $result['symb_h'] = __("%dh", "actualtime");
+   $result['symb_hour'] = _n("%d hour", "%d hours", 1);
+   $result['symb_hours'] = _n("%d hour", "%d hours", 2);
    //TRANS: min is a symbol for minutes in a time (displays: 3min)
-   $result['symb_min'] = __("%dmin", "actualtime");;
-   $result['symb_minute'] = _n("%d minute", "%d minutes", 1); 
-   $result['symb_minutes'] = _n("%d minute", "%d minutes", 2); 
+   $result['symb_min'] = __("%dmin", "actualtime");
+   $result['symb_minute'] = _n("%d minute", "%d minutes", 1);
+   $result['symb_minutes'] = _n("%d minute", "%d minutes", 2);
    //TRANS: s is a symbol for seconds in a time (displays: 3s)
-   $result['symb_s'] = __("%ds", "actualtime");;
-   $result['symb_second'] = _n("%d second", "%d seconds", 1); 
-   $result['symb_seconds'] = _n("%d second", "%d seconds", 2); 
+   $result['symb_s'] = __("%ds", "actualtime");
+   $result['symb_second'] = _n("%d second", "%d seconds", 1);
+   $result['symb_seconds'] = _n("%d second", "%d seconds", 2);
    // Current user active task. Data to timer popup
    $config = new PluginActualtimeConfig;
    if ($config->showTimerPopup()) {

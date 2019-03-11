@@ -609,7 +609,7 @@ $(document).ready(function(){
 JAVASCRIPT;
       echo Html::scriptBlock($script);
    }
-      
+
    static function install(Migration $migration) {
       global $DB;
 
