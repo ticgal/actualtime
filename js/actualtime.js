@@ -57,7 +57,7 @@ function timeToText(time, format) {
    return text;
 }
 
-$(document).ready(function(){
+function showTimerPopup() {
    jQuery.ajax({
       type:     'GET',
       url:      ajax_url + '?footer',
@@ -76,14 +76,12 @@ $(document).ready(function(){
          symb_second = result['symb_second']; 
          symb_seconds = result['symb_seconds']; 
 
-         if ($("#timer" + result['rand']).length) {
-            $("#timer" + result['rand']).remove();
-         }
+         $("[id^='actualtime_timer']").remove();
 
          if (result['task_id']) {
             $("body").append(result['div']);
             var time = result['time'];
-            var timerdiv = $("#timer" + result['rand']);
+            var timerdiv = $("#actualtime_timer" + result['rand']);
             timer = setInterval(function() {
                time += 1;
                timerdiv.find('span').text(timeToText(time, 10));
@@ -123,4 +121,8 @@ $(document).ready(function(){
          }
       }
    });
+}
+
+$(document).ready(function(){
+    showTimerPopup();
 });

@@ -145,6 +145,7 @@ if (isset($_POST["action"])) {
 
 } elseif (isset($_GET["footer"])) {
 
+   // For timer popup windows (called by atualtime.js)
    global $CFG_GLPI;
    // Base function for all general stuff in javascript
    // Translations
@@ -173,7 +174,7 @@ if (isset($_POST["action"])) {
       $result['task_id'] = $task_id;
       $result['ticket_id'] = PluginActualtimetask::getTicket(Session::getLoginUserID());
       $result['time'] = abs(PluginActualtimeTask::totalEndTime($task_id));
-      $result['div'] = "<div id='timer{$result['rand']}'>" . __("Timer started on", 'actualtime') . " <a onclick='showtaskform(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id={$result['ticket_id']}'>" . __("Ticket") . " {$result['ticket_id']}</a> -> <span></span></div>";
+      $result['div'] = "<div id='actualtime_timer{$result['rand']}'>" . __("Timer started on", 'actualtime') . " <a onclick='showtaskform(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id={$result['ticket_id']}'>" . __("Ticket") . " {$result['ticket_id']}</a> -> <span></span></div>";
    }
    echo json_encode($result);
 

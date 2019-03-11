@@ -190,10 +190,15 @@ $(document).ready(function() {
                   }
                   endCount(result['realclock']);
                   $('#actualtimeseg{$rand}').html(result['html']);
+                  // remove timer popup
+                  $('[id^="actualtime_timer"]').remove();
                } else if (val == 'start') {
                   $('#actualtime1{$rand}').attr('value','$text_pause').attr('action','pause').css('background-color','orange').prop('disabled',false);
                   $('#actualtime2{$rand}').attr('action','end').css('background-color','red').prop('disabled',false);
                   startCount(id);
+                  // show timer popup
+                  showTimerPopup();
+                  return;
                }
             }
             $('#message_result').html(result['mensage']);
