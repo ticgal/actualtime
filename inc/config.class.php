@@ -117,13 +117,6 @@ class PluginActualtimeConfig extends CommonDBTM {
       return true;
    }
 
-   static function postItemForm(array $params) {
-      echo "<tr><td>postItemForm AQUI</td></tr>";
-   }
-   static function postShowItem(array $params) {
-      echo "<tr><td>postShowItem AQUI</td></tr>";
-   }
-
    /**
     * Plugin is enabled in plugin settings?
     *

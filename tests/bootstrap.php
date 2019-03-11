@@ -11,8 +11,13 @@ include GLPI_ROOT . "/inc/includes.php";
 include_once GLPI_ROOT . '/tests/GLPITestCase.php';
 include_once GLPI_ROOT . '/tests/DbTestCase.php';
 
+require_once GLPI_ROOT . '/plugins/actualtime/setup.php';
+
 //install plugin
 $plugin = new \Plugin();
+//Glpi 9.4 does not initialize plugin table, so new plugins will not show
+//until you navigate to Plugins menu (let's force it, then)
+$plugin->checkStates(true);
 $plugin->getFromDBbyDir('actualtime');
 
 //check from prerequisites as Plugin::install() does not!
