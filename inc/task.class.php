@@ -615,6 +615,15 @@ JAVASCRIPT;
       }
    }
 
+   static function postShowTab($params) {
+      $script=<<<JAVASCRIPT
+$(document).ready(function(){
+   showTimerPopup();
+});
+JAVASCRIPT;
+      echo Html::scriptBlock($script);
+   }
+      
    static function install(Migration $migration) {
       global $DB;
 
