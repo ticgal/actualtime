@@ -84,7 +84,7 @@ function showTimerPopup() {
             var timerdiv = $("#actualtime_timer" + result['rand']);
             timer = setInterval(function() {
                time += 1;
-               timerdiv.find('span').text(timeToText(time, 10));
+               timerdiv.find('span').text(timeToText(time, 1));
             },1000);
             timerdiv.attr('title', result['warning']);
             $(function() {

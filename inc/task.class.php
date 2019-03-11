@@ -86,6 +86,12 @@ class PluginActualtimeTask extends CommonDBTM{
 
                   $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
                   $done=__('Done');
+                  $config = new PluginActualtimeConfig;
+                  if ($config->showTimerPopup()) {
+                     $showtimerpopup =  'true';
+                  } else {
+                     $showtimerpopup = 'false';
+                  }
 
                   $script=<<<JAVASCRIPT
 function showtaskform(e) {
@@ -123,41 +129,19 @@ $(document).ready(function() {
          data:     {action: 'count', task_id: id},
          success:  function (result) {
             var time=result;
+            $('#real_clock{$rand}').text(timeToText(time, 3));
             x=setInterval(function() {
                time += 1;
-               var text;
-               var distance = time;
-               var seconds = 0;
-               var minutes = 0;
-               var hours = 0;
-               var days = 0;
-               seconds = distance % 60;
-               distance -= seconds;
-               text = seconds + " s";
-               if (distance > 0) {
-                  minutes = (distance % 3600) / 60;
-                  distance -= minutes * 60;
-                  text = minutes + " m " + seconds + " s";
-                  if (distance > 0) {
-                     hours = (distance % 86400) / 3600;
-                     distance -= hours * 3600;
-                     text = hours + " h " + minutes + " m " + seconds + " s";
-                     if (distance > 0) {
-                        days = distance / 86400;
-                        text = days + " d " + hours + " h " + minutes + " m " + seconds + " s";
-                     }
-                  }
-               }
-               $('#real_clock{$rand}').text(text);
+               $('#real_clock{$rand}').text(timeToText(time, 3));
             },1000);
          },
       });
    }
 
-   function endCount(realclk){
+   function endCount(time){
       clearInterval(x);
       // Correct real time clock with the actual data in database
-      $('#real_clock{$rand}').html(realclk);
+      $('#real_clock{$rand}').text(timeToText(time, 3));
       $('#real_clock{$rand}').css('color','black');
    }
 
@@ -188,7 +172,7 @@ $(document).ready(function() {
                   } else {
                      $('#actualtime1{$rand}').attr('value','$text_restart').attr('action','start').css('background-color','green').prop('disabled',false);
                   }
-                  endCount(result['realclock']);
+                  endCount(result['time']);
                   $('#actualtimeseg{$rand}').html(result['html']);
                   // remove timer popup
                   $('[id^="actualtime_timer"]').remove();
@@ -196,9 +180,11 @@ $(document).ready(function() {
                   $('#actualtime1{$rand}').attr('value','$text_pause').attr('action','pause').css('background-color','orange').prop('disabled',false);
                   $('#actualtime2{$rand}').attr('action','end').css('background-color','red').prop('disabled',false);
                   startCount(id);
-                  // show timer popup
-                  showTimerPopup();
-                  return;
+                  if ({$showtimerpopup}) {
+                     // show timer popup
+                     showTimerPopup();
+                     return;
+                  }
                }
             }
             $('#message_result').html(result['mensage']);

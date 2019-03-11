@@ -66,8 +66,8 @@ class PluginActualtimeConfig extends CommonDBTM {
 
       echo "<input type='hidden' name='id' value='1'>";
 
-      echo "<tr class='tab_bg_1'>
-            <td>" . __("Enable timer on tasks", "actualtime") . "</td><td>";
+      echo "<tr class='tab_bg_1'>";
+      echo "<td>" . __("Enable timer on tasks", "actualtime") . "</td><td>";
       Dropdown::showYesNo('enable', $this->isEnabled(), -1,
                           ['on_change' => 'show_hide_options(this.value);']);
       echo "</td>";
@@ -82,8 +82,10 @@ class PluginActualtimeConfig extends CommonDBTM {
       $style = ($this->isEnabled()) ? "" : "style='display: none '";
 
       // Include lines with other settings
-      echo "<tr class='tab_bg_1' name='optional$rand' $style>
-         <td>    ";
+
+      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<td>" . __("Display pop-up window with current running timer", "actualtime") . "</td><td>";
+      Dropdown::showYesNo('showtimerpopup', $this->showTimerPopup(), -1);
       echo "</td>";
       echo "</tr>";
 
@@ -123,10 +125,21 @@ class PluginActualtimeConfig extends CommonDBTM {
    }
 
    /**
-    * @return mixed
+    * Plugin is enabled in plugin settings?
+    *
+    * @return boolean
     */
    function isEnabled() {
       return ($this->fields['enable'] ? true : false);
+   }
+
+   /**
+    * Timer pop-up display on every page enabled in plugin settings?
+    *
+    * @return boolean
+    */
+   function showTimerPopup() {
+      return ($this->fields['showtimerpopup'] ? true : false);
    }
 
    static function install(Migration $migration) {
@@ -157,20 +170,16 @@ class PluginActualtimeConfig extends CommonDBTM {
             );
          }
 
-         // New settings (fields)
-         //$migration->addField(
-         //   $table,
-         //   'newsettingfieldname',
-         //   'newsettingfieldtype',
-         //   'newsettingfieldoptions',
-         //);
-         //$DB->update(
-         //   $table, [
-         //      'newsettingfieldname' => 'defaultvalue'
-         //   ], [
-         //      'id' => 1
-         //   ]
-         //);
+         $migration->addField(
+            $table,
+            'showtimerpopup',
+            'boolean',
+            [
+               'update' => 1,
+               'value'  => 1,
+               'after' => 'enable'
+            ]
+         );
 
       }
 
