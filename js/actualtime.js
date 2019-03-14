@@ -29,6 +29,10 @@ function actualtime_showTaskForm(e){
       })
       .load(ajax_url + '?showform=true', function() {
          $(this).dialog('option', 'position', ['center', 'center'] );
+         var div = $(this).parent();
+         var of = div.offset();
+         div.css('position', 'fixed');
+         div.offset(of);
       });
 }
 
@@ -102,6 +106,12 @@ function actualtime_showTimerPopup(ticket) {
             })
             .dialog('open');
       });
+      setTimeout(function() {
+         // Transform in position:fixed to solve dialog bug
+         of = $("#actualtime_popup").parent().offset();
+         $("#actualtime_popup").parent().css('position', 'fixed');
+         $("#actualtime_popup").parent().offset(of);
+       }, 1000);
    }
 }
 
