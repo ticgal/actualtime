@@ -19,16 +19,17 @@ class PluginActualtimeTask extends CommonDBTM{
 
       global $CFG_GLPI;
       $item = $params['item'];
-      $text_restart = __('Restart', 'actualtime');
-      $text_pause = __('Pause', 'actualtime');
 
       switch ($item->getType()) {
          case 'TicketTask':
             if ($item->getID()) {
 
+               $task_id = $item->getID();
                $rand = mt_rand();
-               $buttons = self::checkTech($item->getID());
-               $time=self::totalEndTime($item->getID());
+               $buttons = self::checkTech($task_id);
+               $time = self::totalEndTime($task_id);
+               $text_restart = __('Restart', 'actualtime');
+               $text_pause = __('Pause', 'actualtime');
 
                if ($buttons) {
 
@@ -39,10 +40,11 @@ class PluginActualtimeTask extends CommonDBTM{
                   $action2 = '';
                   $color2 = 'gray';
                   $disabled2 = 'disabled';
+                  $timercolor = 'black';
 
                   if ($item->getField('state')==1) {
 
-                     if (self::checkTimerActive($item->getID())) {
+                     if (self::checkTimerActive($task_id)) {
 
                         $value1 = $text_pause;
                         $action1 = 'pause';
@@ -51,6 +53,7 @@ class PluginActualtimeTask extends CommonDBTM{
                         $action2 = 'end';
                         $color2 = 'red';
                         $disabled2 = '';
+                        $timercolor = 'red';
 
                      } else {
 
@@ -72,174 +75,32 @@ class PluginActualtimeTask extends CommonDBTM{
                   $html="<tr class='tab_bg_2'>";
                   $html.="<td colspan='2'></td>";
                   $html.="<td colspan='2'>";
-                  $html.="<div><input type='button' id='actualtime1$rand' name='update' task_id='".$item->getID()."'action='".$action1."' value='".$value1."' class='x-button x-button-main' style='background-color:".$color1.";color:white' $disabled1></div>";
-                  $html.="<div><input type='button' id='actualtime2$rand' name='update' task_id='".$item->getID()."'action='".$action2."' value='".__('End')."' class='x-button x-button-main' style='background-color:".$color2.";color:white' $disabled2></div>";
+                  // Objects of the same task have the same id beginning
+                  // as they all should be changed on actions in case multiple
+                  // windows of the same task is opened (list of tasks + modal)
+                  $html.="<div><input type='button' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' class='x-button x-button-main' style='background-color:$color1;color:white' $disabled1></div>";
+                  $html.="<div><input type='button' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' class='x-button x-button-main' style='background-color:$color2;color:white' $disabled2></div>";
                   $html.="</td></tr>";
                   $html.="<tr class='tab_bg_2'>";
                   $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
-                  $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
+                  $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='actualtime_timer_{$task_id}_{$rand}' style='color:{$timercolor}'>".HTML::timestampToString($time)."</td>";
                   $html.="</tr>";
-                  $html.="<tr id='actualtimeseg{$rand}'>";
+                  $html.="<tr id='actualtime_segment_{$task_id}_{$rand}'>";
                   $html.=self::getSegment($item->getID());
                   $html.="</tr>";
                   echo $html;
 
-                  $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
-                  $done=__('Done');
-
                   $script=<<<JAVASCRIPT
-function showtaskform(e) {
-   e.preventDefault();
-   $('<div>')
-      .dialog({
-         modal:  true,
-         width:  'auto',
-         height: 'auto',
-      })
-      .load('{$ajax_url}?showform=true', function() {
-         $(this).dialog('option', 'position', ['center', 'center'] );
-      });
-}
 $(document).ready(function() {
-   var x;
-   if (!$("#message_result").length) {
-      $("body").append("<div id='message_result'></div>");
-   }
 
-   if ($("#timer{$rand}").length) {
-      $("#timer{$rand}").remove();
-   }
-
-   if ($("#actualtime1{$rand}").attr("action")=='pause') {
-      startCount($("#actualtime1{$rand}").attr("task_id"));
-   }
-
-   function startCount(id) {
-      $('#real_clock{$rand}').css('color','red');
-      jQuery.ajax({
-         type:     "POST",
-         url:      '{$ajax_url}',
-         dataType: 'json',
-         data:     {action: 'count', task_id: id},
-         success:  function (result) {
-            var time=result;
-            x=setInterval(function() {
-               time += 1;
-               var text;
-               var distance = time;
-               var seconds = 0;
-               var minutes = 0;
-               var hours = 0;
-               var days = 0;
-               seconds = distance % 60;
-               distance -= seconds;
-               text = seconds + " s";
-               if (distance > 0) {
-                  minutes = (distance % 3600) / 60;
-                  distance -= minutes * 60;
-                  text = minutes + " m " + seconds + " s";
-                  if (distance > 0) {
-                     hours = (distance % 86400) / 3600;
-                     distance -= hours * 3600;
-                     text = hours + " h " + minutes + " m " + seconds + " s";
-                     if (distance > 0) {
-                        days = distance / 86400;
-                        text = days + " d " + hours + " h " + minutes + " m " + seconds + " s";
-                     }
-                  }
-               }
-               $('#real_clock{$rand}').text(text);
-            },1000);
-         },
-      });
-   }
-
-   function endCount(realclk){
-      clearInterval(x);
-      // Correct real time clock with the actual data in database
-      $('#real_clock{$rand}').html(realclk);
-      $('#real_clock{$rand}').css('color','black');
-   }
-
-   $("#actualtime1{$rand}").click(function(event) {
-      buttonPressed($(this));
+   $("#actualtime_button_{$task_id}_1_{$rand}").click(function(event) {
+      actualtime_pressedButton($task_id, $(this).attr('action'));
    });
 
-   $("#actualtime2{$rand}").click(function(event) {
-      buttonPressed($(this));
+   $("#actualtime_button_{$task_id}_2_{$rand}").click(function(event) {
+      actualtime_pressedButton($task_id, $(this).attr('action'));
    });
 
-   function buttonPressed(btnobj) {
-      var id = btnobj.attr("task_id");
-      var val = btnobj.attr("action");
-      var time = {$time};
-      jQuery.ajax({
-         type:     "POST",
-         url:      '{$ajax_url}',
-         dataType: 'json',
-         data:     {action: val, task_id: id},
-         success:  function (result) {
-            if (result['class'] == 'info_msg') {
-               if (val == 'end' || val == 'pause') {
-                  if (val == 'end') {
-                     $("table:has(#actualtime2{$rand}) select[name='state']").val(2).trigger('change');
-                     $('#actualtime1{$rand}').attr('action','').css('background-color','gray').prop('disabled',true);
-                     $('#actualtime2{$rand}').attr('action','').css('background-color','gray').prop('disabled',true);
-                  } else {
-                     $('#actualtime1{$rand}').attr('value','$text_restart').attr('action','start').css('background-color','green').prop('disabled',false);
-                  }
-                  endCount(result['realclock']);
-                  $('#actualtimeseg{$rand}').html(result['html']);
-               } else if (val == 'start') {
-                  $('#actualtime1{$rand}').attr('value','$text_pause').attr('action','pause').css('background-color','orange').prop('disabled',false);
-                  $('#actualtime2{$rand}').attr('action','end').css('background-color','red').prop('disabled',false);
-                  startCount(id);
-               }
-            }
-            $('#message_result').html(result['mensage']);
-            $('#message_result').attr('title', result['title']);
-            $(function() {
-               var _of = window;
-               var _at = 'right-20 bottom-20';
-               //calculate relative dialog position
-               $('.message_result').each(function() {
-                  var _this = $(this);
-                  if (_this.attr('aria-describedby') != 'message_result') {
-                     _of = _this;
-                     _at = 'right top-' + (10 + _this.outerHeight());
-                  }
-               });
-               $('#message_result').dialog({
-                  dialogClass: 'message_after_redirect ' + result['class'],
-                  minHeight:   40,
-                  minWidth:    200,
-                  position:    {
-                     my:        'right bottom',
-                     at:        _at,
-                     of:        _of,
-                     collision: 'none'
-                  },
-                  autoOpen:    false,
-                  show:        {
-                     effect:     'slide',
-                     direction:  'down',
-                     'duration': 800
-                  }
-               })
-               .dialog('open');
-               $(document.body).on('click', function(e) {
-                  if ($('#message_result').dialog('isOpen')
-                     && !$(e.target).is('.ui-dialog, a')
-                     && !$(e.target).closest('.ui-dialog').length) {
-                     $('#message_result').dialog('close');
-                     // redo focus on initial element
-                     e.target.focus();
-                  }
-               });
-            });
-         },
-      });
-   };
 });
 JAVASCRIPT;
                   echo Html::scriptBlock($script);
@@ -248,9 +109,9 @@ JAVASCRIPT;
 
                   $html="<tr class='tab_bg_2'>";
                   $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
-                  $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='real_clock$rand'>".HTML::timestampToString($time)."</td>";
+                  $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='actualtime_timer_{$task_id}_{$rand}'>".HTML::timestampToString($time)."</td>";
                   $html.="</div></td></tr>";
-                  $html.="<tr id='actualtimeseg{$rand}'>";
+                  $html.="<tr id='actualtime_segment_{$task_id}_{$rand}'>";
                   $html.=self::getSegment($item->getID());
                   $html.="</tr>";
                   echo $html;
@@ -392,23 +253,12 @@ JAVASCRIPT;
    }
 
    static function getTicket($user_id) {
-      global $DB;
-
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            [
-               'NOT' => ['actual_begin' => null],
-            ],
-            'actual_end'=>null,
-            'users_id'=>$user_id,
-         ]
-      ];
-      $req=$DB->request($query);
-      $row=$req->next();
-      $task=new TicketTask();
-      $task->getFromDB($row['tasks_id']);
-      return $task->fields['tickets_id'];
+      if ($task_id=self::getTask($user_id)) {
+         $task=new TicketTask();
+         $task->getFromDB($task_id);
+         return $task->fields['tickets_id'];
+      }
+      return false;
    }
 
    static function getTask($user_id) {
@@ -621,113 +471,14 @@ JAVASCRIPT;
       }
    }
 
-   static public function postShowItem($params) {
-      global $DB,$CFG_GLPI;
-
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            [
-               'NOT' => ['actual_begin' => null],
-            ],
-            'actual_end'=>null,
-            'users_id'=>Session::getLoginUserID(),
-         ]
-      ];
-      $req=$DB->request($query);
-      if ($row=$req->next()) {
-
-         $rand = mt_rand();
-         $warning=__s('Warning');
-         $seconds=self::totalEndTime($row['tasks_id']);
-         $ticket_id=self::getTicket(Session::getLoginUserID());
-         $ajax_url=$CFG_GLPI['root_doc']."/plugins/actualtime/ajax/timer.php";
-
-         $div="<div id='timer$rand'>".__("Timer started on", 'actualtime')." <a onclick='showtaskform(event)' href='".$CFG_GLPI['root_doc']."/front/ticket.form.php?id=".$ticket_id."'>".__("Ticket")." ".$ticket_id."</a> -> <span>".HTML::timestampToString($seconds)."</span></div>";
+   static function postShowTab($params) {
+      if ($ticket_id = PluginActualtimetask::getTicket(Session::getLoginUserID())) {
          $script=<<<JAVASCRIPT
-function showtaskform(e){
-   e.preventDefault();
-   $('<div>')
-      .dialog({
-         modal:  true,
-         width:  'auto',
-         height: 'auto',
-      })
-      .load('{$ajax_url}?showform=true', function() {
-         $(this).dialog('option', 'position', ['center', 'center'] );
-      });
-}
-$(document).ready(function() {
-   if ($("#timer{$rand}").length) {
-      $("#timer{$rand}").remove();
-   }
-   $("body").append("{$div}");
-   var time = {$seconds};
-   timer = setInterval(function() {
-      time += 1;
-
-      var text;
-      var distance = time;
-      var seconds = 0;
-      var minutes = 0;
-      var hours = 0;
-      var days = 0;
-      seconds = distance % 60;
-      distance -= seconds;
-      text = seconds + " s";
-
-      if (distance > 0) {
-         minutes = (distance % 3600) / 60;
-         distance -= minutes * 60;
-         text = minutes + " m " + seconds + " s";
-         if (distance > 0) {
-            hours = (distance % 86400) / 3600;
-            distance -= hours * 3600;
-            text = hours + " h " + minutes + " m " + seconds + " s";
-            if (distance > 0) {
-               days = distance / 86400;
-               text = days + " d " + hours + " h " + minutes + " m " + seconds + " s";
-            }
-         }
-      }
-
-      $('#timer{$rand} span').text(text);
-   },1000);
-   $('#timer{$rand}').attr('title', '{$warning}');
-   $(function() {
-      var _of = window;
-      var _at = 'right-20 bottom-20';
-      //calculate relative dialog position
-      $('.message_result').each(function() {
-         var _this = $(this);
-         if (_this.attr('aria-describedby') != 'message_result') {
-            _of = _this;
-            _at = 'right top-' + (10 + _this.outerHeight());
-         }
-      });
-
-      $('#timer{$rand}').dialog({
-         dialogClass: 'message_after_redirect warn_msg',
-         minHeight:   40,
-         minWidth:    200,
-         position:    {
-            my:        'right bottom',
-            at:        _at,
-            of:        _of,
-            collision: 'none'
-         },
-         autoOpen:    false,
-         show:        {
-            effect:     'slide',
-            direction:  'down',
-            'duration': 800
-         }
-      })
-      .dialog('open');
-   });
+$(document).ready(function(){
+   actualtime_showTimerPopup($ticket_id);
 });
 JAVASCRIPT;
-         print_r(Html::scriptBlock($script));
+         echo Html::scriptBlock($script);
       }
    }
 

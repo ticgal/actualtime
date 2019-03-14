@@ -19,7 +19,9 @@ before_script:
   - composer self-update
   - composer require --dev atoum/atoum
   - git clone --depth=1 https://github.com/glpi-project/glpi -b $GLPIVER ../glpi && cd ../glpi
-  - composer install --no-dev
+  - composer install --optimize-autoloader --no-dev
+  - sed -e '/"php":/d' -i composer.json
+  - rm -f composer.lock
   - mysql -u root -e 'create database glpitest;'
   # Both 9.3 and 9.4:
   - if [[ -f "scripts/cliinstall.php" ]]; then php scripts/cliinstall.php --db=glpitest --user=root --tests; else bin/console glpi:database:install --config-dir=./tests --no-interaction --db-name=glpitest --db-user=root; fi
@@ -31,7 +33,7 @@ before_script:
 script:
   - vendor/bin/robo --no-interaction code:cs
   - mysql -u root -e 'select version();'
-  - ./vendor/bin/atoum -bf tests/bootstrap.php -d tests/units/
+  - ./vendor/bin/atoum --debug -bf tests/bootstrap.php -d tests/units/
 
 
 # Permit failure on Glpi 9.4 until fix test environment
@@ -43,8 +45,6 @@ matrix:
       env: GLPIVER=9.4/bugfixes
   allow_failures:
     - php: nightly
-    - env: GLPIVER=master
-    - env: GLPIVER=9.4/bugfixes
 
 cache:
   directories:
