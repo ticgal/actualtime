@@ -83,16 +83,27 @@ class PluginActualtimeConfig extends CommonDBTM {
 
       // Include lines with other settings
 
+      $values = [
+         0 => __('In Standard interface only (default)', 'actualtime'),
+         1 => __('Both in Standard and Helpdesk interfaces', 'actualtime'),
+      ];
+      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<td>" . __("Enable timer on tasks", "actualtime") . "</td><td>";
+      Dropdown::showFromArray(
+         'displayinfofor',
+         $values,
+         [
+            'value' => $this->fields['displayinfofor']
+         ]
+      );
+      echo "</td>";
+      echo "</tr>";
+
       echo "<tr class='tab_bg_1' name='optional$rand' $style>";
       echo "<td>" . __("Display pop-up window with current running timer", "actualtime") . "</td><td>";
       Dropdown::showYesNo('showtimerpopup', $this->showTimerPopup(), -1);
       echo "</td>";
       echo "</tr>";
-
-      //echo "<tr class='tab_bg_1' name='optional$rand' $style>
-      //   <td>example settings 2";
-      //echo "</td>";
-      //echo "</tr>";
 
       echo "<tr class='tab_bg_1' align='center'>";
 
@@ -118,7 +129,7 @@ class PluginActualtimeConfig extends CommonDBTM {
    }
 
    /**
-    * Plugin is enabled in plugin settings?
+    * Is plugin enabled in plugin settings?
     *
     * @return boolean
     */
@@ -127,12 +138,21 @@ class PluginActualtimeConfig extends CommonDBTM {
    }
 
    /**
-    * Timer pop-up display on every page enabled in plugin settings?
+    * Is displaying timer pop-up on every page enabled in plugin settings?
     *
     * @return boolean
     */
    function showTimerPopup() {
       return ($this->fields['showtimerpopup'] ? true : false);
+   }
+
+   /**
+    * Is actual time information (timers) shown also in Helpdesk interface?
+    *
+    * @return boolean
+    */
+   function showInHelpdesk() {
+      return ($this->fields['displayinfofor'] == 1);
    }
 
    static function install(Migration $migration) {
@@ -145,6 +165,8 @@ class PluginActualtimeConfig extends CommonDBTM {
          $query = "CREATE TABLE IF NOT EXISTS $table (
                       `id` int(11) NOT NULL auto_increment,
                       `enable` boolean NOT NULL DEFAULT true,
+                      `showtimerpopup` boolean NOT NULL DEFAULT true,
+                      `displayinfofor` smallint NOT NULL DEFAULT 0,
                       PRIMARY KEY (`id`)
                    )
                    ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
@@ -158,7 +180,7 @@ class PluginActualtimeConfig extends CommonDBTM {
          if (! count($reg)) {
             $DB->insert(
                $table, [
-                  'enable' => 1
+                  'enable' => true
                ]
             );
          }
@@ -168,9 +190,23 @@ class PluginActualtimeConfig extends CommonDBTM {
             'showtimerpopup',
             'boolean',
             [
-               'update' => 1,
-               'value'  => 1,
+               'update' => true,
+               'value'  => true,
                'after' => 'enable'
+            ]
+         );
+
+         // For whom the actualtime timers are displayed?
+         // 0 - Only in standard/central interface (default)
+         // 1 - Both in standard and helpdesk interfaces
+         $migration->addField(
+            $table,
+            'displayinfofor',
+            'smallint',
+            [
+               'update' => 0,
+               'value'  => 0,
+               'after' => 'showtimerpopup'
             ]
          );
 

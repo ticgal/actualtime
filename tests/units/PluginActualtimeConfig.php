@@ -42,6 +42,13 @@ class PluginActualtimeConfig extends atoum {
                ->isTrue();
    }
 
+   public function testShowInHelpdesk() {
+      $this
+         ->given($this->newTestedInstance)
+            ->boolean($this->testedInstance->showInHelpdesk())
+               ->isFalse();
+   }
+
    public function testCanView() {
       $this
          ->given($this->newTestedInstance)

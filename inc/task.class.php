@@ -24,6 +24,8 @@ class PluginActualtimeTask extends CommonDBTM{
          case 'TicketTask':
             if ($item->getID()) {
 
+               $config = new PluginActualtimeConfig;
+
                $task_id = $item->getID();
                $rand = mt_rand();
                $buttons = self::checkTech($task_id);
@@ -31,6 +33,7 @@ class PluginActualtimeTask extends CommonDBTM{
                $text_restart = __('Restart', 'actualtime');
                $text_pause = __('Pause', 'actualtime');
 
+               // Only task user
                if ($buttons) {
 
                   $value1 = __('Start');
@@ -72,23 +75,15 @@ class PluginActualtimeTask extends CommonDBTM{
 
                   }
 
-                  $html="<tr class='tab_bg_2'>";
-                  $html.="<td colspan='2'></td>";
-                  $html.="<td colspan='2'>";
+                  $html = "<tr class='tab_bg_2'>";
+                  $html .= "<td colspan='2'></td>";
+                  $html .= "<td colspan='2'>";
                   // Objects of the same task have the same id beginning
                   // as they all should be changed on actions in case multiple
                   // windows of the same task is opened (list of tasks + modal)
-                  $html.="<div><input type='button' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' class='x-button x-button-main' style='background-color:$color1;color:white' $disabled1></div>";
-                  $html.="<div><input type='button' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' class='x-button x-button-main' style='background-color:$color2;color:white' $disabled2></div>";
-                  $html.="</td></tr>";
-                  $html.="<tr class='tab_bg_2'>";
-                  $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
-                  $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='actualtime_timer_{$task_id}_{$rand}' style='color:{$timercolor}'>".HTML::timestampToString($time)."</td>";
-                  $html.="</tr>";
-                  $html.="<tr id='actualtime_segment_{$task_id}_{$rand}'>";
-                  $html.=self::getSegment($item->getID());
-                  $html.="</tr>";
-                  echo $html;
+                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' class='x-button x-button-main' style='background-color:$color1;color:white' $disabled1></div>";
+                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' class='x-button x-button-main' style='background-color:$color2;color:white' $disabled2></div>";
+                  $html .= "</td></tr>";
 
                   $script=<<<JAVASCRIPT
 $(document).ready(function() {
@@ -101,20 +96,43 @@ $(document).ready(function() {
       actualtime_pressedButton($task_id, $(this).attr('action'));
    });
 
+   actualtime_fillCurrentTime($task_id, $time);
+
 });
 JAVASCRIPT;
-                  echo Html::scriptBlock($script);
-               } else {
-                  $time=self::totalEndTime($item->getID());
 
-                  $html="<tr class='tab_bg_2'>";
-                  $html.="<td class='center'>".__("Start date")."</td><td class='center'>".__("Partial actual duration", 'actualtime')."</td>";
-                  $html.="<td>".__('Actual Duration', 'actualtime')." </td><td id='actualtime_timer_{$task_id}_{$rand}'>".HTML::timestampToString($time)."</td>";
-                  $html.="</div></td></tr>";
-                  $html.="<tr id='actualtime_segment_{$task_id}_{$rand}'>";
-                  $html.=self::getSegment($item->getID());
-                  $html.="</tr>";
+               } else {
+
+                  // If not task assigned user, only update total time fields
+                  $html = '';
+                  $script=<<<JAVASCRIPT
+$(document).ready(function() {
+
+   actualtime_fillCurrentTime($task_id, $time);
+
+});
+JAVASCRIPT;
+
+               }
+
+               // Task user (always) or Standard interface (always)
+               // or Helpdesk inteface (only if config allows)
+               if ($buttons
+                  || (Session::getCurrentInterface() == "central")
+                  || $config->showInHelpdesk()) {
+
+                  $html .= "<tr class='tab_bg_2'>";
+                  $html .= "<td class='center'>" . __("Start date") . "</td><td class='center'>" . __("Partial actual duration", 'actualtime') . "</td>";
+                  $html .= "<td>" . __('Actual Duration', 'actualtime') . " </td><td id='actualtime_timer_{$task_id}_{$rand}' style='color:{$timercolor}'></td>";
+                  $html .= "</tr>";
+                  $html .= "<tr id='actualtime_segment_{$task_id}_{$rand}'>";
+                  $html .= self::getSegment($item->getID());
+                  $html .= "</tr>";
+
                   echo $html;
+
+                  echo Html::scriptBlock($script);
+
                }
             }
             break;
@@ -297,7 +315,10 @@ JAVASCRIPT;
    static public function showStats(Ticket $ticket) {
       global $DB;
 
-      if (Session::getCurrentInterface() == "central") {
+      $config = new PluginActualtimeConfig;
+      if ((Session::getCurrentInterface() == "central")
+         || $config->showInHelpdesk()) {
+
          $total_time=$ticket->getField('actiontime');
          $ticket_id=$ticket->getID();
          $actual_totaltime=0;

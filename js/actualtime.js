@@ -111,7 +111,7 @@ function actualtime_showTimerPopup(ticket) {
          of = $("#actualtime_popup").parent().offset();
          $("#actualtime_popup").parent().css('position', 'fixed');
          $("#actualtime_popup").parent().offset(of);
-       }, 1000);
+      }, 1000);
    }
 }
 
@@ -126,6 +126,11 @@ function actualtime_startCount(task, time) {
 
 function actualtime_endCount(){
    clearInterval(timer);
+}
+
+function actualtime_fillCurrentTime(task, time) {
+   var timestr = actualtime_timeToText(time, 1);
+   $("[id^='actualtime_timer_" + task + "_']").text(timestr);
 }
 
 function actualtime_pressedButton(task, val) {
