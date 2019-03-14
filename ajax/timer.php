@@ -44,9 +44,11 @@ if (isset($_POST["action"])) {
                   ]
                );
                $result=[
-                  'mensage' => __("Timer started", 'actualtime'),
-                  'title'   => __('Information'),
-                  'class'   => 'info_msg',
+                  'mensage'   => __("Timer started", 'actualtime'),
+                  'title'     => __('Information'),
+                  'class'     => 'info_msg',
+                  'ticket_id' => PluginActualtimetask::getTicket(Session::getLoginUserID()),
+                  'time'      => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
 
             }
@@ -89,8 +91,8 @@ if (isset($_POST["action"])) {
                   'mensage' => __("Timer completed", 'actualtime'),
                   'title'   => __('Information'),
                   'class'   => 'info_msg',
-                  'html' => PluginActualtimeTask::getSegment($task_id),
-                  'time' => abs(PluginActualtimeTask::totalEndTime($task_id)),
+                  'segment' => PluginActualtimeTask::getSegment($task_id),
+                  'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
 
             } else {
@@ -126,11 +128,11 @@ if (isset($_POST["action"])) {
                   ]
                );
                $result=[
-                  'mensage'=>__("Timer completed", 'actualtime'),
-                  'title' => __('Information'),
-                  'class' => 'info_msg',
-                  'html' => PluginActualtimeTask::getSegment($task_id),
-                  'time' => abs(PluginActualtimeTask::totalEndTime($task_id)),
+                  'mensage' =>__("Timer completed", 'actualtime'),
+                  'title'   => __('Information'),
+                  'class'   => 'info_msg',
+                  'segment' => PluginActualtimeTask::getSegment($task_id),
+                  'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
 
             }
@@ -167,16 +169,19 @@ if (isset($_POST["action"])) {
    $result['symb_s'] = __("%ds", "actualtime");
    $result['symb_second'] = _n("%d second", "%d seconds", 1);
    $result['symb_seconds'] = _n("%d second", "%d seconds", 2);
+   $result['text_warning'] = __('Warning');
+   $result['text_pause'] = __('Pause', 'actualtime');
+   $result['text_restart'] = __('Restart', 'actualtime');
+   $result['text_done'] = __('Done');
    // Current user active task. Data to timer popup
    $config = new PluginActualtimeConfig;
    if ($config->showTimerPopup()) {
       $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
       if ($task_id) {
-         $result['warning'] = __('Warning');
          $result['task_id'] = $task_id;
          $result['ticket_id'] = PluginActualtimetask::getTicket(Session::getLoginUserID());
          $result['time'] = abs(PluginActualtimeTask::totalEndTime($task_id));
-         $result['div'] = "<div id='actualtime_timer{$result['rand']}'>" . __("Timer started on", 'actualtime') . " <a onclick='showtaskform(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id={$result['ticket_id']}'>" . __("Ticket") . " {$result['ticket_id']}</a> -> <span></span></div>";
+         $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='actualtime_showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " %t</a> -> <span></span></div>";
       }
    }
    echo json_encode($result);
