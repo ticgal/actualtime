@@ -49,6 +49,13 @@ class PluginActualtimeConfig extends atoum {
                ->isFalse();
    }
 
+   public function testShowTimerInBox() {
+      $this
+         ->given($this->newTestedInstance)
+            ->boolean($this->testedInstance->showTimerInBox())
+               ->isTrue();
+   }
+
    public function testCanView() {
       $this
          ->given($this->newTestedInstance)

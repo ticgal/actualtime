@@ -105,6 +105,12 @@ class PluginActualtimeConfig extends CommonDBTM {
       echo "</td>";
       echo "</tr>";
 
+      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<td>" . __("Display actual time in closed task box ('Processing ticket' list)", "actualtime") . "</td><td>";
+      Dropdown::showYesNo('showtimerinbox', $this->showTimerInBox(), -1);
+      echo "</td>";
+      echo "</tr>";
+
       echo "<tr class='tab_bg_1' align='center'>";
 
       $this->showFormButtons(['candel'=>false]);
@@ -155,6 +161,15 @@ class PluginActualtimeConfig extends CommonDBTM {
       return ($this->fields['displayinfofor'] == 1);
    }
 
+   /**
+    * Is timer shown in closed task box at 'Actions historical' page?
+    *
+    * @return boolean
+    */
+   function showTimerInBox() {
+      return ($this->fields['showtimerinbox'] ? true : false);
+   }
+
    static function install(Migration $migration) {
       global $DB;
 
@@ -167,6 +182,7 @@ class PluginActualtimeConfig extends CommonDBTM {
                       `enable` boolean NOT NULL DEFAULT true,
                       `showtimerpopup` boolean NOT NULL DEFAULT true,
                       `displayinfofor` smallint NOT NULL DEFAULT 0,
+                      `showtimerinbox` boolean NOT NULL DEFAULT true,
                       PRIMARY KEY (`id`)
                    )
                    ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
@@ -207,6 +223,17 @@ class PluginActualtimeConfig extends CommonDBTM {
                'update' => 0,
                'value'  => 0,
                'after' => 'showtimerpopup'
+            ]
+         );
+
+         $migration->addField(
+            $table,
+            'showtimerinbox',
+            'boolean',
+            [
+               'update' => true,
+               'value'  => true,
+               'after' => 'displayinfofor'
             ]
          );
 

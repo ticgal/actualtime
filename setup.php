@@ -86,5 +86,10 @@ function plugin_init_actualtime() {
          $PLUGIN_HOOKS['post_show_tab']['actualtime'] = ['PluginActualtimeTask', 'postShowTab'];
       }
 
+      if ($config->showTimerInBox()) {
+         // This hook is not needed if not showing closed task box timer
+         $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
+      }
+
    }
 }
