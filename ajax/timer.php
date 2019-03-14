@@ -176,12 +176,14 @@ if (isset($_POST["action"])) {
    // Current user active task. Data to timer popup
    $config = new PluginActualtimeConfig;
    if ($config->showTimerPopup()) {
+      // popup_div exists only if settings allow display pop-up timer
+      $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='actualtime_showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " %t</a> -> <span></span></div>";
       $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
       if ($task_id) {
+         // Only if timer is active
          $result['task_id'] = $task_id;
          $result['ticket_id'] = PluginActualtimetask::getTicket(Session::getLoginUserID());
          $result['time'] = abs(PluginActualtimeTask::totalEndTime($task_id));
-         $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='actualtime_showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " %t</a> -> <span></span></div>";
       }
    }
    echo json_encode($result);
