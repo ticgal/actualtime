@@ -111,7 +111,7 @@ function actualtime_showTimerPopup(ticket) {
          of = $("#actualtime_popup").parent().offset();
          $("#actualtime_popup").parent().css('position', 'fixed');
          $("#actualtime_popup").parent().offset(of);
-       }, 1000);
+      }, 1000);
    }
 }
 
