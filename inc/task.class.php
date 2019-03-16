@@ -26,7 +26,7 @@ class PluginActualtimeTask extends CommonDBTM{
 
                $task_id = $item->getID();
                $rand = mt_rand();
-               $buttons = self::checkTech($task_id);
+               $buttons = (self::checkTech($task_id) && $item->can($task_id, UPDATE));
                $time = self::totalEndTime($task_id);
                $text_restart = __('Restart', 'actualtime');
                $text_pause = __('Pause', 'actualtime');
