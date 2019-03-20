@@ -70,11 +70,7 @@ function plugin_init_actualtime() {
       // Add settings form as a tab on Setup - General page
       Plugin::registerClass('PluginActualtimeConfig', ['addtabon' => 'Config']);
 
-      // If settings disable timers, just don't load any hook
       $config = new PluginActualtimeConfig;
-      if (!$config->isEnabled()) {
-         return;
-      }
 
       $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
       $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket'=> 'plugin_activetime_item_stats'];

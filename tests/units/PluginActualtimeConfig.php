@@ -28,13 +28,6 @@ class PluginActualtimeConfig extends atoum {
                ->isInstanceOfTestedClass();
    }
 
-   public function testIsEnabled() {
-      $this
-         ->given($this->newTestedInstance)
-            ->boolean($this->testedInstance->isEnabled())
-               ->isTrue();
-   }
-
    public function testShowTimerPopup() {
       $this
          ->given($this->newTestedInstance)

@@ -59,35 +59,16 @@ class PluginActualtimeConfig extends CommonDBTM {
 
    function showForm() {
 
-      $rand = mt_rand();
-
       $this->getFromDB(1);
       $this->showFormHeader();
 
       echo "<input type='hidden' name='id' value='1'>";
 
-      echo "<tr class='tab_bg_1'>";
-      echo "<td>" . __("Enable timer on tasks", "actualtime") . "</td><td>";
-      Dropdown::showYesNo('enable', $this->isEnabled(), -1,
-                          ['on_change' => 'show_hide_options(this.value);']);
-      echo "</td>";
-      echo "</tr>";
-
-      echo Html::scriptBlock("
-         function show_hide_options(val) {
-            var display = (val == 0) ? 'none' : '';
-            $('tr[name=\"optional$rand\"').css( 'display', display );
-         }");
-
-      $style = ($this->isEnabled()) ? "" : "style='display: none '";
-
-      // Include lines with other settings
-
       $values = [
          0 => __('In Standard interface only (default)', 'actualtime'),
          1 => __('Both in Standard and Helpdesk interfaces', 'actualtime'),
       ];
-      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Enable timer on tasks", "actualtime") . "</td><td>";
       Dropdown::showFromArray(
          'displayinfofor',
@@ -99,13 +80,13 @@ class PluginActualtimeConfig extends CommonDBTM {
       echo "</td>";
       echo "</tr>";
 
-      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Display pop-up window with current running timer", "actualtime") . "</td><td>";
       Dropdown::showYesNo('showtimerpopup', $this->showTimerPopup(), -1);
       echo "</td>";
       echo "</tr>";
 
-      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Display actual time in closed task box ('Processing ticket' list)", "actualtime") . "</td><td>";
       Dropdown::showYesNo('showtimerinbox', $this->showTimerInBox(), -1);
       echo "</td>";
@@ -132,15 +113,6 @@ class PluginActualtimeConfig extends CommonDBTM {
          $instance->showForm();
       }
       return true;
-   }
-
-   /**
-    * Is plugin enabled in plugin settings?
-    *
-    * @return boolean
-    */
-   function isEnabled() {
-      return ($this->fields['enable'] ? true : false);
    }
 
    /**
@@ -175,68 +147,83 @@ class PluginActualtimeConfig extends CommonDBTM {
 
       $table = self::getTable();
       if (! $DB->tableExists($table)) {
+
          $migration->displayMessage("Installing $table");
 
          $query = "CREATE TABLE IF NOT EXISTS $table (
                       `id` int(11) NOT NULL auto_increment,
-                      `enable` boolean NOT NULL DEFAULT true,
-                      `showtimerpopup` boolean NOT NULL DEFAULT true,
                       `displayinfofor` smallint NOT NULL DEFAULT 0,
+                      `showtimerpopup` boolean NOT NULL DEFAULT true,
                       `showtimerinbox` boolean NOT NULL DEFAULT true,
                       PRIMARY KEY (`id`)
                    )
                    ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
          $DB->query($query) or die($DB->error());
-      }
 
-      if ($DB->tableExists($table)) {
+      } else {
 
-         // Create default record (if it does not exist)
-         $reg = $DB->request($table);
-         if (! count($reg)) {
-            $DB->insert(
-               $table, [
-                  'enable' => true
+         $fields = $DB->list_fields($table, false);
+
+         if (! isset($fields['displayinfofor'])) {
+            // For whom the actualtime timers are displayed?
+            // 0 - Only in standard/central interface (default)
+            // 1 - Both in standard and helpdesk interfaces
+            $migration->addField(
+               $table,
+               'displayinfofor',
+               'smallint',
+               [
+                  'update' => 0,
+                  'value'  => 0,
+                  'after' => 'enable'
                ]
             );
          }
 
-         $migration->addField(
-            $table,
-            'showtimerpopup',
-            'boolean',
-            [
-               'update' => true,
-               'value'  => true,
-               'after' => 'enable'
+         if (! isset($fields['showtimerpopup'])) {
+            $migration->addField(
+               $table,
+               'showtimerpopup',
+               'boolean',
+               [
+                  'update' => true,
+                  'value'  => true,
+                  'after' => 'displayinfofor'
+               ]
+            );
+         }
+
+         if (! isset($fields['showtimerinbox'])) {
+            $migration->addField(
+               $table,
+               'showtimerinbox',
+               'boolean',
+               [
+                  'update' => true,
+                  'value'  => true,
+                  'after' => 'showtimerpopup'
+               ]
+            );
+         }
+
+         // Old not used field in version 1.1.1
+         if (isset($fields['enable'])) {
+            $migration->dropField(
+               $table,
+               'enable'
+            );
+         }
+
+      }
+
+      // Create default record (if it does not exist)
+      $reg = $DB->request($table);
+      if (! count($reg)) {
+         $DB->insert(
+            $table, [
+               'displayinfofor' => 0
             ]
          );
-
-         // For whom the actualtime timers are displayed?
-         // 0 - Only in standard/central interface (default)
-         // 1 - Both in standard and helpdesk interfaces
-         $migration->addField(
-            $table,
-            'displayinfofor',
-            'smallint',
-            [
-               'update' => 0,
-               'value'  => 0,
-               'after' => 'showtimerpopup'
-            ]
-         );
-
-         $migration->addField(
-            $table,
-            'showtimerinbox',
-            'boolean',
-            [
-               'update' => true,
-               'value'  => true,
-               'after' => 'displayinfofor'
-            ]
-         );
-
       }
 
    }
