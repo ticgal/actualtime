@@ -502,6 +502,10 @@ JAVASCRIPT;
    static function postShowItem($params) {
 
       $item = $params['item'];
+      if (! is_object($item) || ! method_exists($item, 'getType')) {
+         // Sometimes, params['item'] is just an array, like 'Solution'
+         return;
+      }
       switch ($item->getType()) {
          case 'TicketTask':
 
