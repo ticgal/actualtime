@@ -87,6 +87,7 @@ function plugin_init_actualtime() {
       if ($config->showTimerInBox()) {
          // This hook is not needed if not showing closed task box timer
          $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
+      }
 
       if ($config->autoOpenNew()) {
           // This hook is not needed if not opening new tasks automatically

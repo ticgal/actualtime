@@ -58,6 +58,7 @@ class PluginActualtimeConfig extends CommonDBTM {
    }
 
    function showForm() {
+      $rand = mt_rand();
 
       $this->getFromDB(1);
       $this->showFormHeader();
@@ -89,13 +90,13 @@ class PluginActualtimeConfig extends CommonDBTM {
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Display actual time in closed task box ('Processing ticket' list)", "actualtime") . "</td><td>";
       Dropdown::showYesNo('showtimerinbox', $this->showTimerInBox(), -1);
-      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<tr class='tab_bg_1' name='optional$rand'>";
       echo "<td>" . __("Automatically open new created tasks", "actualtime") . "</td><td>";
       Dropdown::showYesNo('autoopennew', $this->autoOpenNew(), -1);
       echo "</td>";
       echo "</tr>";
 
-      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<tr class='tab_bg_1' name='optional$rand'>";
       echo "<td>" . __("Automatically open task with timer running", "actualtime") . "</td><td>";
       Dropdown::showYesNo('autoopenrunning', $this->autoOpenRunning(), -1);
       echo "</td>";
