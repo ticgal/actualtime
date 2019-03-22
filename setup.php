@@ -1,5 +1,5 @@
 <?php
-define ('PLUGIN_ACTUALTIME_VERSION', '1.1.2');
+define ('PLUGIN_ACTUALTIME_VERSION', '1.1.3');
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "9.3.0");
 // Maximum GLPI version, exclusive
@@ -70,11 +70,7 @@ function plugin_init_actualtime() {
       // Add settings form as a tab on Setup - General page
       Plugin::registerClass('PluginActualtimeConfig', ['addtabon' => 'Config']);
 
-      // If settings disable timers, just don't load any hook
       $config = new PluginActualtimeConfig;
-      if (!$config->isEnabled()) {
-         return;
-      }
 
       $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
       $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket'=> 'plugin_actualtime_item_stats'];
@@ -87,9 +83,15 @@ function plugin_init_actualtime() {
          $PLUGIN_HOOKS['post_show_tab']['actualtime'] = ['PluginActualtimeTask', 'postShowTab'];
       }
 
+
+      if ($config->showTimerInBox()) {
+         // This hook is not needed if not showing closed task box timer
+         $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
+
       if ($config->autoOpenNew()) {
           // This hook is not needed if not opening new tasks automatically
           $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
+
       }
 
    }
