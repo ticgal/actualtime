@@ -26,9 +26,9 @@ if (isset($_POST["action"])) {
             if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
 
                // action=start, timer=off, current user is alerady using timer
-               $opcional=PluginActualtimeTask::getTicket(Session::getLoginUserID());
+               $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
                $result=[
-                  'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='actualtime_showTaskForm(event)' href='/front/ticket.form.php?id=".$opcional."'>".__("Ticket")."</a>",
+                  'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='actualtime_showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
                   'title'   => __('Warning'),
                   'class'   => 'warn_msg',
                ];
