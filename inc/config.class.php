@@ -89,11 +89,19 @@ class PluginActualtimeConfig extends CommonDBTM {
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Display actual time in closed task box ('Processing ticket' list)", "actualtime") . "</td><td>";
       Dropdown::showYesNo('showtimerinbox', $this->showTimerInBox(), -1);
+      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<td>" . __("Automatically open new created tasks", "actualtime") . "</td><td>";
+      Dropdown::showYesNo('autoopennew', $this->autoOpenNew(), -1);
+      echo "</td>";
+      echo "</tr>";
+
+      echo "<tr class='tab_bg_1' name='optional$rand' $style>";
+      echo "<td>" . __("Automatically open task with timer running", "actualtime") . "</td><td>";
+      Dropdown::showYesNo('autoopenrunning', $this->autoOpenRunning(), -1);
       echo "</td>";
       echo "</tr>";
 
       echo "<tr class='tab_bg_1' align='center'>";
-
       $this->showFormButtons(['candel'=>false]);
    }
 
@@ -142,6 +150,25 @@ class PluginActualtimeConfig extends CommonDBTM {
       return ($this->fields['showtimerinbox'] ? true : false);
    }
 
+   /**
+    * Auto open the form for the task that was just created (new tasks)?
+    *
+    * @return boolean
+    */
+   function autoOpenNew() {
+      return ($this->fields['autoopennew'] ? true : false);
+   }
+
+   /**
+    * Auto open the form for the task with a currently running timer
+    * when listing tickets' tasks?
+    *
+    * @return boolean
+    */
+   function autoOpenRunning() {
+      return ($this->fields['autoopenrunning'] ? true : false);
+   }
+
    static function install(Migration $migration) {
       global $DB;
 
@@ -155,11 +182,14 @@ class PluginActualtimeConfig extends CommonDBTM {
                       `displayinfofor` smallint NOT NULL DEFAULT 0,
                       `showtimerpopup` boolean NOT NULL DEFAULT true,
                       `showtimerinbox` boolean NOT NULL DEFAULT true,
+                      `enable` boolean NOT NULL DEFAULT true,
+                      `showtimerpopup` boolean NOT NULL DEFAULT true,
+                      `autoopennew` boolean NOT NULL DEFAULT false,
+                      `autoopenrunning` boolean NOT NULL DEFAULT false,
                       PRIMARY KEY (`id`)
                    )
                    ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
          $DB->query($query) or die($DB->error());
-
       } else {
 
          $fields = $DB->list_fields($table, false);
@@ -205,7 +235,41 @@ class PluginActualtimeConfig extends CommonDBTM {
                ]
             );
          }
-
+         if (! $DB->fieldExists($table, 'autoopennew')) {
+            // Add new field autoopennew
+            $migration->addField(
+               $table,
+               'autoopennew',
+               'boolean',
+               [
+                  'update' => false,
+                  'value'  => false,
+                  'after'  => 'showtimerinbox',
+               ]
+            );
+         }
+         if (! $DB->fieldExists($table, 'autoopenrunning')) {
+            // Add new field autoopenrunning
+            $migration->addField(
+               $table,
+               'autoopenrunning',
+               'boolean',
+               [
+                  'update' => false,
+                  'value'  => false,
+                  'after'  => 'autoopennew',
+               ]
+            );
+         }
+         // Create default record (if it does not exist)
+         $reg = $DB->request($table);
+         if (! count($reg)) {
+            $DB->insert(
+               $table, [
+                  'enable' => true
+               ]
+            );
+         }
          // Old not used field in version 1.1.1
          if (isset($fields['enable'])) {
             $migration->dropField(

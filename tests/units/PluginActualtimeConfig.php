@@ -49,6 +49,20 @@ class PluginActualtimeConfig extends atoum {
                ->isTrue();
    }
 
+   public function testAutoOpenNew() {
+      $this
+         ->given($this->newTestedInstance)
+            ->boolean($this->testedInstance->autoOpenNew())
+               ->isFalse();
+   }
+
+   public function testAutoOpenRunning() {
+      $this
+         ->given($this->newTestedInstance)
+            ->boolean($this->testedInstance->autoOpenRunning())
+               ->isFalse();
+   }
+
    public function testCanView() {
       $this
          ->given($this->newTestedInstance)
