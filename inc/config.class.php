@@ -90,6 +90,9 @@ class PluginActualtimeConfig extends CommonDBTM {
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Display actual time in closed task box ('Processing ticket' list)", "actualtime") . "</td><td>";
       Dropdown::showYesNo('showtimerinbox', $this->showTimerInBox(), -1);
+      echo "</td>";
+      echo "</tr>";
+
       echo "<tr class='tab_bg_1' name='optional$rand'>";
       echo "<td>" . __("Automatically open new created tasks", "actualtime") . "</td><td>";
       Dropdown::showYesNo('autoopennew', $this->autoOpenNew(), -1);
@@ -183,8 +186,6 @@ class PluginActualtimeConfig extends CommonDBTM {
                       `displayinfofor` smallint NOT NULL DEFAULT 0,
                       `showtimerpopup` boolean NOT NULL DEFAULT true,
                       `showtimerinbox` boolean NOT NULL DEFAULT true,
-                      `enable` boolean NOT NULL DEFAULT true,
-                      `showtimerpopup` boolean NOT NULL DEFAULT true,
                       `autoopennew` boolean NOT NULL DEFAULT false,
                       `autoopenrunning` boolean NOT NULL DEFAULT false,
                       PRIMARY KEY (`id`)
@@ -206,12 +207,13 @@ class PluginActualtimeConfig extends CommonDBTM {
                [
                   'update' => 0,
                   'value'  => 0,
-                  'after' => 'enable'
+                  'after' => 'id'
                ]
             );
          }
 
          if (! isset($fields['showtimerpopup'])) {
+            // Add new field showtimerpopup
             $migration->addField(
                $table,
                'showtimerpopup',
@@ -225,6 +227,7 @@ class PluginActualtimeConfig extends CommonDBTM {
          }
 
          if (! isset($fields['showtimerinbox'])) {
+            // Add new field showtimerinbox
             $migration->addField(
                $table,
                'showtimerinbox',
@@ -236,6 +239,7 @@ class PluginActualtimeConfig extends CommonDBTM {
                ]
             );
          }
+
          if (! $DB->fieldExists($table, 'autoopennew')) {
             // Add new field autoopennew
             $migration->addField(
@@ -249,6 +253,7 @@ class PluginActualtimeConfig extends CommonDBTM {
                ]
             );
          }
+
          if (! $DB->fieldExists($table, 'autoopenrunning')) {
             // Add new field autoopenrunning
             $migration->addField(
@@ -262,15 +267,7 @@ class PluginActualtimeConfig extends CommonDBTM {
                ]
             );
          }
-         // Create default record (if it does not exist)
-         $reg = $DB->request($table);
-         if (! count($reg)) {
-            $DB->insert(
-               $table, [
-                  'enable' => true
-               ]
-            );
-         }
+
          // Old not used field in version 1.1.1
          if (isset($fields['enable'])) {
             $migration->dropField(
