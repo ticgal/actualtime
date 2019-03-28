@@ -39,6 +39,7 @@ $(document).ready(function() {
 JAVASCRIPT;
 
                // Only task user
+               $timercolor = 'black';
                if ($buttons) {
 
                   $value1 = __('Start');
@@ -48,7 +49,6 @@ JAVASCRIPT;
                   $action2 = '';
                   $color2 = 'gray';
                   $disabled2 = 'disabled';
-                  $timercolor = 'black';
 
                   if ($item->getField('state')==1) {
 
@@ -526,25 +526,29 @@ JAVASCRIPT;
       switch ($item->getType()) {
          case 'TicketTask':
 
-            $task_id = $item->getID();
-            $rand = mt_rand();
-
             $config = new PluginActualtimeConfig;
+            $task_id = $item->getID();
+            // Auto open needs to use correct item randomic number
+            $rand = $params['options']['rand'];
+
+            // Show timer in closed task box in:
             // Standard interface (always)
             // or Helpdesk inteface (only if config allows)
-            if ((Session::getCurrentInterface() == "central")
-               || $config->showInHelpdesk()) {
+            if ($config->showTimerInBox() &&
+               ((Session::getCurrentInterface() == "central")
+               || $config->showInHelpdesk())
+            ) {
 
                $time = self::totalEndTime($task_id);
                $fa_icon = ($time > 0 ? ' fa-clock-o' : '');
                $timercolor = (self::checkTimerActive($task_id) ? 'red' : 'black');
                // Anchor to find correct span, even when user has no update
                // right on status checkbox
-               echo "<div id='actualtime_anchor_$rand'></div>";
+               echo "<div id='actualtime_anchor_{$task_id}_{$rand}'></div>";
                $script = <<<JAVASCRIPT
 $(document).ready(function() {
    if ($("[id^='actualtime_faclock_{$task_id}_']").length == 0) {
-      $("#actualtime_anchor_{$rand}").prev().find("span.state")
+      $("#actualtime_anchor_{$task_id}_{$rand}").prev().find("span.state")
          .after("<i id='actualtime_faclock_{$task_id}_{$rand}' class='fa{$fa_icon}' style='color:{$timercolor}; padding:3px; vertical-align:middle;'></i><span id='actualtime_timer_{$task_id}_box_{$rand}' style='color:{$timercolor}; vertical-align:middle;'></span>");
       if ($time > 0) {
          actualtime_fillCurrentTime($task_id, $time);
@@ -554,11 +558,6 @@ $(document).ready(function() {
 JAVASCRIPT;
                echo Html::scriptBlock($script);
             }
-            break;
-            $config = new PluginActualtimeConfig;
-            $task_id = $item->getID();
-            // Auto open needs to use correct item randomic number
-            $rand = $params['options']['rand'];
 
             // Verify if this is a new task just created now
             $autoopennew = false;
