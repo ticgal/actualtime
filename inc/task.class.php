@@ -39,6 +39,7 @@ $(document).ready(function() {
 JAVASCRIPT;
 
                // Only task user
+               $timercolor = 'black';
                if ($buttons) {
 
                   $value1 = __('Start');
@@ -48,7 +49,6 @@ JAVASCRIPT;
                   $action2 = '';
                   $color2 = 'gray';
                   $disabled2 = 'disabled';
-                  $timercolor = 'black';
 
                   if ($item->getField('state')==1) {
 
