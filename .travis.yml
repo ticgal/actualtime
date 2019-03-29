@@ -19,7 +19,10 @@ before_script:
   - composer self-update
   - composer require --dev atoum/atoum
   - git clone --depth=1 https://github.com/glpi-project/glpi -b $GLPIVER ../glpi && cd ../glpi
-  - composer install --no-dev
+  - sed -e '/"php":/d' -i composer.json
+  - sed -i 's/CssMin/cssmin/;s/Faker/Faker/;s/vfsStream/vfsstream/' composer.json
+  - composer install --optimize-autoloader --no-dev
+  - rm -f composer.lock
   - mysql -u root -e 'create database glpitest;'
   # Both 9.3 and 9.4:
   - if [[ -f "scripts/cliinstall.php" ]]; then php scripts/cliinstall.php --db=glpitest --user=root --tests; else bin/console glpi:database:install --config-dir=./tests --no-interaction --db-name=glpitest --db-user=root; fi
@@ -31,9 +34,10 @@ before_script:
 script:
   - vendor/bin/robo --no-interaction code:cs
   - mysql -u root -e 'select version();'
-  - ./vendor/bin/atoum -bf tests/bootstrap.php -d tests/units/
+  - ./vendor/bin/atoum --debug -bf tests/bootstrap.php -d tests/units/
 
 
+# Permit failure on PHP nightly until Travis fix missing gd extension
 matrix:
   exclude:
     - php: 5.6

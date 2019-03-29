@@ -6,6 +6,13 @@ use atoum;
 
 class PluginActualtimeTask extends atoum {
 
+   public function testRightname() {
+      $this
+         ->given($conf = $this->getTestedClassName())
+            ->string($conf::$rightname)
+               ->isEqualTo('task');
+   }
+
    public function testGetTypeName() {
       $this
          ->if($class = $this->testedClass->getClass())
