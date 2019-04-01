@@ -14,8 +14,7 @@ function plugin_version_actualtime() {
       'requirements'   => [
          'glpi'   => [
             'min' => PLUGIN_ACTUALTIME_MIN_GLPI,
-            // Allow all version from PLUGIN_ACTUALTIME_MIN_GLPI
-            //'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
+            'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
          ]
       ]];
 }
