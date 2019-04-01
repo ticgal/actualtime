@@ -111,6 +111,6 @@ tar czf "$PLUGINNAME-$RELEASE.tar.tgz" $PLUGINNAME
 cd $INIT_PWD;
 
 echo "Deleting temp directory"
-rm -rf /tmp/$PLUGINNAME
+#rm -rf /tmp/$PLUGINNAME
 
 echo "The Tarball is in the /tmp directory"
