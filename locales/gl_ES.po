@@ -8,14 +8,14 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
 "POT-Creation-Date: 2019-03-05 14:04-0300\n"
-"PO-Revision-Date: 2018-11-15 17:37+0100\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2019-04-02 19:14+0200\n"
+"Last-Translator: Óscar Beiro <oscar@ticgal.com>\n"
 "Language-Team: \n"
 "Language: gl_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.2.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: setup.php:9 inc/task.class.php:15
@@ -48,23 +48,23 @@ msgstr "Non se inicializou a tarefa"
 
 #: inc/config.class.php:57
 msgid "Task timer configuration"
-msgstr ""
+msgstr "Configuración do temporizador de tarefas"
 
 #: inc/config.class.php:70
 msgid "Enable timer on tasks"
-msgstr ""
+msgstr "Activar o temporizador nas tarefas"
 
 #: inc/config.class.php:103
 msgid "Actual time"
-msgstr ""
+msgstr "Tempo real"
 
 #: inc/task.class.php:22
 msgid "Restart"
-msgstr ""
+msgstr "Reiniciar"
 
 #: inc/task.class.php:23
 msgid "Pause"
-msgstr ""
+msgstr "Deter"
 
 #: inc/task.class.php:82
 msgid "Partial actual duration"
@@ -80,4 +80,4 @@ msgstr "Desviación"
 
 #: inc/task.class.php:603
 msgid "Timer started on"
-msgstr "Comezou o temporizador na"
+msgstr "O temporizador comezou ás "

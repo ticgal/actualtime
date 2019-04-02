@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://github.com/ticgal/actualtime/issues\n"
 "POT-Creation-Date: 2019-03-05 14:04-0300\n"
-"PO-Revision-Date: 2019-02-19 15:50-0300\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2019-04-02 19:14+0200\n"
+"Last-Translator: Óscar Beiro <oscar@ticgal.com>\n"
 "Language-Team: \n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.2.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: setup.php:9 inc/task.class.php:15
 msgid "ActualTime"
-msgstr "TempoReal"
+msgstr ""
 
 #: ajax/timer.php:17
 msgid "A user is already performing the task"
