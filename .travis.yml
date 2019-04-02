@@ -1,6 +1,6 @@
 language: php
 php:
-  - 5.6
+#  - 5.6
   - 7.0
   - 7.1
   - 7.2
@@ -11,9 +11,10 @@ env:
   global:
     - DB=mysql
   matrix:
+    - GLPIVER=9.5/bugfixes
     - GLPIVER=9.4/bugfixes
     - GLPIVER=9.3/bugfixes
-    - GLPIVER=master
+#    - GLPIVER=master
 
 before_script:
   - composer self-update
@@ -40,10 +41,10 @@ script:
 # Permit failure on PHP nightly until Travis fix missing gd extension
 matrix:
   exclude:
-    - php: 5.6
-      env: GLPIVER=master
-    - php: 5.6
-      env: GLPIVER=9.4/bugfixes
+#    - php: 5.6
+#      env: GLPIVER=master
+#    - php: 5.6
+#      env: GLPIVER=9.4/bugfixes
   allow_failures:
     - php: nightly
 
