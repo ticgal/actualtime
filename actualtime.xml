@@ -22,6 +22,11 @@
    </authors>
    <versions>
       <version>
+	<num>1.2.0</num>
+	<compatibility>9.3</compatibility>
+	<compatibility>9.4</compatibility>
+      </version>
+      <version>
 	<num>1.1.0</num>
 	<compatibility>9.3</compatibility>
 	<compatibility>9.4</compatibility>
@@ -35,6 +40,8 @@
       <lang>en_GB</lang>
       <lang>gl_ES</lang>
       <lang>es_ES</lang>
+      <lang>fr_FR</lang>
+      <lang>pt_BR/lang>
    </langs>
    <license>AGPL v3+</license>
    <tags>
