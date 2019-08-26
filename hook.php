@@ -39,6 +39,21 @@ function plugin_actualtime_item_add($item) {
    PluginActualtimeTask::afterAdd($item);
 }
 
+function plugin_actualtime_getAddSearchOptionsNew($itemtype){
+   $tab=[];
+
+   switch ($itemtype) {
+      case 'Ticket':
+         $config = new PluginActualtimeConfig;
+         if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
+            $tab = array_merge($tab, PluginActualtimeTask::rawSearchOptionsToAdd());
+         }
+         break;
+   }
+
+   return $tab;
+}
+
 /**
  * Uninstall previously installed elements of the plugin
  *
