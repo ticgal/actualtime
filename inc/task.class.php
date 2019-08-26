@@ -15,6 +15,114 @@ class PluginActualtimeTask extends CommonDBTM{
       return __('ActualTime', 'Actualtime');
    }
 
+   static public function rawSearchOptionsToAdd(){
+
+      $tab[]=[
+         'id'=>'7000',
+         'table'=>self::getTable(),
+         'field'=>'actual_actiontime',
+         'name'=>__('Total duration'),
+         'datatype' => 'specific',
+         'joinparams'=>[
+            'beforejoin'=>[
+               'table'=>'glpi_tickettasks',
+               'joinparams' => [
+                  'jointype' => 'child'
+               ]
+            ],
+            'jointype' => 'child',
+            'linkfield'=>'tasks_id'
+         ],
+         'type'=>'total'
+      ];
+      $tab[]=[
+         'id'=>'7001',
+         'table'=>self::getTable(),
+         'field'=>'actual_actiontime',
+         'name'=>__("Duration Diff", "actiontime"),
+         'datatype' => 'specific',
+         'joinparams'=>[
+            'beforejoin'=>[
+               'table'=>'glpi_tickettasks',
+               'joinparams' => [
+                  'jointype' => 'child'
+               ]
+            ],
+            'jointype' => 'child',
+            'linkfield'=>'tasks_id'
+         ],
+         'type'=>'diff'
+      ];
+      $tab[]=[
+         'id'=>'7002',
+         'table'=>self::getTable(),
+         'field'=>'actual_actiontime',
+         'name'=>__("Duration Diff", "actiontime")." (%)",
+         'datatype' => 'specific',
+         'joinparams'=>[
+            'beforejoin'=>[
+               'table'=>'glpi_tickettasks',
+               'joinparams' => [
+                  'jointype' => 'child'
+               ]
+            ],
+            'jointype' => 'child',
+            'linkfield'=>'tasks_id'
+         ],
+         'type'=>'diff%'
+      ];
+
+      return $tab;
+   }
+
+   static function getSpecificValueToDisplay($field, $values, array $options = []) {
+      global $DB;
+      if (!is_array($values)) {
+         $values = [$field => $values];
+      }
+
+      switch ($field) {
+         case 'actual_actiontime' :
+            $actual_totaltime=0;
+            $ticket=new Ticket();
+            $ticket->getFromDB($options['raw_data']['id']);
+            $total_time=$ticket->getField('actiontime');
+            $query=[
+               'SELECT'=>[
+                  'glpi_tickettasks.id',
+               ],
+               'FROM'=>'glpi_tickettasks',
+               'WHERE'=>[
+                  'tickets_id'=>$options['raw_data']['id'],
+               ]
+            ];
+            foreach ($DB->request($query) as $id => $row) {
+               $actual_totaltime+=self::totalEndTime($row['id']);
+            }
+            switch ($options['searchopt']['type']) {
+               case 'diff':
+                  $diff=$total_time-$actual_totaltime;
+                  return HTML::timestampToString($diff);
+                  break;
+
+               case 'diff%':
+                  if ($total_time==0) {
+                     $diffpercent=0;
+                  } else {
+                     $diffpercent=100*($total_time-$actual_totaltime)/$total_time;
+                  }
+                  return round($diffpercent, 2)."%";
+                  break;
+               
+               default:
+                  return HTML::timestampToString($actual_totaltime);
+                  break;
+            }
+         break;
+      }
+      return parent::getSpecificValueToDisplay($field, $values, $options);
+   }
+
    static public function postForm($params) {
       global $CFG_GLPI;
 
