@@ -592,22 +592,24 @@ JAVASCRIPT;
    static function preUpdate(TicketTask $item) {
       global $DB;
 
-      if ($item->input['state']!=1) {
-         if (self::checkTimerActive($item->input['id'])) {
-            $actual_begin=self::getActualBegin($item->input['id']);
-            $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
-            $DB->update(
-               'glpi_plugin_actualtime_tasks', [
-                  'actual_end'      => date("Y-m-d H:i:s"),
-                  'actual_actiontime'      => $seconds,
-               ], [
-                  'tasks_id'=>$item->input['id'],
-                  [
-                     'NOT' => ['actual_begin' => null],
-                  ],
-                  'actual_end'=>null,
-               ]
-            );
+      if(array_key_exists('state',$item->input)){
+         if ($item->input['state']!=1) {
+            if (self::checkTimerActive($item->input['id'])) {
+               $actual_begin=self::getActualBegin($item->input['id']);
+               $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
+               $DB->update(
+                  'glpi_plugin_actualtime_tasks', [
+                     'actual_end'      => date("Y-m-d H:i:s"),
+                     'actual_actiontime'      => $seconds,
+                  ], [
+                     'tasks_id'=>$item->input['id'],
+                     [
+                        'NOT' => ['actual_begin' => null],
+                     ],
+                     'actual_end'=>null,
+                  ]
+               );
+            }
          }
       }
    }
