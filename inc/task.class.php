@@ -577,7 +577,7 @@ JAVASCRIPT;
       global $DB;
       $config = new PluginActualtimeConfig;
       if ($config->autoOpenNew()) {
-         if ($item->getField('state')==1 && $item->fields['id']) {
+         if ($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']) {
             // Empty record means just added task (for postShowItem)
             $DB->insert(
                'glpi_plugin_actualtime_tasks', [
