@@ -105,6 +105,12 @@ class PluginActualtimeConfig extends CommonDBTM {
       echo "</td>";
       echo "</tr>";
 
+      echo "<tr class='tab_bg_1' name='optional$rand'>";
+      echo "<td>" . __("Automatically update the duration", "actualtime") . "</td><td>";
+      Dropdown::showYesNo('autoupdate_duration', $this->autoUpdateDuration(), -1);
+      echo "</td>";
+      echo "</tr>";
+
       echo "<tr class='tab_bg_1' align='center'>";
       $this->showFormButtons(['candel'=>false]);
    }
@@ -173,6 +179,10 @@ class PluginActualtimeConfig extends CommonDBTM {
       return ($this->fields['autoopenrunning'] ? true : false);
    }
 
+   function autoUpdateDuration(){
+    return $this->fields['autoupdate_duration'];
+   }
+
    static function install(Migration $migration) {
       global $DB;
 
@@ -188,6 +198,7 @@ class PluginActualtimeConfig extends CommonDBTM {
                       `showtimerinbox` boolean NOT NULL DEFAULT true,
                       `autoopennew` boolean NOT NULL DEFAULT false,
                       `autoopenrunning` boolean NOT NULL DEFAULT false,
+                      `autoupdate_duration` TINYINT(1) NOT NULL DEFAULT '0',
                       PRIMARY KEY (`id`)
                    )
                    ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
@@ -287,6 +298,12 @@ class PluginActualtimeConfig extends CommonDBTM {
             ]
          );
       }
+
+      $migration->addField(
+        $table,
+        'autoupdate_duration',
+        'bool'
+      );
 
    }
 
