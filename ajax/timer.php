@@ -9,6 +9,7 @@ Session::checkLoginUser();
 if (isset($_POST["action"])) {
 
    $task_id=$_POST["task_id"];
+   $config = new PluginActualtimeConfig;
    switch ($_POST["action"]) {
       case 'start':
          if (PluginActualtimeTask::checkTimerActive($task_id)) {
@@ -82,7 +83,7 @@ if (isset($_POST["action"])) {
                   $DB->update(
                      'glpi_tickettasks', [
                         'state' => 2,
-                     ], [
+                     ]+ (($config->autoUpdateDuration()) ? ['actiontime'=>ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP)]:[]), [
                         'id' => $task_id,
                      ]
                   );
@@ -94,6 +95,10 @@ if (isset($_POST["action"])) {
                   'segment' => PluginActualtimeTask::getSegment($task_id),
                   'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
+
+               if ($config->autoUpdateDuration()) {
+                  $result['duration']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+               }
 
             } else {
 
@@ -123,7 +128,7 @@ if (isset($_POST["action"])) {
                $DB->update(
                   'glpi_tickettasks', [
                      'state' => 2,
-                  ], [
+                  ]+ (($config->autoUpdateDuration()) ? ['actiontime'=>ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP)]:[]), [
                      'id' => $task_id,
                   ]
                );
@@ -134,6 +139,10 @@ if (isset($_POST["action"])) {
                   'segment' => PluginActualtimeTask::getSegment($task_id),
                   'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
+
+               if ($config->autoUpdateDuration()) {
+                  $result['duration']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+               }
 
             }
          }
