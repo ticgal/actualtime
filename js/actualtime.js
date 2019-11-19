@@ -163,6 +163,10 @@ function actualtime_pressedButton(task, val) {
                   $("span.state.state_1[onclick='change_task_state(" + task + ", this)']").attr('title',text_done).toggleClass('state_1 state_2');
                   $("input[type='hidden'][name='id'][value='" + task + "']").closest("table#mainformtable").find("select[name='state']").val(2).trigger('change');
                   $("[id^='actualtime_button_" + task + "_']").attr('action', '').css('background-color', 'gray').prop('disabled', true);
+                  if (typeof result["duration"]!=='undefined') {
+                     $("input[type='hidden'][name='id'][value='" + task + "']").closest("table#mainformtable").find("select[name='actiontime']").val(result['duration']).trigger('change');
+                     $("div#viewitemtickettask"+task+" span.actiontime").text(actualtime_timeToText(result['duration'], 1));
+                  }
                } else {
                   $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_restart).attr('action', 'start').css('background-color', 'green').prop('disabled', false);
                }
