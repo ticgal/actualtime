@@ -76,7 +76,7 @@ function actualtime_showTimerPopup(ticket) {
       $("#actualtime_popup").attr('title', text_warning);
       $(function() {
          var _of = window;
-         var _at = 'right-20 bottom-20';
+         var _at = 'left+20 bottom-20';
          //calculate relative dialog position
          $('.message_result').each(function() {
             var _this = $(this);
@@ -92,7 +92,7 @@ function actualtime_showTimerPopup(ticket) {
                minHeight:   40,
                minWidth:    200,
                position:    {
-                  my:        'right bottom',
+                  my:        'left bottom',
                   at:        _at,
                   of:        _of,
                   collision: 'none'
@@ -176,7 +176,7 @@ function actualtime_pressedButton(task, val) {
          $('#message_result').attr('title', result['title']);
          $(function() {
             var _of = window;
-            var _at = 'right-20 bottom-20';
+            var _at = 'left+20 bottom-20';
             //calculate relative dialog position
             $('.message_result').each(function() {
                var _this = $(this);
@@ -190,7 +190,7 @@ function actualtime_pressedButton(task, val) {
                minHeight:   40,
                minWidth:    200,
                position:    {
-                  my:        'right bottom',
+                  my:        'left bottom',
                   at:        _at,
                   of:        _of,
                   collision: 'none'
