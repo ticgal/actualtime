@@ -7,76 +7,81 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-03 10:01+0200\n"
-"PO-Revision-Date: 2019-07-23 14:13+0200\n"
+"POT-Creation-Date: 2019-11-20 16:59+0100\n"
+"PO-Revision-Date: 2019-11-20 17:17+0100\n"
+"Last-Translator: Óscar Beiro <oscar@ticgal.com>\n"
 "Language-Team: \n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
-"Last-Translator: Óscar Beiro <oscar@ticgal.com>\n"
+"X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: de_DE\n"
 
-#: ajax/timer.php:18
+#: ajax/timer.php:19 inc/apirest.class.php:367
 msgid "A user is already performing the task"
 msgstr "Ein  anderer Benutzer bearbeitet gerade diese Aufgabe"
 
-#: ajax/timer.php:31
+#: ajax/timer.php:32 inc/apirest.class.php:373
 msgid "You are already doing a task"
 msgstr "Du bearbeitest gerade eine andere Aufgabe"
 
-#: ajax/timer.php:47
+#: ajax/timer.php:48 inc/apirest.class.php:384
 msgid "Timer started"
 msgstr "Timer gestarted"
 
-#: ajax/timer.php:91 ajax/timer.php:131
+#: ajax/timer.php:92 ajax/timer.php:136 inc/apirest.class.php:416
+#: inc/apirest.class.php:466
 msgid "Timer completed"
 msgstr "Timer beendet"
 
-#: ajax/timer.php:102
+#: ajax/timer.php:107 inc/apirest.class.php:424 inc/apirest.class.php:472
 msgid "Only the user who initiated the task can close it"
 msgstr "Nur der Benutzer, der die Aufgabe erstellt hat, kann diese schließen"
 
-#: ajax/timer.php:116
+#: ajax/timer.php:121 inc/apirest.class.php:429 inc/apirest.class.php:477
 msgid "The task had not been initialized"
 msgstr "Die Aufgabe wurde nicht initialisiert"
 
 #. TRANS: d is a symbol for days in a time (displays: 3d)
-#: ajax/timer.php:157
+#: ajax/timer.php:166
 #, php-format
 msgid "%dd"
 msgstr ""
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
-#: ajax/timer.php:161
+#: ajax/timer.php:170
 #, php-format
 msgid "%dh"
 msgstr ""
 
 #. TRANS: min is a symbol for minutes in a time (displays: 3min)
-#: ajax/timer.php:165
+#: ajax/timer.php:174
 #, php-format
 msgid "%dmin"
 msgstr ""
 
 #. TRANS: s is a symbol for seconds in a time (displays: 3s)
-#: ajax/timer.php:169
+#: ajax/timer.php:178
 #, php-format
 msgid "%ds"
 msgstr ""
 
-#: ajax/timer.php:173 inc/task.class.php:34
+#: ajax/timer.php:182 inc/task.class.php:142
 msgid "Pause"
 msgstr "Pause"
 
-#: ajax/timer.php:174 inc/task.class.php:33
+#: ajax/timer.php:183 inc/task.class.php:141
 msgid "Restart"
 msgstr "Neustart"
 
-#: ajax/timer.php:180
+#: ajax/timer.php:189
 msgid "Timer started on"
 msgstr "Timer gestartet am"
+
+#: inc/apirest.class.php:12
+msgid "ActualTime rest API"
+msgstr "ActualTime rest API"
 
 #: inc/config.class.php:57
 msgid "Task timer configuration"
@@ -110,7 +115,11 @@ msgstr "Neue Aufgabe automatisch öffnen"
 msgid "Automatically open task with timer running"
 msgstr "Timer beim öffnen der Aufgabe automatisch starten"
 
-#: inc/config.class.php:115
+#: inc/config.class.php:109
+msgid "Automatically update the duration"
+msgstr "Automatische Aktualisierung der Dauer"
+
+#: inc/config.class.php:121
 msgid "Actual time"
 msgstr "Actual time"
 
@@ -118,14 +127,15 @@ msgstr "Actual time"
 msgid "ActualTime"
 msgstr "ActualTime"
 
-#: inc/task.class.php:114
+#: inc/task.class.php:42 inc/task.class.php:60 inc/task.class.php:453
+#: inc/task.class.php:459 inc/task.class.php:465
+msgid "Duration Diff"
+msgstr "Zeit-Differenz"
+
+#: inc/task.class.php:222
 msgid "Partial actual duration"
 msgstr "Teilweise tatsächliche Dauer"
 
-#: inc/task.class.php:115
+#: inc/task.class.php:223
 msgid "Actual Duration"
 msgstr "Tatsächliche Dauer"
-
-#: inc/task.class.php:345 inc/task.class.php:351 inc/task.class.php:357
-msgid "Duration Diff"
-msgstr "Zeit-Differenz"
