@@ -211,6 +211,9 @@ if (isset($_POST["action"])) {
       ];
       $options['parent'] = getItemForItemtype("Ticket");
       $options['parent']->getFromDB(PluginActualtimeTask::getTicket(Session::getLoginUserID()));
+      echo "<div class='center'>";
+      echo "<a href='".$options['parent']->getFormURLWithID(PluginActualtimeTask::getTicket(Session::getLoginUserID()))."'>".__("View this item in his context")."</a>";
+      echo "</div>";
       $item = getItemForItemtype("TicketTask");
       $item->showForm($task_id, $options);
    }
