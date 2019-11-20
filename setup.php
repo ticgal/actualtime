@@ -76,6 +76,7 @@ function plugin_init_actualtime() {
       $PLUGIN_HOOKS['pre_item_update']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_update'];
       $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
       $PLUGIN_HOOKS['add_javascript']['actualtime'] = 'js/actualtime.js';
+      $PLUGIN_HOOKS['item_purge']['actualtime']=['TicketTask'=>'plugin_actualtime_item_purge'];
 
       if ($config->showTimerPopup()) {
          // This hook is not needed if not showing popup
@@ -83,9 +84,8 @@ function plugin_init_actualtime() {
       }
 
       if ($config->autoOpenNew()) {
-          // This hook is not needed if not opening new tasks automatically
-          $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
-
+         // This hook is not needed if not opening new tasks automatically
+         $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
       }
 
    }
