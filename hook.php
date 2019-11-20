@@ -39,6 +39,16 @@ function plugin_actualtime_item_add($item) {
    PluginActualtimeTask::afterAdd($item);
 }
 
+function plugin_actualtime_item_purge(TicketTask $item){
+   global $DB;
+
+   $DB->delete(
+      PluginActualtimeTask::getTable(),[
+         'tasks_id'=>$item->fields['id']
+      ]
+   );
+}
+
 function plugin_actualtime_getAddSearchOptionsNew($itemtype){
    $tab=[];
 
