@@ -98,6 +98,10 @@ if (isset($_POST["action"])) {
 
                if ($config->autoUpdateDuration()) {
                   $result['duration']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+                  $task=new TicketTask();
+                  $task->getFromDB($task_id);
+                  $ticket=new Ticket();
+                  $ticket->updateActionTime($task->fields['tickets_id']);
                }
 
             } else {
@@ -142,6 +146,10 @@ if (isset($_POST["action"])) {
 
                if ($config->autoUpdateDuration()) {
                   $result['duration']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+                  $task=new TicketTask();
+                  $task->getFromDB($task_id);
+                  $ticket=new Ticket();
+                  $ticket->updateActionTime($task->fields['tickets_id']);
                }
 
             }
