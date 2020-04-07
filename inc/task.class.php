@@ -10,6 +10,9 @@ include_once('config.class.php');
 class PluginActualtimeTask extends CommonDBTM{
 
    public static $rightname = 'task';
+   const AUTO=1;
+   const WEB=2;
+   const ANDROID=3;
 
    static function getTypeName($nb = 0) {
       return __('ActualTime', 'Actualtime');
@@ -764,6 +767,13 @@ JAVASCRIPT;
             $query = "ALTER TABLE $table MODIFY `users_id` int(11) NOT NULL";
             $DB->query($query) or die($DB->error());
          }
+         $migration->addField($table,'origin_start',"INT(11) NOT NULL");
+         $migration->addField($table,'latitude_start',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
+         $migration->addField($table,'longitude_start',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
+         $migration->addField($table,'origin_end',"INT(11) NOT NULL");
+         $migration->addField($table,'latitude_end',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
+         $migration->addField($table,'longitude_end',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
+         $migration->migrationOneTable($table);
       }
    }
 
