@@ -42,6 +42,7 @@ if (isset($_POST["action"])) {
                      'tasks_id'     => $task_id,
                      'actual_begin' => date("Y-m-d H:i:s"),
                      'users_id'     => Session::getLoginUserID(),
+                     'origin_start' => PluginActualtimetask::WEB,
                   ]
                );
                $result=[
@@ -71,6 +72,7 @@ if (isset($_POST["action"])) {
                   'glpi_plugin_actualtime_tasks', [
                      'actual_end'        => date("Y-m-d H:i:s"),
                      'actual_actiontime' => $seconds,
+                     'origin_end' => PluginActualtimetask::WEB,
                   ], [
                      'tasks_id' => $task_id,
                      [
