@@ -1,6 +1,7 @@
 <?php
 
 include ("../../../inc/includes.php");
+use Glpi\Event;
 header("Content-Type: text/html; charset=UTF-8");
 Html::header_nocache();
 
@@ -82,13 +83,16 @@ if (isset($_POST["action"])) {
                   ]
                );
                if ($_POST['action']=='end') {
-                  $DB->update(
-                     'glpi_tickettasks', [
-                        'state' => 2,
-                     ]+ (($config->autoUpdateDuration()) ? ['actiontime'=>ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP)]:[]), [
-                        'id' => $task_id,
-                     ]
-                  );
+               	$task=new TicketTask();
+                  $task->getFromDB($task_id);
+                  $input['id']=$task_id;
+                  $input['tickets_id']=$task->fields['tickets_id'];
+                  $input['state']=2;
+                  if ($config->autoUpdateDuration()) {
+                  	$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+                  }
+                  $task->update($input);
+                  Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking",sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
                }
                $result=[
                   'mensage' => __("Timer completed", 'actualtime'),
@@ -97,14 +101,6 @@ if (isset($_POST["action"])) {
                   'segment' => PluginActualtimeTask::getSegment($task_id),
                   'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
-
-               if ($config->autoUpdateDuration()) {
-                  $result['duration']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
-                  $task=new TicketTask();
-                  $task->getFromDB($task_id);
-                  $ticket=new Ticket();
-                  $ticket->updateActionTime($task->fields['tickets_id']);
-               }
 
             } else {
 
@@ -131,13 +127,17 @@ if (isset($_POST["action"])) {
             } else {
 
                // action=end, timer=off
-               $DB->update(
-                  'glpi_tickettasks', [
-                     'state' => 2,
-                  ]+ (($config->autoUpdateDuration()) ? ['actiontime'=>ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP)]:[]), [
-                     'id' => $task_id,
-                  ]
-               );
+               $task=new TicketTask();
+               $task->getFromDB($task_id);
+               $input['id']=$task_id;
+               $input['tickets_id']=$task->fields['tickets_id'];
+               $input['state']=2;
+               if ($config->autoUpdateDuration()) {
+               	$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+               }
+               $task->update($input);
+               Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking",sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
+               
                $result=[
                   'mensage' =>__("Timer completed", 'actualtime'),
                   'title'   => __('Information'),
@@ -145,14 +145,6 @@ if (isset($_POST["action"])) {
                   'segment' => PluginActualtimeTask::getSegment($task_id),
                   'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
-
-               if ($config->autoUpdateDuration()) {
-                  $result['duration']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
-                  $task=new TicketTask();
-                  $task->getFromDB($task_id);
-                  $ticket=new Ticket();
-                  $ticket->updateActionTime($task->fields['tickets_id']);
-               }
 
             }
          }
