@@ -13,6 +13,25 @@ if (isset($_POST["action"])) {
    $config = new PluginActualtimeConfig;
    switch ($_POST["action"]) {
       case 'start':
+         $plugin=new Plugin();
+         if ($plugin->isActivated('actualtime')) {
+            $result=[
+               'title'   => __('Warning'),
+               'class'   => 'warn_msg',
+            ];
+            if(PluginTamLeave::checkLeave(Session::getLoginUserID())){
+               $result['mensage']=__("Today is marked as absence you can not initialize the timer",'tam');
+               echo json_encode($result);
+               break;
+            }else{
+               $timer_id=PluginTamTam::checkWorking(Session::getLoginUserID());
+               if ($timer_id==0) {
+                  $result['mensage']="<a href='".$CFG_GLPI['root_doc']."/front/preference.php?forcetab=PluginTamTam$1'>" .__("Timer has not been initialized", 'tam')."</a>";
+                  echo json_encode($result);
+                  break;
+               }
+            }
+         }
          if (PluginActualtimeTask::checkTimerActive($task_id)) {
 
             // action=start, timer=on
