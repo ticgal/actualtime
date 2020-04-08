@@ -443,6 +443,7 @@ class PluginGappEssentialsApirest extends API {
 
 		$this->initEndpoint();
 		$task_id=$this->getId();
+		$config = new PluginActualtimeConfig;
 
 		if (PluginActualtimeTask::checkTimerActive($task_id)) {
 			if (PluginActualtimeTask::checkUser($task_id, Session::getLoginUserID())) {
@@ -463,13 +464,15 @@ class PluginGappEssentialsApirest extends API {
 						'actual_end' => null,
 					]
 				);
-				$DB->update(
-					'glpi_tickettasks', [
-						'state' => 2,
-					], [
-						'id' => $task_id,
-					]
-				);
+				$task=new TicketTask();
+            $task->getFromDB($task_id);
+            $input['id']=$task_id;
+            $input['tickets_id']=$task->fields['tickets_id'];
+            $input['state']=2;
+            if ($config->autoUpdateDuration()) {
+            	$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+            }
+            $task->update($input);
 
 				$result=[
 					'mensage' => __("Timer completed", 'actualtime'),
