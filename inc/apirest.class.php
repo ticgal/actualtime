@@ -362,6 +362,19 @@ class PluginGappEssentialsApirest extends API {
 
 		$this->initEndpoint();
 		$task_id=$this->getId();
+
+		$plugin=new Plugin();
+		if ($plugin->isActivated('actualtime')) {
+			if(PluginTamLeave::checkLeave(Session::getLoginUserID())){
+				$this->returnResponse(__("Today is marked as absence you can not initialize the timer",'tam'), 409);
+			}else{
+				$timer_id=PluginTamTam::checkWorking(Session::getLoginUserID());
+				if ($timer_id==0) {
+					$this->returnResponse(__("Timer no initialized",'tam'), 409);
+				}
+			}
+		}
+
 		if (PluginActualtimeTask::checkTimerActive($task_id)) {
 			$result=[
 				'mensage' => __("A user is already performing the task", 'actualtime')
