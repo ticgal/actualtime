@@ -364,7 +364,7 @@ class PluginGappEssentialsApirest extends API {
 		$task_id=$this->getId();
 
 		$plugin=new Plugin();
-		if ($plugin->isActivated('actualtime')) {
+		if ($plugin->isActivated('tam')) {
 			if(PluginTamLeave::checkLeave(Session::getLoginUserID())){
 				$this->returnResponse(__("Today is marked as absence you can not initialize the timer",'tam'), 409);
 			}else{
