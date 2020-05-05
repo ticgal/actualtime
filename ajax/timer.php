@@ -14,7 +14,7 @@ if (isset($_POST["action"])) {
    switch ($_POST["action"]) {
       case 'start':
          $plugin=new Plugin();
-         if ($plugin->isActivated('actualtime')) {
+         if ($plugin->isActivated('tam')) {
             $result=[
                'title'   => __('Warning'),
                'class'   => 'warn_msg',
