@@ -101,6 +101,13 @@ if (isset($_POST["action"])) {
                      'actual_end' => null,
                   ]
                );
+               $result=[
+                  'mensage' => __("Timer completed", 'actualtime'),
+                  'title'   => __('Information'),
+                  'class'   => 'info_msg',
+                  'segment' => PluginActualtimeTask::getSegment($task_id),
+                  'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
+               ];
                if ($_POST['action']=='end') {
                	$task=new TicketTask();
                   $task->getFromDB($task_id);
@@ -109,17 +116,11 @@ if (isset($_POST["action"])) {
                   $input['state']=2;
                   if ($config->autoUpdateDuration()) {
                   	$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+                     $result['duration']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
                   }
                   $task->update($input);
                   Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking",sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
                }
-               $result=[
-                  'mensage' => __("Timer completed", 'actualtime'),
-                  'title'   => __('Information'),
-                  'class'   => 'info_msg',
-                  'segment' => PluginActualtimeTask::getSegment($task_id),
-                  'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
-               ];
 
             } else {
 
@@ -146,17 +147,6 @@ if (isset($_POST["action"])) {
             } else {
 
                // action=end, timer=off
-               $task=new TicketTask();
-               $task->getFromDB($task_id);
-               $input['id']=$task_id;
-               $input['tickets_id']=$task->fields['tickets_id'];
-               $input['state']=2;
-               if ($config->autoUpdateDuration()) {
-               	$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
-               }
-               $task->update($input);
-               Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking",sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
-               
                $result=[
                   'mensage' =>__("Timer completed", 'actualtime'),
                   'title'   => __('Information'),
@@ -164,7 +154,18 @@ if (isset($_POST["action"])) {
                   'segment' => PluginActualtimeTask::getSegment($task_id),
                   'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
-
+               
+               $task=new TicketTask();
+               $task->getFromDB($task_id);
+               $input['id']=$task_id;
+               $input['tickets_id']=$task->fields['tickets_id'];
+               $input['state']=2;
+               if ($config->autoUpdateDuration()) {
+               	$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+                  $result['duration']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+               }
+               $task->update($input);
+               Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking",sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
             }
          }
          echo json_encode($result);
