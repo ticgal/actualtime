@@ -123,11 +123,11 @@ if (isset($_POST["action"])) {
                   }
                   $task->update($input);
                   Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking",sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
-                  if ($plugin->isActivated('gappextended')) {
-                  	$task=new TicketTask();
-                  	$task->getFromDB($task_id);
-	               	PluginGappextendedPush::sendActualtime($task->fields['tickets_id'],$task_id,$result,Session::getLoginUserID());
-	               }
+               }
+               if ($plugin->isActivated('gappextended')) {
+               	$task=new TicketTask();
+               	$task->getFromDB($task_id);
+               	PluginGappextendedPush::sendActualtime($task->fields['tickets_id'],$task_id,$result,Session::getLoginUserID());
                }
 
             } else {
