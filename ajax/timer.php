@@ -8,12 +8,11 @@ Html::header_nocache();
 Session::checkLoginUser();
 
 if (isset($_POST["action"])) {
-
+	$plugin=new Plugin();
    $task_id=$_POST["task_id"];
    $config = new PluginActualtimeConfig;
    switch ($_POST["action"]) {
       case 'start':
-         $plugin=new Plugin();
          if ($plugin->isActivated('tam')) {
             $result=[
                'title'   => __('Warning'),
@@ -73,6 +72,10 @@ if (isset($_POST["action"])) {
                   'time'      => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
 
+               if ($plugin->isActivated('gappextended')) {
+               	PluginGappextendedPush::sendActualtime(PluginActualtimetask::getTicket(Session::getLoginUserID()),$task_id,$result,Session::getLoginUserID());
+               }
+
             }
          }
          echo json_encode($result);
@@ -120,6 +123,11 @@ if (isset($_POST["action"])) {
                   }
                   $task->update($input);
                   Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking",sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
+                  if ($plugin->isActivated('gappextended')) {
+                  	$task=new TicketTask();
+                  	$task->getFromDB($task_id);
+	               	PluginGappextendedPush::sendActualtime($task->fields['tickets_id'],$task_id,$result,Session::getLoginUserID());
+	               }
                }
 
             } else {
@@ -166,6 +174,9 @@ if (isset($_POST["action"])) {
                }
                $task->update($input);
                Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking",sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
+               if ($plugin->isActivated('gappextended')) {
+	               PluginGappextendedPush::sendActualtime($task->fields['tickets_id'],$task_id,$result,Session::getLoginUserID());
+	            }
             }
          }
          echo json_encode($result);
