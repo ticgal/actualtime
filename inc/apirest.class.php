@@ -317,6 +317,9 @@ class PluginActualtimeApirest extends API {
 			case 'statsTimer':
 				return $this->returnResponse($this->statsTimer($this->parameters));
 			break;
+			case 'timerStatus':
+				return $this->returnResponse($this->timerStatus($this->parameters));
+			break;
 			default:
 				$this->messageLostError();
 			break;
