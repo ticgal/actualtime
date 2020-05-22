@@ -377,13 +377,13 @@ class PluginActualtimeApirest extends API {
 
 		if (PluginActualtimeTask::checkTimerActive($task_id)) {
 			$result=[
-				'mensage' => __("A user is already performing the task", 'actualtime')
+				'message' => __("A user is already performing the task", 'actualtime')
 			];
 		} else {
 			if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
 				$ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
 				$result=[
-					'mensage' => __("You are already doing a task", 'actualtime')." ".__("Ticket") . "$ticket_id",
+					'message' => __("You are already doing a task", 'actualtime')." ".__("Ticket") . "$ticket_id",
 				];
 			} else {
 				$DB->insert(
@@ -397,7 +397,7 @@ class PluginActualtimeApirest extends API {
 					]
 				);
 				$result=[
-					'mensage'   => __("Timer started", 'actualtime'),
+					'message'   => __("Timer started", 'actualtime'),
 					'time'      => abs(PluginActualtimeTask::totalEndTime($task_id)),
 				];
 			}
@@ -432,7 +432,7 @@ class PluginActualtimeApirest extends API {
 					]
 				);
 				$result=[
-					'mensage' => __("Timer completed", 'actualtime'),
+					'message' => __("Timer completed", 'actualtime'),
 					'title'   => __('Information'),
 					'class'   => 'info_msg',
 					'segment' => PluginActualtimeTask::getSegment($task_id),
@@ -440,12 +440,12 @@ class PluginActualtimeApirest extends API {
 				];
 			} else {
 				$result=[
-					'mensage' => __("Only the user who initiated the task can close it", 'actualtime'),
+					'message' => __("Only the user who initiated the task can close it", 'actualtime'),
 				];
 			}
 		} else {
 			$result=[
-				'mensage' => __("The task had not been initialized", 'actualtime'),
+				'message' => __("The task had not been initialized", 'actualtime'),
 			];
 		}
 		return $result;
@@ -488,18 +488,18 @@ class PluginActualtimeApirest extends API {
             $task->update($input);
 
 				$result=[
-					'mensage' => __("Timer completed", 'actualtime'),
+					'message' => __("Timer completed", 'actualtime'),
 					'segment' => PluginActualtimeTask::getSegment($task_id),
 					'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
 				];
 			} else {
 				$result=[
-					'mensage' => __("Only the user who initiated the task can close it", 'actualtime'),
+					'message' => __("Only the user who initiated the task can close it", 'actualtime'),
 				];
 			}
 		} else {
 			$result=[
-				'mensage' => __("The task had not been initialized", 'actualtime'),
+				'message' => __("The task had not been initialized", 'actualtime'),
 			];
 		}
 		return $result;
