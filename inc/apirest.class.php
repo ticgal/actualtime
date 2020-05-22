@@ -537,5 +537,23 @@ class PluginActualtimeApirest extends API {
 
 		return $result;
 	}
+	
+	protected function timerStatus($params=[]){
+		
+		$this->initEndpoint();
+		if(PluginActualtimeTask::checkUserFree(Session::getLoginUserID())){
+			$result=[
+				'free'=>true,
+			];
+		}else{
+			$result=[
+				'free'=>false,
+				'ticket_id'=>PluginActualtimeTask::getTicket(Session::getLoginUserID()),
+				'task_id'=>PluginActualtimeTask::getTask(Session::getLoginUserID()),
+				'time'=>abs(PluginActualtimeTask::totalEndTime(PluginActualtimeTask::getTask(Session::getLoginUserID())))
+			];
+		}
+		return $result;
+	}
 
 }
