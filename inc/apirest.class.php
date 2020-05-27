@@ -379,15 +379,11 @@ class PluginActualtimeApirest extends API {
 		}
 
 		if (PluginActualtimeTask::checkTimerActive($task_id)) {
-			$result=[
-				'message' => __("A user is already performing the task", 'actualtime')
-			];
+			$this->returnResponse(__("A user is already performing the task",'actualtime'), 409);
 		} else {
 			if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
 				$ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
-				$result=[
-					'message' => __("You are already doing a task", 'actualtime')." ".__("Ticket") . "$ticket_id",
-				];
+				$this->returnResponse(__("You are already doing a task",'actualtime')." ".__("Ticket") . "$ticket_id", 409);
 			} else {
 				$DB->insert(
 					'glpi_plugin_actualtime_tasks', [
@@ -442,14 +438,10 @@ class PluginActualtimeApirest extends API {
 					'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
 				];
 			} else {
-				$result=[
-					'message' => __("Only the user who initiated the task can close it", 'actualtime'),
-				];
+				$this->returnResponse(__("Only the user who initiated the task can close it",'actualtime'), 409);
 			}
 		} else {
-			$result=[
-				'message' => __("The task had not been initialized", 'actualtime'),
-			];
+			$this->returnResponse(__("The task had not been initialized",'actualtime'), 409);
 		}
 		return $result;
 	}
@@ -496,14 +488,10 @@ class PluginActualtimeApirest extends API {
 					'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
 				];
 			} else {
-				$result=[
-					'message' => __("Only the user who initiated the task can close it", 'actualtime'),
-				];
+				$this->returnResponse(__("Only the user who initiated the task can close it",'actualtime'), 409);
 			}
 		} else {
-			$result=[
-				'message' => __("The task had not been initialized", 'actualtime'),
-			];
+			$this->returnResponse(__("The task had not been initialized",'actualtime'), 409);
 		}
 		return $result;
 	}
