@@ -379,7 +379,7 @@ class PluginActualtimeApirest extends API {
 		}
 		$task=new TicketTask();
 		if(!$task->getFromDB($task_id)){
-			$this->returnResponse(__("Item not found"), 400);
+			$this->returnError(__("Item not found"), 400,'ERROR_ITEM_NOT_FOUND');
 		}
 		if($task->getField('state')!=1){
 			$this->returnResponse(__("Task completed."), 409);
