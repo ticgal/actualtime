@@ -377,6 +377,13 @@ class PluginActualtimeApirest extends API {
 				}
 			}
 		}
+		$task=new TicketTask();
+		if(!$task->getFromDB($task_id)){
+			$this->returnResponse(__("Item not found"), 400);
+		}
+		if($task->getField('state')!=1){
+			$this->returnResponse(__("Task completed."), 409);
+		}
 
 		if (PluginActualtimeTask::checkTimerActive($task_id)) {
 			$this->returnResponse(__("A user is already performing the task",'actualtime'), 409);
