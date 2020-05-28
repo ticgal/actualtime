@@ -493,6 +493,7 @@ class PluginActualtimeApirest extends API {
 					'message' => __("Timer completed", 'actualtime'),
 					'segment' => PluginActualtimeTask::getSegment($task_id),
 					'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
+					'task_time'=> $task->getField('actiontime),
 				];
 			} else {
 				$this->returnResponse(__("Only the user who initiated the task can close it",'actualtime'), 409);
