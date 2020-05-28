@@ -454,7 +454,7 @@ class PluginActualtimeApirest extends API {
 	}
 
 	protected function stopTimer($params=[]){
-		global $DB;
+		global $DB,$CFG_GLPI;
 
 		$this->initEndpoint();
 		$task_id=$this->getId();
