@@ -521,7 +521,7 @@ class PluginActualtimeApirest extends API {
 			$actiontime=$row['actiontime'];
 		}
 		$actual_totaltime=abs(PluginActualtimeTask::totalEndTime($task_id));
-		if ($total_time==0) {
+		if ($actiontime==0) {
 			$diffpercent=0;
 		} else {
 			$diffpercent=100*($actiontime-$actual_totaltime)/$actiontime;
