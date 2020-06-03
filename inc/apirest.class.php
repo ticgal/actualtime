@@ -499,26 +499,22 @@ class PluginActualtimeApirest extends API {
 				$this->returnResponse(__("Only the user who initiated the task can close it",'actualtime'), 409);
 			}
 		} else {
-			if (PluginActualtimeTask::checkUser($task_id, Session::getLoginUserID())) {
-				$task=new TicketTask();
-				$task->getFromDB($task_id);
-				$input['id']=$task_id;
-				$input['tickets_id']=$task->fields['tickets_id'];
-				$input['state']=2;
-				if ($config->autoUpdateDuration()) {
-					$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
-				}
-				$task->update($input);
-
-				$result=[
-					'message' => __("Timer completed", 'actualtime'),
-					'segment' => PluginActualtimeTask::getSegment($task_id),
-					'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
-					'task_time'=> $task->getField('actiontime'),
-				];	
-			} else {
-				$this->returnResponse(__("Only the user who initiated the task can close it",'actualtime'), 409);
+			$task=new TicketTask();
+			$task->getFromDB($task_id);
+			$input['id']=$task_id;
+			$input['tickets_id']=$task->fields['tickets_id'];
+			$input['state']=2;
+			if ($config->autoUpdateDuration()) {
+				$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
 			}
+			$task->update($input);
+
+			$result=[
+				'message' => __("Timer completed", 'actualtime'),
+				'segment' => PluginActualtimeTask::getSegment($task_id),
+				'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
+				'task_time'=> $task->getField('actiontime'),
+			];
 		}
 		return $result;
 	}
