@@ -365,6 +365,15 @@ class PluginActualtimeApirest extends API {
 
 		$this->initEndpoint();
 		$task_id=$this->getId();
+		
+		 $DB->delete(
+			 'glpi_plugin_actualtime_tasks', [
+				 'task_id'      => $task_id,
+				 'actual_begin' => null,
+				 'actual_end'   => null,
+				 'users_id'     => Session::getLoginUserID(),
+			 ]
+		 );
 
 		$plugin=new Plugin();
 		if ($plugin->isActivated('tam')) {
