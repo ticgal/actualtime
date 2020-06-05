@@ -398,8 +398,8 @@ class PluginActualtimeApirest extends API {
 						'actual_begin' => date("Y-m-d H:i:s"),
 						'users_id'     => Session::getLoginUserID(),
 						'origin_start' => PluginActualtimetask::ANDROID,
-						'latitude_start'=>$params['latitude'],
-						'longitude_start'=>$params['longitude'],
+						/*'latitude_start'=>$params['latitude'],
+						'longitude_start'=>$params['longitude'],*/
 					]
 				);
 				$result=[
@@ -427,8 +427,8 @@ class PluginActualtimeApirest extends API {
 						'actual_end'        => date("Y-m-d H:i:s"),
 						'actual_actiontime' => $seconds,
 						'origin_end' => PluginActualtimetask::ANDROID,
-						'latitude_end'=>$params['latitude'],
-						'longitude_end'=>$params['longitude'],
+						/*'latitude_end'=>$params['latitude'],
+						'longitude_end'=>$params['longitude'],*/
 					], [
 						'tasks_id' => $task_id,
 						[
@@ -469,8 +469,8 @@ class PluginActualtimeApirest extends API {
 						'actual_end'        => date("Y-m-d H:i:s"),
 						'actual_actiontime' => $seconds,
 						'origin_end' => PluginActualtimetask::ANDROID,
-						'latitude_end'=>$params['latitude'],
-						'longitude_end'=>$params['longitude'],
+						/*'latitude_end'=>$params['latitude'],
+						'longitude_end'=>$params['longitude'],*/
 					], [
 						'tasks_id' => $task_id,
 						[
