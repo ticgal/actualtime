@@ -368,7 +368,7 @@ class PluginActualtimeApirest extends API {
 		
 		 $DB->delete(
 			 'glpi_plugin_actualtime_tasks', [
-				 'task_id'      => $task_id,
+				 'tasks_id'      => $task_id,
 				 'actual_begin' => null,
 				 'actual_end'   => null,
 				 'users_id'     => Session::getLoginUserID(),
