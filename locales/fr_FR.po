@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-20 16:59+0100\n"
+"POT-Creation-Date: 2020-07-10 12:05+0200\n"
 "PO-Revision-Date: 2019-11-20 17:18+0100\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -18,70 +18,84 @@ msgstr ""
 "X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: ajax/timer.php:19 inc/apirest.class.php:367
+#: ajax/timer.php:22 inc/apirest.class.php:381
+msgid "Today is marked as absence you can not initialize the timer"
+msgstr ""
+
+#: ajax/timer.php:28
+#, fuzzy
+msgid "Timer has not been initialized"
+msgstr "La tâche n'a pas été démarrée"
+
+#: ajax/timer.php:38 inc/apirest.class.php:398
 msgid "A user is already performing the task"
 msgstr "Un utilisateur est effectue déjà cette tâche"
 
-#: ajax/timer.php:32 inc/apirest.class.php:373
+#: ajax/timer.php:51 inc/apirest.class.php:402
 msgid "You are already doing a task"
 msgstr "Vous effectuez déjà cette tâche"
 
-#: ajax/timer.php:48 inc/apirest.class.php:384
+#: ajax/timer.php:68 inc/apirest.class.php:415
 msgid "Timer started"
 msgstr "Compteur démarré"
 
-#: ajax/timer.php:92 ajax/timer.php:136 inc/apirest.class.php:416
-#: inc/apirest.class.php:466
+#: ajax/timer.php:108 ajax/timer.php:159 inc/apirest.class.php:450
+#: inc/apirest.class.php:502 inc/apirest.class.php:522
 msgid "Timer completed"
 msgstr "Compteur terminé"
 
-#: ajax/timer.php:107 inc/apirest.class.php:424 inc/apirest.class.php:472
+#: ajax/timer.php:137 inc/apirest.class.php:457 inc/apirest.class.php:508
 msgid "Only the user who initiated the task can close it"
 msgstr "Seul l'utilisateur qui a démarré la tâche peut l'arrêter"
 
-#: ajax/timer.php:121 inc/apirest.class.php:429 inc/apirest.class.php:477
+#: ajax/timer.php:151 inc/apirest.class.php:460
 msgid "The task had not been initialized"
 msgstr "La tâche n'a pas été démarrée"
 
 #. TRANS: d is a symbol for days in a time (displays: 3d)
-#: ajax/timer.php:166
+#: ajax/timer.php:199
 #, php-format
 msgid "%dd"
 msgstr ""
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
-#: ajax/timer.php:170
+#: ajax/timer.php:203
 #, php-format
 msgid "%dh"
 msgstr ""
 
 #. TRANS: min is a symbol for minutes in a time (displays: 3min)
-#: ajax/timer.php:174
+#: ajax/timer.php:207
 #, php-format
 msgid "%dmin"
 msgstr ""
 
 #. TRANS: s is a symbol for seconds in a time (displays: 3s)
-#: ajax/timer.php:178
+#: ajax/timer.php:211
 #, php-format
 msgid "%ds"
 msgstr ""
 
-#: ajax/timer.php:182 inc/task.class.php:142
+#: ajax/timer.php:215 inc/task.class.php:145
 msgid "Pause"
 msgstr ""
 
-#: ajax/timer.php:183 inc/task.class.php:141
+#: ajax/timer.php:216 inc/task.class.php:144
 msgid "Restart"
 msgstr ""
 
-#: ajax/timer.php:189
+#: ajax/timer.php:222
 msgid "Timer started on"
 msgstr "Compteur démarré à"
 
 #: inc/apirest.class.php:12
 msgid "ActualTime rest API"
 msgstr "ActualTime rest API"
+
+#: inc/apirest.class.php:385
+#, fuzzy
+msgid "Timer no initialized"
+msgstr "La tâche n'a pas été démarrée"
 
 #: inc/config.class.php:57
 msgid "Task timer configuration"
@@ -123,19 +137,19 @@ msgstr ""
 msgid "Actual time"
 msgstr ""
 
-#: inc/task.class.php:15
+#: inc/task.class.php:18
 msgid "ActualTime"
 msgstr "ActualTime"
 
-#: inc/task.class.php:42 inc/task.class.php:60 inc/task.class.php:453
-#: inc/task.class.php:459 inc/task.class.php:465
+#: inc/task.class.php:45 inc/task.class.php:63 inc/task.class.php:456
+#: inc/task.class.php:462 inc/task.class.php:468
 msgid "Duration Diff"
 msgstr "Différence de durée"
 
-#: inc/task.class.php:222
+#: inc/task.class.php:225
 msgid "Partial actual duration"
 msgstr "Durée partielle de l'acton"
 
-#: inc/task.class.php:223
+#: inc/task.class.php:226
 msgid "Actual Duration"
 msgstr "Durée actuelle"
