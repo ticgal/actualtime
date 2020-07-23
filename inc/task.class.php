@@ -756,6 +756,12 @@ JAVASCRIPT;
             `actual_end` datetime DEFAULT NULL,
             `users_id` int(11) NOT NULL,
             `actual_actiontime` int(11) NOT NULL DEFAULT 0,
+            `origin_start` INT(11) NOT NULL,
+            `latitude_start` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+            `longitude_start` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+            `origin_end` INT(11) NOT NULL,
+            `latitude_end` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+            `longitude_end` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
             PRIMARY KEY (`id`),
             KEY `tasks_id` (`tasks_id`),
             KEY `users_id` (`users_id`)
