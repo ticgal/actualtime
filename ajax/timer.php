@@ -7,6 +7,8 @@ Html::header_nocache();
 
 Session::checkLoginUser();
 
+global $CFG_GLPI;
+
 if (isset($_POST["action"])) {
 	$plugin=new Plugin();
    $task_id=$_POST["task_id"];
@@ -48,7 +50,7 @@ if (isset($_POST["action"])) {
                // action=start, timer=off, current user is alerady using timer
                $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
                $result=[
-                  'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='actualtime_showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
+                  'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
                   'title'   => __('Warning'),
                   'class'   => 'warn_msg',
                ];
@@ -219,7 +221,7 @@ if (isset($_POST["action"])) {
    $config = new PluginActualtimeConfig;
    if ($config->showTimerPopup()) {
       // popup_div exists only if settings allow display pop-up timer
-      $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='actualtime_showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " %t</a> -> <span></span></div>";
+      $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " %t</a> -> <span></span></div>";
       $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
       if ($task_id) {
          // Only if timer is active

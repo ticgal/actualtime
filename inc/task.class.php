@@ -146,7 +146,6 @@ class PluginActualtimeTask extends CommonDBTM{
                $html = '';
                $script = <<<JAVASCRIPT
 $(document).ready(function() {
-
 JAVASCRIPT;
 
                // Only task user
@@ -197,18 +196,18 @@ JAVASCRIPT;
                   // Objects of the same task have the same id beginning
                   // as they all should be changed on actions in case multiple
                   // windows of the same task is opened (list of tasks + modal)
-                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' class='x-button x-button-main' style='background-color:$color1;color:white' $disabled1></div>";
-                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' class='x-button x-button-main' style='background-color:$color2;color:white' $disabled2></div>";
+                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' class='x-button x-button-main' style='background-color:$color1;color:white' $disabled1 data-track-changes=''></div>";
+                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' class='x-button x-button-main' style='background-color:$color2;color:white' $disabled2 data-track-changes=''></div>";
                   $html .= "</td></tr>";
 
                   // Only task user have buttons
                   $script .= <<<JAVASCRIPT
    $("#actualtime_button_{$task_id}_1_{$rand}").click(function(event) {
-      actualtime_pressedButton($task_id, $(this).attr('action'));
+      window.actualTime.pressedButton($task_id, $(this).attr('action'));
    });
 
    $("#actualtime_button_{$task_id}_2_{$rand}").click(function(event) {
-      actualtime_pressedButton($task_id, $(this).attr('action'));
+      window.actualTime.pressedButton($task_id, $(this).attr('action'));
    });
 
 JAVASCRIPT;
@@ -234,7 +233,7 @@ JAVASCRIPT;
                   // Finally, fill the actual total time in all timers
                   $script .= <<<JAVASCRIPT
 
-   actualtime_fillCurrentTime($task_id, $time);
+   window.actualTime.fillCurrentTime($task_id, $time);
 
 });
 JAVASCRIPT;
@@ -625,7 +624,7 @@ JAVASCRIPT;
       if ($ticket_id = PluginActualtimetask::getTicket(Session::getLoginUserID())) {
          $script=<<<JAVASCRIPT
 $(document).ready(function(){
-   actualtime_showTimerPopup($ticket_id);
+   window.actualTime.showTimerPopup($ticket_id);
 });
 JAVASCRIPT;
          echo Html::scriptBlock($script);
@@ -668,7 +667,7 @@ $(document).ready(function() {
       $("#actualtime_anchor_{$task_id}_{$rand}").prev().find("span.state")
          .after("<i id='actualtime_faclock_{$task_id}_{$rand}' class='fa{$fa_icon}' style='color:{$timercolor}; padding:3px; vertical-align:middle;'></i><span id='actualtime_timer_{$task_id}_box_{$rand}' style='color:{$timercolor}; vertical-align:middle;'></span>");
       if ($time > 0) {
-         actualtime_fillCurrentTime($task_id, $time);
+         window.actualTime.fillCurrentTime($task_id, $time);
       }
    }
 });

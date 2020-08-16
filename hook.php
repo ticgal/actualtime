@@ -9,7 +9,7 @@ function plugin_actualtime_install() {
    $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
    // Parse inc directory
-   foreach (glob(dirname(__FILE__).'/inc/*') as $filepath) {
+   foreach (glob(__DIR__ .'/inc/*') as $filepath) {
       // Load *.class.php files and get the class name
       if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
          $classname = 'PluginActualtime' . ucfirst($matches[1]);
@@ -74,7 +74,7 @@ function plugin_actualtime_uninstall() {
    $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
    // Parse inc directory
-   foreach (glob(dirname(__FILE__).'/inc/*') as $filepath) {
+   foreach (glob(__DIR__ .'/inc/*') as $filepath) {
       // Load *.class.php files and get the class name
       if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
          $classname = 'PluginActualtime' . ucfirst($matches[1]);
