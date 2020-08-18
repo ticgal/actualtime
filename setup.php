@@ -1,5 +1,7 @@
 <?php
+
 define ('PLUGIN_ACTUALTIME_VERSION', '1.4.0');
+
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "9.5.0");
 // Maximum GLPI version, exclusive
