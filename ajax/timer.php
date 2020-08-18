@@ -50,7 +50,7 @@ if (isset($_POST["action"])) {
                // action=start, timer=off, current user is alerady using timer
                $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
                $result=[
-                  'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
+                  'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='window.actualTime.showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
                   'title'   => __('Warning'),
                   'class'   => 'warn_msg',
                ];
@@ -221,7 +221,7 @@ if (isset($_POST["action"])) {
    $config = new PluginActualtimeConfig;
    if ($config->showTimerPopup()) {
       // popup_div exists only if settings allow display pop-up timer
-      $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " %t</a> -> <span></span></div>";
+      $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='window.actualTime.showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " %t</a> -> <span></span></div>";
       $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
       if ($task_id) {
          // Only if timer is active
@@ -247,7 +247,8 @@ if (isset($_POST["action"])) {
       $options['parent'] = getItemForItemtype("Ticket");
       $options['parent']->getFromDB(PluginActualtimeTask::getTicket(Session::getLoginUserID()));
       echo "<div class='center'>";
-      echo "<a href='".$options['parent']->getFormURLWithID(PluginActualtimeTask::getTicket(Session::getLoginUserID()))."'>".__("View this item in his context")."</a>";
+      echo "<a href='".$CFG_GLPI['root_doc']."/index.php?redirect=ticket_".PluginActualtimeTask::getTicket(Session::getLoginUserID())."&noAUTO=1'>".__("View this item in his context")."</a>";
+      echo "<hr>";
       echo "</div>";
       $item = getItemForItemtype("TicketTask");
       $item->showForm($task_id, $options);
