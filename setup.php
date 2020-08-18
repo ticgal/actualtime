@@ -83,10 +83,6 @@ function plugin_init_actualtime() {
          $PLUGIN_HOOKS['post_show_tab']['actualtime'] = ['PluginActualtimeTask', 'postShowTab'];
       }
 
-      if ($config->autoOpenNew()) {
-         // This hook is not needed if not opening new tasks automatically
-         $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
-      }
-
+      $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
    }
 }

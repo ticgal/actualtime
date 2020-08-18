@@ -630,7 +630,7 @@ JAVASCRIPT;
                   // action=start, timer=off, current user is alerady using timer
                   $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
                   $result=[
-                     'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='actualtime_showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
+                     'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='window.actualTime.showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
                      'type'   => WARNING,
                   ];
 
