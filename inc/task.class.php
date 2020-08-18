@@ -683,9 +683,32 @@ JAVASCRIPT;
 
    static function preUpdate(TicketTask $item) {
       global $DB,$CFG_GLPI;
-
       if(array_key_exists('state',$item->input)){
          if ($item->input['state']!=1) {
+            if (self::checkTimerActive($item->input['id'])) {
+               $actual_begin=self::getActualBegin($item->input['id']);
+               $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
+               $DB->update(
+                  'glpi_plugin_actualtime_tasks', [
+                     'actual_end'      => date("Y-m-d H:i:s"),
+                     'actual_actiontime'      => $seconds,
+                  ], [
+                     'tasks_id'=>$item->input['id'],
+                     [
+                        'NOT' => ['actual_begin' => null],
+                     ],
+                     'actual_end'=>null,
+                  ]
+               );
+               $config = new PluginActualtimeConfig;
+               if ($config->autoUpdateDuration()) {
+                  $item->input['actiontime']=ceil(self::totalEndTime($item->input['id'])/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+               }
+            }
+         }
+      }
+      if (array_key_exists('users_id_tech',$item->input)){
+         if ($item->input['users_id_tech']!=$item->fields['users_id_tech']) {
             if (self::checkTimerActive($item->input['id'])) {
                $actual_begin=self::getActualBegin($item->input['id']);
                $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
