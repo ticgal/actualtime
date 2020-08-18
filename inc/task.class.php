@@ -146,7 +146,6 @@ class PluginActualtimeTask extends CommonDBTM{
                $html = '';
                $script = <<<JAVASCRIPT
 $(document).ready(function() {
-
 JAVASCRIPT;
 
                // Only task user
@@ -197,18 +196,18 @@ JAVASCRIPT;
                   // Objects of the same task have the same id beginning
                   // as they all should be changed on actions in case multiple
                   // windows of the same task is opened (list of tasks + modal)
-                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' class='x-button x-button-main' style='background-color:$color1;color:white' $disabled1></div>";
-                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' class='x-button x-button-main' style='background-color:$color2;color:white' $disabled2></div>";
+                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' class='x-button x-button-main' style='background-color:$color1;color:white' $disabled1 data-track-changes=''></div>";
+                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' class='x-button x-button-main' style='background-color:$color2;color:white' $disabled2 data-track-changes=''></div>";
                   $html .= "</td></tr>";
 
                   // Only task user have buttons
                   $script .= <<<JAVASCRIPT
    $("#actualtime_button_{$task_id}_1_{$rand}").click(function(event) {
-      actualtime_pressedButton($task_id, $(this).attr('action'));
+      window.actualTime.pressedButton($task_id, $(this).attr('action'));
    });
 
    $("#actualtime_button_{$task_id}_2_{$rand}").click(function(event) {
-      actualtime_pressedButton($task_id, $(this).attr('action'));
+      window.actualTime.pressedButton($task_id, $(this).attr('action'));
    });
 
 JAVASCRIPT;
@@ -234,13 +233,24 @@ JAVASCRIPT;
                   // Finally, fill the actual total time in all timers
                   $script .= <<<JAVASCRIPT
 
-   actualtime_fillCurrentTime($task_id, $time);
+   window.actualTime.fillCurrentTime($task_id, $time);
 
 });
 JAVASCRIPT;
                   echo Html::scriptBlock($script);
 
                }
+            }else{
+               //echo Html::scriptBlock('');
+               $div= "<div id='actualtime_autostart' class='fa-label'><i class='fas fa-stopwatch fa-fw' title='".__('Autostart')."'></i><span class='switch pager_controls'><label for='autostart' title='".__('Autostart')."'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1'><span class='lever'></span></label></span></div>";
+               $script=<<<JAVASCRIPT
+               $(document).ready(function() {
+                  if($("#actualtime_autostart").length==0){
+                     $("div.ajax_box #mainformtable tr.tab_bg_1 td").last().append("{$div}");
+                  }
+               });
+JAVASCRIPT;
+               echo Html::scriptBlock($script);
             }
             break;
       }
@@ -579,24 +589,126 @@ JAVASCRIPT;
    static function afterAdd(TicketTask $item) {
       global $DB;
       $config = new PluginActualtimeConfig;
-      if ($config->autoOpenNew()) {
-         if ($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']) {
-            // Empty record means just added task (for postShowItem)
-            $DB->insert(
-               'glpi_plugin_actualtime_tasks', [
-                  'tasks_id' => $item->fields['id'],
-                  'users_id' => Session::getLoginUserID(),
-               ]
+      $plugin=new Plugin();
+      if($item->input['autostart']){
+         if($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']){
+            $task_id=$item->fields['id'];
+            if ($plugin->isActivated('tam')) {
+               if(PluginTamLeave::checkLeave(Session::getLoginUserID())){
+                  $result['mensage']=__("Today is marked as absence you can not initialize the timer",'tam');
+                  Session::addMessageAfterRedirect(
+                     __("Today is marked as absence you can not initialize the timer",'tam'),
+                     true,
+                     WARNING
+                  );
+                  return;
+               }else{
+                  $timer_id=PluginTamTam::checkWorking(Session::getLoginUserID());
+                  if ($timer_id==0) {
+                     Session::addMessageAfterRedirect(
+                        "<a href='".$CFG_GLPI['root_doc']."/front/preference.php?forcetab=PluginTamTam$1'>" .__("Timer has not been initialized", 'tam')."</a>",
+                        true,
+                        WARNING
+                     );
+                     return;
+                  }
+               }
+            }
+            if (PluginActualtimeTask::checkTimerActive($task_id)) {
+
+               // action=start, timer=on
+               $result=[
+                  'mensage' => __("A user is already performing the task", 'actualtime'),
+                  'type'   => WARNING,
+               ];
+
+            } else {
+
+               // action=start, timer=off
+               if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
+
+                  // action=start, timer=off, current user is alerady using timer
+                  $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
+                  $result=[
+                     'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='window.actualTime.showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
+                     'type'   => WARNING,
+                  ];
+
+               } else {
+
+                  // action=start, timer=off, current user is free
+                  $DB->insert(
+                     'glpi_plugin_actualtime_tasks', [
+                        'tasks_id'     => $task_id,
+                        'actual_begin' => date("Y-m-d H:i:s"),
+                        'users_id'     => Session::getLoginUserID(),
+                        'origin_start' => PluginActualtimetask::WEB,
+                     ]
+                  );
+                  $result=[
+                     'mensage'   => __("Timer started", 'actualtime'),
+                     'title'     => __('Information'),
+                     'class'     => 'info_msg',
+                     'ticket_id' => PluginActualtimetask::getTicket(Session::getLoginUserID()),
+                     'time'      => abs(PluginActualtimeTask::totalEndTime($task_id)),
+                     'type'      => INFO
+                  ];
+
+                  if ($plugin->isActivated('gappextended')) {
+                     PluginGappextendedPush::sendActualtime(PluginActualtimetask::getTicket(Session::getLoginUserID()),$task_id,$result,Session::getLoginUserID(),true);
+                  }
+
+               }
+            }
+            Session::addMessageAfterRedirect(
+               $result['mensage'],
+               true,
+               $result['type']
             );
+         }
+      }else{
+         if ($config->autoOpenNew()) {
+            if ($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']) {
+               // Empty record means just added task (for postShowItem)
+               $DB->insert(
+                  'glpi_plugin_actualtime_tasks', [
+                     'tasks_id' => $item->fields['id'],
+                     'users_id' => Session::getLoginUserID(),
+                  ]
+               );
+            }
          }
       }
    }
 
    static function preUpdate(TicketTask $item) {
       global $DB,$CFG_GLPI;
-
       if(array_key_exists('state',$item->input)){
          if ($item->input['state']!=1) {
+            if (self::checkTimerActive($item->input['id'])) {
+               $actual_begin=self::getActualBegin($item->input['id']);
+               $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
+               $DB->update(
+                  'glpi_plugin_actualtime_tasks', [
+                     'actual_end'      => date("Y-m-d H:i:s"),
+                     'actual_actiontime'      => $seconds,
+                  ], [
+                     'tasks_id'=>$item->input['id'],
+                     [
+                        'NOT' => ['actual_begin' => null],
+                     ],
+                     'actual_end'=>null,
+                  ]
+               );
+               $config = new PluginActualtimeConfig;
+               if ($config->autoUpdateDuration()) {
+                  $item->input['actiontime']=ceil(self::totalEndTime($item->input['id'])/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+               }
+            }
+         }
+      }
+      if (array_key_exists('users_id_tech',$item->input)){
+         if ($item->input['users_id_tech']!=$item->fields['users_id_tech']) {
             if (self::checkTimerActive($item->input['id'])) {
                $actual_begin=self::getActualBegin($item->input['id']);
                $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
@@ -625,7 +737,7 @@ JAVASCRIPT;
       if ($ticket_id = PluginActualtimetask::getTicket(Session::getLoginUserID())) {
          $script=<<<JAVASCRIPT
 $(document).ready(function(){
-   actualtime_showTimerPopup($ticket_id);
+   window.actualTime.showTimerPopup($ticket_id);
 });
 JAVASCRIPT;
          echo Html::scriptBlock($script);
@@ -668,7 +780,7 @@ $(document).ready(function() {
       $("#actualtime_anchor_{$task_id}_{$rand}").prev().find("span.state")
          .after("<i id='actualtime_faclock_{$task_id}_{$rand}' class='fa{$fa_icon}' style='color:{$timercolor}; padding:3px; vertical-align:middle;'></i><span id='actualtime_timer_{$task_id}_box_{$rand}' style='color:{$timercolor}; vertical-align:middle;'></span>");
       if ($time > 0) {
-         actualtime_fillCurrentTime($task_id, $time);
+         window.actualTime.fillCurrentTime($task_id, $time);
       }
    }
 });

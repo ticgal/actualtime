@@ -1,5 +1,7 @@
 <?php
 
+use Glpi\Api\API;
+
 class PluginActualtimeApirest extends API {
 	protected $request_uri;
 	protected $url_elements;

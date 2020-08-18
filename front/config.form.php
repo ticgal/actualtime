@@ -2,6 +2,7 @@
 
 include('../../../inc/includes.php');
 
+global $CFG_GLPI;
 // Check if plugin is activated...
 $plugin = new Plugin();
 if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) {
