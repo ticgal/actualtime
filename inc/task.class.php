@@ -241,6 +241,17 @@ JAVASCRIPT;
                   echo Html::scriptBlock($script);
 
                }
+            }else{
+               //echo Html::scriptBlock('');
+               $div= "<div id='actualtime_autostart' class='fa-label'><i class='fas fa-stopwatch fa-fw' title='".__('Autostart')."'></i><span class='switch pager_controls'><label for='autostart' title='".__('Autostart')."'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1'><span class='lever'></span></label></span></div>";
+               $script=<<<JAVASCRIPT
+               $(document).ready(function() {
+                  if($("#actualtime_autostart").length==0){
+                     $("div.ajax_box #mainformtable tr.tab_bg_1 td").last().append("{$div}");
+                  }
+               });
+JAVASCRIPT;
+               echo Html::scriptBlock($script);
             }
             break;
       }
@@ -579,15 +590,94 @@ JAVASCRIPT;
    static function afterAdd(TicketTask $item) {
       global $DB;
       $config = new PluginActualtimeConfig;
-      if ($config->autoOpenNew()) {
-         if ($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']) {
-            // Empty record means just added task (for postShowItem)
-            $DB->insert(
-               'glpi_plugin_actualtime_tasks', [
-                  'tasks_id' => $item->fields['id'],
-                  'users_id' => Session::getLoginUserID(),
-               ]
+      $plugin=new Plugin();
+      if($item->input['autostart']){
+         if($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']){
+            $task_id=$item->fields['id'];
+            if ($plugin->isActivated('tam')) {
+               if(PluginTamLeave::checkLeave(Session::getLoginUserID())){
+                  $result['mensage']=__("Today is marked as absence you can not initialize the timer",'tam');
+                  Session::addMessageAfterRedirect(
+                     __("Today is marked as absence you can not initialize the timer",'tam'),
+                     true,
+                     WARNING
+                  );
+                  return;
+               }else{
+                  $timer_id=PluginTamTam::checkWorking(Session::getLoginUserID());
+                  if ($timer_id==0) {
+                     Session::addMessageAfterRedirect(
+                        "<a href='".$CFG_GLPI['root_doc']."/front/preference.php?forcetab=PluginTamTam$1'>" .__("Timer has not been initialized", 'tam')."</a>",
+                        true,
+                        WARNING
+                     );
+                     return;
+                  }
+               }
+            }
+            if (PluginActualtimeTask::checkTimerActive($task_id)) {
+
+               // action=start, timer=on
+               $result=[
+                  'mensage' => __("A user is already performing the task", 'actualtime'),
+                  'type'   => WARNING,
+               ];
+
+            } else {
+
+               // action=start, timer=off
+               if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
+
+                  // action=start, timer=off, current user is alerady using timer
+                  $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
+                  $result=[
+                     'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='actualtime_showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
+                     'type'   => WARNING,
+                  ];
+
+               } else {
+
+                  // action=start, timer=off, current user is free
+                  $DB->insert(
+                     'glpi_plugin_actualtime_tasks', [
+                        'tasks_id'     => $task_id,
+                        'actual_begin' => date("Y-m-d H:i:s"),
+                        'users_id'     => Session::getLoginUserID(),
+                        'origin_start' => PluginActualtimetask::WEB,
+                     ]
+                  );
+                  $result=[
+                     'mensage'   => __("Timer started", 'actualtime'),
+                     'title'     => __('Information'),
+                     'class'     => 'info_msg',
+                     'ticket_id' => PluginActualtimetask::getTicket(Session::getLoginUserID()),
+                     'time'      => abs(PluginActualtimeTask::totalEndTime($task_id)),
+                     'type'      => INFO
+                  ];
+
+                  if ($plugin->isActivated('gappextended')) {
+                     PluginGappextendedPush::sendActualtime(PluginActualtimetask::getTicket(Session::getLoginUserID()),$task_id,$result,Session::getLoginUserID(),true);
+                  }
+
+               }
+            }
+            Session::addMessageAfterRedirect(
+               $result['mensage'],
+               true,
+               $result['type']
             );
+         }
+      }else{
+         if ($config->autoOpenNew()) {
+            if ($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']) {
+               // Empty record means just added task (for postShowItem)
+               $DB->insert(
+                  'glpi_plugin_actualtime_tasks', [
+                     'tasks_id' => $item->fields['id'],
+                     'users_id' => Session::getLoginUserID(),
+                  ]
+               );
+            }
          }
       }
    }
