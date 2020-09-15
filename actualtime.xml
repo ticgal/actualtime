@@ -60,13 +60,13 @@
    <license>AGPL v3+</license>
    <tags>
       	<en>
-		<tag>Ticket</tag>
-    		<tag>Task</tag>
-		<tag>Statistics</tag>
+		<tag>ticket</tag>
+    		<tag>task</tag>
+		<tag>statistics</tag>
 	</en>
 	<es>
-		<tag>Peticiones</tag>
-    		<tag>Tareas</tag>
+		<tag>peticiones</tag>
+    		<tag>tareas</tag>
 	</es>
    </tags>
    <screenshots>
