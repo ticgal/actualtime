@@ -86,5 +86,7 @@ function plugin_init_actualtime() {
       }
 
       $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
+
+      $PLUGIN_HOOKS['menu_toadd']['actualtime']=['admin'=>'PluginActualtimeRunning'];
    }
 }
