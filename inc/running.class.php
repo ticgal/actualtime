@@ -19,14 +19,30 @@ class PluginActualtimeRunning extends CommonGLPI {
 	static public function show(){
 		global $DB;
 
+		$rand=mt_rand();
 		echo "<div class='center'>";
 		echo "<h1>".__("Running timers","actualtime")." <i id='refresh' class='fa fa-sync pointer' ></i></h1>";
 		echo "</div>";
+
+		echo "<div class='center'>";
+		echo "<table class='tab_cadre_fixehov'>";
+		echo "<tr>";
+		echo "<td class='center'><span>".__("Update every (s)","actualtime")." </span>";
+		Dropdown::showNumber('interval',['value'=>5,'min'=>5,'max'=>MINUTE_TIMESTAMP,'step'=>10,'rand'=>$rand]);
+		echo "</td>";
+		echo "<td><span>".__("Disable")." </span>";
+		Dropdown::showYesNo('disable',0,-1,['use_checkbox'=>true,'rand'=>$rand]);
+		echo "</td>";
+		echo "</tr>";
+		echo "</table>";
+		echo "</div>";
+
 		echo "<div id='running'>";
 		echo "<div>";
 		$script=<<<JAVASCRIPT
 		$(document).ready(function() {
-			setInterval(loadRunning,5000);
+			var loading=setInterval(loadRunning,5000);
+			var interval=5000;
 
 			function loadRunning(){
 				$.ajax({
@@ -43,6 +59,19 @@ class PluginActualtimeRunning extends CommonGLPI {
 			loadRunning();
 			$('#refresh').click(function(){
 				loadRunning();
+			});
+
+			$('#dropdown_interval{$rand}').on('change',function(){
+				clearInterval(loading);
+				interval=(this.value*1000);
+				loading=setInterval(loadRunning,(this.value*1000));
+			});
+			$('#dropdown_disable{$rand}').change(function(){
+				if (this.checked) {
+					clearInterval(loading);
+				} else {
+					loading=setInterval(loadRunning,interval);
+				}
 			});
 		});
 JAVASCRIPT;
@@ -66,7 +95,7 @@ JAVASCRIPT;
 			$html.= "<tr>";
 			$html.= "<th class='center'>".__("Technician")."</th>";
 			$html.= "<th class='center'>".__("Entity")."</th>";
-			$html.= "<th class='center'>".__("Ticket")."-".__("Task")."</th>";
+			$html.= "<th class='center'>".__("Ticket")." - ".__("Task")."</th>";
 			$html.= "<th class='center'>".__("Time")."</th>";
 			$html.= "</tr>";
 
