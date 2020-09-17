@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-18 13:30+0200\n"
-"PO-Revision-Date: 2020-07-10 12:12+0200\n"
+"POT-Creation-Date: 2020-09-17 17:20+0200\n"
+"PO-Revision-Date: 2020-09-17 17:23+0200\n"
 "Last-Translator: Óscar Beiro <oscar@ticgal.com>\n"
 "Language-Team: \n"
 "Language: gl_ES\n"
@@ -135,6 +135,19 @@ msgstr "Actualizar a duración automaticamente"
 #: inc/config.class.php:121
 msgid "Actual time"
 msgstr "Tempo real"
+
+#: inc/running.class.php:6
+#, fuzzy
+msgid "Actualtime"
+msgstr "Tempo real"
+
+#: inc/running.class.php:24
+msgid "Running timers"
+msgstr "Temporizadores funcionando"
+
+#: inc/running.class.php:29
+msgid "Update every (s)"
+msgstr "Actualizar cada (s)"
 
 #: inc/task.class.php:18
 msgid "ActualTime"

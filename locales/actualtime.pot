@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-18 13:30+0200\n"
+"POT-Creation-Date: 2020-09-17 17:20+0200\n"
 "PO-Revision-Date: 2020-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,6 +133,18 @@ msgstr ""
 
 #: inc/config.class.php:121
 msgid "Actual time"
+msgstr ""
+
+#: inc/running.class.php:6
+msgid "Actualtime"
+msgstr ""
+
+#: inc/running.class.php:24
+msgid "Running timers"
+msgstr ""
+
+#: inc/running.class.php:29
+msgid "Update every (s)"
 msgstr ""
 
 #: inc/task.class.php:18
