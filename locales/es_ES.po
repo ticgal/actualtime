@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-09-17 17:20+0200\n"
-"PO-Revision-Date: 2020-09-17 17:29+0200\n"
+"PO-Revision-Date: 2020-10-05 09:29+0200\n"
 "Last-Translator: Óscar Beiro <oscar@ticgal.com>\n"
 "Language-Team: \n"
 "Language: es_ES\n"
@@ -86,7 +86,7 @@ msgstr "Reiniciar"
 
 #: ajax/timer.php:224
 msgid "Timer started on"
-msgstr "Temporizador iniciado a las"
+msgstr "Temporizador iniciado en"
 
 #: inc/apirest.class.php:14
 msgid "ActualTime rest API"
