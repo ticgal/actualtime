@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-08-18 13:30+0200\n"
-"PO-Revision-Date: 2020-07-10 12:09+0200\n"
+"POT-Creation-Date: 2020-09-17 17:20+0200\n"
+"PO-Revision-Date: 2020-09-17 17:22+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_GB\n"
@@ -135,6 +135,19 @@ msgstr "Automatically update the duration"
 #: inc/config.class.php:121
 msgid "Actual time"
 msgstr "Actual time"
+
+#: inc/running.class.php:6
+#, fuzzy
+msgid "Actualtime"
+msgstr "Actual time"
+
+#: inc/running.class.php:24
+msgid "Running timers"
+msgstr "Running timers"
+
+#: inc/running.class.php:29
+msgid "Update every (s)"
+msgstr "Update every (s)"
 
 #: inc/task.class.php:18
 msgid "ActualTime"

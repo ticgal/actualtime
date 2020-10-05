@@ -1,6 +1,6 @@
 <?php
 
-define ('PLUGIN_ACTUALTIME_VERSION', '1.4.0');
+define ('PLUGIN_ACTUALTIME_VERSION', '1.5.0');
 
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "9.5.0");
@@ -86,5 +86,7 @@ function plugin_init_actualtime() {
       }
 
       $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
+
+      $PLUGIN_HOOKS['menu_toadd']['actualtime']=['admin'=>'PluginActualtimeRunning'];
    }
 }
