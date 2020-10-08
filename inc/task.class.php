@@ -864,8 +864,8 @@ JAVASCRIPT;
          $query = "CREATE TABLE IF NOT EXISTS $table (
             `id` int(11) NOT NULL auto_increment,
             `tasks_id` int(11) NOT NULL,
-            `actual_begin` datetime DEFAULT NULL,
-            `actual_end` datetime DEFAULT NULL,
+            `actual_begin` TIMESTAMP NULL DEFAULT NULL,
+            `actual_end` TIMESTAMP NULL DEFAULT NULL,
             `users_id` int(11) NOT NULL,
             `actual_actiontime` int(11) NOT NULL DEFAULT 0,
             `origin_start` INT(11) NOT NULL,
@@ -891,6 +891,10 @@ JAVASCRIPT;
          $migration->addField($table,'origin_end',"INT(11) NOT NULL");
          $migration->addField($table,'latitude_end',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
          $migration->addField($table,'longitude_end',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
+         
+         $migration->changeField($table,'actual_begin','actual_begin','TIMESTAMP NULL DEFAULT NULL');
+         $migration->changeField($table,'actual_end','actual_end','TIMESTAMP NULL DEFAULT NULL');
+         
          $migration->migrationOneTable($table);
       }
    }
