@@ -410,8 +410,11 @@ JAVASCRIPT;
          ]
       ];
       $req=$DB->request($query);
-      $row=$req->next();
-      return $row['tasks_id'];
+      if($row=$req->next()){
+         return $row['tasks_id'];
+      }else{
+         return 0;
+      }
    }
 
    static function getActualBegin($task_id) {
