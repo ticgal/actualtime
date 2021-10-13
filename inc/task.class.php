@@ -780,7 +780,7 @@ JAVASCRIPT;
                $script = <<<JAVASCRIPT
 $(document).ready(function() {
    if ($("[id^='actualtime_faclock_{$task_id}_']").length == 0) {
-      $("#actualtime_anchor_{$task_id}_{$rand}").prev().find("span.state")
+      $("#viewitemtickettask{$task_id} div.displayed_content div.item_content p span.state")
          .after("<i id='actualtime_faclock_{$task_id}_{$rand}' class='fa{$fa_icon}' style='color:{$timercolor}; padding:3px; vertical-align:middle;'></i><span id='actualtime_timer_{$task_id}_box_{$rand}' style='color:{$timercolor}; vertical-align:middle;'></span>");
       if ($time > 0) {
          window.actualTime.fillCurrentTime($task_id, $time);
