@@ -592,8 +592,8 @@ JAVASCRIPT;
    static function afterAdd(TicketTask $item) {
       global $DB;
       $config = new PluginActualtimeConfig;
-      $plugin=new Plugin();
-      if($item->input['autostart']){
+      $plugin = new Plugin();
+      if(isset($item->input['autostart']) && $item->input['autostart']) {
          if($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']){
             $task_id=$item->fields['id'];
             if ($plugin->isActivated('tam')) {
