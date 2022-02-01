@@ -1,0 +1,25 @@
+{
+ 
+  "upload": {
+    "type": "pot",
+    "deprecate": "project",
+    "files": [
+      {
+        "pattern": "actualtime.pot",
+        "lang": "en_GB"
+      },
+      {
+        "group": "existing",
+        "file": "actualtime.pot",
+        "pattern": "./*.po",
+        "type": "po",
+        "lang": "${autodetectLang}"
+      }
+    ]
+  },
+ 
+  "download": {
+    "files": "${languageCode}_${regionCode}.po",
+    "includeSourceLang": true
+  }
+}
