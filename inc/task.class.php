@@ -885,6 +885,87 @@ JAVASCRIPT;
       }
    }
 
+   static function populatePlanning($options = []) {
+      global $DB, $CFG_GLPI;
+
+      $default_options = [
+         'color' => '',
+         'event_type_color' => '',
+         'check_planned' => false,
+         'display_done_events' => true,
+      ];
+
+      $options = array_merge($default_options, $options);
+      $interv = [];
+
+      if (!isset($options['begin']) || ($options['begin'] == 'NULL') || !isset($options['end']) || ($options['end'] == 'NULL')) {
+         return $interv;
+      }
+      if (!$options['display_done_events']) {
+         return $interv;
+      }
+
+      $who      = $options['who'];
+      $whogroup = $options['whogroup'];
+      $begin    = $options['begin'];
+      $end      = $options['end'];
+
+      $ASSIGN = "";
+
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
+            'actual_begin' => ['<=', $end],
+            'actual_end' => ['>=', $begin]
+         ],
+         'ORDER' => [
+            'actual_begin ASC']
+      ];
+
+      if ($whogroup === "mine") {
+         if (isset($_SESSION['glpigroups'])) {
+            $whogroup = $_SESSION['glpigroups'];
+         } elseif ($who > 0) {
+            $whogroup = array_column(Group_User::getUserGroups($who), 'id');
+         }
+      }
+      if ($who > 0) {
+         $query['WHERE'][] = ["users_id" => $who];
+      }
+      if ($whogroup > 0) {
+         $query['WHERE'][] = ["groups_id" => $whogroup];
+      }
+
+      foreach ($DB->request($query) as $id => $row) {
+         $key = $row["actual_begin"] . "$$" . "PluginActualtimeTask" . $row["id"];
+         $interv[$key]['color']            = $options['color'];
+         $interv[$key]['event_type_color'] = $options['event_type_color'];
+         $interv[$key]['itemtype']         = self::getType();
+         $interv[$key]['id']               = $row['id'];
+         $interv[$key]["users_id"]         = $row["users_id"];
+         $interv[$key]["name"]             = self::getTypeName();
+         $interv[$key]["content"]          = Html::timestampToString($row['actual_actiontime']);
+
+         $interv[$key]["begin"] = $row['actual_begin'];
+         $interv[$key]["end"] = $row['actual_end'];
+
+         $interv[$key]["editable"] = false;
+      }
+
+      return $interv;
+   }
+
+   static function displayPlanningItem(array $val, $who, $type = "", $complete = 0) {
+
+      $html = "<strong>".$val["name"]."</strong>";
+      $html .= "<br><strong>".sprintf(__('By %s'), getUserName($val["users_id"]))."</strong>";
+      $html .= "<br><strong>".__('Start date')."</strong> : ".Html::convdatetime($val["begin"]);
+      $html .= "<br><strong>".__('End date')."</strong> : ".Html::convdatetime($val["end"]);
+      $html .= "<br><strong>".__('Total duration')."</strong> : ".$val["content"];
+
+      return $html;
+   }
+
    static function install(Migration $migration) {
       global $DB;
 
