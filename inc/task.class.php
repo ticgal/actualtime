@@ -801,7 +801,7 @@ JAVASCRIPT;
             ) {
 
                $time = self::totalEndTime($task_id);
-               $fa_icon = ($time > 0 ? ' fa-clock-o' : '');
+               $fa_icon = ($time > 0 ? ' fa-clock' : '');
                $timercolor = (self::checkTimerActive($task_id) ? 'red' : 'black');
                // Anchor to find correct span, even when user has no update
                // right on status checkbox

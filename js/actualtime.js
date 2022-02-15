@@ -150,7 +150,7 @@ window.actualTime = new function() {
                   $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_pause).attr('action', 'pause').css('background-color', 'orange').prop('disabled', false);
                   $("[id^='actualtime_button_" + task + "_2_']").attr('action', 'end').css('background-color', 'red').prop('disabled', false);
                   window.actualTime.showTimerPopup(result['ticket_id']);
-                  $("[id^='actualtime_faclock_" + task + "_']").addClass('fa-clock-o').css('color', 'red');
+                  $("[id^='actualtime_faclock_" + task + "_']").addClass('fa-clock').css('color', 'red');
                   return;
                } else if ((val == 'end') || (val == 'pause')) {
                   window.actualTime.endCount();
