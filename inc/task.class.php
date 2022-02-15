@@ -889,9 +889,9 @@ JAVASCRIPT;
       global $DB, $CFG_GLPI;
 
       $default_options = [
+         'genical' => false,
          'color' => '',
          'event_type_color' => '',
-         'check_planned' => false,
          'display_done_events' => true,
       ];
 
@@ -946,10 +946,26 @@ JAVASCRIPT;
          $interv[$key]["name"]             = self::getTypeName();
          $interv[$key]["content"]          = Html::timestampToString($row['actual_actiontime']);
 
+         $task = new TicketTask();
+         $task->getFromDB($row['tasks_id']);
+         $url_id = $task->fields['tickets_id'];
+         if (!$options['genical']) {
+            $interv[$key]["url"] = Ticket::getFormURLWithID($url_id);
+         } else {
+            $interv[$key]["url"] = $CFG_GLPI["url_base"].Ticket::getFormURLWithID($url_id, false);
+         }
+         $interv[$key]["ajaxurl"] = $CFG_GLPI["root_doc"]."/ajax/planning.php".
+                                    "?action=edit_event_form".
+                                    "&itemtype=".$task->getType().
+                                    "&parentitemtype=".Ticket::getType().
+                                    "&parentid=".$task->fields['tickets_id'].
+                                    "&id=".$row['tasks_id'].
+                                    "&url=".$interv[$key]["url"];
+
          $interv[$key]["begin"] = $row['actual_begin'];
          $interv[$key]["end"] = $row['actual_end'];
 
-         $interv[$key]["editable"] = false;
+         $interv[$key]["editable"] = $task->canUpdateITILItem();
       }
 
       return $interv;
