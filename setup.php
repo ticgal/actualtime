@@ -118,5 +118,7 @@ function plugin_init_actualtime() {
       $PLUGIN_HOOKS['menu_toadd']['actualtime']=['admin'=>'PluginActualtimeRunning'];
 
       Plugin::registerClass('PluginActualtimeTask', ['planning_types' => true]);
+
+      $PLUGIN_HOOKS['dashboard_cards']['actualtime'] = ['PluginActualtimeDashboard', 'dashboardCards'];
    }
 }
