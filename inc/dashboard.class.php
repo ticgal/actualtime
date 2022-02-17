@@ -40,6 +40,7 @@ class PluginActualtimeDashboard extends CommonDBTM {
 			'widgettype' => ['bars', 'lines'],
 			'label' => __('(Top 20 users) % Actualtime usage per day','actualtime'),
 			'group' => 'Actualtime',
+			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::moreActualtimeTasksByDay'
 		];
 
@@ -47,6 +48,7 @@ class PluginActualtimeDashboard extends CommonDBTM {
 			'widgettype' => ['bars', 'lines'],
 			'label' => __('(Low 20 users) % Actualtime usage per day','actualtime'),
 			'group' => 'Actualtime',
+			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessActualtimeTasksByDay'
 		];
 

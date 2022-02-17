@@ -41,6 +41,16 @@ class PluginActualtimeProvider extends CommonDBTM {
 			'series' => []
 		];
 
+		$year   = date("Y") - 15;
+		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+		$end    = date("Y-m-d");
+
+		if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+			$begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+			$end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+			unset($params['apply_filters']['dates']);
+		}
+
 		$task_table = TicketTask::getTable();
 		$actualtime_table = PluginActualtimeTask::getTable();
 		$table = Ticket::getTable();
@@ -66,7 +76,9 @@ class PluginActualtimeProvider extends CommonDBTM {
 				]
 			],
 			'WHERE' => [
-				$task_table.'.state' => 2
+				$task_table.'.state' => 2,
+				$task_table.'.begin' => ['>=', $begin],
+				$task_table.'.end' => ['<=', $end],
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task DESC"],
 			'GROUP' => ['users_id_tech'],
@@ -104,6 +116,8 @@ class PluginActualtimeProvider extends CommonDBTM {
 				],
 				'WHERE' => [
 					$task_table.'.state' => 2,
+					$task_table.'.begin' => ['>=', $begin],
+					$task_table.'.end' => ['<=', $end],
 					$task_table.".users_id_tech" => $techs_id,
 				] + getEntitiesRestrictCriteria($table),
 				'ORDER' => ['period DESC', "nb_task DESC"],
@@ -142,22 +156,6 @@ class PluginActualtimeProvider extends CommonDBTM {
 							$task_table.".date" => ['LIKE', $period.'%']
 						] + getEntitiesRestrictCriteria($table),
 					];
-					$s_criteria = [
-						'criteria' => [
-							[
-								'link'       => 'AND',
-								'field'      => 94, // writer
-								'searchtype' => 'contains',
-								'value'      => $key
-							], [
-								'link'       => 'AND',
-								'field'      => 97, // date
-								'searchtype' => 'contains',
-								'value'      => $period
-							]
-						],
-						'reset' => 'reset'
-					];
 					$total = 0;
 					$req = $DB->request($sqltotal);
 					if ($row = $req->next()) {
@@ -166,12 +164,10 @@ class PluginActualtimeProvider extends CommonDBTM {
 					if (array_key_exists($period, $value)) {
 						$aux['data'][] = [
 							'value' => round(($value[$period]/$total)*100, 2),
-							'url' => Ticket::getSearchURL()."?".Toolbox::append_params($s_criteria)
 						];
 					} else {
 						$aux['data'][] = [
 							'value' => 0,
-							'url' => Ticket::getSearchURL()."?".Toolbox::append_params($s_criteria)
 						];
 					}
 				}
@@ -193,6 +189,16 @@ class PluginActualtimeProvider extends CommonDBTM {
 			'labels' => [],
 			'series' => []
 		];
+
+		$year   = date("Y") - 15;
+		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+		$end    = date("Y-m-d");
+
+		if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+			$begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+			$end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+			unset($params['apply_filters']['dates']);
+		}
 
 		$task_table = TicketTask::getTable();
 		$actualtime_table = PluginActualtimeTask::getTable();
@@ -220,6 +226,8 @@ class PluginActualtimeProvider extends CommonDBTM {
 			],
 			'WHERE' => [
 				$task_table.'.state' => 2,
+				$task_table.'.begin' => ['>=', $begin],
+				$task_table.'.end' => ['<=', $end],
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task ASC"],
 			'GROUP' => ['users_id_tech'],
@@ -255,6 +263,8 @@ class PluginActualtimeProvider extends CommonDBTM {
 				'WHERE' => [
 					$task_table.'.state' => 2,
 					$task_table.".users_id_tech" => $techs_id,
+					$task_table.'.begin' => ['>=', $begin],
+					$task_table.'.end' => ['<=', $end],
 				] + getEntitiesRestrictCriteria($table),
 				'ORDER' => ['period DESC', "nb_task DESC"],
 				'GROUP' => ['period', "tech"],
