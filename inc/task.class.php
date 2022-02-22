@@ -104,6 +104,25 @@ class PluginActualtimeTask extends CommonDBTM{
          'type'=>'diff%'
       ];
 
+      $tab[]=[
+         'id'=>'7003',
+         'table'=>self::getTable(),
+         'field'=>'actual_actiontime',
+         'name'=>__('Task duration'),
+         'datatype' => 'specific',
+         'joinparams'=>[
+            'beforejoin'=>[
+               'table'=>'glpi_tickettasks',
+               'joinparams' => [
+                  'jointype' => 'child'
+               ]
+            ],
+            'jointype' => 'child',
+            'linkfield'=>'tasks_id'
+         ],
+         'type'=>'task'
+      ];
+
       return $tab;
    }
 
@@ -146,6 +165,23 @@ class PluginActualtimeTask extends CommonDBTM{
                   return round($diffpercent, 2)."%";
                   break;
                
+               case 'task':
+                    $query=[
+                       'SELECT'=>[
+                          'actual_actiontime'
+                       ],
+                       'FROM'=>self::getTable(),
+                       'WHERE'=>[
+                          'tasks_id'=>$options['raw_data']['id']
+                       ]
+                    ];
+                    $task_time=0;
+                    foreach ($DB->request($query) as $actiontime) {
+                       $task_time += $actiontime["actual_actiontime"];
+                    }
+                    return HTML::timestampToString($task_time);
+               break;
+                
                default:
                   return HTML::timestampToString($actual_totaltime);
                   break;
