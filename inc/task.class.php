@@ -1,4 +1,33 @@
 <?php
+/*
+ -------------------------------------------------------------------------
+ ActualTime plugin for GLPI
+ Copyright (C) 2018-2022 by the TICgal Team.
+ https://www.tic.gal/
+ -------------------------------------------------------------------------
+ LICENSE
+ This file is part of the ActualTime plugin.
+ ActualTime plugin is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3 of the License, or
+ (at your option) any later version.
+ ActualTime plugin is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ You should have received a copy of the GNU General Public License
+ along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ --------------------------------------------------------------------------
+ @package   ActualTime
+ @author    the TICgal team
+ @copyright Copyright (c) 2018-2022 TICgal team
+ @license   AGPL License 3.0 or (at your option) any later version
+            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ @link      https://www.tic.gal/
+ @since     2018-2022
+ ----------------------------------------------------------------------
+*/
+
 if (!defined('GLPI_ROOT')) {
    die("Sorry. You can't access directly to this file");
 }
@@ -75,6 +104,25 @@ class PluginActualtimeTask extends CommonDBTM{
          'type'=>'diff%'
       ];
 
+      $tab[]=[
+         'id'=>'7003',
+         'table'=>self::getTable(),
+         'field'=>'actual_actiontime',
+         'name'=>__('Task duration'),
+         'datatype' => 'specific',
+         'joinparams'=>[
+            'beforejoin'=>[
+               'table'=>'glpi_tickettasks',
+               'joinparams' => [
+                  'jointype' => 'child'
+               ]
+            ],
+            'jointype' => 'child',
+            'linkfield'=>'tasks_id'
+         ],
+         'type'=>'task'
+      ];
+
       return $tab;
    }
 
@@ -117,6 +165,23 @@ class PluginActualtimeTask extends CommonDBTM{
                   return round($diffpercent, 2)."%";
                   break;
                
+               case 'task':
+                    $query=[
+                       'SELECT'=>[
+                          'actual_actiontime'
+                       ],
+                       'FROM'=>self::getTable(),
+                       'WHERE'=>[
+                          'tasks_id'=>$options['raw_data']['id']
+                       ]
+                    ];
+                    $task_time=0;
+                    foreach ($DB->request($query) as $actiontime) {
+                       $task_time += $actiontime["actual_actiontime"];
+                    }
+                    return HTML::timestampToString($task_time);
+               break;
+                
                default:
                   return HTML::timestampToString($actual_totaltime);
                   break;
@@ -772,7 +837,7 @@ JAVASCRIPT;
             ) {
 
                $time = self::totalEndTime($task_id);
-               $fa_icon = ($time > 0 ? ' fa-clock-o' : '');
+               $fa_icon = ($time > 0 ? ' fa-clock' : '');
                $timercolor = (self::checkTimerActive($task_id) ? 'red' : 'black');
                // Anchor to find correct span, even when user has no update
                // right on status checkbox
@@ -854,6 +919,103 @@ JAVASCRIPT;
             }
             break;
       }
+   }
+
+   static function populatePlanning($options = []) {
+      global $DB, $CFG_GLPI;
+
+      $default_options = [
+         'genical' => false,
+         'color' => '',
+         'event_type_color' => '',
+         'display_done_events' => true,
+      ];
+
+      $options = array_merge($default_options, $options);
+      $interv = [];
+
+      if (!isset($options['begin']) || ($options['begin'] == 'NULL') || !isset($options['end']) || ($options['end'] == 'NULL')) {
+         return $interv;
+      }
+      if (!$options['display_done_events']) {
+         return $interv;
+      }
+
+      $who      = $options['who'];
+      $whogroup = $options['whogroup'];
+      $begin    = $options['begin'];
+      $end      = $options['end'];
+
+      $ASSIGN = "";
+
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
+            'actual_begin' => ['<=', $end],
+            'actual_end' => ['>=', $begin]
+         ],
+         'ORDER' => [
+            'actual_begin ASC']
+      ];
+
+      if ($whogroup === "mine") {
+         if (isset($_SESSION['glpigroups'])) {
+            $whogroup = $_SESSION['glpigroups'];
+         } elseif ($who > 0) {
+            $whogroup = array_column(Group_User::getUserGroups($who), 'id');
+         }
+      }
+      if ($who > 0) {
+         $query['WHERE'][] = ["users_id" => $who];
+      }
+      if ($whogroup > 0) {
+         $query['WHERE'][] = ["groups_id" => $whogroup];
+      }
+
+      foreach ($DB->request($query) as $id => $row) {
+         $key = $row["actual_begin"] . "$$" . "PluginActualtimeTask" . $row["id"];
+         $interv[$key]['color']            = $options['color'];
+         $interv[$key]['event_type_color'] = $options['event_type_color'];
+         $interv[$key]['itemtype']         = self::getType();
+         $interv[$key]['id']               = $row['id'];
+         $interv[$key]["users_id"]         = $row["users_id"];
+         $interv[$key]["name"]             = self::getTypeName();
+         $interv[$key]["content"]          = Html::timestampToString($row['actual_actiontime']);
+
+         $task = new TicketTask();
+         $task->getFromDB($row['tasks_id']);
+         $url_id = $task->fields['tickets_id'];
+         if (!$options['genical']) {
+            $interv[$key]["url"] = Ticket::getFormURLWithID($url_id);
+         } else {
+            $interv[$key]["url"] = $CFG_GLPI["url_base"].Ticket::getFormURLWithID($url_id, false);
+         }
+         $interv[$key]["ajaxurl"] = $CFG_GLPI["root_doc"]."/ajax/planning.php".
+                                    "?action=edit_event_form".
+                                    "&itemtype=".$task->getType().
+                                    "&parentitemtype=".Ticket::getType().
+                                    "&parentid=".$task->fields['tickets_id'].
+                                    "&id=".$row['tasks_id'].
+                                    "&url=".$interv[$key]["url"];
+
+         $interv[$key]["begin"] = $row['actual_begin'];
+         $interv[$key]["end"] = $row['actual_end'];
+
+         $interv[$key]["editable"] = $task->canUpdateITILItem();
+      }
+
+      return $interv;
+   }
+
+   static function displayPlanningItem(array $val, $who, $type = "", $complete = 0) {
+
+      $html = "<strong>".$val["name"]."</strong>";
+      $html .= "<br><strong>".sprintf(__('By %s'), getUserName($val["users_id"]))."</strong>";
+      $html .= "<br><strong>".__('Start date')."</strong> : ".Html::convdatetime($val["begin"]);
+      $html .= "<br><strong>".__('End date')."</strong> : ".Html::convdatetime($val["end"]);
+      $html .= "<br><strong>".__('Total duration')."</strong> : ".$val["content"];
+
+      return $html;
    }
 
    static function install(Migration $migration) {
