@@ -398,7 +398,7 @@ class PluginActualtimeApirest extends API {
 		
 		 $DB->delete(
 			 'glpi_plugin_actualtime_tasks', [
-				 'tasks_id'      => $task_id,
+				 'tickettasks_id'      => $task_id,
 				 'actual_begin' => null,
 				 'actual_end'   => null,
 				 'users_id'     => Session::getLoginUserID(),
@@ -433,7 +433,7 @@ class PluginActualtimeApirest extends API {
 			} else {
 				$DB->insert(
 					'glpi_plugin_actualtime_tasks', [
-						'tasks_id'     => $task_id,
+						'tickettasks_id'     => $task_id,
 						'actual_begin' => date("Y-m-d H:i:s"),
 						'users_id'     => Session::getLoginUserID(),
 						'origin_start' => PluginActualtimetask::ANDROID,
@@ -469,7 +469,7 @@ class PluginActualtimeApirest extends API {
 						/*'latitude_end'=>$params['latitude'],
 						'longitude_end'=>$params['longitude'],*/
 					], [
-						'tasks_id' => $task_id,
+						'tickettasks_id' => $task_id,
 						[
 							'NOT' => ['actual_begin' => null],
 						],
@@ -511,7 +511,7 @@ class PluginActualtimeApirest extends API {
 						/*'latitude_end'=>$params['latitude'],
 						'longitude_end'=>$params['longitude'],*/
 					], [
-						'tasks_id' => $task_id,
+						'tickettasks_id' => $task_id,
 						[
 							'NOT' => ['actual_begin' => null],
 						],

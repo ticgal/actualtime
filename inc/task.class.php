@@ -63,7 +63,6 @@ class PluginActualtimeTask extends CommonDBTM{
                ]
             ],
             'jointype' => 'child',
-            'linkfield'=>'tasks_id'
          ],
          'type'=>'total'
       ];
@@ -81,7 +80,6 @@ class PluginActualtimeTask extends CommonDBTM{
                ]
             ],
             'jointype' => 'child',
-            'linkfield'=>'tasks_id'
          ],
          'type'=>'diff'
       ];
@@ -99,7 +97,6 @@ class PluginActualtimeTask extends CommonDBTM{
                ]
             ],
             'jointype' => 'child',
-            'linkfield'=>'tasks_id'
          ],
          'type'=>'diff%'
       ];
@@ -118,7 +115,6 @@ class PluginActualtimeTask extends CommonDBTM{
                ]
             ],
             'jointype' => 'child',
-            'linkfield'=>'tasks_id'
          ],
          'type'=>'task'
       ];
@@ -172,7 +168,7 @@ class PluginActualtimeTask extends CommonDBTM{
                        ],
                        'FROM'=>self::getTable(),
                        'WHERE'=>[
-                          'tasks_id'=>$options['raw_data']['id']
+                          'tickettasks_id'=>$options['raw_data']['id']
                        ]
                     ];
                     $task_time=0;
@@ -346,7 +342,7 @@ JAVASCRIPT;
       $query=[
          'FROM'=>self::getTable(),
          'WHERE'=>[
-            'tasks_id'=>$task_id,
+            'tickettasks_id'=>$task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
@@ -367,7 +363,7 @@ JAVASCRIPT;
       $query=[
          'FROM'=>self::getTable(),
          'WHERE'=>[
-            'tasks_id'=>$task_id,
+            'tickettasks_id'=>$task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
@@ -385,7 +381,7 @@ JAVASCRIPT;
       $querytime=[
          'FROM'=>self::getTable(),
          'WHERE'=>[
-            'tasks_id'=>$task_id,
+            'tickettasks_id'=>$task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
@@ -407,7 +403,7 @@ JAVASCRIPT;
       $query=[
          'FROM'=>self::getTable(),
          'WHERE'=>[
-            'tasks_id'=>$task_id,
+            'tickettasks_id'=>$task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
@@ -476,7 +472,7 @@ JAVASCRIPT;
       ];
       $req=$DB->request($query);
       if($row=$req->next()){
-         return $row['tasks_id'];
+         return $row['tickettasks_id'];
       }else{
          return 0;
       }
@@ -488,7 +484,7 @@ JAVASCRIPT;
       $query=[
          'FROM'=>self::getTable(),
          'WHERE'=>[
-            'tasks_id'=>$task_id,
+            'tickettasks_id'=>$task_id,
             'actual_end'=>null,
          ]
       ];
@@ -578,7 +574,7 @@ JAVASCRIPT;
                'SELECT'=>['SUM'=>'actual_actiontime AS actual_total'],
                'FROM'=>self::getTable(),
                'WHERE'=>[
-                  'tasks_id'=>$row['task_id'],
+                  'tickettasks_id'=>$row['task_id'],
                ],
             ];
             $req = $DB->request($qtime);
@@ -637,7 +633,7 @@ JAVASCRIPT;
       $query=[
          'FROM'=>self::getTable(),
          'WHERE'=>[
-            'tasks_id'=>$task_id,
+            'tickettasks_id'=>$task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
@@ -707,7 +703,7 @@ JAVASCRIPT;
                   // action=start, timer=off, current user is free
                   $DB->insert(
                      'glpi_plugin_actualtime_tasks', [
-                        'tasks_id'     => $task_id,
+                        'tickettasks_id'     => $task_id,
                         'actual_begin' => date("Y-m-d H:i:s"),
                         'users_id'     => Session::getLoginUserID(),
                         'origin_start' => PluginActualtimetask::WEB,
@@ -740,7 +736,7 @@ JAVASCRIPT;
                // Empty record means just added task (for postShowItem)
                $DB->insert(
                   'glpi_plugin_actualtime_tasks', [
-                     'tasks_id' => $item->fields['id'],
+                     'tickettasks_id' => $item->fields['id'],
                      'users_id' => Session::getLoginUserID(),
                   ]
                );
@@ -761,7 +757,7 @@ JAVASCRIPT;
                      'actual_end'      => date("Y-m-d H:i:s"),
                      'actual_actiontime'      => $seconds,
                   ], [
-                     'tasks_id'=>$item->input['id'],
+                     'tickettasks_id'=>$item->input['id'],
                      [
                         'NOT' => ['actual_begin' => null],
                      ],
@@ -785,7 +781,7 @@ JAVASCRIPT;
                      'actual_end'      => date("Y-m-d H:i:s"),
                      'actual_actiontime'      => $seconds,
                   ], [
-                     'tasks_id'=>$item->input['id'],
+                     'tickettasks_id'=>$item->input['id'],
                      [
                         'NOT' => ['actual_begin' => null],
                      ],
@@ -863,7 +859,7 @@ JAVASCRIPT;
                $query=[
                   'FROM'=>self::getTable(),
                   'WHERE'=>[
-                     'tasks_id'     => $task_id,
+                     'tickettasks_id'     => $task_id,
                      'actual_begin' => null,
                      'actual_end'   => null,
                      'users_id'     => Session::getLoginUserID(),
@@ -983,7 +979,7 @@ JAVASCRIPT;
          $interv[$key]["content"]          = Html::timestampToString($row['actual_actiontime']);
 
          $task = new TicketTask();
-         $task->getFromDB($row['tasks_id']);
+         $task->getFromDB($row['tickettasks_id']);
          $url_id = $task->fields['tickets_id'];
          if (!$options['genical']) {
             $interv[$key]["url"] = Ticket::getFormURLWithID($url_id);
@@ -995,7 +991,7 @@ JAVASCRIPT;
                                     "&itemtype=".$task->getType().
                                     "&parentitemtype=".Ticket::getType().
                                     "&parentid=".$task->fields['tickets_id'].
-                                    "&id=".$row['tasks_id'].
+                                    "&id=".$row['tickettasks_id'].
                                     "&url=".$interv[$key]["url"];
 
          $interv[$key]["begin"] = $row['actual_begin'];
@@ -1021,45 +1017,37 @@ JAVASCRIPT;
    static function install(Migration $migration) {
       global $DB;
 
+      $default_charset = DBConnection::getDefaultCharset();
+		$default_collation = DBConnection::getDefaultCollation();
+		$default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+
       $table = self::getTable();
 
       if (!$DB->tableExists($table)) {
          $migration->displayMessage("Installing $table");
 
          $query = "CREATE TABLE IF NOT EXISTS $table (
-            `id` int(11) NOT NULL auto_increment,
-            `tasks_id` int(11) NOT NULL,
+            `id` int {$default_key_sign} NOT NULL auto_increment,
+            `tickettasks_id` int {$default_key_sign} NOT NULL,
             `actual_begin` TIMESTAMP NULL DEFAULT NULL,
             `actual_end` TIMESTAMP NULL DEFAULT NULL,
-            `users_id` int(11) NOT NULL,
-            `actual_actiontime` int(11) NOT NULL DEFAULT 0,
-            `origin_start` INT(11) NOT NULL,
-            `latitude_start` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-            `longitude_start` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-            `origin_end` INT(11) NOT NULL,
-            `latitude_end` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-            `longitude_end` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+            `users_id` int {$default_key_sign} NOT NULL,
+            `actual_actiontime` int {$default_key_sign} NOT NULL DEFAULT 0,
+            `origin_start` INT {$default_key_sign} NOT NULL,
+            `origin_end` INT {$default_key_sign} NOT NULL,
             PRIMARY KEY (`id`),
-            KEY `tasks_id` (`tasks_id`),
+            KEY `tickettasks_id` (`tickettasks_id`),
             KEY `users_id` (`users_id`)
-         ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+         ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
          $DB->query($query) or die($DB->error());
       } else {
-         $fields = $DB->list_fields($table, false);
-         if ($fields["users_id"]["Type"] != "int(11)") {
-            $query = "ALTER TABLE $table MODIFY `users_id` int(11) NOT NULL";
-            $DB->query($query) or die($DB->error());
-         }
-         $migration->addField($table,'origin_start',"INT(11) NOT NULL");
-         $migration->addField($table,'latitude_start',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
-         $migration->addField($table,'longitude_start',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
-         $migration->addField($table,'origin_end',"INT(11) NOT NULL");
-         $migration->addField($table,'latitude_end',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
-         $migration->addField($table,'longitude_end',"varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL");
          
-         $migration->changeField($table,'actual_begin','actual_begin','TIMESTAMP NULL DEFAULT NULL');
-         $migration->changeField($table,'actual_end','actual_end','TIMESTAMP NULL DEFAULT NULL');
-         
+         $migration->changeField($table, 'tasks_id', 'tickettasks_id', 'int');
+         $migration->dropField($table, 'latitude_start');
+         $migration->dropField($table, 'longitude_start');
+         $migration->dropField($table, 'latitude_end');
+         $migration->dropField($table, 'longitude_end');
+
          $migration->migrationOneTable($table);
       }
    }

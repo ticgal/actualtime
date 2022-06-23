@@ -65,7 +65,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 				$actualtime_table => [
 					'FKEY' => [
 						$task_table => 'id',
-						$actualtime_table => 'tasks_id',
+						$actualtime_table => 'tickettasks_id',
 					]
 				],
 				$table => [
@@ -104,7 +104,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 					$actualtime_table => [
 						'FKEY' => [
 							$task_table => 'id',
-							$actualtime_table => 'tasks_id',
+							$actualtime_table => 'tickettasks_id',
 						]
 					],
 					$table => [
@@ -190,7 +190,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 				$actualtime_table => [
 					'FKEY' => [
 						$task_table => 'id',
-						$actualtime_table => 'tasks_id',
+						$actualtime_table => 'tickettasks_id',
 					]
 				],
 				$table => [
@@ -232,7 +232,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 					$actualtime_table => [
 						'FKEY' => [
 							$task_table => 'id',
-							$actualtime_table => 'tasks_id',
+							$actualtime_table => 'tickettasks_id',
 						]
 					],
 					$table => [
@@ -318,7 +318,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 				$actualtime_table => [
 					'FKEY' => [
 						$task_table => 'id',
-						$actualtime_table => 'tasks_id',
+						$actualtime_table => 'tickettasks_id',
 					]
 				],
 				$table => [
@@ -357,7 +357,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 					$actualtime_table => [
 						'FKEY' => [
 							$task_table => 'id',
-							$actualtime_table => 'tasks_id',
+							$actualtime_table => 'tickettasks_id',
 						]
 					],
 					$table => [
@@ -467,7 +467,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 				$actualtime_table => [
 					'FKEY' => [
 						$task_table => 'id',
-						$actualtime_table => 'tasks_id',
+						$actualtime_table => 'tickettasks_id',
 					]
 				],
 				$table => [
@@ -545,7 +545,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 							$actualtime_table => [
 								'FKEY' => [
 									$task_table => 'id',
-									$actualtime_table => 'tasks_id',
+									$actualtime_table => 'tickettasks_id',
 								]
 							],
 							$table => [

@@ -129,14 +129,14 @@ JAVASCRIPT;
 				$user=new User();
 				$user->getFromDB($row['users_id']);
 				$html.= "<td class='center'><a href='".$user->getLinkURL()."'>".$user->getFriendlyName()."</a></td>";
-				$task_id=$row['tasks_id'];
+				$task_id=$row['tickettasks_id'];
 				$task=new TicketTask();
-				$task->getFromDB($row['tasks_id']);
+				$task->getFromDB($row['tickettasks_id']);
 				$ticket=new Ticket();
 				$ticket->getFromDB($task->fields['tickets_id']);
 				$html.= "<td class='center'>".Entity::getFriendlyNameById($ticket->fields['entities_id'])."</td>";
 				$html.= "<td class='center'><a href='".$ticket->getLinkURL()."'>".$ticket->getID()." - ".$task->getID()."</a></td>";
-				$html.= "<td class='center'>".HTML::timestampToString(PluginActualtimeTask::totalEndTime($row['tasks_id']))."</td>";
+				$html.= "<td class='center'>".HTML::timestampToString(PluginActualtimeTask::totalEndTime($row['tickettasks_id']))."</td>";
 				$html.= "</tr>";
 			}
 			$html.= "</table>";

@@ -36,30 +36,12 @@ if (!defined('GLPI_ROOT')) {
  * Class PluginActualtimeConfig
  */
 class PluginActualtimeConfig extends CommonDBTM {
-
-   static $rightname = 'config';
-   static private $_config = null;
-
-   /**
-    * @param bool $update
-    *
-    * @return PluginActualtimeConfig
-    */
-   static function getConfig($update = false) {
-
-      if (!isset(self::$_config)) {
-         self::$_config = new self();
-      }
-      if ($update) {
-         self::$_config->getFromDB(1);
-      }
-      return self::$_config;
-   }
-
+   static private $_instance = null;
+   
    /**
     * PluginActualtimeConfig constructor.
     */
-   function __construct() {
+    function __construct() {
       global $DB;
 
       if ($DB->tableExists($this->getTable())) {
@@ -71,10 +53,13 @@ class PluginActualtimeConfig extends CommonDBTM {
       return Session::haveRight('config', UPDATE);
    }
 
-
    static function canView() {
       return Session::haveRight('config', READ);
    }
+
+   static function canUpdate() {
+		return Session::haveRight('config', UPDATE);
+	}
 
    /**
     * @param int $nb
@@ -85,13 +70,39 @@ class PluginActualtimeConfig extends CommonDBTM {
       return __("Task timer configuration", "actualtime");
    }
 
-   function showForm() {
+   static function getInstance() {
+		if (!isset(self::$_instance)) {
+			self::$_instance = new self();
+			if (!self::$_instance->getFromDB(1)) {
+				self::$_instance->getEmpty();
+			}
+		}
+		return self::$_instance;
+	}
+
+   /**
+    * @param bool $update
+    *
+    * @return PluginActualtimeConfig
+    */
+   static function getConfig($update = false) {
+      static $config = null;
+      if (is_null(self::$config)) {
+         $config = new self();
+      }
+      if ($update) {
+         $config->getFromDB(1);
+      }
+      return $config;
+   }
+
+   static function showConfigForm() {
       $rand = mt_rand();
 
-      $this->getFromDB(1);
-      $this->showFormHeader();
+      $config = new self();
+      $config->getFromDB(1);
 
-      echo "<input type='hidden' name='id' value='1'>";
+      $config->showFormHeader(['colspan' => 4]);
 
       $values = [
          0 => __('In Standard interface only (default)', 'actualtime'),
@@ -103,7 +114,7 @@ class PluginActualtimeConfig extends CommonDBTM {
          'displayinfofor',
          $values,
          [
-            'value' => $this->fields['displayinfofor']
+            'value' => $config->fields['displayinfofor']
          ]
       );
       echo "</td>";
@@ -111,36 +122,37 @@ class PluginActualtimeConfig extends CommonDBTM {
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Display pop-up window with current running timer", "actualtime") . "</td><td>";
-      Dropdown::showYesNo('showtimerpopup', $this->showTimerPopup(), -1);
+      Dropdown::showYesNo('showtimerpopup', $config->showTimerPopup(), -1);
       echo "</td>";
       echo "</tr>";
 
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Display actual time in closed task box ('Processing ticket' list)", "actualtime") . "</td><td>";
-      Dropdown::showYesNo('showtimerinbox', $this->showTimerInBox(), -1);
+      Dropdown::showYesNo('showtimerinbox', $config->showTimerInBox(), -1);
       echo "</td>";
       echo "</tr>";
 
       echo "<tr class='tab_bg_1' name='optional$rand'>";
       echo "<td>" . __("Automatically open new created tasks", "actualtime") . "</td><td>";
-      Dropdown::showYesNo('autoopennew', $this->autoOpenNew(), -1);
+      Dropdown::showYesNo('autoopennew', $config->autoOpenNew(), -1);
       echo "</td>";
       echo "</tr>";
 
       echo "<tr class='tab_bg_1' name='optional$rand'>";
       echo "<td>" . __("Automatically open task with timer running", "actualtime") . "</td><td>";
-      Dropdown::showYesNo('autoopenrunning', $this->autoOpenRunning(), -1);
+      Dropdown::showYesNo('autoopenrunning', $config->autoOpenRunning(), -1);
       echo "</td>";
       echo "</tr>";
 
       echo "<tr class='tab_bg_1' name='optional$rand'>";
       echo "<td>" . __("Automatically update the duration", "actualtime") . "</td><td>";
-      Dropdown::showYesNo('autoupdate_duration', $this->autoUpdateDuration(), -1);
+      Dropdown::showYesNo('autoupdate_duration', $config->autoUpdateDuration(), -1);
       echo "</td>";
       echo "</tr>";
 
-      echo "<tr class='tab_bg_1' align='center'>";
-      $this->showFormButtons(['candel'=>false]);
+      $config->showFormButtons(['candel'=>false]);
+
+      return false;
    }
 
    function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
@@ -155,8 +167,7 @@ class PluginActualtimeConfig extends CommonDBTM {
    static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
 
       if ($item->getType()=='Config') {
-         $instance = self::getConfig();
-         $instance->showForm();
+         self::showConfigForm();
       }
       return true;
    }
@@ -214,125 +225,39 @@ class PluginActualtimeConfig extends CommonDBTM {
    static function install(Migration $migration) {
       global $DB;
 
+      $default_charset = DBConnection::getDefaultCharset();
+		$default_collation = DBConnection::getDefaultCollation();
+		$default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+
       $table = self::getTable();
+      $config = new self();
       if (! $DB->tableExists($table)) {
 
          $migration->displayMessage("Installing $table");
 
          $query = "CREATE TABLE IF NOT EXISTS $table (
-                      `id` int(11) NOT NULL auto_increment,
-                      `displayinfofor` smallint NOT NULL DEFAULT 0,
-                      `showtimerpopup` boolean NOT NULL DEFAULT true,
-                      `showtimerinbox` boolean NOT NULL DEFAULT true,
-                      `autoopennew` boolean NOT NULL DEFAULT false,
-                      `autoopenrunning` boolean NOT NULL DEFAULT false,
-                      `autoupdate_duration` TINYINT(1) NOT NULL DEFAULT '0',
+                      `id` int {$default_key_sign} NOT NULL auto_increment,
+                      `displayinfofor` smallint NOT NULL DEFAULT '0',
+                      `showtimerpopup` TINYINT NOT NULL DEFAULT '1',
+                      `showtimerinbox` TINYINT NOT NULL DEFAULT '1',
+                      `autoopennew` TINYINT NOT NULL DEFAULT '0',
+                      `autoopenrunning` TINYINT NOT NULL DEFAULT '0',
+                      `autoupdate_duration` TINYINT NOT NULL DEFAULT '0',
                       PRIMARY KEY (`id`)
-                   )
-                   ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci";
+         ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
          $DB->query($query) or die($DB->error());
+         $config->add([
+				'id' => 1,
+				'displayinfofor' => 0,
+			]);
       } else {
+         $migration->changeField($table, 'showtimerpopup', 'showtimerpopup', 'bool', ['value' => 1]);
+         $migration->changeField($table, 'showtimerinbox', 'showtimerinbox', 'bool', ['value' => 1]);
+         $migration->changeField($table, 'autoopennew', 'autoopennew', 'bool', ['value' => 0]);
+         $migration->changeField($table, 'autoopenrunning', 'autoopenrunning', 'bool', ['value' => 0]);
 
-         $fields = $DB->list_fields($table, false);
-
-         if (! isset($fields['displayinfofor'])) {
-            // For whom the actualtime timers are displayed?
-            // 0 - Only in standard/central interface (default)
-            // 1 - Both in standard and helpdesk interfaces
-            $migration->addField(
-               $table,
-               'displayinfofor',
-               'smallint',
-               [
-                  'update' => 0,
-                  'value'  => 0,
-                  'after' => 'id'
-               ]
-            );
-         }
-
-         if (! isset($fields['showtimerpopup'])) {
-            // Add new field showtimerpopup
-            $migration->addField(
-               $table,
-               'showtimerpopup',
-               'boolean',
-               [
-                  'update' => true,
-                  'value'  => true,
-                  'after' => 'displayinfofor'
-               ]
-            );
-         }
-
-         if (! isset($fields['showtimerinbox'])) {
-            // Add new field showtimerinbox
-            $migration->addField(
-               $table,
-               'showtimerinbox',
-               'boolean',
-               [
-                  'update' => true,
-                  'value'  => true,
-                  'after' => 'showtimerpopup'
-               ]
-            );
-         }
-
-         if (! $DB->fieldExists($table, 'autoopennew')) {
-            // Add new field autoopennew
-            $migration->addField(
-               $table,
-               'autoopennew',
-               'boolean',
-               [
-                  'update' => false,
-                  'value'  => false,
-                  'after'  => 'showtimerinbox',
-               ]
-            );
-         }
-
-         if (! $DB->fieldExists($table, 'autoopenrunning')) {
-            // Add new field autoopenrunning
-            $migration->addField(
-               $table,
-               'autoopenrunning',
-               'boolean',
-               [
-                  'update' => false,
-                  'value'  => false,
-                  'after'  => 'autoopennew',
-               ]
-            );
-         }
-
-         // Old not used field in version 1.1.1
-         if (isset($fields['enable'])) {
-            $migration->dropField(
-               $table,
-               'enable'
-            );
-         }
-
+         $migration->migrationOneTable($table);
       }
-
-      // Create default record (if it does not exist)
-      $reg = $DB->request($table);
-      if (! count($reg)) {
-         $DB->insert(
-            $table, [
-               'displayinfofor' => 0
-            ]
-         );
-      }
-
-      $migration->addField(
-        $table,
-        'autoupdate_duration',
-        'bool'
-      );
-
    }
 
    static function uninstall(Migration $migration) {

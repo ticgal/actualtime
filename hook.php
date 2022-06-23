@@ -78,11 +78,11 @@ function plugin_actualtime_item_purge(TicketTask $item){
    );
 }
 
-function plugin_actualtime_getAddSearchOptionsNew($itemtype){
+function plugin_actualtime_getAddSearchOptions($itemtype) {
    $tab=[];
 
    switch ($itemtype) {
-      case 'Ticket':
+      case Ticket::getType():
          $config = new PluginActualtimeConfig;
          if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
             $tab = array_merge($tab, PluginActualtimeTask::rawSearchOptionsToAdd());

@@ -88,7 +88,7 @@ if (isset($_POST["action"])) {
                // action=start, timer=off, current user is free
                $DB->insert(
                   'glpi_plugin_actualtime_tasks', [
-                     'tasks_id'     => $task_id,
+                     'tickettasks_id'     => $task_id,
                      'actual_begin' => date("Y-m-d H:i:s"),
                      'users_id'     => Session::getLoginUserID(),
                      'origin_start' => PluginActualtimetask::WEB,
@@ -127,7 +127,7 @@ if (isset($_POST["action"])) {
                      'actual_actiontime' => $seconds,
                      'origin_end' => PluginActualtimetask::WEB,
                   ], [
-                     'tasks_id' => $task_id,
+                     'tickettasks_id' => $task_id,
                      [
                         'NOT' => ['actual_begin' => null],
                      ],
