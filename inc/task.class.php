@@ -200,7 +200,7 @@ class PluginActualtimeTask extends CommonDBTM{
 
                $task_id = $item->getID();
                $rand = mt_rand();
-               $buttons = (self::checkTech($task_id) && $item->can($task_id, UPDATE));
+               $buttons = ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE));
                $time = self::totalEndTime($task_id);
                $text_restart = __('Restart', 'actualtime');
                $text_pause = __('Pause', 'actualtime');
@@ -251,15 +251,10 @@ JAVASCRIPT;
 
                   }
 
-                  $html = "<tr class='tab_bg_2'>";
-                  $html .= "<td colspan='2'></td>";
-                  $html .= "<td colspan='2'>";
-                  // Objects of the same task have the same id beginning
-                  // as they all should be changed on actions in case multiple
-                  // windows of the same task is opened (list of tasks + modal)
-                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' class='x-button x-button-main' style='background-color:$color1;color:white' $disabled1 data-track-changes=''></div>";
-                  $html .= "<div><input type='button' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' class='x-button x-button-main' style='background-color:$color2;color:white' $disabled2 data-track-changes=''></div>";
-                  $html .= "</td></tr>";
+                  $html .= "<div class='row'>";
+                  $html .= "<div class='col-12 col-md-6'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' style='width:60%;background-color:$color1;color:white' $disabled1><span>$value1</span></button></div>";
+                  $html .= "<div class='col-12 col-md-6'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' style='width:60%;background-color:$color2;color:white' $disabled2><span>".__('End')."</span></button></div>";
+                  $html .= "</div>";
 
                   // Only task user have buttons
                   $script .= <<<JAVASCRIPT
@@ -281,13 +276,16 @@ JAVASCRIPT;
                   || (Session::getCurrentInterface() == "central")
                   || $config->showInHelpdesk()) {
 
-                  $html .= "<tr class='tab_bg_2'>";
-                  $html .= "<td class='center'>" . __("Start date") . "</td><td class='center'>" . __("Partial actual duration", 'actualtime') . "</td>";
-                  $html .= "<td>" . __('Actual Duration', 'actualtime') . " </td><td id='actualtime_timer_{$task_id}_{$rand}' style='color:{$timercolor}'></td>";
-                  $html .= "</tr>";
-                  $html .= "<tr id='actualtime_segment_{$task_id}_{$rand}'>";
+                  $html .= "<div class='row'>";
+                  $html .= "<div class='col-12 col-md-3'>" . __("Start date") . "</div>";
+                  $html .= "<div class='col-12 col-md-3'>" . __("Partial actual duration", 'actualtime') . "</div>";
+                  $html .= "<div class='col-12 col-md-3'>" . __("Actual Duration", 'actualtime') . "</div>";
+                  $html .= "<div class='col-12 col-md-3' id='actualtime_timer_{$task_id}_{$rand}' style='color:{$timercolor}'></div>";
+                  $html .= "</div>";
+
+                  $html .= "<div class='row' id='actualtime_segment_{$task_id}_{$rand}'>";
                   $html .= self::getSegment($item->getID());
-                  $html .= "</tr>";
+                  $html .= "</div>";
 
                   echo $html;
 
@@ -303,11 +301,11 @@ JAVASCRIPT;
                }
             }else{
                //echo Html::scriptBlock('');
-               $div= "<div id='actualtime_autostart' class='fa-label'><i class='fas fa-stopwatch fa-fw' title='".__('Autostart')."'></i><span class='switch pager_controls'><label for='autostart' title='".__('Autostart')."'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1'><span class='lever'></span></label></span></div>";
+               $div = "<div id='actualtime_autostart' class='form-field row col-12 mb-2'><label class='col-form-label col-2 text-xxl-end' for='autostart'><i class='fas fa-stopwatch fa-fw me-1' title='".__('Autostart')."'></i></label><div class='col-10 field-container'><label class='form-check form-switch pt-2'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1' class='form-check-input'></label></div></div>";
                $script=<<<JAVASCRIPT
                $(document).ready(function() {
                   if($("#actualtime_autostart").length==0){
-                     $("div.ajax_box #mainformtable tr.tab_bg_1 td").last().append("{$div}");
+                     $("#new-TicketTask-block div.itiltask form div.row:first div.row").last().append("{$div}");
                   }
                });
 JAVASCRIPT;
@@ -329,7 +327,7 @@ JAVASCRIPT;
          ]
       ];
       $req=$DB->request($query);
-      if ($row=$req->next()) {
+      if ($row=$req->current()) {
          return true;
       } else {
          return false;
@@ -350,7 +348,7 @@ JAVASCRIPT;
          ]
       ];
       $req=$DB->request($query);
-      if ($row=$req->next()) {
+      if ($row=$req->current()) {
          return true;
       } else {
          return false;
@@ -390,7 +388,7 @@ JAVASCRIPT;
       ];
 
       $req=$DB->request($querytime);
-      if ($row=$req->next()) {
+      if ($row=$req->current()) {
          $seconds+=(strtotime("now")-strtotime($row['actual_begin']));
       }
 
@@ -412,7 +410,7 @@ JAVASCRIPT;
          ]
       ];
       $req=$DB->request($query);
-      if ($row=$req->next()) {
+      if ($row=$req->current()) {
          return true;
       } else {
          return false;
@@ -441,7 +439,7 @@ JAVASCRIPT;
          ]
       ];
       $req=$DB->request($query);
-      if ($row=$req->next()) {
+      if ($row=$req->current()) {
          return false;
       } else {
          return true;
@@ -471,7 +469,7 @@ JAVASCRIPT;
          ]
       ];
       $req=$DB->request($query);
-      if($row=$req->next()){
+      if($row=$req->current()){
          return $row['tickettasks_id'];
       }else{
          return 0;
@@ -489,7 +487,7 @@ JAVASCRIPT;
          ]
       ];
       $req=$DB->request($query);
-      $row=$req->next();
+      $row=$req->current();
       return $row['actual_begin'];
    }
 
@@ -577,8 +575,9 @@ JAVASCRIPT;
                   'tickettasks_id'=>$row['task_id'],
                ],
             ];
+            $list[$row['id']]['actual_total'] = 0;
             $req = $DB->request($qtime);
-            if ($time = $req->next()) {
+            if ($time = $req->current()) {
                if (self::findKey($list[$row['id']], 'actual_total')) {
                   $list[$row['id']]['actual_total']+=$time['actual_total'];
                } else {
@@ -866,7 +865,7 @@ JAVASCRIPT;
                   ]
                ];
                $req = $DB->request($query);
-               if ($row = $req->next()) {
+               if ($row = $req->current()) {
                   $autoopennew = true;
                }
             }
@@ -1034,7 +1033,7 @@ JAVASCRIPT;
             `users_id` int {$default_key_sign} NOT NULL,
             `actual_actiontime` int {$default_key_sign} NOT NULL DEFAULT 0,
             `origin_start` INT {$default_key_sign} NOT NULL,
-            `origin_end` INT {$default_key_sign} NOT NULL,
+            `origin_end` INT {$default_key_sign} NOT NULL DEFAULT 0,
             PRIMARY KEY (`id`),
             KEY `tickettasks_id` (`tickettasks_id`),
             KEY `users_id` (`users_id`)
@@ -1047,6 +1046,7 @@ JAVASCRIPT;
          $migration->dropField($table, 'longitude_start');
          $migration->dropField($table, 'latitude_end');
          $migration->dropField($table, 'longitude_end');
+         $migration->changeField($table, 'origin_end', 'origin_end', 'int', ['value' => 0]);
 
          $migration->migrationOneTable($table);
       }

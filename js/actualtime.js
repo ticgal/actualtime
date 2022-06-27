@@ -148,6 +148,7 @@ window.actualTime = new function() {
                   window.actualTime.startCount(task, result['time']);
                   $("[id^='actualtime_timer_" + task + "_']").css('color', 'red');
                   $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_pause).attr('action', 'pause').css('background-color', 'orange').prop('disabled', false);
+                  $("[id^='actualtime_button_" + task + "_1_']").html('<span>' + text_pause + '</span>');
                   $("[id^='actualtime_button_" + task + "_2_']").attr('action', 'end').css('background-color', 'red').prop('disabled', false);
                   window.actualTime.showTimerPopup(result['ticket_id']);
                   $("[id^='actualtime_faclock_" + task + "_']").addClass('fa-clock').css('color', 'red');
@@ -165,11 +166,11 @@ window.actualTime = new function() {
                      // Update state fields also (as Done)
                      $("select[name='state']").attr('data-track-changes', '');
                      $("span.state.state_1[onclick='change_task_state(" + task + ", this)']").attr('title', text_done).toggleClass('state_1 state_2');
-                     $("input[type='hidden'][name='id'][value='" + task + "']").closest("table#mainformtable").find("select[name='state']").val(2).trigger('change');
+                     $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='TicketTask'][data-items-id='"+task+"']").find("select[name='state']").val(2).trigger('change');
                      $("select[name='state']").removeAttr('data-track-changes');
                      $("[id^='actualtime_button_" + task + "_']").attr('action', '').css('background-color', 'gray').prop('disabled', true);
                      if (typeof result["duration"] !== 'undefined') {
-                        var actiontime = $("input[type='hidden'][name='id'][value='" + task + "']").closest("table#mainformtable").find("select[name='actiontime']");
+                        var actiontime = $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='TicketTask'][data-items-id='"+task+"']").find("select[name='actiontime']");
                         actiontime.attr('data-track-changes', '');
                         actiontime.val(result['duration']).trigger('change');
                         actiontime.removeAttr('data-track-changes');
@@ -177,6 +178,7 @@ window.actualTime = new function() {
                      }
                   } else {
                      $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_restart).attr('action', 'start').css('background-color', 'green').prop('disabled', false);
+                     $("[id^='actualtime_button_" + task + "_1_']").html('<span>' + text_restart + '</span>');
                   }
                }
             }
