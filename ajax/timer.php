@@ -45,8 +45,7 @@ if (isset($_POST["action"])) {
       case 'start':
          if ($plugin->isActivated('tam')) {
             $result=[
-               'title'   => __('Warning'),
-               'class'   => 'warn_msg',
+               'type'   => 'warning',
             ];
             if(PluginTamLeave::checkLeave(Session::getLoginUserID())){
                $result['mensage']=__("Today is marked as absence you can not initialize the timer",'tam');
@@ -66,8 +65,7 @@ if (isset($_POST["action"])) {
             // action=start, timer=on
             $result=[
                'mensage' => __("A user is already performing the task", 'actualtime'),
-               'title'   => __('Warning'),
-               'class'   => 'warn_msg',
+               'type'   => 'warning',
             ];
 
          } else {
@@ -79,8 +77,7 @@ if (isset($_POST["action"])) {
                $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
                $result=[
                   'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='window.actualTime.showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
-                  'title'   => __('Warning'),
-                  'class'   => 'warn_msg',
+                  'type'   => 'warning',
                ];
 
             } else {
@@ -96,8 +93,7 @@ if (isset($_POST["action"])) {
                );
                $result=[
                   'mensage'   => __("Timer started", 'actualtime'),
-                  'title'     => __('Information'),
-                  'class'     => 'info_msg',
+                  'type'     => 'info',
                   'ticket_id' => PluginActualtimetask::getTicket(Session::getLoginUserID()),
                   'time'      => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
@@ -136,8 +132,7 @@ if (isset($_POST["action"])) {
                );
                $result=[
                   'mensage' => __("Timer completed", 'actualtime'),
-                  'title'   => __('Information'),
-                  'class'   => 'info_msg',
+                  'type'   => 'info',
                   'segment' => PluginActualtimeTask::getSegment($task_id),
                   'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
@@ -165,8 +160,7 @@ if (isset($_POST["action"])) {
                // action=end or pause, timer=on, timer started by other user
                $result=[
                   'mensage' => __("Only the user who initiated the task can close it", 'actualtime'),
-                  'title'   => __('Warning'),
-                  'class'   => 'warn_msg',
+                  'type'   => 'warning',
                ];
 
             }
@@ -179,16 +173,14 @@ if (isset($_POST["action"])) {
                // action=pause, timer=off
                $result=[
                   'mensage' => __("The task had not been initialized", 'actualtime'),
-                  'title'   => __('Warning'),
-                  'class'   => 'warn_msg',
+                  'type'   => 'warning',
                ];
             } else {
 
                // action=end, timer=off
                $result=[
                   'mensage' =>__("Timer completed", 'actualtime'),
-                  'title'   => __('Information'),
-                  'class'   => 'info_msg',
+                  'type'   => 'info',
                   'segment' => PluginActualtimeTask::getSegment($task_id),
                   'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
                ];
@@ -268,18 +260,18 @@ if (isset($_POST["action"])) {
    if (isset($query['showform'])) {
       $task_id=PluginActualtimeTask::getTask(Session::getLoginUserID());
       $rand = mt_rand();
-      $options = [
-         'from_planning_edit_ajax' => true,
-         'formoptions'             => "id='edit_event_form$rand'"
-      ];
-      $options['parent'] = getItemForItemtype("Ticket");
-      $options['parent']->getFromDB(PluginActualtimeTask::getTicket(Session::getLoginUserID()));
-      echo "<div class='center'>";
-      echo "<a href='".$CFG_GLPI['root_doc']."/index.php?redirect=ticket_".PluginActualtimeTask::getTicket(Session::getLoginUserID())."&noAUTO=1'>".__("View this item in his context")."</a>";
-      echo "<hr>";
+      $parent = getItemForItemtype("Ticket");
+      $parent->getFromDB(PluginActualtimeTask::getTicket(Session::getLoginUserID()));
+      $options['parent'] = $parent;
+      echo  "<div class='modal-header'>";
+      echo "<h4 class='modal-title'><a href='".urldecode($CFG_GLPI['url_base']."/index.php?redirect=".strtolower($parent->getType())."_".PluginActualtimeTask::getTicket(Session::getLoginUserID())."&noAUTO=1")."'>".__("View this item in his context")."</a></h4>";
+      echo "<button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='".__("Close")."'></button>";
       echo "</div>";
+      echo "<div class='modal-body'>";
       $item = getItemForItemtype("TicketTask");
+      $item->getFromDB($task_id);
       $item->showForm($task_id, $options);
+      echo "</div>";
    }
 
 }

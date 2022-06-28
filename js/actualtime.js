@@ -16,26 +16,26 @@ window.actualTime = new function() {
    var symb_s = '%ds';
    var symb_second = '%d second';
    var symb_seconds = '%d seconds';
-   var text_warning = 'Warning';
    var text_pause = 'Pause';
    var text_restart = 'Restart';
    var text_done = 'Done';
+   var toast = null;
+   var modal = null;
 
    this.showTaskForm = function(e) {
       e.preventDefault();
-      $('<div>')
-         .dialog({
-            modal: true,
-            width: 'auto',
-            height: 'auto',
-         })
-         .load(this.ajax_url + '?showform=true', function () {
-            $(this).dialog('option', 'position', ['center', 'center']);
-            var div = $(this).parent();
-            var of = div.offset();
-            div.css('position', 'fixed');
-            div.offset(of);
-         });
+      if (modal == null) {
+         var html = `<div class="modal fade" id="modal_actualtime" role="dialog">';
+            <div class="modal-dialog modal-lg">
+               <div id="modal_content" class="modal-content">
+               </div>
+            </div>
+         </div>`;
+         $('body').append(html);
+         modal = new bootstrap.Modal(document.getElementById('modal_actualtime'),{});
+      }
+      $("#modal_content").load(this.ajax_url + '?showform=true');
+      modal.show();
    }
 
    this.timeToText = function(time, format) {
@@ -72,49 +72,10 @@ window.actualTime = new function() {
    }
 
    this.showTimerPopup = function(ticket) {
-      $("#actualtime_popup").remove();
       // only if enabled in settings
-      if (popup_div) {
-         $("body").append(popup_div.replace(/%t/g, ticket));
-         $("#actualtime_popup").attr('title', text_warning);
-         $(function () {
-            var _of = window;
-            var _at = 'left+20 bottom-20';
-            //calculate relative dialog position
-            $('.message_result').each(function () {
-               var _this = $(this);
-               if (_this.attr('aria-describedby') != 'message_result') {
-                  _of = _this;
-                  _at = 'right top-' + (10 + _this.outerHeight());
-               }
-            });
-            $("#actualtime_popup")
-               .attr('title', text_warning)
-               .dialog({
-                  dialogClass: 'message_after_redirect warn_msg',
-                  minHeight: 40,
-                  minWidth: 200,
-                  position: {
-                     my: 'left bottom',
-                     at: _at,
-                     of: _of,
-                     collision: 'none'
-                  },
-                  autoOpen: false,
-                  show: {
-                     effect: 'slide',
-                     direction: 'down',
-                     'duration': 800
-                  }
-               })
-               .dialog('open');
-         });
-         setTimeout(function () {
-            // Transform in position:fixed to solve dialog bug
-            of = $("#actualtime_popup").parent().offset();
-            $("#actualtime_popup").parent().css('position', 'fixed');
-            $("#actualtime_popup").parent().offset(of);
-         }, 1000);
+      if (popup_div && toast != null) {
+         $("#toast_body").html(popup_div.replace(/%t/g, ticket));
+         toast.show();
       }
    }
 
@@ -123,7 +84,7 @@ window.actualTime = new function() {
          time += 1;
          var timestr = window.actualTime.timeToText(time, 1);
          $("[id^='actualtime_timer_" + task + "_']").text(timestr);
-         $("#actualtime_popup span").text(timestr);
+         $("#toast_body span").text(timestr);
       }, 1000);
    }
 
@@ -143,7 +104,7 @@ window.actualTime = new function() {
          dataType: 'json',
          data: {action: val, task_id: task},
          success: function (result) {
-            if (result['class'] == 'info_msg') {
+            if (result['type'] == 'info') {
                if (val == 'start') {
                   window.actualTime.startCount(task, result['time']);
                   $("[id^='actualtime_timer_" + task + "_']").css('color', 'red');
@@ -155,7 +116,8 @@ window.actualTime = new function() {
                   return;
                } else if ((val == 'end') || (val == 'pause')) {
                   window.actualTime.endCount();
-                  $("#actualtime_popup").remove();
+                  //$("#actualtime_popup").remove();
+                  toast.hide();
                   // Update all forms of this task (normal and modal)
                   $("[id^='actualtime_timer_" + task + "_']").css('color', 'black');
                   $("[id^='actualtime_faclock_" + task + "_']").css('color', 'black');
@@ -182,55 +144,35 @@ window.actualTime = new function() {
                   }
                }
             }
-            $('#message_result').html(result['mensage']);
-            $('#message_result').attr('title', result['title']);
-            $(function () {
-               var _of = window;
-               var _at = 'left+20 bottom-20';
-               //calculate relative dialog position
-               $('.message_result').each(function () {
-                  var _this = $(this);
-                  if (_this.attr('aria-describedby') != 'message_result') {
-                     _of = _this;
-                     _at = 'right top-' + (10 + _this.outerHeight());
-                  }
-               });
-               $('#message_result').dialog({
-                  dialogClass: 'message_after_redirect ' + result['class'],
-                  minHeight: 40,
-                  minWidth: 200,
-                  position: {
-                     my: 'left bottom',
-                     at: _at,
-                     of: _of,
-                     collision: 'none'
-                  },
-                  autoOpen: false,
-                  show: {
-                     effect: 'slide',
-                     direction: 'down',
-                     'duration': 800
-                  }
-               })
-                  .dialog('open');
-               $(document.body).on('click', function (e) {
-                  if ($('#message_result').dialog('isOpen')
-                     && !$(e.target).is('.ui-dialog, a')
-                     && !$(e.target).closest('.ui-dialog').length) {
-                     $('#message_result').dialog('close');
-                     // redo focus on initial element
-                     e.target.focus();
-                  }
-               });
-            });
+            switch (result['type']) {
+               case 'warning':
+                  glpi_toast_warning(result['mensage']);
+                  break;
+               case 'info':
+                  glpi_toast_info(result['mensage']);
+                  break;
+               default:
+                  glpi_toast_error(result['mensage']);
+                  break;
+            }
          }
       });
    }
 
    this.init = function(ajax_url) {
       window.actualTime.ajax_url = ajax_url;
-      if (!$("#message_result").length) {
-         $("body").append("<div id='message_result'></div>");
+      if (!$("#toast_actualtime").length) {
+         const html = `<div class='toast-container bottom-0 end-0 p-3 messages_after_redirect'>
+            <div id='toast_actualtime' class='toast bg-warning text-white border-0 animate__delay-2s animate__slow' role='alert' aria-live='assertive' aria-atomic='true' data-bs-autohide='false'>
+               <div class='toast-header'>
+                  <strong class='me-auto'>${__('Warning')}</strong>
+                  <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='${__('Close')}'></button>
+               </div>
+               <div id='toast_body' class='toast-body'></div>
+            </div>
+         </div>`;
+         $('body').append(html);
+         toast = new bootstrap.Toast(document.querySelector('#toast_actualtime'), {});
       }
 
       // Initialize
