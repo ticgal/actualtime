@@ -545,50 +545,47 @@ JAVASCRIPT;
          $html.="<tr><th colspan='5'>ActualTime - ".__("Technician")."</th></tr>";
          $html.="<tr><th>".__("Technician")."</th><th>".__("Total duration")."</th><th>ActualTime - ".__("Total duration")."</th><th>".__("Duration Diff", "actiontime")."</th><th>".__("Duration Diff", "actiontime")." (%)</th></tr>";
 
-         $query=[
-            'SELECT'=>[
-               'glpi_tickettasks.actiontime',
-               'glpi_tickettasks.id AS task_id',
-               'glpi_users.name',
-               'glpi_users.id',
+         $tasktable = TicketTask::getTable();
+         $query = [
+            'SELECT' => [
+               'actiontime',
+               'id',
+               'users_id_tech',
             ],
-            'FROM'=>'glpi_tickettasks',
-            'INNER JOIN'=>[
-               'glpi_users'=>[
-                  'FKEY'=>[
-                     'glpi_users'=>'id',
-                     'glpi_tickettasks'=>'users_id_tech',
-                  ]
-               ]
+            'FROM' => $tasktable,
+            'WHERE' => [
+               'tickets_id' => $ticket_id,
             ],
-            'WHERE'=>[
-               'glpi_tickettasks.tickets_id'=>$ticket_id,
-            ],
-            'ORDER'=>'glpi_users.id',
+            'ORDER' => 'users_id_tech',
          ];
          $list=[];
          foreach ($DB->request($query) as $id => $row) {
-            $list[$row['id']]['name']=$row['name'];
-            if (self::findKey($list[$row['id']], 'total')) {
-               $list[$row['id']]['total']+=$row['actiontime'];
+            $list[$row['users_id_tech']]['name'] = getUserName($row['users_id_tech']);
+            if (isset($list[$row['users_id_tech']]['total'])) {
+               $list[$row['users_id_tech']]['total'] += $row['actiontime'];
             } else {
-               $list[$row['id']]['total']=$row['actiontime'];
+               $list[$row['users_id_tech']]['total'] = $row['actiontime'];
             }
-            $qtime=[
-               'SELECT'=>['SUM'=>'actual_actiontime AS actual_total'],
-               'FROM'=>self::getTable(),
-               'WHERE'=>[
-                  'tickettasks_id'=>$row['task_id'],
+            $qtime = [
+               'SELECT' => [
+                  'SUM' => 'actual_actiontime AS actual_total'
+               ],
+               'FROM' => self::getTable(),
+               'WHERE' => [
+                  'tickettasks_id' => $row['id'],
                ],
             ];
-            $list[$row['id']]['actual_total'] = 0;
             $req = $DB->request($qtime);
             if ($time = $req->current()) {
-               if (self::findKey($list[$row['id']], 'actual_total')) {
-                  $list[$row['id']]['actual_total']+=$time['actual_total'];
-               } else {
-                   $list[$row['id']]['actual_total']=$time['actual_total'];
-               }
+               $actualtotal = $time['actual_total'];
+            } else {
+               $actualtotal = 0;
+            }
+
+            if (isset($list[$row['users_id_tech']]['actual_total'])) {
+               $list[$row['users_id_tech']]['actual_total'] += $actualtotal;
+            } else {
+               $list[$row['users_id_tech']]['actual_total'] = $actualtotal;
             }
          }
 
@@ -619,17 +616,6 @@ $(document).ready(function(){
 JAVASCRIPT;
          echo Html::scriptBlock($script);
       }
-   }
-
-   static function findKey($array, $keySearch) {
-      foreach ($array as $key => $item) {
-         if ($key == $keySearch) {
-            return true;
-         } else if (is_array($item) && self::findKey($item, $keySearch)) {
-            return true;
-         }
-      }
-      return false;
    }
 
    static function getSegment($task_id) {
