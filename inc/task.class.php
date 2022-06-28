@@ -205,6 +205,7 @@ class PluginActualtimeTask extends CommonDBTM{
                $text_restart = __('Restart', 'actualtime');
                $text_pause = __('Pause', 'actualtime');
                $html = '';
+               $html_buttons = '';
                $script = <<<JAVASCRIPT
 $(document).ready(function() {
 JAVASCRIPT;
@@ -251,10 +252,12 @@ JAVASCRIPT;
 
                   }
 
-                  $html .= "<div class='row'>";
-                  $html .= "<div class='col-12 col-md-6'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' style='width:60%;background-color:$color1;color:white' $disabled1><span>$value1</span></button></div>";
-                  $html .= "<div class='col-12 col-md-6'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' style='width:60%;background-color:$color2;color:white' $disabled2><span>".__('End')."</span></button></div>";
-                  $html .= "</div>";
+                  //$html_buttons .= "<div class='col-12 col-md-6'>";
+                  //$html_buttons .= "<div class='row'>";
+                  $html_buttons .= "<div class='col-12 col-md-3'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' style='width:60%;background-color:$color1;color:white' $disabled1><span>$value1</span></button></div>";
+                  $html_buttons .= "<div class='col-12 col-md-3'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' style='width:60%;background-color:$color2;color:white' $disabled2><span>".__('End')."</span></button></div>";
+                  //$html_buttons .= "</div>";
+                  //$html_buttons .= "</div>";
 
                   // Only task user have buttons
                   $script .= <<<JAVASCRIPT
@@ -276,14 +279,17 @@ JAVASCRIPT;
                   || (Session::getCurrentInterface() == "central")
                   || $config->showInHelpdesk()) {
 
-                  $html .= "<div class='row'>";
-                  $html .= "<div class='col-12 col-md-3'>" . __("Start date") . "</div>";
-                  $html .= "<div class='col-12 col-md-3'>" . __("Partial actual duration", 'actualtime') . "</div>";
+                  $html .= "<div class='row center'>";
                   $html .= "<div class='col-12 col-md-3'>" . __("Actual Duration", 'actualtime') . "</div>";
                   $html .= "<div class='col-12 col-md-3' id='actualtime_timer_{$task_id}_{$rand}' style='color:{$timercolor}'></div>";
+                  $html .= $html_buttons;
+                  $html .= "</div>";
+                  $html .= "<div class='row center b'>";
+                  $html .= "<div class='col-12 col-md-6'>" . __("Start date") . "</div>";
+                  $html .= "<div class='col-12 col-md-6'>" . __("Partial actual duration", 'actualtime') . "</div>";
                   $html .= "</div>";
 
-                  $html .= "<div class='row' id='actualtime_segment_{$task_id}_{$rand}'>";
+                  $html .= "<div class='row center' id='actualtime_segment_{$task_id}_{$rand}'>";
                   $html .= self::getSegment($item->getID());
                   $html .= "</div>";
 
@@ -641,11 +647,10 @@ JAVASCRIPT;
             ],
          ]
       ];
-      $html="<td colspan='2'><table class='tab_cadre_fixe'>";
+      $html = "";
       foreach ($DB->request($query) as $id => $row) {
-         $html.="<tr class='tab_bg_2'><td>".$row['actual_begin']."</td><td>".HTML::timestampToString($row['actual_actiontime'])."</td></tr>";
+         $html.="<div class='row'><div class='col-12 col-md-6'>".$row['actual_begin']."</div><div class='col-12 col-md-6'>".HTML::timestampToString($row['actual_actiontime'])."</div></div>";
       }
-      $html.="</table></td>";
       return $html;
    }
 
