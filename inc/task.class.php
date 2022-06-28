@@ -734,18 +734,6 @@ JAVASCRIPT;
                $result['type']
             );
          }
-      }else{
-         if ($config->autoOpenNew()) {
-            if ($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']) {
-               // Empty record means just added task (for postShowItem)
-               $DB->insert(
-                  'glpi_plugin_actualtime_tasks', [
-                     'tickettasks_id' => $item->fields['id'],
-                     'users_id' => Session::getLoginUserID(),
-                  ]
-               );
-            }
-         }
       }
    }
 
@@ -856,25 +844,7 @@ JAVASCRIPT;
                echo Html::scriptBlock($script);
             }
 
-            // Verify if this is a new task just created now
-            $autoopennew = false;
-            if ($config->autoOpenNew() && $item->fields['state']==1 && $task_id) {
-               // New created task opens automatically
-               $query=[
-                  'FROM'=>self::getTable(),
-                  'WHERE'=>[
-                     'tickettasks_id'     => $task_id,
-                     'actual_begin' => null,
-                     'actual_end'   => null,
-                     'users_id'     => Session::getLoginUserID(),
-                  ]
-               ];
-               $req = $DB->request($query);
-               if ($row = $req->current()) {
-                  $autoopennew = true;
-               }
-            }
-            if ($autoopennew || ($config->autoOpenRunning() && self::checkUser($task_id, Session::getLoginUserID()))) {
+            if ($config->autoOpenRunning() && self::checkUser($task_id, Session::getLoginUserID())) {
                // New created task or user has running timer on this task
                // Open edit window automatically
                $ticket_id = $item->fields['tickets_id'];
@@ -905,17 +875,6 @@ $(document).ready(function(){
 JAVASCRIPT;
 
                print_r(Html::scriptBlock($script));
-               if ($autoopennew) {
-                  // Remove empty record
-                  $DB->delete(
-                     'glpi_plugin_actualtime_tasks', [
-                        'id'           => $row['id'],
-                        'actual_begin' => null,
-                        'actual_end'   => null,
-                        'users_id'     => Session::getLoginUserID(),
-                     ]
-                  );
-               }
             }
             break;
       }

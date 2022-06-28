@@ -133,12 +133,6 @@ class PluginActualtimeConfig extends CommonDBTM {
       echo "</tr>";
 
       echo "<tr class='tab_bg_1' name='optional$rand'>";
-      echo "<td>" . __("Automatically open new created tasks", "actualtime") . "</td><td>";
-      Dropdown::showYesNo('autoopennew', $config->autoOpenNew(), -1);
-      echo "</td>";
-      echo "</tr>";
-
-      echo "<tr class='tab_bg_1' name='optional$rand'>";
       echo "<td>" . __("Automatically open task with timer running", "actualtime") . "</td><td>";
       Dropdown::showYesNo('autoopenrunning', $config->autoOpenRunning(), -1);
       echo "</td>";
@@ -200,15 +194,6 @@ class PluginActualtimeConfig extends CommonDBTM {
    }
 
    /**
-    * Auto open the form for the task that was just created (new tasks)?
-    *
-    * @return boolean
-    */
-   function autoOpenNew() {
-      return ($this->fields['autoopennew'] ? true : false);
-   }
-
-   /**
     * Auto open the form for the task with a currently running timer
     * when listing tickets' tasks?
     *
@@ -240,7 +225,6 @@ class PluginActualtimeConfig extends CommonDBTM {
                       `displayinfofor` smallint NOT NULL DEFAULT '0',
                       `showtimerpopup` TINYINT NOT NULL DEFAULT '1',
                       `showtimerinbox` TINYINT NOT NULL DEFAULT '1',
-                      `autoopennew` TINYINT NOT NULL DEFAULT '0',
                       `autoopenrunning` TINYINT NOT NULL DEFAULT '0',
                       `autoupdate_duration` TINYINT NOT NULL DEFAULT '0',
                       PRIMARY KEY (`id`)
@@ -253,8 +237,8 @@ class PluginActualtimeConfig extends CommonDBTM {
       } else {
          $migration->changeField($table, 'showtimerpopup', 'showtimerpopup', 'bool', ['value' => 1]);
          $migration->changeField($table, 'showtimerinbox', 'showtimerinbox', 'bool', ['value' => 1]);
-         $migration->changeField($table, 'autoopennew', 'autoopennew', 'bool', ['value' => 0]);
          $migration->changeField($table, 'autoopenrunning', 'autoopenrunning', 'bool', ['value' => 0]);
+         $migration->dropField($table, 'autoopennew');
 
          $migration->migrationOneTable($table);
       }
