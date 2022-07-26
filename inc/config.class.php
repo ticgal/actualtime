@@ -35,13 +35,15 @@ if (!defined('GLPI_ROOT')) {
 /**
  * Class PluginActualtimeConfig
  */
-class PluginActualtimeConfig extends CommonDBTM {
+class PluginActualtimeConfig extends CommonDBTM
+{
    static private $_instance = null;
-   
+
    /**
     * PluginActualtimeConfig constructor.
     */
-    function __construct() {
+   function __construct()
+   {
       global $DB;
 
       if ($DB->tableExists($this->getTable())) {
@@ -49,43 +51,49 @@ class PluginActualtimeConfig extends CommonDBTM {
       }
    }
 
-   static function canCreate() {
+   static function canCreate()
+   {
       return Session::haveRight('config', UPDATE);
    }
 
-   static function canView() {
+   static function canView()
+   {
       return Session::haveRight('config', READ);
    }
 
-   static function canUpdate() {
-		return Session::haveRight('config', UPDATE);
-	}
+   static function canUpdate()
+   {
+      return Session::haveRight('config', UPDATE);
+   }
 
    /**
     * @param int $nb
     *
     * @return translated
     */
-   static function getTypeName($nb = 0) {
+   static function getTypeName($nb = 0)
+   {
       return __("Task timer configuration", "actualtime");
    }
 
-   static function getInstance() {
-		if (!isset(self::$_instance)) {
-			self::$_instance = new self();
-			if (!self::$_instance->getFromDB(1)) {
-				self::$_instance->getEmpty();
-			}
-		}
-		return self::$_instance;
-	}
+   static function getInstance()
+   {
+      if (!isset(self::$_instance)) {
+         self::$_instance = new self();
+         if (!self::$_instance->getFromDB(1)) {
+            self::$_instance->getEmpty();
+         }
+      }
+      return self::$_instance;
+   }
 
    /**
     * @param bool $update
     *
     * @return PluginActualtimeConfig
     */
-   static function getConfig($update = false) {
+   static function getConfig($update = false)
+   {
       static $config = null;
       if (is_null(self::$config)) {
          $config = new self();
@@ -96,7 +104,8 @@ class PluginActualtimeConfig extends CommonDBTM {
       return $config;
    }
 
-   static function showConfigForm() {
+   static function showConfigForm()
+   {
       $rand = mt_rand();
 
       $config = new self();
@@ -144,23 +153,25 @@ class PluginActualtimeConfig extends CommonDBTM {
       echo "</td>";
       echo "</tr>";
 
-      $config->showFormButtons(['candel'=>false]);
+      $config->showFormButtons(['candel' => false]);
 
       return false;
    }
 
-   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0) {
+   function getTabNameForItem(CommonGLPI $item, $withtemplate = 0)
+   {
 
-      if ($item->getType()=='Config') {
-            return __("Actual time", "actualtime");
+      if ($item->getType() == 'Config') {
+         return __("Actual time", "actualtime");
       }
       return '';
    }
 
 
-   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0) {
+   static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0)
+   {
 
-      if ($item->getType()=='Config') {
+      if ($item->getType() == 'Config') {
          self::showConfigForm();
       }
       return true;
@@ -171,7 +182,8 @@ class PluginActualtimeConfig extends CommonDBTM {
     *
     * @return boolean
     */
-   function showTimerPopup() {
+   function showTimerPopup()
+   {
       return ($this->fields['showtimerpopup'] ? true : false);
    }
 
@@ -180,7 +192,8 @@ class PluginActualtimeConfig extends CommonDBTM {
     *
     * @return boolean
     */
-   function showInHelpdesk() {
+   function showInHelpdesk()
+   {
       return ($this->fields['displayinfofor'] == 1);
    }
 
@@ -189,7 +202,8 @@ class PluginActualtimeConfig extends CommonDBTM {
     *
     * @return boolean
     */
-   function showTimerInBox() {
+   function showTimerInBox()
+   {
       return ($this->fields['showtimerinbox'] ? true : false);
    }
 
@@ -199,24 +213,27 @@ class PluginActualtimeConfig extends CommonDBTM {
     *
     * @return boolean
     */
-   function autoOpenRunning() {
+   function autoOpenRunning()
+   {
       return ($this->fields['autoopenrunning'] ? true : false);
    }
 
-   function autoUpdateDuration(){
-    return $this->fields['autoupdate_duration'];
+   function autoUpdateDuration()
+   {
+      return $this->fields['autoupdate_duration'];
    }
 
-   static function install(Migration $migration) {
+   static function install(Migration $migration)
+   {
       global $DB;
 
       $default_charset = DBConnection::getDefaultCharset();
-		$default_collation = DBConnection::getDefaultCollation();
-		$default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+      $default_collation = DBConnection::getDefaultCollation();
+      $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
 
       $table = self::getTable();
       $config = new self();
-      if (! $DB->tableExists($table)) {
+      if (!$DB->tableExists($table)) {
 
          $migration->displayMessage("Installing $table");
 
@@ -231,9 +248,9 @@ class PluginActualtimeConfig extends CommonDBTM {
          ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
          $DB->query($query) or die($DB->error());
          $config->add([
-				'id' => 1,
-				'displayinfofor' => 0,
-			]);
+            'id' => 1,
+            'displayinfofor' => 0,
+         ]);
       } else {
          $migration->changeField($table, 'showtimerpopup', 'showtimerpopup', 'bool', ['value' => 1]);
          $migration->changeField($table, 'showtimerinbox', 'showtimerinbox', 'bool', ['value' => 1]);
@@ -244,7 +261,8 @@ class PluginActualtimeConfig extends CommonDBTM {
       }
    }
 
-   static function uninstall(Migration $migration) {
+   static function uninstall(Migration $migration)
+   {
       global $DB;
 
       $table = self::getTable();

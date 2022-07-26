@@ -30,7 +30,8 @@
 
 use Glpi\Api\API;
 
-class PluginActualtimeApirest extends API {
+class PluginActualtimeApirest extends API
+{
 	protected $request_uri;
 	protected $url_elements;
 	protected $verb;
@@ -38,11 +39,13 @@ class PluginActualtimeApirest extends API {
 	protected $debug = 0;
 	protected $format = "json";
 
-	public static function getTypeName($nb = 0) {
-		return __('ActualTime rest API','actualtime');
+	public static function getTypeName($nb = 0)
+	{
+		return __('ActualTime rest API', 'actualtime');
 	}
 
-	public function manageUploadedFiles() {
+	public function manageUploadedFiles()
+	{
 		foreach (array_keys($_FILES) as $filename) {
 			$upload_result = GLPIUploadHandler::uploadFiles(['name' => $filename, 'print_response' => false]);
 			foreach ($upload_result as $uresult) {
@@ -53,7 +56,8 @@ class PluginActualtimeApirest extends API {
 		}
 	}
 
-	public function parseIncomingParams($is_inline_doc = false) {
+	public function parseIncomingParams($is_inline_doc = false)
+	{
 
 		$parameters = [];
 
@@ -89,7 +93,6 @@ class PluginActualtimeApirest extends API {
 				$this->returnError("JSON payload seems not valid", 400, "ERROR_JSON_PAYLOAD_INVALID", false);
 			}
 			$this->format = "json";
-
 		} else if (strpos($content_type, "multipart/form-data") !== false) {
 			if (count($_FILES) <= 0) {
 				// likely uploaded files is too big so $_REQUEST will be empty also.
@@ -110,7 +113,6 @@ class PluginActualtimeApirest extends API {
 			$parameters['upload_result'] = [];
 			$parameters['input']->_filename = [];
 			$parameters['input']->_prefix_filename = [];
-
 		} else if (strpos($content_type, "application/x-www-form-urlencoded") !== false) {
 			/** @var array $postvars */
 			parse_str($body, $postvars);
@@ -118,7 +120,6 @@ class PluginActualtimeApirest extends API {
 				$parameters[$field] = $value;
 			}
 			$this->format = "html";
-
 		} else {
 			$this->format = "html";
 		}
@@ -183,7 +184,8 @@ class PluginActualtimeApirest extends API {
 		return "";
 	}
 
-	private function initEndpoint($unlock_session = true, $endpoint = "") {
+	private function initEndpoint($unlock_session = true, $endpoint = "")
+	{
 
 		if ($endpoint === "") {
 			$backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
@@ -198,11 +200,12 @@ class PluginActualtimeApirest extends API {
 	}
 
 	/**
-	* Check if the app_toke in case of config ask to
-	*
-	* @return void
-	*/
-	private function checkAppToken() {
+	 * Check if the app_toke in case of config ask to
+	 *
+	 * @return void
+	 */
+	private function checkAppToken()
+	{
 
 		// check app token (if needed)
 		if (!isset($this->parameters['app_token'])) {
@@ -218,19 +221,20 @@ class PluginActualtimeApirest extends API {
 	}
 
 	/**
-	* Log usage of the api into glpi historical or log files (defined by api config)
-	*
-	* It stores the ip and the username of the current session.
-	*
-	* @param string $endpoint function called by api to log (default '')
-	*
-	* @return void
-	*/
-	private function logEndpointUsage($endpoint = "") {
+	 * Log usage of the api into glpi historical or log files (defined by api config)
+	 *
+	 * It stores the ip and the username of the current session.
+	 *
+	 * @param string $endpoint function called by api to log (default '')
+	 *
+	 * @return void
+	 */
+	private function logEndpointUsage($endpoint = "")
+	{
 
 		$username = "";
 		if (isset($_SESSION['glpiname'])) {
-			$username = "(".$_SESSION['glpiname'].")";
+			$username = "(" . $_SESSION['glpiname'] . ")";
 		}
 
 		$apiclient = new APIClient;
@@ -238,7 +242,7 @@ class PluginActualtimeApirest extends API {
 			$changes = [
 				0,
 				"",
-				"Enpoint '$endpoint' called by ".$this->iptxt." $username"
+				"Enpoint '$endpoint' called by " . $this->iptxt . " $username"
 			];
 
 			switch ($apiclient->fields['dolog_method']) {
@@ -247,18 +251,19 @@ class PluginActualtimeApirest extends API {
 					break;
 
 				case APIClient::DOLOG_LOGS:
-					Toolbox::logInFile("api", $changes[2]."\n");
+					Toolbox::logInFile("api", $changes[2] . "\n");
 					break;
 			}
 		}
 	}
 
 	/**
-	* Unlock the current session (readonly) to permit concurrent call
-	*
-	* @return void
-	*/
-	private function unlockSessionIfPossible() {
+	 * Unlock the current session (readonly) to permit concurrent call
+	 *
+	 * @return void
+	 */
+	private function unlockSessionIfPossible()
+	{
 
 		if (!$this->session_write) {
 			session_write_close();
@@ -266,15 +271,16 @@ class PluginActualtimeApirest extends API {
 	}
 
 	/**
-	* Retrieve in url_element the current id. If we have a multiple id (ex /Ticket/1/TicketFollwup/2),
-	* it always find the second
-	*
-	* @return integer|boolean id of current itemtype (or false if not found)
-	*/
-	private function getId() {
+	 * Retrieve in url_element the current id. If we have a multiple id (ex /Ticket/1/TicketFollwup/2),
+	 * it always find the second
+	 *
+	 * @return integer|boolean id of current itemtype (or false if not found)
+	 */
+	private function getId()
+	{
 
-		$id = isset($this->url_elements[1]) && is_numeric($this->url_elements[1]) ?intval($this->url_elements[1]) :false;
-		$additional_id = isset($this->url_elements[3]) && is_numeric($this->url_elements[3]) ?intval($this->url_elements[3]) :false;
+		$id = isset($this->url_elements[1]) && is_numeric($this->url_elements[1]) ? intval($this->url_elements[1]) : false;
+		$additional_id = isset($this->url_elements[3]) && is_numeric($this->url_elements[3]) ? intval($this->url_elements[3]) : false;
 
 		if ($additional_id || isset($this->parameters['parent_itemtype'])) {
 			$this->parameters['parent_id'] = $id;
@@ -284,16 +290,18 @@ class PluginActualtimeApirest extends API {
 		return $id;
 	}
 
-	private function pluginActivated(){
+	private function pluginActivated()
+	{
 
-		$plugin=new Plugin();
+		$plugin = new Plugin();
 
 		if (!$plugin->isActivated('actualtime')) {
 			$this->returnError("Plugin disabled", 400, "ERROR_PLUGIN_DISABLED");
 		}
 	}
 
-	public function call() {
+	public function call()
+	{
 
 		$this->request_uri  = $_SERVER['REQUEST_URI'];
 		$this->verb         = $_SERVER['REQUEST_METHOD'];
@@ -337,27 +345,27 @@ class PluginActualtimeApirest extends API {
 		switch ($resource) {
 			case 'startTimer':
 				return $this->returnResponse($this->startTimer($this->parameters));
-			break;
+				break;
 			case 'pauseTimer':
 				return $this->returnResponse($this->pauseTimer($this->parameters));
-			break;
+				break;
 			case 'stopTimer':
 				return $this->returnResponse($this->stopTimer($this->parameters));
-			break;
+				break;
 			case 'statsTimer':
 				return $this->returnResponse($this->statsTimer($this->parameters));
-			break;
+				break;
 			case 'timerStatus':
 				return $this->returnResponse($this->timerStatus($this->parameters));
-			break;
+				break;
 			default:
 				$this->messageLostError();
-			break;
+				break;
 		}
-
 	}
 
-	public function returnResponse($response, $httpcode = 200, $additionalheaders = []) {
+	public function returnResponse($response, $httpcode = 200, $additionalheaders = [])
+	{
 		if (empty($httpcode)) {
 			$httpcode = 200;
 		}
@@ -390,49 +398,52 @@ class PluginActualtimeApirest extends API {
 		exit;
 	}
 
-	protected function startTimer($params=[]){
+	protected function startTimer($params = [])
+	{
 		global $DB;
 
 		$this->initEndpoint();
-		$task_id=$this->getId();
-		
-		 $DB->delete(
-			 'glpi_plugin_actualtime_tasks', [
-				 'tickettasks_id'      => $task_id,
-				 'actual_begin' => null,
-				 'actual_end'   => null,
-				 'users_id'     => Session::getLoginUserID(),
-			 ]
-		 );
+		$task_id = $this->getId();
 
-		$plugin=new Plugin();
+		$DB->delete(
+			'glpi_plugin_actualtime_tasks',
+			[
+				'tickettasks_id'      => $task_id,
+				'actual_begin' => null,
+				'actual_end'   => null,
+				'users_id'     => Session::getLoginUserID(),
+			]
+		);
+
+		$plugin = new Plugin();
 		if ($plugin->isActivated('tam')) {
-			if(PluginTamLeave::checkLeave(Session::getLoginUserID())){
-				$this->returnResponse(__("Today is marked as absence you can not initialize the timer",'tam'), 409);
-			}else{
-				$timer_id=PluginTamTam::checkWorking(Session::getLoginUserID());
-				if ($timer_id==0) {
-					$this->returnResponse(__("Timer no initialized",'tam'), 409);
+			if (PluginTamLeave::checkLeave(Session::getLoginUserID())) {
+				$this->returnResponse(__("Today is marked as absence you can not initialize the timer", 'tam'), 409);
+			} else {
+				$timer_id = PluginTamTam::checkWorking(Session::getLoginUserID());
+				if ($timer_id == 0) {
+					$this->returnResponse(__("Timer no initialized", 'tam'), 409);
 				}
 			}
 		}
-		$task=new TicketTask();
-		if(!$task->getFromDB($task_id)){
-			$this->returnError(__("Item not found"), 400,'ERROR_ITEM_NOT_FOUND');
+		$task = new TicketTask();
+		if (!$task->getFromDB($task_id)) {
+			$this->returnError(__("Item not found"), 400, 'ERROR_ITEM_NOT_FOUND');
 		}
-		if($task->getField('state')!=1){
+		if ($task->getField('state') != 1) {
 			$this->returnResponse(__("Task completed."), 409);
 		}
 
 		if (PluginActualtimeTask::checkTimerActive($task_id)) {
-			$this->returnResponse(__("A user is already performing the task",'actualtime'), 409);
+			$this->returnResponse(__("A user is already performing the task", 'actualtime'), 409);
 		} else {
-			if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
+			if (!PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
 				$ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
-				$this->returnResponse(__("You are already doing a task",'actualtime')." ".__("Ticket") . "$ticket_id", 409);
+				$this->returnResponse(__("You are already doing a task", 'actualtime') . " " . __("Ticket") . "$ticket_id", 409);
 			} else {
 				$DB->insert(
-					'glpi_plugin_actualtime_tasks', [
+					'glpi_plugin_actualtime_tasks',
+					[
 						'tickettasks_id'     => $task_id,
 						'actual_begin' => date("Y-m-d H:i:s"),
 						'users_id'     => Session::getLoginUserID(),
@@ -441,7 +452,7 @@ class PluginActualtimeApirest extends API {
 						'longitude_start'=>$params['longitude'],*/
 					]
 				);
-				$result=[
+				$result = [
 					'message'   => __("Timer started", 'actualtime'),
 					'time'      => abs(PluginActualtimeTask::totalEndTime($task_id)),
 				];
@@ -451,24 +462,27 @@ class PluginActualtimeApirest extends API {
 		return $result;
 	}
 
-	protected function pauseTimer($params=[]){
+	protected function pauseTimer($params = [])
+	{
 		global $DB;
 
 		$this->initEndpoint();
-		$task_id=$this->getId();
+		$task_id = $this->getId();
 
 		if (PluginActualtimeTask::checkTimerActive($task_id)) {
 			if (PluginActualtimeTask::checkUser($task_id, Session::getLoginUserID())) {
-				$actual_begin=PluginActualtimeTask::getActualBegin($task_id);
-				$seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
+				$actual_begin = PluginActualtimeTask::getActualBegin($task_id);
+				$seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
 				$DB->update(
-					'glpi_plugin_actualtime_tasks', [
+					'glpi_plugin_actualtime_tasks',
+					[
 						'actual_end'        => date("Y-m-d H:i:s"),
 						'actual_actiontime' => $seconds,
 						'origin_end' => PluginActualtimetask::ANDROID,
 						/*'latitude_end'=>$params['latitude'],
 						'longitude_end'=>$params['longitude'],*/
-					], [
+					],
+					[
 						'tickettasks_id' => $task_id,
 						[
 							'NOT' => ['actual_begin' => null],
@@ -476,7 +490,7 @@ class PluginActualtimeApirest extends API {
 						'actual_end' => null,
 					]
 				);
-				$result=[
+				$result = [
 					'message' => __("Timer completed", 'actualtime'),
 					'title'   => __('Information'),
 					'class'   => 'info_msg',
@@ -484,33 +498,36 @@ class PluginActualtimeApirest extends API {
 					'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
 				];
 			} else {
-				$this->returnResponse(__("Only the user who initiated the task can close it",'actualtime'), 409);
+				$this->returnResponse(__("Only the user who initiated the task can close it", 'actualtime'), 409);
 			}
 		} else {
-			$this->returnResponse(__("The task had not been initialized",'actualtime'), 409);
+			$this->returnResponse(__("The task had not been initialized", 'actualtime'), 409);
 		}
 		return $result;
 	}
 
-	protected function stopTimer($params=[]){
-		global $DB,$CFG_GLPI;
+	protected function stopTimer($params = [])
+	{
+		global $DB, $CFG_GLPI;
 
 		$this->initEndpoint();
-		$task_id=$this->getId();
+		$task_id = $this->getId();
 		$config = new PluginActualtimeConfig;
 
 		if (PluginActualtimeTask::checkTimerActive($task_id)) {
 			if (PluginActualtimeTask::checkUser($task_id, Session::getLoginUserID())) {
-				$actual_begin=PluginActualtimeTask::getActualBegin($task_id);
-				$seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
+				$actual_begin = PluginActualtimeTask::getActualBegin($task_id);
+				$seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
 				$DB->update(
-					'glpi_plugin_actualtime_tasks', [
+					'glpi_plugin_actualtime_tasks',
+					[
 						'actual_end'        => date("Y-m-d H:i:s"),
 						'actual_actiontime' => $seconds,
 						'origin_end' => PluginActualtimetask::ANDROID,
 						/*'latitude_end'=>$params['latitude'],
 						'longitude_end'=>$params['longitude'],*/
-					], [
+					],
+					[
 						'tickettasks_id' => $task_id,
 						[
 							'NOT' => ['actual_begin' => null],
@@ -518,95 +535,96 @@ class PluginActualtimeApirest extends API {
 						'actual_end' => null,
 					]
 				);
-				$task=new TicketTask();
+				$task = new TicketTask();
 				$task->getFromDB($task_id);
-				$input['id']=$task_id;
-				$input['tickets_id']=$task->fields['tickets_id'];
-				$input['state']=2;
+				$input['id'] = $task_id;
+				$input['tickets_id'] = $task->fields['tickets_id'];
+				$input['state'] = 2;
 				if ($config->autoUpdateDuration()) {
-					$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+					$input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
 				}
 				$task->update($input);
 
-				$result=[
+				$result = [
 					'message' => __("Timer completed", 'actualtime'),
 					'segment' => PluginActualtimeTask::getSegment($task_id),
 					'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
-					'task_time'=> $task->getField('actiontime'),
+					'task_time' => $task->getField('actiontime'),
 				];
 			} else {
-				$this->returnResponse(__("Only the user who initiated the task can close it",'actualtime'), 409);
+				$this->returnResponse(__("Only the user who initiated the task can close it", 'actualtime'), 409);
 			}
 		} else {
-			$task=new TicketTask();
+			$task = new TicketTask();
 			$task->getFromDB($task_id);
-			$input['id']=$task_id;
-			$input['tickets_id']=$task->fields['tickets_id'];
-			$input['state']=2;
+			$input['id'] = $task_id;
+			$input['tickets_id'] = $task->fields['tickets_id'];
+			$input['state'] = 2;
 			if ($config->autoUpdateDuration()) {
-				$input['actiontime']=ceil(PluginActualtimeTask::totalEndTime($task_id)/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+				$input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
 			}
 			$task->update($input);
 
-			$result=[
+			$result = [
 				'message' => __("Timer completed", 'actualtime'),
 				'segment' => PluginActualtimeTask::getSegment($task_id),
 				'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
-				'task_time'=> $task->getField('actiontime'),
+				'task_time' => $task->getField('actiontime'),
 			];
 		}
 		return $result;
 	}
 
-	protected function statsTimer($params=[]){
+	protected function statsTimer($params = [])
+	{
 		global $DB;
 
 		$this->initEndpoint();
-		$task_id=$this->getId();
+		$task_id = $this->getId();
 
-		$query=[
-			'FROM'=>'glpi_tickettasks',
-			'WHERE'=>[
-				'id'=>$task_id,
+		$query = [
+			'FROM' => 'glpi_tickettasks',
+			'WHERE' => [
+				'id' => $task_id,
 			]
 		];
 		$req = $DB->request($query);
-		$actiontime=0;
+		$actiontime = 0;
 		if ($row = $req->next()) {
-			$actiontime=$row['actiontime'];
+			$actiontime = $row['actiontime'];
 		}
-		$actual_totaltime=abs(PluginActualtimeTask::totalEndTime($task_id));
-		if ($actiontime==0) {
-			$diffpercent=0;
+		$actual_totaltime = abs(PluginActualtimeTask::totalEndTime($task_id));
+		if ($actiontime == 0) {
+			$diffpercent = 0;
 		} else {
-			$diffpercent=100*($actiontime-$actual_totaltime)/$actiontime;
+			$diffpercent = 100 * ($actiontime - $actual_totaltime) / $actiontime;
 		}
-		$result=[
+		$result = [
 			'time' => $actual_totaltime,
-			'actiontime'=>$actiontime,
-			'diff'=>$actiontime-$actual_totaltime,
-			'diffpercent'=>$diffpercent,
+			'actiontime' => $actiontime,
+			'diff' => $actiontime - $actual_totaltime,
+			'diffpercent' => $diffpercent,
 		];
 
 		return $result;
 	}
-	
-	protected function timerStatus($params=[]){
-		
+
+	protected function timerStatus($params = [])
+	{
+
 		$this->initEndpoint();
-		if(PluginActualtimeTask::checkUserFree(Session::getLoginUserID())){
-			$result=[
-				'free'=>true,
+		if (PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
+			$result = [
+				'free' => true,
 			];
-		}else{
-			$result=[
-				'free'=>false,
-				'ticket_id'=>PluginActualtimeTask::getTicket(Session::getLoginUserID()),
-				'task_id'=>PluginActualtimeTask::getTask(Session::getLoginUserID()),
-				'time'=>abs(PluginActualtimeTask::totalEndTime(PluginActualtimeTask::getTask(Session::getLoginUserID())))
+		} else {
+			$result = [
+				'free' => false,
+				'ticket_id' => PluginActualtimeTask::getTicket(Session::getLoginUserID()),
+				'task_id' => PluginActualtimeTask::getTask(Session::getLoginUserID()),
+				'time' => abs(PluginActualtimeTask::totalEndTime(PluginActualtimeTask::getTask(Session::getLoginUserID())))
 			];
 		}
 		return $result;
 	}
-
 }

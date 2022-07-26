@@ -28,15 +28,17 @@
  ----------------------------------------------------------------------
 */
 
-define ('PLUGIN_ACTUALTIME_VERSION', '1.5.2');
+define('PLUGIN_ACTUALTIME_VERSION', '1.5.2');
 
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "10.0.0");
 // Maximum GLPI version, exclusive
 define("PLUGIN_ACTUALTIME_MAX_GLPI", "10.1.0");
 
-function plugin_version_actualtime() {
-   return ['name'       => 'ActualTime',
+function plugin_version_actualtime()
+{
+   return [
+      'name'       => 'ActualTime',
       'version'        => PLUGIN_ACTUALTIME_VERSION,
       'author'         => '<a href="https://tic.gal">TICgal</a>',
       'homepage'       => 'https://tic.gal/en/project/actualtime-plugin-glpi/',
@@ -46,10 +48,12 @@ function plugin_version_actualtime() {
             'min' => PLUGIN_ACTUALTIME_MIN_GLPI,
             'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
          ]
-      ]];
+      ]
+   ];
 }
 
-function plugin_init_actualtime() {
+function plugin_init_actualtime()
+{
    global $PLUGIN_HOOKS, $CFG_GLPI;
 
    $PLUGIN_HOOKS['csrf_compliant']['actualtime'] = true;
@@ -66,20 +70,20 @@ function plugin_init_actualtime() {
       $config = new PluginActualtimeConfig;
 
       $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
-      $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket'=> 'plugin_actualtime_item_stats'];
-      $PLUGIN_HOOKS['pre_item_update']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_update'];
+      $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket' => 'plugin_actualtime_item_stats'];
+      $PLUGIN_HOOKS['pre_item_update']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_update'];
       $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
       $PLUGIN_HOOKS['add_javascript']['actualtime'] = 'js/actualtime.js';
-      $PLUGIN_HOOKS['item_purge']['actualtime']=['TicketTask'=>'plugin_actualtime_item_purge'];
+      $PLUGIN_HOOKS['item_purge']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_purge'];
 
       if ($config->showTimerPopup()) {
          // This hook is not needed if not showing popup
          $PLUGIN_HOOKS['post_show_tab']['actualtime'] = ['PluginActualtimeTask', 'postShowTab'];
       }
 
-      $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask'=>'plugin_actualtime_item_add'];
+      $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_add'];
 
-      $PLUGIN_HOOKS['menu_toadd']['actualtime']=['admin'=>'PluginActualtimeRunning'];
+      $PLUGIN_HOOKS['menu_toadd']['actualtime'] = ['admin' => 'PluginActualtimeRunning'];
 
       Plugin::registerClass('PluginActualtimeTask', ['planning_types' => true]);
 

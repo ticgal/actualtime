@@ -34,160 +34,165 @@ if (!defined('GLPI_ROOT')) {
 
 include_once('config.class.php');
 /**
-*
-*/
-class PluginActualtimeTask extends CommonDBTM{
+ *
+ */
+class PluginActualtimeTask extends CommonDBTM
+{
 
    public static $rightname = 'task';
-   const AUTO=1;
-   const WEB=2;
-   const ANDROID=3;
+   const AUTO = 1;
+   const WEB = 2;
+   const ANDROID = 3;
 
-   static function getTypeName($nb = 0) {
+   static function getTypeName($nb = 0)
+   {
       return __('ActualTime', 'Actualtime');
    }
 
-   static public function rawSearchOptionsToAdd(){
+   static public function rawSearchOptionsToAdd()
+   {
 
-      $tab[]=[
-         'id'=>'7000',
-         'table'=>self::getTable(),
-         'field'=>'actual_actiontime',
-         'name'=>__('Total duration'),
+      $tab[] = [
+         'id' => '7000',
+         'table' => self::getTable(),
+         'field' => 'actual_actiontime',
+         'name' => __('Total duration'),
          'datatype' => 'specific',
-         'joinparams'=>[
-            'beforejoin'=>[
-               'table'=>'glpi_tickettasks',
+         'joinparams' => [
+            'beforejoin' => [
+               'table' => 'glpi_tickettasks',
                'joinparams' => [
                   'jointype' => 'child'
                ]
             ],
             'jointype' => 'child',
          ],
-         'type'=>'total'
+         'type' => 'total'
       ];
-      $tab[]=[
-         'id'=>'7001',
-         'table'=>self::getTable(),
-         'field'=>'actual_actiontime',
-         'name'=>__("Duration Diff", "actiontime"),
+      $tab[] = [
+         'id' => '7001',
+         'table' => self::getTable(),
+         'field' => 'actual_actiontime',
+         'name' => __("Duration Diff", "actiontime"),
          'datatype' => 'specific',
-         'joinparams'=>[
-            'beforejoin'=>[
-               'table'=>'glpi_tickettasks',
+         'joinparams' => [
+            'beforejoin' => [
+               'table' => 'glpi_tickettasks',
                'joinparams' => [
                   'jointype' => 'child'
                ]
             ],
             'jointype' => 'child',
          ],
-         'type'=>'diff'
+         'type' => 'diff'
       ];
-      $tab[]=[
-         'id'=>'7002',
-         'table'=>self::getTable(),
-         'field'=>'actual_actiontime',
-         'name'=>__("Duration Diff", "actiontime")." (%)",
+      $tab[] = [
+         'id' => '7002',
+         'table' => self::getTable(),
+         'field' => 'actual_actiontime',
+         'name' => __("Duration Diff", "actiontime") . " (%)",
          'datatype' => 'specific',
-         'joinparams'=>[
-            'beforejoin'=>[
-               'table'=>'glpi_tickettasks',
+         'joinparams' => [
+            'beforejoin' => [
+               'table' => 'glpi_tickettasks',
                'joinparams' => [
                   'jointype' => 'child'
                ]
             ],
             'jointype' => 'child',
          ],
-         'type'=>'diff%'
+         'type' => 'diff%'
       ];
 
-      $tab[]=[
-         'id'=>'7003',
-         'table'=>self::getTable(),
-         'field'=>'actual_actiontime',
-         'name'=>__('Task duration'),
+      $tab[] = [
+         'id' => '7003',
+         'table' => self::getTable(),
+         'field' => 'actual_actiontime',
+         'name' => __('Task duration'),
          'datatype' => 'specific',
-         'joinparams'=>[
-            'beforejoin'=>[
-               'table'=>'glpi_tickettasks',
+         'joinparams' => [
+            'beforejoin' => [
+               'table' => 'glpi_tickettasks',
                'joinparams' => [
                   'jointype' => 'child'
                ]
             ],
             'jointype' => 'child',
          ],
-         'type'=>'task'
+         'type' => 'task'
       ];
 
       return $tab;
    }
 
-   static function getSpecificValueToDisplay($field, $values, array $options = []) {
+   static function getSpecificValueToDisplay($field, $values, array $options = [])
+   {
       global $DB;
       if (!is_array($values)) {
          $values = [$field => $values];
       }
 
       switch ($field) {
-         case 'actual_actiontime' :
-            $actual_totaltime=0;
-            $ticket=new Ticket();
+         case 'actual_actiontime':
+            $actual_totaltime = 0;
+            $ticket = new Ticket();
             $ticket->getFromDB($options['raw_data']['id']);
-            $total_time=$ticket->getField('actiontime');
-            $query=[
-               'SELECT'=>[
+            $total_time = $ticket->getField('actiontime');
+            $query = [
+               'SELECT' => [
                   'glpi_tickettasks.id',
                ],
-               'FROM'=>'glpi_tickettasks',
-               'WHERE'=>[
-                  'tickets_id'=>$options['raw_data']['id'],
+               'FROM' => 'glpi_tickettasks',
+               'WHERE' => [
+                  'tickets_id' => $options['raw_data']['id'],
                ]
             ];
             foreach ($DB->request($query) as $id => $row) {
-               $actual_totaltime+=self::totalEndTime($row['id']);
+               $actual_totaltime += self::totalEndTime($row['id']);
             }
             switch ($options['searchopt']['type']) {
                case 'diff':
-                  $diff=$total_time-$actual_totaltime;
+                  $diff = $total_time - $actual_totaltime;
                   return HTML::timestampToString($diff);
                   break;
 
                case 'diff%':
-                  if ($total_time==0) {
-                     $diffpercent=0;
+                  if ($total_time == 0) {
+                     $diffpercent = 0;
                   } else {
-                     $diffpercent=100*($total_time-$actual_totaltime)/$total_time;
+                     $diffpercent = 100 * ($total_time - $actual_totaltime) / $total_time;
                   }
-                  return round($diffpercent, 2)."%";
+                  return round($diffpercent, 2) . "%";
                   break;
-               
+
                case 'task':
-                    $query=[
-                       'SELECT'=>[
-                          'actual_actiontime'
-                       ],
-                       'FROM'=>self::getTable(),
-                       'WHERE'=>[
-                          'tickettasks_id'=>$options['raw_data']['id']
-                       ]
-                    ];
-                    $task_time=0;
-                    foreach ($DB->request($query) as $actiontime) {
-                       $task_time += $actiontime["actual_actiontime"];
-                    }
-                    return HTML::timestampToString($task_time);
-               break;
-                
+                  $query = [
+                     'SELECT' => [
+                        'actual_actiontime'
+                     ],
+                     'FROM' => self::getTable(),
+                     'WHERE' => [
+                        'tickettasks_id' => $options['raw_data']['id']
+                     ]
+                  ];
+                  $task_time = 0;
+                  foreach ($DB->request($query) as $actiontime) {
+                     $task_time += $actiontime["actual_actiontime"];
+                  }
+                  return HTML::timestampToString($task_time);
+                  break;
+
                default:
                   return HTML::timestampToString($actual_totaltime);
                   break;
             }
-         break;
+            break;
       }
       return parent::getSpecificValueToDisplay($field, $values, $options);
    }
 
-   static public function postForm($params) {
+   static public function postForm($params)
+   {
       global $CFG_GLPI;
 
       $item = $params['item'];
@@ -222,7 +227,7 @@ JAVASCRIPT;
                   $color2 = 'gray';
                   $disabled2 = 'disabled';
 
-                  if ($item->getField('state')==1) {
+                  if ($item->getField('state') == 1) {
 
                      if (self::checkTimerActive($task_id)) {
 
@@ -234,7 +239,6 @@ JAVASCRIPT;
                         $color2 = 'red';
                         $disabled2 = '';
                         $timercolor = 'red';
-
                      } else {
 
                         if ($time > 0) {
@@ -247,15 +251,13 @@ JAVASCRIPT;
                         $action1 = 'start';
                         $color1 = 'green';
                         $disabled1 = '';
-
                      }
-
                   }
 
                   //$html_buttons .= "<div class='col-12 col-md-6'>";
                   //$html_buttons .= "<div class='row'>";
                   $html_buttons .= "<div class='col-12 col-md-3'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' style='width:60%;background-color:$color1;color:white' $disabled1><span>$value1</span></button></div>";
-                  $html_buttons .= "<div class='col-12 col-md-3'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='".__('End')."' style='width:60%;background-color:$color2;color:white' $disabled2><span>".__('End')."</span></button></div>";
+                  $html_buttons .= "<div class='col-12 col-md-3'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='" . __('End') . "' style='width:60%;background-color:$color2;color:white' $disabled2><span>" . __('End') . "</span></button></div>";
                   //$html_buttons .= "</div>";
                   //$html_buttons .= "</div>";
 
@@ -270,14 +272,15 @@ JAVASCRIPT;
    });
 
 JAVASCRIPT;
-
                }
 
                // Task user (always) or Standard interface (always)
                // or Helpdesk inteface (only if config allows)
-               if ($buttons
+               if (
+                  $buttons
                   || (Session::getCurrentInterface() == "central")
-                  || $config->showInHelpdesk()) {
+                  || $config->showInHelpdesk()
+               ) {
 
                   $html .= "<div class='row center'>";
                   $html .= "<div class='col-12 col-md-3'>" . __("Actual Duration", 'actualtime') . "</div>";
@@ -303,12 +306,11 @@ JAVASCRIPT;
 });
 JAVASCRIPT;
                   echo Html::scriptBlock($script);
-
                }
-            }else{
+            } else {
                //echo Html::scriptBlock('');
-               $div = "<div id='actualtime_autostart' class='form-field row col-12 mb-2'><label class='col-form-label col-2 text-xxl-end' for='autostart'><i class='fas fa-stopwatch fa-fw me-1' title='".__('Autostart')."'></i></label><div class='col-10 field-container'><label class='form-check form-switch pt-2'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1' class='form-check-input'></label></div></div>";
-               $script=<<<JAVASCRIPT
+               $div = "<div id='actualtime_autostart' class='form-field row col-12 mb-2'><label class='col-form-label col-2 text-xxl-end' for='autostart'><i class='fas fa-stopwatch fa-fw me-1' title='" . __('Autostart') . "'></i></label><div class='col-10 field-container'><label class='form-check form-switch pt-2'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1' class='form-check-input'></label></div></div>";
+               $script = <<<JAVASCRIPT
                $(document).ready(function() {
                   if($("#actualtime_autostart").length==0){
                      $("#new-TicketTask-block div.itiltask form div.row:first div.row").last().append("{$div}");
@@ -319,55 +321,57 @@ JAVASCRIPT;
             }
             break;
       }
-
    }
 
-   static function checkTech($task_id) {
+   static function checkTech($task_id)
+   {
       global $DB;
 
-      $query=[
-         'FROM'=>'glpi_tickettasks',
-         'WHERE'=>[
-            'id'=>$task_id,
-            'users_id_tech'=>Session::getLoginUserID(),
+      $query = [
+         'FROM' => 'glpi_tickettasks',
+         'WHERE' => [
+            'id' => $task_id,
+            'users_id_tech' => Session::getLoginUserID(),
          ]
       ];
-      $req=$DB->request($query);
-      if ($row=$req->current()) {
+      $req = $DB->request($query);
+      if ($row = $req->current()) {
          return true;
       } else {
          return false;
       }
    }
 
-   static function checkTimerActive($task_id) {
+   static function checkTimerActive($task_id)
+   {
       global $DB;
 
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            'tickettasks_id'=>$task_id,
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
+            'tickettasks_id' => $task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
-            'actual_end'=>null,
+            'actual_end' => null,
          ]
       ];
-      $req=$DB->request($query);
-      if ($row=$req->current()) {
+      $req = $DB->request($query);
+      if ($row = $req->current()) {
          return true;
       } else {
          return false;
       }
    }
 
-   static function totalEndTime($task_id) {
+   static function totalEndTime($task_id)
+   {
       global $DB;
 
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            'tickettasks_id'=>$task_id,
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
+            'tickettasks_id' => $task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
@@ -377,46 +381,47 @@ JAVASCRIPT;
          ]
       ];
 
-      $seconds=0;
+      $seconds = 0;
       foreach ($DB->request($query) as $id => $row) {
-         $seconds+=$row['actual_actiontime'];
+         $seconds += $row['actual_actiontime'];
       }
 
-      $querytime=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            'tickettasks_id'=>$task_id,
+      $querytime = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
+            'tickettasks_id' => $task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
-            'actual_end'=>null,
+            'actual_end' => null,
          ]
       ];
 
-      $req=$DB->request($querytime);
-      if ($row=$req->current()) {
-         $seconds+=(strtotime("now")-strtotime($row['actual_begin']));
+      $req = $DB->request($querytime);
+      if ($row = $req->current()) {
+         $seconds += (strtotime("now") - strtotime($row['actual_begin']));
       }
 
       return $seconds;
    }
 
-   static function checkUser($task_id, $user_id) {
+   static function checkUser($task_id, $user_id)
+   {
       global $DB;
 
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            'tickettasks_id'=>$task_id,
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
+            'tickettasks_id' => $task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
-            'actual_end'=>null,
-            'users_id'=>$user_id,
+            'actual_end' => null,
+            'users_id' => $user_id,
          ]
       ];
-      $req=$DB->request($query);
-      if ($row=$req->current()) {
+      $req = $DB->request($query);
+      if ($row = $req->current()) {
          return true;
       } else {
          return false;
@@ -430,120 +435,126 @@ JAVASCRIPT;
     *
     * @return Boolean (true if technitian IS NOT ACTIVE in any task)
     * (opposite behaviour from original version until 1.1.0)
-   **/
-   static function checkUserFree($user_id) {
+    **/
+   static function checkUserFree($user_id)
+   {
       global $DB;
 
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
             [
                'NOT' => ['actual_begin' => null],
             ],
-            'actual_end'=>null,
-            'users_id'=>$user_id,
+            'actual_end' => null,
+            'users_id' => $user_id,
          ]
       ];
-      $req=$DB->request($query);
-      if ($row=$req->current()) {
+      $req = $DB->request($query);
+      if ($row = $req->current()) {
          return false;
       } else {
          return true;
       }
    }
 
-   static function getTicket($user_id) {
-      if ($task_id=self::getTask($user_id)) {
-         $task=new TicketTask();
+   static function getTicket($user_id)
+   {
+      if ($task_id = self::getTask($user_id)) {
+         $task = new TicketTask();
          $task->getFromDB($task_id);
          return $task->fields['tickets_id'];
       }
       return false;
    }
 
-   static function getTask($user_id) {
+   static function getTask($user_id)
+   {
       global $DB;
 
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
             [
                'NOT' => ['actual_begin' => null],
             ],
-            'actual_end'=>null,
-            'users_id'=>$user_id,
+            'actual_end' => null,
+            'users_id' => $user_id,
          ]
       ];
-      $req=$DB->request($query);
-      if($row=$req->current()){
+      $req = $DB->request($query);
+      if ($row = $req->current()) {
          return $row['tickettasks_id'];
-      }else{
+      } else {
          return 0;
       }
    }
 
-   static function getActualBegin($task_id) {
+   static function getActualBegin($task_id)
+   {
       global $DB;
 
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            'tickettasks_id'=>$task_id,
-            'actual_end'=>null,
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
+            'tickettasks_id' => $task_id,
+            'actual_end' => null,
          ]
       ];
-      $req=$DB->request($query);
-      $row=$req->current();
+      $req = $DB->request($query);
+      $row = $req->current();
       return $row['actual_begin'];
    }
 
-   static public function showStats(Ticket $ticket) {
+   static public function showStats(Ticket $ticket)
+   {
       global $DB;
 
       $config = new PluginActualtimeConfig;
       if ((Session::getCurrentInterface() == "central")
-         || $config->showInHelpdesk()) {
+         || $config->showInHelpdesk()
+      ) {
 
-         $total_time=$ticket->getField('actiontime');
-         $ticket_id=$ticket->getID();
-         $actual_totaltime=0;
-         $query=[
-            'SELECT'=>[
+         $total_time = $ticket->getField('actiontime');
+         $ticket_id = $ticket->getID();
+         $actual_totaltime = 0;
+         $query = [
+            'SELECT' => [
                'glpi_tickettasks.id',
             ],
-            'FROM'=>'glpi_tickettasks',
-            'WHERE'=>[
-               'tickets_id'=>$ticket_id,
+            'FROM' => 'glpi_tickettasks',
+            'WHERE' => [
+               'tickets_id' => $ticket_id,
             ]
          ];
          foreach ($DB->request($query) as $id => $row) {
-            $actual_totaltime+=self::totalEndTime($row['id']);
+            $actual_totaltime += self::totalEndTime($row['id']);
          }
-         $html="<table class='tab_cadre_fixe'>";
-         $html.="<tr><th colspan='2'>ActualTime</th></tr>";
+         $html = "<table class='tab_cadre_fixe'>";
+         $html .= "<tr><th colspan='2'>ActualTime</th></tr>";
 
-         $html.="<tr class='tab_bg_2'><td>".__("Total duration")."</td><td>".HTML::timestampToString($total_time)."</td></tr>";
-         $html.="<tr class='tab_bg_2'><td>ActualTime - ".__("Total duration")."</td><td>".HTML::timestampToString($actual_totaltime)."</td></tr>";
+         $html .= "<tr class='tab_bg_2'><td>" . __("Total duration") . "</td><td>" . HTML::timestampToString($total_time) . "</td></tr>";
+         $html .= "<tr class='tab_bg_2'><td>ActualTime - " . __("Total duration") . "</td><td>" . HTML::timestampToString($actual_totaltime) . "</td></tr>";
 
-         $diff=$total_time-$actual_totaltime;
-         if ($diff<0) {
-            $color='red';
+         $diff = $total_time - $actual_totaltime;
+         if ($diff < 0) {
+            $color = 'red';
          } else {
-            $color='black';
+            $color = 'black';
          }
-         $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")."</td><td style='color:".$color."'>".HTML::timestampToString($diff)."</td></tr>";
-         if ($total_time==0) {
-            $diffpercent=0;
+         $html .= "<tr class='tab_bg_2'><td>" . __("Duration Diff", "actiontime") . "</td><td style='color:" . $color . "'>" . HTML::timestampToString($diff) . "</td></tr>";
+         if ($total_time == 0) {
+            $diffpercent = 0;
          } else {
-            $diffpercent=100*($total_time-$actual_totaltime)/$total_time;
+            $diffpercent = 100 * ($total_time - $actual_totaltime) / $total_time;
          }
-         $html.="<tr class='tab_bg_2'><td>".__("Duration Diff", "actiontime")." (%)</td><td style='color:".$color."'>".round($diffpercent, 2)."%</td></tr>";
+         $html .= "<tr class='tab_bg_2'><td>" . __("Duration Diff", "actiontime") . " (%)</td><td style='color:" . $color . "'>" . round($diffpercent, 2) . "%</td></tr>";
 
-         $html.="</table>";
+         $html .= "</table>";
 
-         $html.="<table class='tab_cadre_fixe'>";
-         $html.="<tr><th colspan='5'>ActualTime - ".__("Technician")."</th></tr>";
-         $html.="<tr><th>".__("Technician")."</th><th>".__("Total duration")."</th><th>ActualTime - ".__("Total duration")."</th><th>".__("Duration Diff", "actiontime")."</th><th>".__("Duration Diff", "actiontime")." (%)</th></tr>";
+         $html .= "<table class='tab_cadre_fixe'>";
+         $html .= "<tr><th colspan='5'>ActualTime - " . __("Technician") . "</th></tr>";
+         $html .= "<tr><th>" . __("Technician") . "</th><th>" . __("Total duration") . "</th><th>ActualTime - " . __("Total duration") . "</th><th>" . __("Duration Diff", "actiontime") . "</th><th>" . __("Duration Diff", "actiontime") . " (%)</th></tr>";
 
          $tasktable = TicketTask::getTable();
          $query = [
@@ -558,7 +569,7 @@ JAVASCRIPT;
             ],
             'ORDER' => 'users_id_tech',
          ];
-         $list=[];
+         $list = [];
          foreach ($DB->request($query) as $id => $row) {
             $list[$row['users_id_tech']]['name'] = getUserName($row['users_id_tech']);
             if (isset($list[$row['users_id_tech']]['total'])) {
@@ -590,26 +601,26 @@ JAVASCRIPT;
          }
 
          foreach ($list as $key => $value) {
-            $html.="<tr class='tab_bg_2'><td>".$value['name']."</td>";
+            $html .= "<tr class='tab_bg_2'><td>" . $value['name'] . "</td>";
 
-            $html.="<td>".HTML::timestampToString($value['total'])."</td>";
+            $html .= "<td>" . HTML::timestampToString($value['total']) . "</td>";
 
-            $html.="<td>".HTML::timestampToString($value['actual_total'])."</td>";
-            if (($value['total']-$value['actual_total'])<0) {
-               $color='red';
+            $html .= "<td>" . HTML::timestampToString($value['actual_total']) . "</td>";
+            if (($value['total'] - $value['actual_total']) < 0) {
+               $color = 'red';
             } else {
-               $color='black';
+               $color = 'black';
             }
-            $html.="<td style='color:".$color."'>".HTML::timestampToString($value['total']-$value['actual_total'])."</td>";
-            if ($value['total']==0) {
-               $html.="<td style='color:".$color."'>0%</td></tr>";
+            $html .= "<td style='color:" . $color . "'>" . HTML::timestampToString($value['total'] - $value['actual_total']) . "</td>";
+            if ($value['total'] == 0) {
+               $html .= "<td style='color:" . $color . "'>0%</td></tr>";
             } else {
-               $html.="<td style='color:".$color."'>".round(100*($value['total']-$value['actual_total'])/$value['total'])."%</td></tr>";
+               $html .= "<td style='color:" . $color . "'>" . round(100 * ($value['total'] - $value['actual_total']) / $value['total']) . "%</td></tr>";
             }
          }
-         $html.="</table>";
+         $html .= "</table>";
 
-         $script=<<<JAVASCRIPT
+         $script = <<<JAVASCRIPT
 $(document).ready(function(){
    $("div.dates_timelines:last").append("{$html}");
 });
@@ -618,13 +629,14 @@ JAVASCRIPT;
       }
    }
 
-   static function getSegment($task_id) {
+   static function getSegment($task_id)
+   {
       global $DB;
 
-      $query=[
-         'FROM'=>self::getTable(),
-         'WHERE'=>[
-            'tickettasks_id'=>$task_id,
+      $query = [
+         'FROM' => self::getTable(),
+         'WHERE' => [
+            'tickettasks_id' => $task_id,
             [
                'NOT' => ['actual_begin' => null],
             ],
@@ -635,32 +647,33 @@ JAVASCRIPT;
       ];
       $html = "";
       foreach ($DB->request($query) as $id => $row) {
-         $html.="<div class='row'><div class='col-12 col-md-6'>".$row['actual_begin']."</div><div class='col-12 col-md-6'>".HTML::timestampToString($row['actual_actiontime'])."</div></div>";
+         $html .= "<div class='row'><div class='col-12 col-md-6'>" . $row['actual_begin'] . "</div><div class='col-12 col-md-6'>" . HTML::timestampToString($row['actual_actiontime']) . "</div></div>";
       }
       return $html;
    }
 
-   static function afterAdd(TicketTask $item) {
+   static function afterAdd(TicketTask $item)
+   {
       global $DB;
       $config = new PluginActualtimeConfig;
       $plugin = new Plugin();
-      if(isset($item->input['autostart']) && $item->input['autostart']) {
-         if($item->getField('state')==1 && $item->getField('users_id_tech')==Session::getLoginUserID() && $item->fields['id']){
-            $task_id=$item->fields['id'];
+      if (isset($item->input['autostart']) && $item->input['autostart']) {
+         if ($item->getField('state') == 1 && $item->getField('users_id_tech') == Session::getLoginUserID() && $item->fields['id']) {
+            $task_id = $item->fields['id'];
             if ($plugin->isActivated('tam')) {
-               if(PluginTamLeave::checkLeave(Session::getLoginUserID())){
-                  $result['mensage']=__("Today is marked as absence you can not initialize the timer",'tam');
+               if (PluginTamLeave::checkLeave(Session::getLoginUserID())) {
+                  $result['mensage'] = __("Today is marked as absence you can not initialize the timer", 'tam');
                   Session::addMessageAfterRedirect(
-                     __("Today is marked as absence you can not initialize the timer",'tam'),
+                     __("Today is marked as absence you can not initialize the timer", 'tam'),
                      true,
                      WARNING
                   );
                   return;
-               }else{
-                  $timer_id=PluginTamTam::checkWorking(Session::getLoginUserID());
-                  if ($timer_id==0) {
+               } else {
+                  $timer_id = PluginTamTam::checkWorking(Session::getLoginUserID());
+                  if ($timer_id == 0) {
                      Session::addMessageAfterRedirect(
-                        "<a href='".$CFG_GLPI['root_doc']."/front/preference.php?forcetab=PluginTamTam$1'>" .__("Timer has not been initialized", 'tam')."</a>",
+                        "<a href='" . $CFG_GLPI['root_doc'] . "/front/preference.php?forcetab=PluginTamTam$1'>" . __("Timer has not been initialized", 'tam') . "</a>",
                         true,
                         WARNING
                      );
@@ -671,35 +684,34 @@ JAVASCRIPT;
             if (PluginActualtimeTask::checkTimerActive($task_id)) {
 
                // action=start, timer=on
-               $result=[
+               $result = [
                   'mensage' => __("A user is already performing the task", 'actualtime'),
                   'type'   => WARNING,
                ];
-
             } else {
 
                // action=start, timer=off
-               if (! PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
+               if (!PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
 
                   // action=start, timer=off, current user is alerady using timer
                   $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
-                  $result=[
-                     'mensage' => __("You are already doing a task", 'actualtime')." <a onclick='window.actualTime.showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
+                  $result = [
+                     'mensage' => __("You are already doing a task", 'actualtime') . " <a onclick='window.actualTime.showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . "$ticket_id</a>",
                      'type'   => WARNING,
                   ];
-
                } else {
 
                   // action=start, timer=off, current user is free
                   $DB->insert(
-                     'glpi_plugin_actualtime_tasks', [
+                     'glpi_plugin_actualtime_tasks',
+                     [
                         'tickettasks_id'     => $task_id,
                         'actual_begin' => date("Y-m-d H:i:s"),
                         'users_id'     => Session::getLoginUserID(),
                         'origin_start' => PluginActualtimetask::WEB,
                      ]
                   );
-                  $result=[
+                  $result = [
                      'mensage'   => __("Timer started", 'actualtime'),
                      'title'     => __('Information'),
                      'class'     => 'info_msg',
@@ -709,9 +721,8 @@ JAVASCRIPT;
                   ];
 
                   if ($plugin->isActivated('gappextended')) {
-                     PluginGappextendedPush::sendActualtime(PluginActualtimetask::getTicket(Session::getLoginUserID()),$task_id,$result,Session::getLoginUserID(),true);
+                     PluginGappextendedPush::sendActualtime(PluginActualtimetask::getTicket(Session::getLoginUserID()), $task_id, $result, Session::getLoginUserID(), true);
                   }
-
                }
             }
             Session::addMessageAfterRedirect(
@@ -723,61 +734,67 @@ JAVASCRIPT;
       }
    }
 
-   static function preUpdate(TicketTask $item) {
-      global $DB,$CFG_GLPI;
-      if(array_key_exists('state',$item->input)){
-         if ($item->input['state']!=1) {
+   static function preUpdate(TicketTask $item)
+   {
+      global $DB, $CFG_GLPI;
+      if (array_key_exists('state', $item->input)) {
+         if ($item->input['state'] != 1) {
             if (self::checkTimerActive($item->input['id'])) {
-               $actual_begin=self::getActualBegin($item->input['id']);
-               $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
+               $actual_begin = self::getActualBegin($item->input['id']);
+               $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
                $DB->update(
-                  'glpi_plugin_actualtime_tasks', [
+                  'glpi_plugin_actualtime_tasks',
+                  [
                      'actual_end'      => date("Y-m-d H:i:s"),
                      'actual_actiontime'      => $seconds,
-                  ], [
-                     'tickettasks_id'=>$item->input['id'],
+                  ],
+                  [
+                     'tickettasks_id' => $item->input['id'],
                      [
                         'NOT' => ['actual_begin' => null],
                      ],
-                     'actual_end'=>null,
+                     'actual_end' => null,
                   ]
                );
                $config = new PluginActualtimeConfig;
                if ($config->autoUpdateDuration()) {
-                  $item->input['actiontime']=ceil(self::totalEndTime($item->input['id'])/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+                  $item->input['actiontime'] = ceil(self::totalEndTime($item->input['id']) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
                }
             }
          }
       }
-      if (array_key_exists('users_id_tech',$item->input)){
-         if ($item->input['users_id_tech']!=$item->fields['users_id_tech']) {
+      if (array_key_exists('users_id_tech', $item->input)) {
+         if ($item->input['users_id_tech'] != $item->fields['users_id_tech']) {
             if (self::checkTimerActive($item->input['id'])) {
-               $actual_begin=self::getActualBegin($item->input['id']);
-               $seconds=(strtotime(date("Y-m-d H:i:s"))-strtotime($actual_begin));
+               $actual_begin = self::getActualBegin($item->input['id']);
+               $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
                $DB->update(
-                  'glpi_plugin_actualtime_tasks', [
+                  'glpi_plugin_actualtime_tasks',
+                  [
                      'actual_end'      => date("Y-m-d H:i:s"),
                      'actual_actiontime'      => $seconds,
-                  ], [
-                     'tickettasks_id'=>$item->input['id'],
+                  ],
+                  [
+                     'tickettasks_id' => $item->input['id'],
                      [
                         'NOT' => ['actual_begin' => null],
                      ],
-                     'actual_end'=>null,
+                     'actual_end' => null,
                   ]
                );
                $config = new PluginActualtimeConfig;
                if ($config->autoUpdateDuration()) {
-                  $item->input['actiontime']=ceil(self::totalEndTime($item->input['id'])/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
+                  $item->input['actiontime'] = ceil(self::totalEndTime($item->input['id']) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
                }
             }
          }
       }
    }
 
-   static function postShowTab($params) {
+   static function postShowTab($params)
+   {
       if ($ticket_id = PluginActualtimetask::getTicket(Session::getLoginUserID())) {
-         $script=<<<JAVASCRIPT
+         $script = <<<JAVASCRIPT
 $(document).ready(function(){
    window.actualTime.showTimerPopup($ticket_id);
 });
@@ -786,11 +803,12 @@ JAVASCRIPT;
       }
    }
 
-   static function postShowItem($params) {
+   static function postShowItem($params)
+   {
       global $DB;
 
       $item = $params['item'];
-      if (! is_object($item) || ! method_exists($item, 'getType')) {
+      if (!is_object($item) || !method_exists($item, 'getType')) {
          // Sometimes, params['item'] is just an array, like 'Solution'
          return;
       }
@@ -805,9 +823,10 @@ JAVASCRIPT;
             // Show timer in closed task box in:
             // Standard interface (always)
             // or Helpdesk inteface (only if config allows)
-            if ($config->showTimerInBox() &&
+            if (
+               $config->showTimerInBox() &&
                ((Session::getCurrentInterface() == "central")
-               || $config->showInHelpdesk())
+                  || $config->showInHelpdesk())
             ) {
 
                $time = self::totalEndTime($task_id);
@@ -837,27 +856,9 @@ JAVASCRIPT;
                $ticket_id = $item->fields['tickets_id'];
                $div = "<div id='actualtime_autoEdit_{$task_id}_{$rand}' onclick='javascript:viewEditSubitem$ticket_id$rand(event, \"TicketTask\", $task_id, this, \"viewitemTicketTask$task_id$rand\")'></div>";
                echo $div;
-               $script=<<<JAVASCRIPT
-$(document).ready(function(){
-   $("#actualtime_autoEdit_{$task_id}_{$rand}").click();
-   if ($("[id^='actualtime_autoEdit_']").attr('id') == "actualtime_autoEdit_{$task_id}_{$rand}") {
-      // Only scroll the first task if two (first=newly opened, second=timer running)
-      function waitForFormLoad(i){
-         if ($("#viewitemTicketTask$task_id$rand textarea[name='content']").length) {
-            $([document.documentElement, document.body]).animate({
-               scrollTop: $("#viewitemTicketTask$task_id$rand").siblings("div.h_info").offset().top
-            }, 1000);
-            $("#viewitemTicketTask$task_id$rand textarea[name='content']").focus();
-         } else if (i > 10) {
-            return;
-         } else {
-            setTimeout(function() {
-               waitForFormLoad(++i)
-            }, 500);
-         }
-      }
-      waitForFormLoad(0);
-   }
+               $script = <<<JAVASCRIPT
+$(document).ready(function() {
+   $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.card-body a.edit-timeline-item").trigger('click');
 });
 JAVASCRIPT;
 
@@ -867,7 +868,8 @@ JAVASCRIPT;
       }
    }
 
-   static function populatePlanning($options = []) {
+   static function populatePlanning($options = [])
+   {
       global $DB, $CFG_GLPI;
 
       $default_options = [
@@ -901,7 +903,8 @@ JAVASCRIPT;
             'actual_end' => ['>=', $begin]
          ],
          'ORDER' => [
-            'actual_begin ASC']
+            'actual_begin ASC'
+         ]
       ];
 
       if ($whogroup === "mine") {
@@ -934,15 +937,15 @@ JAVASCRIPT;
          if (!$options['genical']) {
             $interv[$key]["url"] = Ticket::getFormURLWithID($url_id);
          } else {
-            $interv[$key]["url"] = $CFG_GLPI["url_base"].Ticket::getFormURLWithID($url_id, false);
+            $interv[$key]["url"] = $CFG_GLPI["url_base"] . Ticket::getFormURLWithID($url_id, false);
          }
-         $interv[$key]["ajaxurl"] = $CFG_GLPI["root_doc"]."/ajax/planning.php".
-                                    "?action=edit_event_form".
-                                    "&itemtype=".$task->getType().
-                                    "&parentitemtype=".Ticket::getType().
-                                    "&parentid=".$task->fields['tickets_id'].
-                                    "&id=".$row['tickettasks_id'].
-                                    "&url=".$interv[$key]["url"];
+         $interv[$key]["ajaxurl"] = $CFG_GLPI["root_doc"] . "/ajax/planning.php" .
+            "?action=edit_event_form" .
+            "&itemtype=" . $task->getType() .
+            "&parentitemtype=" . Ticket::getType() .
+            "&parentid=" . $task->fields['tickets_id'] .
+            "&id=" . $row['tickettasks_id'] .
+            "&url=" . $interv[$key]["url"];
 
          $interv[$key]["begin"] = $row['actual_begin'];
          $interv[$key]["end"] = $row['actual_end'];
@@ -953,23 +956,25 @@ JAVASCRIPT;
       return $interv;
    }
 
-   static function displayPlanningItem(array $val, $who, $type = "", $complete = 0) {
+   static function displayPlanningItem(array $val, $who, $type = "", $complete = 0)
+   {
 
-      $html = "<strong>".$val["name"]."</strong>";
-      $html .= "<br><strong>".sprintf(__('By %s'), getUserName($val["users_id"]))."</strong>";
-      $html .= "<br><strong>".__('Start date')."</strong> : ".Html::convdatetime($val["begin"]);
-      $html .= "<br><strong>".__('End date')."</strong> : ".Html::convdatetime($val["end"]);
-      $html .= "<br><strong>".__('Total duration')."</strong> : ".$val["content"];
+      $html = "<strong>" . $val["name"] . "</strong>";
+      $html .= "<br><strong>" . sprintf(__('By %s'), getUserName($val["users_id"])) . "</strong>";
+      $html .= "<br><strong>" . __('Start date') . "</strong> : " . Html::convdatetime($val["begin"]);
+      $html .= "<br><strong>" . __('End date') . "</strong> : " . Html::convdatetime($val["end"]);
+      $html .= "<br><strong>" . __('Total duration') . "</strong> : " . $val["content"];
 
       return $html;
    }
 
-   static function install(Migration $migration) {
+   static function install(Migration $migration)
+   {
       global $DB;
 
       $default_charset = DBConnection::getDefaultCharset();
-		$default_collation = DBConnection::getDefaultCollation();
-		$default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+      $default_collation = DBConnection::getDefaultCollation();
+      $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
 
       $table = self::getTable();
 
@@ -991,7 +996,7 @@ JAVASCRIPT;
          ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
          $DB->query($query) or die($DB->error());
       } else {
-         
+
          $migration->changeField($table, 'tasks_id', 'tickettasks_id', 'int');
          $migration->dropField($table, 'latitude_start');
          $migration->dropField($table, 'longitude_start');
@@ -1003,7 +1008,8 @@ JAVASCRIPT;
       }
    }
 
-   static function uninstall(Migration $migration) {
+   static function uninstall(Migration $migration)
+   {
 
       $table = self::getTable();
       $migration->displayMessage("Uninstalling $table");

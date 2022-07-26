@@ -47,4 +47,4 @@ if (isset($_POST["update"])) {
    Html::back();
 }
 
-Html::redirect($CFG_GLPI["root_doc"]."/front/config.form.php?forcetab=".urlencode('PluginActualtimeConfig$1'));
+Html::redirect($CFG_GLPI["root_doc"] . "/front/config.form.php?forcetab=" . urlencode('PluginActualtimeConfig$1'));
