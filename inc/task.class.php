@@ -49,6 +49,11 @@ class PluginActualtimeTask extends CommonDBTM{
 
    static public function rawSearchOptionsToAdd(){
 
+      $tab[] = [
+         'id' => 'actualtime',
+         'name' => 'ActualTime'
+      ];
+
       $tab[]=[
          'id'=>'7000',
          'table'=>self::getTable(),
@@ -102,25 +107,6 @@ class PluginActualtimeTask extends CommonDBTM{
             'linkfield'=>'tasks_id'
          ],
          'type'=>'diff%'
-      ];
-
-      $tab[]=[
-         'id'=>'7003',
-         'table'=>self::getTable(),
-         'field'=>'actual_actiontime',
-         'name'=>__('Task duration'),
-         'datatype' => 'specific',
-         'joinparams'=>[
-            'beforejoin'=>[
-               'table'=>'glpi_tickettasks',
-               'joinparams' => [
-                  'jointype' => 'child'
-               ]
-            ],
-            'jointype' => 'child',
-            'linkfield'=>'tasks_id'
-         ],
-         'type'=>'task'
       ];
 
       return $tab;
