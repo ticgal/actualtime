@@ -232,8 +232,8 @@ if (isset($_POST["action"])) {
    $result['symb_second'] = _n("%d second", "%d seconds", 1);
    $result['symb_seconds'] = _n("%d second", "%d seconds", 2);
    $result['text_warning'] = __('Warning');
-   $result['text_pause'] = __('Pause', 'actualtime');
-   $result['text_restart'] = __('Restart', 'actualtime');
+   $result['text_pause'] = "<i class='fa-solid fa-pause'></i>";
+   $result['text_restart'] = "<i class='fa-solid fa-forward'></i>";
    $result['text_done'] = __('Done');
    // Current user active task. Data to timer popup
    $config = new PluginActualtimeConfig;

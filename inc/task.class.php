@@ -207,8 +207,8 @@ class PluginActualtimeTask extends CommonDBTM
                $rand = mt_rand();
                $buttons = ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE));
                $time = self::totalEndTime($task_id);
-               $text_restart = __('Restart', 'actualtime');
-               $text_pause = __('Pause', 'actualtime');
+               $text_restart = "<i class='fa-solid fa-forward'></i>";
+               $text_pause = "<i class='fa-solid fa-pause'></i>";
                $html = '';
                $html_buttons = '';
                $script = <<<JAVASCRIPT
@@ -219,7 +219,7 @@ JAVASCRIPT;
                $timercolor = 'black';
                if ($buttons) {
 
-                  $value1 = __('Start');
+                  $value1 = "<i class='fa-solid fa-play'></i>";
                   $action1 = '';
                   $color1 = 'gray';
                   $disabled1 = 'disabled';
@@ -254,12 +254,8 @@ JAVASCRIPT;
                      }
                   }
 
-                  //$html_buttons .= "<div class='col-12 col-md-6'>";
-                  //$html_buttons .= "<div class='row'>";
-                  $html_buttons .= "<button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' style='background-color:$color1;color:white' $disabled1><span class='d-none d-md-block'>$value1</span></button>";
-                  $html_buttons .= "<button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='" . __('End') . "' style='background-color:$color2;color:white' $disabled2><span class='d-none d-md-block'>" . __('End') . "</span></button>";
-                  //$html_buttons .= "</div>";
-                  //$html_buttons .= "</div>";
+                  $html_buttons .= "<button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' style='background-color:$color1;color:white' $disabled1><span class='d-none d-md-block'>$value1</span></button>";
+                  $html_buttons .= "<button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' style='background-color:$color2;color:white' $disabled2><span class='d-none d-md-block'><i class='fa-solid fa-stop'></i></span></button>";
 
                   // Only task user have buttons
                   $script .= <<<JAVASCRIPT
