@@ -256,8 +256,8 @@ JAVASCRIPT;
 
                   //$html_buttons .= "<div class='col-12 col-md-6'>";
                   //$html_buttons .= "<div class='row'>";
-                  $html_buttons .= "<div class='col-12 col-md-3'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' style='width:60%;background-color:$color1;color:white' $disabled1><span>$value1</span></button></div>";
-                  $html_buttons .= "<div class='col-12 col-md-3'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='" . __('End') . "' style='width:60%;background-color:$color2;color:white' $disabled2><span>" . __('End') . "</span></button></div>";
+                  $html_buttons .= "<button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' value='$value1' style='background-color:$color1;color:white' $disabled1><span class='d-none d-md-block'>$value1</span></button>";
+                  $html_buttons .= "<button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' value='" . __('End') . "' style='background-color:$color2;color:white' $disabled2><span class='d-none d-md-block'>" . __('End') . "</span></button>";
                   //$html_buttons .= "</div>";
                   //$html_buttons .= "</div>";
 
@@ -283,13 +283,19 @@ JAVASCRIPT;
                ) {
 
                   $html .= "<div class='row center'>";
-                  $html .= "<div class='col-12 col-md-3'>" . __("Actual Duration", 'actualtime') . "</div>";
-                  $html .= "<div class='col-12 col-md-3' id='actualtime_timer_{$task_id}_{$rand}' style='color:{$timercolor}'></div>";
+                  $html .= "<div class='col-12 col-md-7'>";
+                  $html .= "<div class='b'>" . __("Actual Duration", 'actualtime') . "</div>";
+                  $html .= "<div id='actualtime_timer_{$task_id}_{$rand}' style='color:{$timercolor}'></div>";
+                  $html .= "</div>";
+                  $html .= "<div class='col-12 col-md-5'>";
+                  $html .= "<div class='btn-group'>";
                   $html .= $html_buttons;
                   $html .= "</div>";
+                  $html .= "</div>";
+                  $html .= "</div>";
                   $html .= "<div class='row center b'>";
-                  $html .= "<div class='col-12 col-md-6'>" . __("Start date") . "</div>";
-                  $html .= "<div class='col-12 col-md-6'>" . __("Partial actual duration", 'actualtime') . "</div>";
+                  $html .= "<div class='col-12 col-md-7'>" . __("Start date") . "</div>";
+                  $html .= "<div class='col-12 col-md-5'>" . __("Partial actual duration", 'actualtime') . "</div>";
                   $html .= "</div>";
 
                   $html .= "<div class='row center' id='actualtime_segment_{$task_id}_{$rand}'>";
@@ -647,7 +653,7 @@ JAVASCRIPT;
       ];
       $html = "";
       foreach ($DB->request($query) as $id => $row) {
-         $html .= "<div class='row'><div class='col-12 col-md-6'>" . $row['actual_begin'] . "</div><div class='col-12 col-md-6'>" . HTML::timestampToString($row['actual_actiontime']) . "</div></div>";
+         $html .= "<div class='row center'><div class='col-12 col-md-7'>" . $row['actual_begin'] . "</div><div class='col-12 col-md-5'>" . HTML::timestampToString($row['actual_actiontime']) . "</div></div>";
       }
       return $html;
    }
