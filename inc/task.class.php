@@ -294,7 +294,7 @@ JAVASCRIPT;
                   $html .= "<div class='col-12 col-md-5'>" . __("Partial actual duration", 'actualtime') . "</div>";
                   $html .= "</div>";
 
-                  $html .= "<div class='row center' id='actualtime_segment_{$task_id}_{$rand}'>";
+                  $html .= "<div id='actualtime_segment_{$task_id}_{$rand}'>";
                   $html .= self::getSegment($item->getID());
                   $html .= "</div>";
 
