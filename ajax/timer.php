@@ -261,10 +261,13 @@ if (isset($_POST["action"])) {
       $parent->getFromDB(PluginActualtimeTask::getTicket(Session::getLoginUserID()));
       $options['parent'] = $parent;
       echo  "<div class='modal-header'>";
-      echo "<h4 class='modal-title'><a href='" . urldecode($CFG_GLPI['url_base'] . "/index.php?redirect=" . strtolower($parent->getType()) . "_" . PluginActualtimeTask::getTicket(Session::getLoginUserID()) . "&noAUTO=1") . "'>" . __("View this item in his context") . "</a></h4>";
+      echo "<h4 class='modal-title'>".__('Update of a task')."</h4>";
       echo "<button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='" . __("Close") . "'></button>";
       echo "</div>";
       echo "<div class='modal-body'>";
+      echo "<div class='center'>";
+      echo "<a class='btn btn-outline-secondary' href='" . urldecode($CFG_GLPI['url_base'] . "/index.php?redirect=" . strtolower($parent->getType()) . "_" . PluginActualtimeTask::getTicket(Session::getLoginUserID()) . "&noAUTO=1") . "'><i class='ti ti-eye'></i><span>" . __("View this item in his context") . "</span></a>";
+      echo "</div><hr>";
       $item = getItemForItemtype("TicketTask");
       $item->getFromDB($task_id);
       $item->showForm($task_id, $options);
