@@ -737,6 +737,8 @@ JAVASCRIPT;
 
    static function preUpdate(TicketTask $item) {
       global $DB,$CFG_GLPI;
+      
+      $config = new PluginActualtimeConfig;
       if(array_key_exists('state',$item->input)){
          if ($item->input['state']!=1) {
             if (self::checkTimerActive($item->input['id'])) {
@@ -754,10 +756,11 @@ JAVASCRIPT;
                      'actual_end'=>null,
                   ]
                );
-               $config = new PluginActualtimeConfig;
                if ($config->autoUpdateDuration()) {
                   $item->input['actiontime']=ceil(self::totalEndTime($item->input['id'])/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
                }
+            } elseif (self::totalEndTime($item->input['id']) > 0 && $config->autoUpdateDuration()) {
+               $item->input['actiontime']=ceil(self::totalEndTime($item->input['id'])/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
             }
          }
       }
@@ -778,7 +781,6 @@ JAVASCRIPT;
                      'actual_end'=>null,
                   ]
                );
-               $config = new PluginActualtimeConfig;
                if ($config->autoUpdateDuration()) {
                   $item->input['actiontime']=ceil(self::totalEndTime($item->input['id'])/($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP))*($CFG_GLPI["time_step"]*MINUTE_TIMESTAMP);
                }
