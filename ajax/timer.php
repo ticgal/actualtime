@@ -42,7 +42,7 @@ global $CFG_GLPI;
 if (isset($_POST["action"])) {
    $plugin = new Plugin();
    $task_id = $_POST["task_id"];
-   $config = new PluginActualtimeConfig;
+   $config = new PluginActualtimeConfig();
    switch ($_POST["action"]) {
       case 'start':
          if ($plugin->isActivated('tam')) {
@@ -236,7 +236,7 @@ if (isset($_POST["action"])) {
    $result['text_restart'] = "<i class='fa-solid fa-forward'></i>";
    $result['text_done'] = __('Done');
    // Current user active task. Data to timer popup
-   $config = new PluginActualtimeConfig;
+   $config = new PluginActualtimeConfig();
    if ($config->showTimerPopup()) {
       // popup_div exists only if settings allow display pop-up timer
       $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='window.actualTime.showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " %t</a> -> <span></span></div>";

@@ -67,7 +67,7 @@ function plugin_init_actualtime()
       // Add settings form as a tab on Setup - General page
       Plugin::registerClass('PluginActualtimeConfig', ['addtabon' => 'Config']);
 
-      $config = new PluginActualtimeConfig;
+      $config = new PluginActualtimeConfig();
 
       $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
       $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket' => 'plugin_actualtime_item_stats'];

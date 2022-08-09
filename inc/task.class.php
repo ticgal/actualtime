@@ -201,7 +201,7 @@ class PluginActualtimeTask extends CommonDBTM
          case 'TicketTask':
             if ($item->getID()) {
 
-               $config = new PluginActualtimeConfig;
+               $config = new PluginActualtimeConfig();
 
                $task_id = $item->getID();
                $rand = mt_rand();
@@ -512,7 +512,7 @@ JAVASCRIPT;
    {
       global $DB;
 
-      $config = new PluginActualtimeConfig;
+      $config = new PluginActualtimeConfig();
       if ((Session::getCurrentInterface() == "central")
          || $config->showInHelpdesk()
       ) {
@@ -657,7 +657,7 @@ JAVASCRIPT;
    static function afterAdd(TicketTask $item)
    {
       global $DB;
-      $config = new PluginActualtimeConfig;
+      $config = new PluginActualtimeConfig();
       $plugin = new Plugin();
       if (isset($item->input['autostart']) && $item->input['autostart']) {
          if ($item->getField('state') == 1 && $item->getField('users_id_tech') == Session::getLoginUserID() && $item->fields['id']) {
@@ -739,6 +739,8 @@ JAVASCRIPT;
    static function preUpdate(TicketTask $item)
    {
       global $DB, $CFG_GLPI;
+
+      $config = new PluginActualtimeConfig();
       if (array_key_exists('state', $item->input)) {
          if ($item->input['state'] != 1) {
             if (self::checkTimerActive($item->input['id'])) {
@@ -758,10 +760,11 @@ JAVASCRIPT;
                      'actual_end' => null,
                   ]
                );
-               $config = new PluginActualtimeConfig;
                if ($config->autoUpdateDuration()) {
                   $item->input['actiontime'] = ceil(self::totalEndTime($item->input['id']) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
                }
+            } elseif (self::totalEndTime($item->input['id']) > 0 && $config->autoUpdateDuration()) {
+               $item->input['actiontime'] = ceil(self::totalEndTime($item->input['id']) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
             }
          }
       }
@@ -784,7 +787,6 @@ JAVASCRIPT;
                      'actual_end' => null,
                   ]
                );
-               $config = new PluginActualtimeConfig;
                if ($config->autoUpdateDuration()) {
                   $item->input['actiontime'] = ceil(self::totalEndTime($item->input['id']) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
                }
@@ -817,7 +819,7 @@ JAVASCRIPT;
       switch ($item->getType()) {
          case 'TicketTask':
 
-            $config = new PluginActualtimeConfig;
+            $config = new PluginActualtimeConfig();
             $task_id = $item->getID();
             // Auto open needs to use correct item randomic number
             $rand = $params['options']['rand'];

@@ -90,7 +90,7 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
 
    switch ($itemtype) {
       case Ticket::getType():
-         $config = new PluginActualtimeConfig;
+         $config = new PluginActualtimeConfig();
          if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
             $tab = array_merge($tab, PluginActualtimeTask::rawSearchOptionsToAdd());
          }
