@@ -12,6 +12,9 @@ sed -i "s/SOME DESCRIPTIVE TITLE/Actualtime Glpi Plugin/" actualtime.pot
 sed -i "s/FIRST AUTHOR <EMAIL@ADDRESS>, YEAR./TICgal, $(date +%Y)/" actualtime.pot
 sed -i "s/YEAR/$(date +%Y)/" actualtime.pot
 
+localazy upload
+localazy download
+
 for a in $(ls *.po); do
 	msgmerge -U $a actualtime.pot
 	msgfmt $a -o "${a%.*}.mo"
