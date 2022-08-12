@@ -53,6 +53,11 @@ class PluginActualtimeTask extends CommonDBTM
    {
 
       $tab[] = [
+         'id' => 'actualtime',
+         'name' => 'ActualTime'
+      ];
+
+      $tab[]=[
          'id' => '7000',
          'table' => self::getTable(),
          'field' => 'actual_actiontime',
@@ -102,24 +107,6 @@ class PluginActualtimeTask extends CommonDBTM
             'jointype' => 'child',
          ],
          'type' => 'diff%'
-      ];
-
-      $tab[] = [
-         'id' => '7003',
-         'table' => self::getTable(),
-         'field' => 'actual_actiontime',
-         'name' => __('Task duration'),
-         'datatype' => 'specific',
-         'joinparams' => [
-            'beforejoin' => [
-               'table' => 'glpi_tickettasks',
-               'joinparams' => [
-                  'jointype' => 'child'
-               ]
-            ],
-            'jointype' => 'child',
-         ],
-         'type' => 'task'
       ];
 
       return $tab;

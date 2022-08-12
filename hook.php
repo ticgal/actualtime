@@ -95,6 +95,34 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
             $tab = array_merge($tab, PluginActualtimeTask::rawSearchOptionsToAdd());
          }
          break;
+      case 'TicketTask':
+         $config = new PluginActualtimeConfig;
+         if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
+            $tab[] = [
+               'id' => 'actualtime',
+               'name' => 'ActualTime'
+            ];
+            
+            $tab[]=[
+               'id'=>'7003',
+               'table'=>PluginActualtimeTask::getTable(),
+               'field'=>'actual_actiontime',
+               'name'=>__('Task duration'),
+               'datatype' => 'specific',
+               'joinparams'=>[
+                  'beforejoin'=>[
+                     'table'=>'glpi_tickettasks',
+                     'joinparams' => [
+                        'jointype' => 'child'
+                     ]
+                  ],
+                  'jointype' => 'child',
+                  'linkfield'=>'tasks_id'
+               ],
+               'type'=>'task'
+            ];
+         }
+         break;
    }
 
    return $tab;
