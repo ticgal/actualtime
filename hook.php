@@ -33,12 +33,13 @@
  *
  * @return boolean True if success
  */
-function plugin_actualtime_install() {
+function plugin_actualtime_install()
+{
 
    $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
    // Parse inc directory
-   foreach (glob(__DIR__ .'/inc/*') as $filepath) {
+   foreach (glob(__DIR__ . '/inc/*') as $filepath) {
       // Load *.class.php files and get the class name
       if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
          $classname = 'PluginActualtime' . ucfirst($matches[1]);
@@ -56,34 +57,40 @@ function plugin_actualtime_install() {
    return true;
 }
 
-function plugin_actualtime_item_stats($item) {
+function plugin_actualtime_item_stats($item)
+{
    PluginActualtimeTask::showStats($item);
 }
 
-function plugin_actualtime_item_update($item) {
+function plugin_actualtime_item_update($item)
+{
    PluginActualtimeTask::preUpdate($item);
 }
 
-function plugin_actualtime_item_add($item) {
+function plugin_actualtime_item_add($item)
+{
    PluginActualtimeTask::afterAdd($item);
 }
 
-function plugin_actualtime_item_purge(TicketTask $item){
+function plugin_actualtime_item_purge(TicketTask $item)
+{
    global $DB;
 
    $DB->delete(
-      PluginActualtimeTask::getTable(),[
-         'tasks_id'=>$item->fields['id']
+      PluginActualtimeTask::getTable(),
+      [
+         'tasks_id' => $item->fields['id']
       ]
    );
 }
 
-function plugin_actualtime_getAddSearchOptionsNew($itemtype){
-   $tab=[];
+function plugin_actualtime_getAddSearchOptions($itemtype)
+{
+   $tab = [];
 
    switch ($itemtype) {
-      case 'Ticket':
-         $config = new PluginActualtimeConfig;
+      case Ticket::getType():
+         $config = new PluginActualtimeConfig();
          if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
             $tab = array_merge($tab, PluginActualtimeTask::rawSearchOptionsToAdd());
          }
@@ -126,12 +133,13 @@ function plugin_actualtime_getAddSearchOptionsNew($itemtype){
  *
  * @return boolean True if success
  */
-function plugin_actualtime_uninstall() {
+function plugin_actualtime_uninstall()
+{
 
    $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
    // Parse inc directory
-   foreach (glob(__DIR__ .'/inc/*') as $filepath) {
+   foreach (glob(__DIR__ . '/inc/*') as $filepath) {
       // Load *.class.php files and get the class name
       if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
          $classname = 'PluginActualtime' . ucfirst($matches[1]);
