@@ -52,13 +52,9 @@ class PluginActualtimeTask extends CommonDBTM
    static public function rawSearchOptionsToAdd()
    {
 
-      $tab[] = [
-         'id' => 'actualtime',
-         'name' => 'ActualTime'
-      ];
+      $tab['actualtime'] = 'ActualTime';
 
-      $tab[]=[
-         'id' => '7000',
+      $tab['7000'] = [
          'table' => self::getTable(),
          'field' => 'actual_actiontime',
          'name' => __('Total duration'),
@@ -74,8 +70,7 @@ class PluginActualtimeTask extends CommonDBTM
          ],
          'type' => 'total'
       ];
-      $tab[] = [
-         'id' => '7001',
+      $tab['7001'] = [
          'table' => self::getTable(),
          'field' => 'actual_actiontime',
          'name' => __("Duration Diff", "actiontime"),
@@ -91,8 +86,7 @@ class PluginActualtimeTask extends CommonDBTM
          ],
          'type' => 'diff'
       ];
-      $tab[] = [
-         'id' => '7002',
+      $tab['7002'] = [
          'table' => self::getTable(),
          'field' => 'actual_actiontime',
          'name' => __("Duration Diff", "actiontime") . " (%)",

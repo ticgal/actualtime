@@ -155,19 +155,15 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
       case Ticket::getType():
          $config = new PluginActualtimeConfig();
          if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
-            $tab = array_merge($tab, PluginActualtimeTask::rawSearchOptionsToAdd());
+           return PluginActualtimeTask::rawSearchOptionsToAdd();
          }
          break;
       case 'TicketTask':
          $config = new PluginActualtimeConfig;
          if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
-            $tab[] = [
-               'id' => 'actualtime',
-               'name' => 'ActualTime'
-            ];
+            $tab['actualtime'] = 'ActualTime';
 
-            $tab[] = [
-               'id' => '7003',
+            $tab['7003'] = [
                'table' => PluginActualtimeTask::getTable(),
                'field' => 'actual_actiontime',
                'name' => __('Task duration'),
