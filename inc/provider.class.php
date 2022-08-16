@@ -46,7 +46,6 @@ class PluginActualtimeProvider extends CommonDBTM
 		$year   = date("Y") - 15;
 		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
 		$end    = date("Y-m-d");
-
 		if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
 			$begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
 			$end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
@@ -79,8 +78,8 @@ class PluginActualtimeProvider extends CommonDBTM
 			],
 			'WHERE' => [
 				$task_table . '.state' => 2,
-				$task_table . '.begin' => ['>=', $begin],
-				$task_table . '.end' => ['<=', $end],
+				$actualtime_table . '.actual_begin' => ['>=', $begin],
+				$actualtime_table . '.actual_end' => ['<=', $end],
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task DESC"],
 			'GROUP' => ['users_id_tech'],
@@ -118,8 +117,8 @@ class PluginActualtimeProvider extends CommonDBTM
 				],
 				'WHERE' => [
 					$task_table . '.state' => 2,
-					$task_table . '.begin' => ['>=', $begin],
-					$task_table . '.end' => ['<=', $end],
+					$actualtime_table . '.actual_begin' => ['>=', $begin],
+					$actualtime_table . '.actual_end' => ['<=', $end],
 					$task_table . ".users_id_tech" => $techs_id,
 				] + getEntitiesRestrictCriteria($table),
 				'ORDER' => ['period DESC', "nb_task DESC"],
@@ -156,7 +155,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		return [
 			'data' => $data,
 			'label' => $params['label'],
-			'icon' => 'fas fa-mobile-alt'
+			'icon' => 'fa-solid fa-stopwatch'
 		];
 	}
 
@@ -205,8 +204,8 @@ class PluginActualtimeProvider extends CommonDBTM
 			],
 			'WHERE' => [
 				$task_table . '.state' => 2,
-				$task_table . '.begin' => ['>=', $begin],
-				$task_table . '.end' => ['<=', $end],
+				$actualtime_table . '.actual_begin' => ['>=', $begin],
+				$actualtime_table . '.actual_end' => ['<=', $end],
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task ASC"],
 			'GROUP' => ['users_id_tech'],
@@ -248,8 +247,8 @@ class PluginActualtimeProvider extends CommonDBTM
 				'WHERE' => [
 					$task_table . '.state' => 2,
 					$task_table . ".users_id_tech" => $techs_id,
-					$task_table . '.begin' => ['>=', $begin],
-					$task_table . '.end' => ['<=', $end],
+					$actualtime_table . '.actual_begin' => ['>=', $begin],
+					$actualtime_table . '.actual_end' => ['<=', $end],
 				] + getEntitiesRestrictCriteria($table),
 				'ORDER' => ['period DESC', "nb_task DESC"],
 				'GROUP' => ['period', "tech"],
@@ -285,7 +284,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		return [
 			'data' => $data,
 			'label' => $params['label'],
-			'icon' => 'fas fa-mobile-alt'
+			'icon' => 'fa-solid fa-stopwatcht'
 		];
 	}
 
@@ -334,8 +333,8 @@ class PluginActualtimeProvider extends CommonDBTM
 			],
 			'WHERE' => [
 				$task_table . '.state' => 2,
-				$task_table . '.begin' => ['>=', $begin],
-				$task_table . '.end' => ['<=', $end],
+				$actualtime_table . '.actual_begin' => ['>=', $begin],
+				$actualtime_table . '.actual_end' => ['<=', $end],
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task DESC"],
 			'GROUP' => ['users_id_tech'],
@@ -373,8 +372,8 @@ class PluginActualtimeProvider extends CommonDBTM
 				],
 				'WHERE' => [
 					$task_table . '.state' => 2,
-					$task_table . '.begin' => ['>=', $begin],
-					$task_table . '.end' => ['<=', $end],
+					$actualtime_table . '.actual_begin' => ['>=', $begin],
+					$actualtime_table . '.actual_end' => ['<=', $end],
 					$task_table . ".users_id_tech" => $techs_id,
 				] + getEntitiesRestrictCriteria($table),
 				'ORDER' => ['period DESC', "nb_task DESC"],
@@ -418,7 +417,7 @@ class PluginActualtimeProvider extends CommonDBTM
 					if ($row = $req->next()) {
 						$total = $row['nb_task'];
 					}
-					if (array_key_exists($period, $value)) {
+					if (array_key_exists($period, $value) && $total > 0) {
 						$aux['data'][] = [
 							'value' => round(($value[$period] / $total) * 100, 2),
 						];
@@ -435,7 +434,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		return [
 			'data' => $data,
 			'label' => $params['label'],
-			'icon' => 'fas fa-mobile-alt'
+			'icon' => 'fa-solid fa-stopwatch'
 		];
 	}
 
@@ -448,7 +447,7 @@ class PluginActualtimeProvider extends CommonDBTM
 			'series' => []
 		];
 
-		$year   = date("Y") - 15;
+		/*$year   = date("Y") - 15;
 		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
 		$end    = date("Y-m-d");
 
@@ -484,8 +483,8 @@ class PluginActualtimeProvider extends CommonDBTM
 			],
 			'WHERE' => [
 				$task_table . '.state' => 2,
-				$task_table . '.begin' => ['>=', $begin],
-				$task_table . '.end' => ['<=', $end],
+				$actualtime_table . '.actual_begin' => ['>=', $begin],
+				$actualtime_table . '.actual_end' => ['<=', $end],
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task ASC"],
 			'GROUP' => ['users_id_tech'],
@@ -521,8 +520,8 @@ class PluginActualtimeProvider extends CommonDBTM
 				'WHERE' => [
 					$task_table . '.state' => 2,
 					$task_table . ".users_id_tech" => $techs_id,
-					$task_table . '.begin' => ['>=', $begin],
-					$task_table . '.end' => ['<=', $end],
+					$actualtime_table . '.actual_begin' => ['>=', $begin],
+					$actualtime_table . '.actual_end' => ['<=', $end],
 				] + getEntitiesRestrictCriteria($table),
 				'ORDER' => ['period DESC', "nb_task DESC"],
 				'GROUP' => ['period', "tech"],
@@ -583,12 +582,12 @@ class PluginActualtimeProvider extends CommonDBTM
 				}
 				$data['series'][] = $aux;
 			}
-		}
+		}*/
 
 		return [
 			'data' => $data,
 			'label' => $params['label'],
-			'icon' => 'fas fa-mobile-alt'
+			'icon' => 'fa-solid fa-stopwatch'
 		];
 	}
 }
