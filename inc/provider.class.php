@@ -288,6 +288,242 @@ class PluginActualtimeProvider extends CommonDBTM
 		];
 	}
 
+	static function moreActualtimeUsageByDay($params = [])
+	{
+		$DB = DBConnection::getReadConnection();
+
+		$data = [
+			'labels' => [],
+			'series' => []
+		];
+
+		$year   = date("Y") - 15;
+		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+		$end    = date("Y-m-d");
+
+		if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+			$begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+			$end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+			unset($params['apply_filters']['dates']);
+		}
+
+		$task_table = TicketTask::getTable();
+		$actualtime_table = PluginActualtimeTask::getTable();
+		$table = Ticket::getTable();
+
+		$query = [
+			'SELECT' => [
+				'SUM' => $actualtime_table.'.actual_actiontime AS total',
+				'users_id_tech'
+			],
+			'FROM' => $actualtime_table,
+			'INNER JOIN' => [
+				$task_table => [
+					'ON' => [
+						$task_table => 'id',
+						$actualtime_table => 'tickettasks_id'
+					]
+				]
+			],
+			'WHERE' => [
+				$task_table.'.state' => 2,
+				'date' => ['>=', $begin],
+				'AND' => [
+					'date' => ['<=', $end],
+				]
+			],
+			'ORDER' => ["total DESC"],
+			'GROUP' => ['users_id_tech'],
+			'LIMIT' => 20,
+		];
+
+		$techs_id = [];
+		foreach ($DB->request($query) as $result) {
+			$techs_id[] = $result['users_id_tech'];
+		}
+
+		if (count($techs_id) > 0) {
+			$sql = [
+				'SELECT' => [
+					new QueryExpression(
+						"FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+					),
+					'SUM' => 'actual_actiontime AS total',
+					'users_id_tech',
+				],
+				'FROM' => $actualtime_table,
+				'INNER JOIN' => [
+					$task_table => [
+						'ON' => [
+							$task_table => 'id',
+							$actualtime_table => 'tickettasks_id'
+						]
+					]
+				],
+				'WHERE' => [
+					$task_table.'.state' => 2,
+					'users_id_tech' => $techs_id,
+					'date' => ['>=', $begin],
+					'AND' => [
+						'date' => ['<=', $end],
+					]
+				],
+				'ORDER' => ['period DESC', "total DESC"],
+				'GROUP' => ['period', "users_id_tech"],
+			];
+
+			$tmp = [];
+			foreach ($DB->request($sql) as $result) {
+				if (!in_array($result['period'], $data['labels'])) {
+					$data['labels'][] = $result['period'];
+				}
+				$tmp[$result['users_id_tech']][$result['period']] = $result['total'];
+			}
+			sort($data['labels']);
+
+			foreach ($tmp as $key => $value) {
+				$aux = [];
+				$aux['name'] = getUserName($key);
+				foreach ($data['labels'] as $id => $period) {
+					if (array_key_exists($period, $value)) {
+						$aux['data'][] = [
+							'value' => round($value[$period]/HOUR_TIMESTAMP,2),
+						];
+					} else {
+						$aux['data'][] = [
+							'value' => 0,
+						];
+					}
+				}
+				$data['series'][] = $aux;
+			}
+		}
+
+		return [
+			'data' => $data,
+			'label' => $params['label'],
+			'icon' => 'fa-solid fa-stopwatcht'
+		];
+	}
+
+	static function lessActualtimeUsageByDay($params = [])
+	{
+		$DB = DBConnection::getReadConnection();
+
+		$data = [
+			'labels' => [],
+			'series' => []
+		];
+
+		$year   = date("Y") - 15;
+		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+		$end    = date("Y-m-d");
+
+		if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+			$begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+			$end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+			unset($params['apply_filters']['dates']);
+		}
+
+		$task_table = TicketTask::getTable();
+		$actualtime_table = PluginActualtimeTask::getTable();
+		$table = Ticket::getTable();
+
+		$query = [
+			'SELECT' => [
+				'SUM' => $actualtime_table.'.actual_actiontime AS total',
+				'users_id_tech'
+			],
+			'FROM' => $actualtime_table,
+			'INNER JOIN' => [
+				$task_table => [
+					'ON' => [
+						$task_table => 'id',
+						$actualtime_table => 'tickettasks_id'
+					]
+				]
+			],
+			'WHERE' => [
+				$task_table.'.state' => 2,
+				'date' => ['>=', $begin],
+				'AND' => [
+					'date' => ['<=', $end],
+				]
+			],
+			'ORDER' => ["total ASC"],
+			'GROUP' => ['users_id_tech'],
+			'LIMIT' => 20,
+		];
+
+		$techs_id = [];
+		foreach ($DB->request($query) as $result) {
+			$techs_id[] = $result['users_id_tech'];
+		}
+
+		if (count($techs_id) > 0) {
+			$sql = [
+				'SELECT' => [
+					new QueryExpression(
+						"FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+					),
+					'SUM' => 'actual_actiontime AS total',
+					'users_id_tech',
+				],
+				'FROM' => $actualtime_table,
+				'INNER JOIN' => [
+					$task_table => [
+						'ON' => [
+							$task_table => 'id',
+							$actualtime_table => 'tickettasks_id'
+						]
+					]
+				],
+				'WHERE' => [
+					$task_table.'.state' => 2,
+					'users_id_tech' => $techs_id,
+					'date' => ['>=', $begin],
+					'AND' => [
+						'date' => ['<=', $end],
+					]
+				],
+				'ORDER' => ['period DESC', "total DESC"],
+				'GROUP' => ['period', "users_id_tech"],
+			];
+
+			$tmp = [];
+			foreach ($DB->request($sql) as $result) {
+				if (!in_array($result['period'], $data['labels'])) {
+					$data['labels'][] = $result['period'];
+				}
+				$tmp[$result['users_id_tech']][$result['period']] = $result['total'];
+			}
+			sort($data['labels']);
+
+			foreach ($tmp as $key => $value) {
+				$aux = [];
+				$aux['name'] = getUserName($key);
+				foreach ($data['labels'] as $id => $period) {
+					if (array_key_exists($period, $value)) {
+						$aux['data'][] = [
+							'value' => round($value[$period]/HOUR_TIMESTAMP,2),
+						];
+					} else {
+						$aux['data'][] = [
+							'value' => 0,
+						];
+					}
+				}
+				$data['series'][] = $aux;
+			}
+		}
+
+		return [
+			'data' => $data,
+			'label' => $params['label'],
+			'icon' => 'fa-solid fa-stopwatcht'
+		];
+	}
+
 	static function morePercentageActualtimeTasksByDay($params = [])
 	{
 		$DB = DBConnection::getReadConnection();
