@@ -72,6 +72,69 @@ function plugin_actualtime_item_add($item)
    PluginActualtimeTask::afterAdd($item);
 }
 
+function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
+{
+   global $DB, $CFG_GLPI;
+
+   if ($solution->input['itemtype'] == Ticket::getType()) {
+
+      $config = new PluginActualtimeConfig();
+      
+      $ticket_id = $solution->input['items_id'];
+
+      $query = [
+         'SELECT' => [
+            PluginActualtimeTask::getTable().'.id',
+            PluginActualtimeTask::getTable().'.tickettasks_id',
+         ],
+         'FROM' => 'glpi_tickettasks',
+         'INNER JOIN' => [
+            PluginActualtimeTask::getTable() => [
+               'ON' => [
+                  PluginActualtimeTask::getTable() => 'tickettasks_id',
+                  'glpi_tickettasks' => 'id'
+               ]
+            ],
+         ],
+         'WHERE' => [
+            'tickets_id' => $ticket_id,
+            'actual_end' => null,
+         ]
+      ];
+      $task = new TicketTask();
+      foreach ($DB->request($query) as $id => $row) {
+         $task_id = $row['tickettasks_id'];
+
+         $actual_begin = PluginActualtimeTask::getActualBegin($task_id);
+         $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
+
+         $DB->update(
+            'glpi_plugin_actualtime_tasks',
+            [
+               'actual_end'        => date("Y-m-d H:i:s"),
+               'actual_actiontime' => $seconds,
+               'origin_end' => PluginActualtimetask::AUTO,
+            ],
+            [
+               'tickettasks_id' => $task_id,
+               [
+                  'NOT' => ['actual_begin' => null],
+               ],
+               'actual_end' => null,
+            ]
+         );
+         $task->getFromDB($task_id);
+         $input['id'] = $task_id;
+         $input['tickets_id'] = $task->fields['tickets_id'];
+         $input['state'] = 2;
+         if ($config->autoUpdateDuration()) {
+            $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
+         }
+         $task->update($input);
+      }
+   }
+}
+
 function plugin_actualtime_item_purge(TicketTask $item)
 {
    global $DB;
@@ -102,24 +165,24 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
                'id' => 'actualtime',
                'name' => 'ActualTime'
             ];
-            
-            $tab[]=[
-               'id'=>'7003',
-               'table'=>PluginActualtimeTask::getTable(),
-               'field'=>'actual_actiontime',
-               'name'=>__('Task duration'),
+
+            $tab[] = [
+               'id' => '7003',
+               'table' => PluginActualtimeTask::getTable(),
+               'field' => 'actual_actiontime',
+               'name' => __('Task duration'),
                'datatype' => 'specific',
-               'joinparams'=>[
-                  'beforejoin'=>[
-                     'table'=>'glpi_tickettasks',
+               'joinparams' => [
+                  'beforejoin' => [
+                     'table' => 'glpi_tickettasks',
                      'joinparams' => [
                         'jointype' => 'child'
                      ]
                   ],
                   'jointype' => 'child',
-                  'linkfield'=>'tasks_id'
+                  'linkfield' => 'tasks_id'
                ],
-               'type'=>'task'
+               'type' => 'task'
             ];
          }
          break;

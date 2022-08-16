@@ -75,6 +75,9 @@ function plugin_init_actualtime()
       $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
       $PLUGIN_HOOKS['add_javascript']['actualtime'] = 'js/actualtime.js';
       $PLUGIN_HOOKS['item_purge']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_purge'];
+      $PLUGIN_HOOKS['pre_item_add']['actualtime']=[
+         'ITILSolution' => 'plugin_actualtime_preSolutionAdd',
+      ];
 
       if ($config->showTimerPopup()) {
          // This hook is not needed if not showing popup
