@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Actualtime\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-12 14:27+0200\n"
+"POT-Creation-Date: 2022-08-17 09:39+0200\n"
 "Language: gl_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,23 +10,23 @@ msgstr ""
 "X-Generator: Localazy (https://localazy.com)\n"
 "Plural-Forms: nplurals=2; plural=(n==1) ? 0 : 1;\n"
 
-#: ajax/timer.php:53 inc/task.class.php:654 inc/task.class.php:656
+#: ajax/timer.php:53 inc/task.class.php:648 inc/task.class.php:650
 msgid "Today is marked as absence you can not initialize the timer"
 msgstr "Hoxe está marcado como ausencia. Non podes inicializar o temporizador."
 
-#: ajax/timer.php:59 inc/task.class.php:665
+#: ajax/timer.php:59 inc/task.class.php:659
 msgid "Timer has not been initialized"
 msgstr "Non se inicializou o temporizador"
 
-#: ajax/timer.php:69 inc/task.class.php:677
+#: ajax/timer.php:69 inc/task.class.php:671
 msgid "A user is already performing the task"
 msgstr "Un usuario xa está a realizar a tarefa"
 
 #: ajax/timer.php:80
-msgid "You are already working on a task in ticket"
-msgstr "You are already working on a task in ticket"
+msgid "You are already working on another ticket task"
+msgstr "Xa estás a traballar noutra tarefa de ticket"
 
-#: ajax/timer.php:96 inc/task.class.php:704
+#: ajax/timer.php:96 inc/task.class.php:698
 msgid "Timer started"
 msgstr "Comezou o temporizador"
 
@@ -107,20 +107,28 @@ msgid "Actual time"
 msgstr "Tempo real"
 
 #: inc/dashboard.class.php:43
-msgid "(Top 20 users) Actualtime usage per day"
-msgstr "(Top 20 users) Actualtime usage per day"
+msgid "Top 20 Actualtime tasks per day"
+msgstr "Os 20 usuarios con máis tarefas de Actualtime ao día"
 
 #: inc/dashboard.class.php:51
-msgid "(Low 20 users) Actualtime usage per day"
-msgstr "(Low 20 users) Actualtime usage per day"
+msgid "Bottom 20 Actualtime tasks per day"
+msgstr "Os 20 usuarios con menos tarefas de Actualtime ao día"
 
 #: inc/dashboard.class.php:59
-msgid "(Top 20 users) % Actualtime usage per day"
-msgstr "(Top 20 users) % Actualtime usage per day"
+msgid "Top 20 Actualtime usage (hours)"
+msgstr "Os 20 usuarios con máis tempo de Actualtime ao día (horas)"
 
 #: inc/dashboard.class.php:67
-msgid "(Low 20 users) % Actualtime usage per day"
-msgstr "(Low 20 users) % Actualtime usage per day"
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr "Os 20 usuarios con menos tempo de Actualtime ao día (horas)"
+
+#: inc/dashboard.class.php:74
+msgid "Top 20 % Actualtime usage per day"
+msgstr "20 usuarios con mellor rendimento de Actualtime en %"
+
+#: inc/dashboard.class.php:82
+msgid "Bottom 20 % Actualtime usage per day"
+msgstr "20 usuarios con menor rendimento de Actualtime en %"
 
 #: inc/running.class.php:36
 msgid "Actualtime"
@@ -138,19 +146,19 @@ msgstr "Actualizar cada (s)"
 msgid "ActualTime"
 msgstr "ActualTime"
 
-#: inc/task.class.php:81 inc/task.class.php:98 inc/task.class.php:534
-#: inc/task.class.php:540 inc/task.class.php:546
+#: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:528
+#: inc/task.class.php:534 inc/task.class.php:540
 msgid "Duration Diff"
 msgstr "Desviación"
 
-#: inc/task.class.php:270
+#: inc/task.class.php:264
 msgid "Actual Duration"
 msgstr "Duración real"
 
-#: inc/task.class.php:281
+#: inc/task.class.php:275
 msgid "Partial actual duration"
 msgstr "Duración real parcial"
 
-#: inc/task.class.php:688
+#: inc/task.class.php:682
 msgid "You are already doing a task"
 msgstr "Xa estás facendo unha tarefa"

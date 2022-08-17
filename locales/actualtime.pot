@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-12 14:27+0200\n"
+"POT-Creation-Date: 2022-08-17 09:39+0200\n"
 "PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,23 +17,23 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ajax/timer.php:53 inc/task.class.php:654 inc/task.class.php:656
+#: ajax/timer.php:53 inc/task.class.php:648 inc/task.class.php:650
 msgid "Today is marked as absence you can not initialize the timer"
 msgstr ""
 
-#: ajax/timer.php:59 inc/task.class.php:665
+#: ajax/timer.php:59 inc/task.class.php:659
 msgid "Timer has not been initialized"
 msgstr ""
 
-#: ajax/timer.php:69 inc/task.class.php:677
+#: ajax/timer.php:69 inc/task.class.php:671
 msgid "A user is already performing the task"
 msgstr ""
 
 #: ajax/timer.php:80
-msgid "You are already working on a task in ticket"
+msgid "You are already working on another ticket task"
 msgstr ""
 
-#: ajax/timer.php:96 inc/task.class.php:704
+#: ajax/timer.php:96 inc/task.class.php:698
 msgid "Timer started"
 msgstr ""
 
@@ -114,19 +114,27 @@ msgid "Actual time"
 msgstr ""
 
 #: inc/dashboard.class.php:43
-msgid "(Top 20 users) Actualtime usage per day"
+msgid "Top 20 Actualtime tasks per day"
 msgstr ""
 
 #: inc/dashboard.class.php:51
-msgid "(Low 20 users) Actualtime usage per day"
+msgid "Bottom 20 Actualtime tasks per day"
 msgstr ""
 
 #: inc/dashboard.class.php:59
-msgid "(Top 20 users) % Actualtime usage per day"
+msgid "Top 20 Actualtime usage (hours)"
 msgstr ""
 
 #: inc/dashboard.class.php:67
-msgid "(Low 20 users) % Actualtime usage per day"
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr ""
+
+#: inc/dashboard.class.php:74
+msgid "Top 20 % Actualtime usage per day"
+msgstr ""
+
+#: inc/dashboard.class.php:82
+msgid "Bottom 20 % Actualtime usage per day"
 msgstr ""
 
 #: inc/running.class.php:36
@@ -145,19 +153,19 @@ msgstr ""
 msgid "ActualTime"
 msgstr ""
 
-#: inc/task.class.php:81 inc/task.class.php:98 inc/task.class.php:534
-#: inc/task.class.php:540 inc/task.class.php:546
+#: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:528
+#: inc/task.class.php:534 inc/task.class.php:540
 msgid "Duration Diff"
 msgstr ""
 
-#: inc/task.class.php:270
+#: inc/task.class.php:264
 msgid "Actual Duration"
 msgstr ""
 
-#: inc/task.class.php:281
+#: inc/task.class.php:275
 msgid "Partial actual duration"
 msgstr ""
 
-#: inc/task.class.php:688
+#: inc/task.class.php:682
 msgid "You are already doing a task"
 msgstr ""
