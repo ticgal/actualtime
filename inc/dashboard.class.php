@@ -56,7 +56,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_moreactualtimeusagebyday'] = [
 			'widgettype' => ['bar', 'stackedbars', 'lines'],
-			'label' => __('Top 20 usage of Actualtime (hours)', 'actualtime'),
+			'label' => __('Top 20 Actualtime usage (hours)', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::moreActualtimeUsageByDay'
@@ -64,7 +64,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_lessactualtimeusagebyday'] = [
 			'widgettype' => ['bar', 'stackedbars', 'lines'],
-			'label' => __('Bottom 20 usage of Actualtime (hours)', 'actualtime'),
+			'label' => __('Bottom 20 Actualtime usage (hours)', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessActualtimeUsageByDay'
