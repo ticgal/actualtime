@@ -40,7 +40,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_moreactualtimetasksbyday'] = [
 			'widgettype' => ['bar', 'stackedbars', 'lines'],
-			'label' => __('(Top 20 users) Actualtime number per day', 'actualtime'),
+			'label' => __('Top 20 Actualtime tasks per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::moreActualtimeTasksByDay'
@@ -48,7 +48,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_lessactualtimetasks'] = [
 			'widgettype' => ['bar', 'stackedbars', 'lines'],
-			'label' => __('(Low 20 users) Actualtime number per day', 'actualtime'),
+			'label' => __('Bottom 20 Actualtime tasks per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessActualtimeTasksByDay'
@@ -69,9 +69,9 @@ class PluginActualtimeDashboard extends CommonDBTM
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessActualtimeUsageByDay'
 		];
-		/*$cards['plugin_actualtime_moreapercentagectualtimetasksbyday'] = [
+		$cards['plugin_actualtime_moreapercentagectualtimetasksbyday'] = [
 			'widgettype' => ['bar', 'bars', 'lines'],
-			'label' => __('(Top 20 users) % Actualtime usage per day', 'actualtime'),
+			'label' => __('Top 20 % Actualtime usage per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::morePercentageActualtimeTasksByDay'
@@ -79,11 +79,11 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_lesspercentageactualtimetasks'] = [
 			'widgettype' => ['bar', 'bars', 'lines'],
-			'label' => __('(Low 20 users) % Actualtime usage per day', 'actualtime'),
+			'label' => __('Bottom 20 % Actualtime usage per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessPercentageActualtimeTasksByDay'
-		];*/
+		];
 
 		return $cards;
 	}
