@@ -162,9 +162,9 @@ window.actualTime = new function() {
    this.init = function(ajax_url) {
       window.actualTime.ajax_url = ajax_url;
       if (!$("#toast_actualtime").length) {
-         const html = `<div class='toast-container bottom-0 end-0 p-3 messages_after_redirect'>
-            <div id='toast_actualtime' class='toast bg-warning text-white border-0 animate__delay-2s animate__slow' role='alert' aria-live='assertive' aria-atomic='true' data-bs-autohide='false'>
-               <div class='toast-header'>
+         const html = `<div class='toast-container bottom-0 start-0 p-3 messages_after_redirect'  id='toast_actualtime'>
+            <div class='toast border-0 animate__animated animate__tada animate__delay-2s animate__slow' role='alert' aria-live='assertive' aria-atomic='true'>
+               <div class='toast-header bg-warning text-white'>
                   <strong class='me-auto'>${__('Warning')}</strong>
                   <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='${__('Close')}'></button>
                </div>
@@ -172,7 +172,7 @@ window.actualTime = new function() {
             </div>
          </div>`;
          $('body').append(html);
-         toast = new bootstrap.Toast(document.querySelector('#toast_actualtime'), {});
+         toast = new bootstrap.Toast(document.querySelector('#toast_actualtime .toast:not(.show)'), {autohide:false});
       }
 
       // Initialize
