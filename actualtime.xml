@@ -2,7 +2,7 @@
    <name>ActualTime</name>
    <key>actualtime</key>
    <state>stable</state> <!-- stable | unstable | beta | alpha -->
-   <logo>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/actualtime-logo.png</logo>
+   <logo>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/actualtime.png</logo>
    <description>
       <short>
 		<en>Adds actual time tracking for GLPI tasks</en>
