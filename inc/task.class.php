@@ -849,6 +849,50 @@ JAVASCRIPT;
 
                print_r(Html::scriptBlock($script));
             }
+
+            if ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE)) {
+               $time = self::totalEndTime($task_id);
+               $text_restart = "<i class='fa-solid fa-forward'></i>";
+               $text_pause = "<i class='fa-solid fa-pause'></i>";
+               $value1 = "<i class='fa-solid fa-play'></i>";
+               $action1 = '';
+               $color1 = 'gray';
+               $disabled1 = 'disabled';
+               if ($item->getField('state') == 1) {
+
+                  if (self::checkTimerActive($task_id)) {
+
+                     $value1 = $text_pause;
+                     $action1 = 'pause';
+                     $color1 = 'orange';
+                     $disabled1 = '';
+                     $timercolor = 'red';
+                  } else {
+
+                     if ($time > 0) {
+                        $value1 = $text_restart;
+                     }
+
+                     $action1 = 'start';
+                     $color1 = 'green';
+                     $disabled1 = '';
+                  }
+               }
+               $button = "<div class='ms-auto col-auto'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' style='background-color:$color1;color:white' $disabled1><span class='d-none d-md-block'>$value1</span></button></div>";
+               $script = <<<JAVASCRIPT
+
+   $(document).ready(function() {
+      if ($("[id^='actualtime_button_{$task_id}_1_{$rand}']").length == 0) {
+         $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.todo-list-state").append("{$button}");
+      }
+      $("#actualtime_button_{$task_id}_1_{$rand}").click(function(event) {
+         window.actualTime.pressedButton($task_id, $(this).attr('action'));
+      });
+   });
+
+JAVASCRIPT;
+               echo Html::scriptBlock($script);
+            }
             break;
       }
    }
