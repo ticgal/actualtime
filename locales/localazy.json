@@ -1,13 +1,9 @@
 {
- 
   "upload": {
     "type": "pot",
     "deprecate": "project",
     "files": [
-      {
-        "pattern": "actualtime.pot",
-        "lang": "en_GB"
-      },
+      "actualtime.pot",
       {
         "group": "existing",
         "file": "actualtime.pot",
@@ -17,7 +13,6 @@
       }
     ]
   },
- 
   "download": {
     "files": "${languageCode}_${regionCode}.po",
     "includeSourceLang": true

@@ -31,9 +31,11 @@ if (!defined('GLPI_ROOT')) {
 	die("Sorry. You can't access directly to this file");
 }
 
-class PluginActualtimeProvider extends CommonDBTM {
+class PluginActualtimeProvider extends CommonDBTM
+{
 
-	static function moreActualtimeTasksByDay($params = []) {
+	static function moreActualtimeTasksByDay($params = [])
+	{
 		$DB = DBConnection::getReadConnection();
 
 		$data = [
@@ -44,7 +46,6 @@ class PluginActualtimeProvider extends CommonDBTM {
 		$year   = date("Y") - 15;
 		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
 		$end    = date("Y-m-d");
-
 		if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
 			$begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
 			$end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
@@ -57,15 +58,15 @@ class PluginActualtimeProvider extends CommonDBTM {
 
 		$sql = [
 			'SELECT' => [
-				"COUNT DISTINCT" => $task_table.".id AS nb_task",
-				$task_table.".users_id_tech",
+				"COUNT DISTINCT" => $task_table . ".id AS nb_task",
+				$task_table . ".users_id_tech",
 			],
 			'FROM' => $task_table,
 			'INNER JOIN' => [
 				$actualtime_table => [
 					'FKEY' => [
 						$task_table => 'id',
-						$actualtime_table => 'tasks_id',
+						$actualtime_table => 'tickettasks_id',
 					]
 				],
 				$table => [
@@ -76,9 +77,9 @@ class PluginActualtimeProvider extends CommonDBTM {
 				]
 			],
 			'WHERE' => [
-				$task_table.'.state' => 2,
-				$task_table.'.begin' => ['>=', $begin],
-				$task_table.'.end' => ['<=', $end],
+				$task_table . '.state' => 2,
+				$actualtime_table . '.actual_begin' => ['>=', $begin],
+				$actualtime_table . '.actual_end' => ['<=', $end],
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task DESC"],
 			'GROUP' => ['users_id_tech'],
@@ -94,17 +95,17 @@ class PluginActualtimeProvider extends CommonDBTM {
 			$query = [
 				'SELECT' => [
 					new QueryExpression(
-						"FROM_UNIXTIME(UNIX_TIMESTAMP(".$DB->quoteName("$task_table.date")."),'%Y-%m-%d') AS period"
+						"FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
 					),
-					"COUNT DISTINCT" => $task_table.".id AS nb_task",
-					$task_table.".users_id_tech AS tech",
+					"COUNT DISTINCT" => $task_table . ".id AS nb_task",
+					$task_table . ".users_id_tech AS tech",
 				],
 				'FROM' => $task_table,
 				'INNER JOIN' => [
 					$actualtime_table => [
 						'FKEY' => [
 							$task_table => 'id',
-							$actualtime_table => 'tasks_id',
+							$actualtime_table => 'tickettasks_id',
 						]
 					],
 					$table => [
@@ -115,10 +116,10 @@ class PluginActualtimeProvider extends CommonDBTM {
 					]
 				],
 				'WHERE' => [
-					$task_table.'.state' => 2,
-					$task_table.'.begin' => ['>=', $begin],
-					$task_table.'.end' => ['<=', $end],
-					$task_table.".users_id_tech" => $techs_id,
+					$task_table . '.state' => 2,
+					$actualtime_table . '.actual_begin' => ['>=', $begin],
+					$actualtime_table . '.actual_end' => ['<=', $end],
+					$task_table . ".users_id_tech" => $techs_id,
 				] + getEntitiesRestrictCriteria($table),
 				'ORDER' => ['period DESC', "nb_task DESC"],
 				'GROUP' => ['period', "tech"],
@@ -154,11 +155,12 @@ class PluginActualtimeProvider extends CommonDBTM {
 		return [
 			'data' => $data,
 			'label' => $params['label'],
-			'icon' => 'fas fa-mobile-alt'
+			'icon' => 'fa-solid fa-stopwatch'
 		];
 	}
 
-	static function lessActualtimeTasksByDay($params=[]){
+	static function lessActualtimeTasksByDay($params = [])
+	{
 		$DB = DBConnection::getReadConnection();
 
 		$data = [
@@ -182,15 +184,15 @@ class PluginActualtimeProvider extends CommonDBTM {
 
 		$sql = [
 			'SELECT' => [
-				"COUNT DISTINCT" => $task_table.".id AS nb_task",
-				$task_table.".users_id_tech",
+				"COUNT DISTINCT" => $task_table . ".id AS nb_task",
+				$task_table . ".users_id_tech",
 			],
 			'FROM' => $task_table,
 			'INNER JOIN' => [
 				$actualtime_table => [
 					'FKEY' => [
 						$task_table => 'id',
-						$actualtime_table => 'tasks_id',
+						$actualtime_table => 'tickettasks_id',
 					]
 				],
 				$table => [
@@ -201,9 +203,9 @@ class PluginActualtimeProvider extends CommonDBTM {
 				]
 			],
 			'WHERE' => [
-				$task_table.'.state' => 2,
-				$task_table.'.begin' => ['>=', $begin],
-				$task_table.'.end' => ['<=', $end],
+				$task_table . '.state' => 2,
+				$actualtime_table . '.actual_begin' => ['>=', $begin],
+				$actualtime_table . '.actual_end' => ['<=', $end],
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task ASC"],
 			'GROUP' => ['users_id_tech'],
@@ -222,17 +224,17 @@ class PluginActualtimeProvider extends CommonDBTM {
 			$query = [
 				'SELECT' => [
 					new QueryExpression(
-						"FROM_UNIXTIME(UNIX_TIMESTAMP(".$DB->quoteName("$task_table.date")."),'%Y-%m-%d') AS period"
+						"FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
 					),
-					"COUNT DISTINCT" => $task_table.".id AS nb_task",
-					$task_table.".users_id_tech AS tech",
+					"COUNT DISTINCT" => $task_table . ".id AS nb_task",
+					$task_table . ".users_id_tech AS tech",
 				],
 				'FROM' => $task_table,
 				'INNER JOIN' => [
 					$actualtime_table => [
 						'FKEY' => [
 							$task_table => 'id',
-							$actualtime_table => 'tasks_id',
+							$actualtime_table => 'tickettasks_id',
 						]
 					],
 					$table => [
@@ -243,10 +245,10 @@ class PluginActualtimeProvider extends CommonDBTM {
 					]
 				],
 				'WHERE' => [
-					$task_table.'.state' => 2,
-					$task_table.".users_id_tech" => $techs_id,
-					$task_table.'.begin' => ['>=', $begin],
-					$task_table.'.end' => ['<=', $end],
+					$task_table . '.state' => 2,
+					$task_table . ".users_id_tech" => $techs_id,
+					$actualtime_table . '.actual_begin' => ['>=', $begin],
+					$actualtime_table . '.actual_end' => ['<=', $end],
 				] + getEntitiesRestrictCriteria($table),
 				'ORDER' => ['period DESC', "nb_task DESC"],
 				'GROUP' => ['period', "tech"],
@@ -282,11 +284,12 @@ class PluginActualtimeProvider extends CommonDBTM {
 		return [
 			'data' => $data,
 			'label' => $params['label'],
-			'icon' => 'fas fa-mobile-alt'
+			'icon' => 'fa-solid fa-stopwatch'
 		];
 	}
 
-	static function morePercentageActualtimeTasksByDay($params = []) {
+	static function moreActualtimeUsageByDay($params = [])
+	{
 		$DB = DBConnection::getReadConnection();
 
 		$data = [
@@ -308,21 +311,21 @@ class PluginActualtimeProvider extends CommonDBTM {
 		$actualtime_table = PluginActualtimeTask::getTable();
 		$table = Ticket::getTable();
 
-		$sql = [
+		$query = [
 			'SELECT' => [
-				"COUNT DISTINCT" => $task_table.".id AS nb_task",
-				$task_table.".users_id_tech",
+				'SUM' => $actualtime_table.'.actual_actiontime AS total',
+				'users_id_tech'
 			],
-			'FROM' => $task_table,
+			'FROM' => $actualtime_table,
 			'INNER JOIN' => [
-				$actualtime_table => [
-					'FKEY' => [
+				$task_table => [
+					'ON' => [
 						$task_table => 'id',
-						$actualtime_table => 'tasks_id',
+						$actualtime_table => 'tickettasks_id'
 					]
 				],
 				$table => [
-					'FKEY' => [
+					'ON' => [
 						$table => 'id',
 						$task_table => 'tickets_id'
 					]
@@ -330,38 +333,40 @@ class PluginActualtimeProvider extends CommonDBTM {
 			],
 			'WHERE' => [
 				$task_table.'.state' => 2,
-				$task_table.'.begin' => ['>=', $begin],
-				$task_table.'.end' => ['<=', $end],
+				$task_table.'.date' => ['>=', $begin],
+				'AND' => [
+					$task_table.'.date' => ['<=', $end],
+				]
 			] + getEntitiesRestrictCriteria($table),
-			'ORDER' => ["nb_task DESC"],
+			'ORDER' => ["total DESC"],
 			'GROUP' => ['users_id_tech'],
-			'LIMIT' => 20
+			'LIMIT' => 20,
 		];
 
 		$techs_id = [];
-		foreach ($DB->request($sql) as $result) {
+		foreach ($DB->request($query) as $result) {
 			$techs_id[] = $result['users_id_tech'];
 		}
 
 		if (count($techs_id) > 0) {
-			$query = [
+			$sql = [
 				'SELECT' => [
 					new QueryExpression(
-						"FROM_UNIXTIME(UNIX_TIMESTAMP(".$DB->quoteName("$task_table.date")."),'%Y-%m-%d') AS period"
+						"FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
 					),
-					"COUNT DISTINCT" => $task_table.".id AS nb_task",
-					$task_table.".users_id_tech AS tech",
+					'SUM' => 'actual_actiontime AS total',
+					'users_id_tech',
 				],
-				'FROM' => $task_table,
+				'FROM' => $actualtime_table,
 				'INNER JOIN' => [
-					$actualtime_table => [
-						'FKEY' => [
+					$task_table => [
+						'ON' => [
 							$task_table => 'id',
-							$actualtime_table => 'tasks_id',
+							$actualtime_table => 'tickettasks_id'
 						]
 					],
 					$table => [
-						'FKEY' => [
+						'ON' => [
 							$table => 'id',
 							$task_table => 'tickets_id'
 						]
@@ -369,20 +374,22 @@ class PluginActualtimeProvider extends CommonDBTM {
 				],
 				'WHERE' => [
 					$task_table.'.state' => 2,
-					$task_table.'.begin' => ['>=', $begin],
-					$task_table.'.end' => ['<=', $end],
-					$task_table.".users_id_tech" => $techs_id,
+					'users_id_tech' => $techs_id,
+					$task_table.'.date' => ['>=', $begin],
+					'AND' => [
+						$task_table.'.date' => ['<=', $end],
+					]
 				] + getEntitiesRestrictCriteria($table),
-				'ORDER' => ['period DESC', "nb_task DESC"],
-				'GROUP' => ['period', "tech"],
+				'ORDER' => ['period DESC', "total DESC"],
+				'GROUP' => ['period', "users_id_tech"],
 			];
 
 			$tmp = [];
-			foreach ($DB->request($query) as $result) {
+			foreach ($DB->request($sql) as $result) {
 				if (!in_array($result['period'], $data['labels'])) {
 					$data['labels'][] = $result['period'];
 				}
-				$tmp[$result['tech']][$result['period']] = $result['nb_task'];
+				$tmp[$result['users_id_tech']][$result['period']] = $result['total'];
 			}
 			sort($data['labels']);
 
@@ -390,33 +397,9 @@ class PluginActualtimeProvider extends CommonDBTM {
 				$aux = [];
 				$aux['name'] = getUserName($key);
 				foreach ($data['labels'] as $id => $period) {
-					$sqltotal = [
-						'SELECT' => [
-							"COUNT DISTINCT" => $task_table.".id AS nb_task",
-						],
-						'FROM' => $task_table,
-						'INNER JOIN' => [
-							$table => [
-								'FKEY' => [
-									$table => 'id',
-									$task_table => 'tickets_id'
-								]
-							]
-						],
-						'WHERE' => [
-							$task_table.'.state' => 2,
-							$task_table.".users_id_tech" => $key,
-							$task_table.".date" => ['LIKE', $period.'%']
-						] + getEntitiesRestrictCriteria($table),
-					];
-					$total = 0;
-					$req = $DB->request($sqltotal);
-					if ($row = $req->next()) {
-						$total = $row['nb_task'];
-					}
 					if (array_key_exists($period, $value)) {
 						$aux['data'][] = [
-							'value' => round(($value[$period]/$total)*100, 2),
+							'value' => round($value[$period]/HOUR_TIMESTAMP,2),
 						];
 					} else {
 						$aux['data'][] = [
@@ -431,11 +414,130 @@ class PluginActualtimeProvider extends CommonDBTM {
 		return [
 			'data' => $data,
 			'label' => $params['label'],
-			'icon' => 'fas fa-mobile-alt'
+			'icon' => 'fa-solid fa-stopwatch'
 		];
 	}
 
-	static function lessPercentageActualtimeTasksByDay($params=[]){
+	static function lessActualtimeUsageByDay($params = [])
+	{
+		$DB = DBConnection::getReadConnection();
+
+		$data = [
+			'labels' => [],
+			'series' => []
+		];
+
+		$year   = date("Y") - 15;
+		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+		$end    = date("Y-m-d");
+
+		if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+			$begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+			$end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+			unset($params['apply_filters']['dates']);
+		}
+
+		$task_table = TicketTask::getTable();
+		$actualtime_table = PluginActualtimeTask::getTable();
+		$table = Ticket::getTable();
+
+		$query = [
+			'SELECT' => [
+				'SUM' => $actualtime_table.'.actual_actiontime AS total',
+				'users_id_tech'
+			],
+			'FROM' => $actualtime_table,
+			'INNER JOIN' => [
+				$task_table => [
+					'ON' => [
+						$task_table => 'id',
+						$actualtime_table => 'tickettasks_id'
+					]
+				]
+			],
+			'WHERE' => [
+				$task_table.'.state' => 2,
+				'date' => ['>=', $begin],
+				'AND' => [
+					'date' => ['<=', $end],
+				]
+			],
+			'ORDER' => ["total ASC"],
+			'GROUP' => ['users_id_tech'],
+			'LIMIT' => 20,
+		];
+
+		$techs_id = [];
+		foreach ($DB->request($query) as $result) {
+			$techs_id[] = $result['users_id_tech'];
+		}
+
+		if (count($techs_id) > 0) {
+			$sql = [
+				'SELECT' => [
+					new QueryExpression(
+						"FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+					),
+					'SUM' => 'actual_actiontime AS total',
+					'users_id_tech',
+				],
+				'FROM' => $actualtime_table,
+				'INNER JOIN' => [
+					$task_table => [
+						'ON' => [
+							$task_table => 'id',
+							$actualtime_table => 'tickettasks_id'
+						]
+					]
+				],
+				'WHERE' => [
+					$task_table.'.state' => 2,
+					'users_id_tech' => $techs_id,
+					'date' => ['>=', $begin],
+					'AND' => [
+						'date' => ['<=', $end],
+					]
+				],
+				'ORDER' => ['period DESC', "total DESC"],
+				'GROUP' => ['period', "users_id_tech"],
+			];
+
+			$tmp = [];
+			foreach ($DB->request($sql) as $result) {
+				if (!in_array($result['period'], $data['labels'])) {
+					$data['labels'][] = $result['period'];
+				}
+				$tmp[$result['users_id_tech']][$result['period']] = $result['total'];
+			}
+			sort($data['labels']);
+
+			foreach ($tmp as $key => $value) {
+				$aux = [];
+				$aux['name'] = getUserName($key);
+				foreach ($data['labels'] as $id => $period) {
+					if (array_key_exists($period, $value)) {
+						$aux['data'][] = [
+							'value' => round($value[$period]/HOUR_TIMESTAMP,2),
+						];
+					} else {
+						$aux['data'][] = [
+							'value' => 0,
+						];
+					}
+				}
+				$data['series'][] = $aux;
+			}
+		}
+
+		return [
+			'data' => $data,
+			'label' => $params['label'],
+			'icon' => 'fa-solid fa-stopwatch'
+		];
+	}
+
+	static function morePercentageActualtimeTasksByDay($params = [])
+	{
 		$DB = DBConnection::getReadConnection();
 
 		$data = [
@@ -459,19 +561,19 @@ class PluginActualtimeProvider extends CommonDBTM {
 
 		$sql = [
 			'SELECT' => [
-				"COUNT DISTINCT" => $task_table.".id AS nb_task",
-				$task_table.".users_id_tech",
+				'SUM' => $actualtime_table.'.actual_actiontime AS total',
+				'users_id_tech'
 			],
-			'FROM' => $task_table,
+			'FROM' => $actualtime_table,
 			'INNER JOIN' => [
-				$actualtime_table => [
-					'FKEY' => [
+				$task_table => [
+					'ON' => [
 						$task_table => 'id',
-						$actualtime_table => 'tasks_id',
+						$actualtime_table => 'tickettasks_id'
 					]
 				],
 				$table => [
-					'FKEY' => [
+					'ON' => [
 						$table => 'id',
 						$task_table => 'tickets_id'
 					]
@@ -479,15 +581,14 @@ class PluginActualtimeProvider extends CommonDBTM {
 			],
 			'WHERE' => [
 				$task_table.'.state' => 2,
-				$task_table.'.begin' => ['>=', $begin],
-				$task_table.'.end' => ['<=', $end],
+				$task_table.'.date' => ['>=', $begin],
+				'AND' => [
+					$task_table.'.date' => ['<=', $end],
+				]
 			] + getEntitiesRestrictCriteria($table),
-			'ORDER' => ["nb_task ASC"],
+			'ORDER' => ["total DESC"],
 			'GROUP' => ['users_id_tech'],
-			'HAVING' => [
-				'nb_task' => ['>', 0],
-			],
-			'LIMIT' => 20
+			'LIMIT' => 20,
 		];
 
 		$techs_id = [];
@@ -499,15 +600,21 @@ class PluginActualtimeProvider extends CommonDBTM {
 			$query = [
 				'SELECT' => [
 					new QueryExpression(
-						"FROM_UNIXTIME(UNIX_TIMESTAMP(".$DB->quoteName("$task_table.date")."),'%Y-%m-%d') AS period"
+						"FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
 					),
-					"COUNT DISTINCT" => $task_table.".id AS nb_task",
-					$task_table.".users_id_tech AS tech",
+					'SUM' => 'actual_actiontime AS total',
+					'users_id_tech',
 				],
-				'FROM' => $task_table,
+				'FROM' => $actualtime_table,
 				'INNER JOIN' => [
+					$task_table => [
+						'ON' => [
+							$task_table => 'id',
+							$actualtime_table => 'tickettasks_id'
+						]
+					],
 					$table => [
-						'FKEY' => [
+						'ON' => [
 							$table => 'id',
 							$task_table => 'tickets_id'
 						]
@@ -515,12 +622,14 @@ class PluginActualtimeProvider extends CommonDBTM {
 				],
 				'WHERE' => [
 					$task_table.'.state' => 2,
-					$task_table.".users_id_tech" => $techs_id,
-					$task_table.'.begin' => ['>=', $begin],
-					$task_table.'.end' => ['<=', $end],
+					'users_id_tech' => $techs_id,
+					$task_table.'.date' => ['>=', $begin],
+					'AND' => [
+						$task_table.'.date' => ['<=', $end],
+					]
 				] + getEntitiesRestrictCriteria($table),
-				'ORDER' => ['period DESC', "nb_task DESC"],
-				'GROUP' => ['period', "tech"],
+				'ORDER' => ['period DESC', "total DESC"],
+				'GROUP' => ['period', "users_id_tech"],
 			];
 
 			$tmp = [];
@@ -528,7 +637,7 @@ class PluginActualtimeProvider extends CommonDBTM {
 				if (!in_array($result['period'], $data['labels'])) {
 					$data['labels'][] = $result['period'];
 				}
-				$tmp[$result['tech']][$result['period']] = $result['nb_task'];
+				$tmp[$result['users_id_tech']][$result['period']] = $result['total'];
 			}
 			sort($data['labels']);
 
@@ -538,37 +647,31 @@ class PluginActualtimeProvider extends CommonDBTM {
 				foreach ($data['labels'] as $id => $period) {
 					$sqltotal = [
 						'SELECT' => [
-							"COUNT DISTINCT" => $task_table.".id AS nb_task",
+							"SUM" => $task_table . ".actiontime AS total",
 						],
 						'FROM' => $task_table,
 						'INNER JOIN' => [
-							$actualtime_table => [
-								'FKEY' => [
-									$task_table => 'id',
-									$actualtime_table => 'tasks_id',
-								]
-							],
 							$table => [
-								'FKEY' => [
+								'ON' => [
 									$table => 'id',
 									$task_table => 'tickets_id'
 								]
 							]
 						],
 						'WHERE' => [
-							$task_table.'.state' => 2,
-							$task_table.".users_id_tech" => $key,
-							$task_table.".date" => ['LIKE', $period.'%']
+							$task_table . '.state' => 2,
+							$task_table . ".users_id_tech" => $key,
+							$task_table . ".date" => ['LIKE', $period . '%']
 						] + getEntitiesRestrictCriteria($table),
 					];
 					$total = 0;
 					$req = $DB->request($sqltotal);
-					if ($row = $req->next()) {
-						$total = $row['nb_task'];
+					if ($row = $req->current()) {
+						$total = $row['total'];
 					}
-					if (array_key_exists($period, $value)) {
+					if (array_key_exists($period, $value) && $total > 0) {
 						$aux['data'][] = [
-							'value' => round(($total/$value[$period])*100, 2),
+							'value' => round(100 * ($total - $value[$period]) / $total, 2),
 						];
 					} else {
 						$aux['data'][] = [
@@ -583,7 +686,161 @@ class PluginActualtimeProvider extends CommonDBTM {
 		return [
 			'data' => $data,
 			'label' => $params['label'],
-			'icon' => 'fas fa-mobile-alt'
+			'icon' => 'fa-solid fa-stopwatch'
+		];
+	}
+
+	static function lessPercentageActualtimeTasksByDay($params = [])
+	{
+		$DB = DBConnection::getReadConnection();
+
+		$data = [
+			'labels' => [],
+			'series' => []
+		];
+
+		$year   = date("Y") - 15;
+		$begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+		$end    = date("Y-m-d");
+
+		if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+			$begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+			$end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+			unset($params['apply_filters']['dates']);
+		}
+
+		$task_table = TicketTask::getTable();
+		$actualtime_table = PluginActualtimeTask::getTable();
+		$table = Ticket::getTable();
+
+		$sql = [
+			'SELECT' => [
+				'SUM' => $actualtime_table.'.actual_actiontime AS total',
+				'users_id_tech'
+			],
+			'FROM' => $actualtime_table,
+			'INNER JOIN' => [
+				$task_table => [
+					'ON' => [
+						$task_table => 'id',
+						$actualtime_table => 'tickettasks_id'
+					]
+				],
+				$table => [
+					'ON' => [
+						$table => 'id',
+						$task_table => 'tickets_id'
+					]
+				]
+			],
+			'WHERE' => [
+				$task_table.'.state' => 2,
+				$task_table.'.date' => ['>=', $begin],
+				'AND' => [
+					$task_table.'.date' => ['<=', $end],
+				]
+			] + getEntitiesRestrictCriteria($table),
+			'ORDER' => ["total ASC"],
+			'GROUP' => ['users_id_tech'],
+			'LIMIT' => 20,
+		];
+
+		$techs_id = [];
+		foreach ($DB->request($sql) as $result) {
+			$techs_id[] = $result['users_id_tech'];
+		}
+
+		if (count($techs_id) > 0) {
+			$query = [
+				'SELECT' => [
+					new QueryExpression(
+						"FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+					),
+					'SUM' => 'actual_actiontime AS total',
+					'users_id_tech',
+				],
+				'FROM' => $actualtime_table,
+				'INNER JOIN' => [
+					$task_table => [
+						'ON' => [
+							$task_table => 'id',
+							$actualtime_table => 'tickettasks_id'
+						]
+					],
+					$table => [
+						'ON' => [
+							$table => 'id',
+							$task_table => 'tickets_id'
+						]
+					]
+				],
+				'WHERE' => [
+					$task_table.'.state' => 2,
+					'users_id_tech' => $techs_id,
+					$task_table.'.date' => ['>=', $begin],
+					'AND' => [
+						$task_table.'.date' => ['<=', $end],
+					]
+				] + getEntitiesRestrictCriteria($table),
+				'ORDER' => ['period DESC', "total DESC"],
+				'GROUP' => ['period', "users_id_tech"],
+			];
+
+			$tmp = [];
+			foreach ($DB->request($query) as $result) {
+				if (!in_array($result['period'], $data['labels'])) {
+					$data['labels'][] = $result['period'];
+				}
+				$tmp[$result['users_id_tech']][$result['period']] = $result['total'];
+			}
+			sort($data['labels']);
+
+			foreach ($tmp as $key => $value) {
+				$aux = [];
+				$aux['name'] = getUserName($key);
+				foreach ($data['labels'] as $id => $period) {
+					$sqltotal = [
+						'SELECT' => [
+							"SUM" => $task_table . ".actiontime AS total",
+						],
+						'FROM' => $task_table,
+						'INNER JOIN' => [
+							$table => [
+								'ON' => [
+									$table => 'id',
+									$task_table => 'tickets_id'
+								]
+							]
+						],
+						'WHERE' => [
+							$task_table . '.state' => 2,
+							$task_table . ".users_id_tech" => $key,
+							$task_table . ".date" => ['LIKE', $period . '%']
+						] + getEntitiesRestrictCriteria($table),
+					];
+					$total = 0;
+					$req = $DB->request($sqltotal);
+					if ($row = $req->current()) {
+						$total = $row['total'];
+					}
+					if (array_key_exists($period, $value) && $total > 0) {
+						$aux['data'][] = [
+							'value' => round(100 * ($total - $value[$period]) / $total, 2),
+						];
+					} else {
+						$aux['data'][] = [
+							'value' => 0,
+						];
+					}
+				}
+				$data['series'][] = $aux;
+			}
+		}
+
+		return [
+			'data' => $data,
+			'label' => $params['label'],
+			'icon' => 'fa-solid fa-stopwatch'
 		];
 	}
 }

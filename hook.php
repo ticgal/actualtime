@@ -33,12 +33,13 @@
  *
  * @return boolean True if success
  */
-function plugin_actualtime_install() {
+function plugin_actualtime_install()
+{
 
    $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
    // Parse inc directory
-   foreach (glob(__DIR__ .'/inc/*') as $filepath) {
+   foreach (glob(__DIR__ . '/inc/*') as $filepath) {
       // Load *.class.php files and get the class name
       if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
          $classname = 'PluginActualtime' . ucfirst($matches[1]);
@@ -56,36 +57,129 @@ function plugin_actualtime_install() {
    return true;
 }
 
-function plugin_actualtime_item_stats($item) {
+function plugin_actualtime_item_stats($item)
+{
    PluginActualtimeTask::showStats($item);
 }
 
-function plugin_actualtime_item_update($item) {
+function plugin_actualtime_item_update($item)
+{
    PluginActualtimeTask::preUpdate($item);
 }
 
-function plugin_actualtime_item_add($item) {
+function plugin_actualtime_item_add($item)
+{
    PluginActualtimeTask::afterAdd($item);
 }
 
-function plugin_actualtime_item_purge(TicketTask $item){
+function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
+{
+   global $DB, $CFG_GLPI;
+
+   if ($solution->input['itemtype'] == Ticket::getType()) {
+
+      $config = new PluginActualtimeConfig();
+      
+      $ticket_id = $solution->input['items_id'];
+
+      $query = [
+         'SELECT' => [
+            PluginActualtimeTask::getTable().'.id',
+            PluginActualtimeTask::getTable().'.tickettasks_id',
+         ],
+         'FROM' => 'glpi_tickettasks',
+         'INNER JOIN' => [
+            PluginActualtimeTask::getTable() => [
+               'ON' => [
+                  PluginActualtimeTask::getTable() => 'tickettasks_id',
+                  'glpi_tickettasks' => 'id'
+               ]
+            ],
+         ],
+         'WHERE' => [
+            'tickets_id' => $ticket_id,
+            'actual_end' => null,
+         ]
+      ];
+      $task = new TicketTask();
+      foreach ($DB->request($query) as $id => $row) {
+         $task_id = $row['tickettasks_id'];
+
+         $actual_begin = PluginActualtimeTask::getActualBegin($task_id);
+         $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
+
+         $DB->update(
+            'glpi_plugin_actualtime_tasks',
+            [
+               'actual_end'        => date("Y-m-d H:i:s"),
+               'actual_actiontime' => $seconds,
+               'origin_end' => PluginActualtimetask::AUTO,
+            ],
+            [
+               'tickettasks_id' => $task_id,
+               [
+                  'NOT' => ['actual_begin' => null],
+               ],
+               'actual_end' => null,
+            ]
+         );
+         $task->getFromDB($task_id);
+         $input['id'] = $task_id;
+         $input['tickets_id'] = $task->fields['tickets_id'];
+         $input['state'] = 2;
+         if ($config->autoUpdateDuration()) {
+            $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
+         }
+         $task->update($input);
+      }
+   }
+}
+
+function plugin_actualtime_item_purge(TicketTask $item)
+{
    global $DB;
 
    $DB->delete(
-      PluginActualtimeTask::getTable(),[
-         'tasks_id'=>$item->fields['id']
+      PluginActualtimeTask::getTable(),
+      [
+         'tasks_id' => $item->fields['id']
       ]
    );
 }
 
-function plugin_actualtime_getAddSearchOptionsNew($itemtype){
-   $tab=[];
+function plugin_actualtime_getAddSearchOptions($itemtype)
+{
+   $tab = [];
 
    switch ($itemtype) {
-      case 'Ticket':
+      case Ticket::getType():
+         $config = new PluginActualtimeConfig();
+         if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
+           return PluginActualtimeTask::rawSearchOptionsToAdd();
+         }
+         break;
+      case 'TicketTask':
          $config = new PluginActualtimeConfig;
          if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
-            $tab = array_merge($tab, PluginActualtimeTask::rawSearchOptionsToAdd());
+            $tab['actualtime'] = 'ActualTime';
+
+            $tab['7003'] = [
+               'table' => PluginActualtimeTask::getTable(),
+               'field' => 'actual_actiontime',
+               'name' => __('Task duration'),
+               'datatype' => 'specific',
+               'joinparams' => [
+                  'beforejoin' => [
+                     'table' => 'glpi_tickettasks',
+                     'joinparams' => [
+                        'jointype' => 'child'
+                     ]
+                  ],
+                  'jointype' => 'child',
+                  'linkfield' => 'tasks_id'
+               ],
+               'type' => 'task'
+            ];
          }
          break;
    }
@@ -98,12 +192,13 @@ function plugin_actualtime_getAddSearchOptionsNew($itemtype){
  *
  * @return boolean True if success
  */
-function plugin_actualtime_uninstall() {
+function plugin_actualtime_uninstall()
+{
 
    $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
    // Parse inc directory
-   foreach (glob(__DIR__ .'/inc/*') as $filepath) {
+   foreach (glob(__DIR__ . '/inc/*') as $filepath) {
       // Load *.class.php files and get the class name
       if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
          $classname = 'PluginActualtime' . ucfirst($matches[1]);

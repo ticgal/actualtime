@@ -1,169 +1,164 @@
-# ActualTime Glpi Plugin.
-# Copyright (C) 2019 TICgal
-# This file is distributed under the same license as the Actualtime Plugin package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: Actualtime\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-17 17:20+0200\n"
-"PO-Revision-Date: 2019-11-20 17:18+0100\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"POT-Creation-Date: 2022-08-17 09:39+0200\n"
 "Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Localazy (https://localazy.com)\n"
+"Plural-Forms: nplurals=2; plural=(n==0 || n==1) ? 0 : 1;\n"
 
-#: ajax/timer.php:24 inc/apirest.class.php:383 inc/task.class.php:598
-#: inc/task.class.php:600
+#: ajax/timer.php:53 inc/task.class.php:648 inc/task.class.php:650
 msgid "Today is marked as absence you can not initialize the timer"
-msgstr ""
+msgstr "Today is marked as absence you can not initialize the timer"
 
-#: ajax/timer.php:30 inc/task.class.php:609
-#, fuzzy
+#: ajax/timer.php:59 inc/task.class.php:659
 msgid "Timer has not been initialized"
 msgstr "La tâche n'a pas été démarrée"
 
-#: ajax/timer.php:40 inc/apirest.class.php:400 inc/task.class.php:621
+#: ajax/timer.php:69 inc/task.class.php:671
 msgid "A user is already performing the task"
-msgstr "Un utilisateur est effectue déjà cette tâche"
+msgstr "Un utilisateur execute déjà cette tâche"
 
-#: ajax/timer.php:53 inc/apirest.class.php:404 inc/task.class.php:633
-msgid "You are already doing a task"
-msgstr "Vous effectuez déjà cette tâche"
+#: ajax/timer.php:80
+msgid "You are already working on another ticket task"
+msgstr "You are already working on another ticket task"
 
-#: ajax/timer.php:70 inc/apirest.class.php:417 inc/task.class.php:649
+#: ajax/timer.php:96 inc/task.class.php:698
 msgid "Timer started"
 msgstr "Compteur démarré"
 
-#: ajax/timer.php:110 ajax/timer.php:161 inc/apirest.class.php:452
-#: inc/apirest.class.php:504 inc/apirest.class.php:524
+#: ajax/timer.php:136 ajax/timer.php:181
 msgid "Timer completed"
 msgstr "Compteur terminé"
 
-#: ajax/timer.php:139 inc/apirest.class.php:459 inc/apirest.class.php:510
+#: ajax/timer.php:163
 msgid "Only the user who initiated the task can close it"
 msgstr "Seul l'utilisateur qui a démarré la tâche peut l'arrêter"
 
-#: ajax/timer.php:153 inc/apirest.class.php:462
+#: ajax/timer.php:174
 msgid "The task had not been initialized"
 msgstr "La tâche n'a pas été démarrée"
 
 #. TRANS: d is a symbol for days in a time (displays: 3d)
-#: ajax/timer.php:201
+#: ajax/timer.php:219
 #, php-format
 msgid "%dd"
-msgstr ""
+msgstr "%dd"
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
-#: ajax/timer.php:205
+#: ajax/timer.php:223
 #, php-format
 msgid "%dh"
-msgstr ""
+msgstr "%dh"
 
 #. TRANS: min is a symbol for minutes in a time (displays: 3min)
-#: ajax/timer.php:209
+#: ajax/timer.php:227
 #, php-format
 msgid "%dmin"
-msgstr ""
+msgstr "%dmin"
 
 #. TRANS: s is a symbol for seconds in a time (displays: 3s)
-#: ajax/timer.php:213
+#: ajax/timer.php:231
 #, php-format
 msgid "%ds"
-msgstr ""
+msgstr "%ds"
 
-#: ajax/timer.php:217 inc/task.class.php:145
-msgid "Pause"
-msgstr ""
-
-#: ajax/timer.php:218 inc/task.class.php:144
-msgid "Restart"
-msgstr ""
-
-#: ajax/timer.php:224
+#: ajax/timer.php:242
 msgid "Timer started on"
 msgstr "Compteur démarré à"
 
-#: inc/apirest.class.php:14
-msgid "ActualTime rest API"
-msgstr "ActualTime rest API"
-
-#: inc/apirest.class.php:387
-#, fuzzy
-msgid "Timer no initialized"
-msgstr "La tâche n'a pas été démarrée"
-
-#: inc/config.class.php:57
+#: inc/config.class.php:76
 msgid "Task timer configuration"
-msgstr ""
+msgstr "Task timer configuration"
 
-#: inc/config.class.php:69
+#: inc/config.class.php:117
 msgid "In Standard interface only (default)"
-msgstr ""
+msgstr "In Standard interface only (default)"
 
-#: inc/config.class.php:70
+#: inc/config.class.php:118
 msgid "Both in Standard and Helpdesk interfaces"
-msgstr ""
-
-#: inc/config.class.php:73
-msgid "Enable timer on tasks"
-msgstr ""
-
-#: inc/config.class.php:85
-msgid "Display pop-up window with current running timer"
-msgstr ""
-
-#: inc/config.class.php:91
-msgid "Display actual time in closed task box ('Processing ticket' list)"
-msgstr ""
-
-#: inc/config.class.php:97
-msgid "Automatically open new created tasks"
-msgstr ""
-
-#: inc/config.class.php:103
-msgid "Automatically open task with timer running"
-msgstr ""
-
-#: inc/config.class.php:109
-msgid "Automatically update the duration"
-msgstr ""
+msgstr "Both in Standard and Helpdesk interfaces"
 
 #: inc/config.class.php:121
-msgid "Actual time"
-msgstr ""
+msgid "Enable timer on tasks"
+msgstr "Activer le minuteur sur les tâches"
 
-#: inc/running.class.php:6
-#, fuzzy
+#: inc/config.class.php:133
+msgid "Display pop-up window with current running timer"
+msgstr "Display pop-up window with current running timer"
+
+#: inc/config.class.php:139
+msgid "Display actual time in closed task box ('Processing ticket' list)"
+msgstr "Display actual time in closed task box ('Processing ticket' list)"
+
+#: inc/config.class.php:145
+msgid "Automatically open task with timer running"
+msgstr "Ouvrir automatiquement la tâche avec le minuteur en cours d'exécution"
+
+#: inc/config.class.php:151
+msgid "Automatically update the duration"
+msgstr "Mettre à jour la durée automatiquement"
+
+#: inc/config.class.php:165
+msgid "Actual time"
+msgstr "Actual time"
+
+#: inc/dashboard.class.php:43
+msgid "Top 20 Actualtime tasks per day"
+msgstr "Top 20 Actualtime tasks per day"
+
+#: inc/dashboard.class.php:51
+msgid "Bottom 20 Actualtime tasks per day"
+msgstr "Bottom 20 Actualtime tasks per day"
+
+#: inc/dashboard.class.php:59
+msgid "Top 20 Actualtime usage (hours)"
+msgstr "Top 20 Actualtime usage (hours)"
+
+#: inc/dashboard.class.php:67
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr "Bottom 20 Actualtime usage (hours)"
+
+#: inc/dashboard.class.php:74
+msgid "Top 20 % Actualtime usage per day"
+msgstr "Top 20 % Actualtime usage per day"
+
+#: inc/dashboard.class.php:82
+msgid "Bottom 20 % Actualtime usage per day"
+msgstr "Bottom 20 % Actualtime usage per day"
+
+#: inc/running.class.php:36
 msgid "Actualtime"
 msgstr "ActualTime"
 
-#: inc/running.class.php:24
+#: inc/running.class.php:56
 msgid "Running timers"
-msgstr ""
+msgstr "Running timers"
 
-#: inc/running.class.php:29
+#: inc/running.class.php:61
 msgid "Update every (s)"
-msgstr ""
+msgstr "Update every (s)"
 
-#: inc/task.class.php:18
+#: inc/task.class.php:49
 msgid "ActualTime"
 msgstr "ActualTime"
 
-#: inc/task.class.php:45 inc/task.class.php:63 inc/task.class.php:466
-#: inc/task.class.php:472 inc/task.class.php:478
+#: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:528
+#: inc/task.class.php:534 inc/task.class.php:540
 msgid "Duration Diff"
 msgstr "Différence de durée"
 
-#: inc/task.class.php:224
+#: inc/task.class.php:264
+msgid "Actual Duration"
+msgstr "Durée actuelle"
+
+#: inc/task.class.php:275
 msgid "Partial actual duration"
 msgstr "Durée partielle de l'acton"
 
-#: inc/task.class.php:225
-msgid "Actual Duration"
-msgstr "Durée actuelle"
+#: inc/task.class.php:682
+msgid "You are already doing a task"
+msgstr "Vous effectuez déjà cette tâche"
