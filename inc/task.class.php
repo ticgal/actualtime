@@ -465,8 +465,11 @@ JAVASCRIPT;
    {
       if ($task_id = self::getTask($user_id)) {
          $task = new TicketTask();
-         $task->getFromDB($task_id);
-         return $task->fields['tickets_id'];
+         if ($task->getFromDB($task_id)) {
+            return $task->fields['tickets_id'];
+         } else {
+            return false;
+         }
       }
       return false;
    }
