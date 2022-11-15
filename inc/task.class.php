@@ -290,6 +290,26 @@ JAVASCRIPT;
 JAVASCRIPT;
                   echo Html::scriptBlock($script);
                }
+
+               $submit_buton = "<button id='actualtime_addme_{$rand}' form='actualtime_form_addme_{$rand}' type='submit' name='update' class='btn btn-icon btn-sm btn-ghost-secondary float-end mt-1 ms-1'><i class='fas fa-male'></i></button>";
+               $form = "<form method='POST' action='/front/tickettask.form.php' class='d-none' id='actualtime_form_addme_{$rand}' data-submit-once>";
+               $form .= "<input type='hidden' name='id' value='{$task_id}'";
+               $form .= "<input type='hidden' name='itemtype' value='Ticket'>";
+               $form .= "<input type='hidden' name='users_id_tech' value='".Session::getLoginUserID()."'>";
+               $form .= "<input type='hidden' name='tickets_id' value='".$item->fields['tickets_id']."'>";
+               $form .= "<input type='hidden' name='_glpi_csrf_token' value='".Session::getNewCSRFToken()."'>";
+               $form .= "</form>";
+               $script = <<<JAVASCRIPT
+                  $(document).ready(function() {
+                     if($("#actualtime_addme_{$rand}").length==0){
+                        $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.itiltask form select[name='users_id_tech']").parent().append("{$submit_buton}");
+                     }
+                     if($("#actualtime_form_addme_{$rand}").length==0){
+                        $("#itil-object-container").parent().append("{$form}");
+                     }
+                  });
+JAVASCRIPT;
+               echo Html::scriptBlock($script);
             } else {
                //echo Html::scriptBlock('');
                $div = "<div id='actualtime_autostart' class='form-field row col-12 mb-2'><label class='col-form-label col-2 text-xxl-end' for='autostart'><i class='fas fa-stopwatch fa-fw me-1' title='" . __('Autostart') . "'></i></label><div class='col-10 field-container'><label class='form-check form-switch pt-2'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1' class='form-check-input'></label></div></div>";
