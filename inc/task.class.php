@@ -901,7 +901,7 @@ JAVASCRIPT;
                      $disabled1 = '';
                   }
                }
-               $button = "<div class='ms-auto col-auto'><button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' style='background-color:$color1;color:white' $disabled1><span class='d-none d-md-block'>$value1</span></button></div>";
+               $button = "<div class='ms-auto col-auto'><button type='button' class='btn btn-icon btn-sm mt-1' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' style='background-color:$color1;color:white;width: 20px;height: 20px;' $disabled1><span class='d-none d-md-block'>$value1</span></button></div>";
                $script = <<<JAVASCRIPT
 
    $(document).ready(function() {
