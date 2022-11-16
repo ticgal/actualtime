@@ -290,6 +290,26 @@ JAVASCRIPT;
 JAVASCRIPT;
                   echo Html::scriptBlock($script);
                }
+
+               $submit_buton = "<button id='actualtime_addme_{$rand}' form='actualtime_form_addme_{$rand}' type='submit' name='update' class='btn btn-icon btn-sm btn-ghost-secondary float-end mt-1 ms-1'><i class='fas fa-male'></i></button>";
+               $form = "<form method='POST' action='/front/tickettask.form.php' class='d-none' id='actualtime_form_addme_{$rand}' data-submit-once>";
+               $form .= "<input type='hidden' name='id' value='{$task_id}'";
+               $form .= "<input type='hidden' name='itemtype' value='Ticket'>";
+               $form .= "<input type='hidden' name='users_id_tech' value='".Session::getLoginUserID()."'>";
+               $form .= "<input type='hidden' name='tickets_id' value='".$item->fields['tickets_id']."'>";
+               $form .= "<input type='hidden' name='_glpi_csrf_token' value='".Session::getNewCSRFToken()."'>";
+               $form .= "</form>";
+               $script = <<<JAVASCRIPT
+                  $(document).ready(function() {
+                     if($("#actualtime_addme_{$rand}").length==0){
+                        $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.itiltask form select[name='users_id_tech']").parent().append("{$submit_buton}");
+                     }
+                     if($("#actualtime_form_addme_{$rand}").length==0){
+                        $("#itil-object-container").parent().append("{$form}");
+                     }
+                  });
+JAVASCRIPT;
+               echo Html::scriptBlock($script);
             } else {
                //echo Html::scriptBlock('');
                $div = "<div id='actualtime_autostart' class='form-field row col-12 mb-2'><label class='col-form-label col-2 text-xxl-end' for='autostart'><i class='fas fa-stopwatch fa-fw me-1' title='" . __('Autostart') . "'></i></label><div class='col-10 field-container'><label class='form-check form-switch pt-2'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1' class='form-check-input'></label></div></div>";
@@ -445,8 +465,11 @@ JAVASCRIPT;
    {
       if ($task_id = self::getTask($user_id)) {
          $task = new TicketTask();
-         $task->getFromDB($task_id);
-         return $task->fields['tickets_id'];
+         if ($task->getFromDB($task_id)) {
+            return $task->fields['tickets_id'];
+         } else {
+            return false;
+         }
       }
       return false;
    }
@@ -848,6 +871,50 @@ $(document).ready(function() {
 JAVASCRIPT;
 
                print_r(Html::scriptBlock($script));
+            }
+
+            if ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE)) {
+               $time = self::totalEndTime($task_id);
+               $text_restart = "<i class='fa-solid fa-forward'></i>";
+               $text_pause = "<i class='fa-solid fa-pause'></i>";
+               $value1 = "<i class='fa-solid fa-play'></i>";
+               $action1 = '';
+               $color1 = 'gray';
+               $disabled1 = 'disabled';
+               if ($item->getField('state') == 1) {
+
+                  if (self::checkTimerActive($task_id)) {
+
+                     $value1 = $text_pause;
+                     $action1 = 'pause';
+                     $color1 = 'orange';
+                     $disabled1 = '';
+                     $timercolor = 'red';
+                  } else {
+
+                     if ($time > 0) {
+                        $value1 = $text_restart;
+                     }
+
+                     $action1 = 'start';
+                     $color1 = 'green';
+                     $disabled1 = '';
+                  }
+               }
+               $button = "<div class='ms-auto col-auto'><button type='button' class='btn btn-icon btn-sm mt-1' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' style='background-color:$color1;color:white;width: 20px;height: 20px;' $disabled1><span class='d-none d-md-block'>$value1</span></button></div>";
+               $script = <<<JAVASCRIPT
+
+   $(document).ready(function() {
+      if ($("[id^='actualtime_button_{$task_id}_1_{$rand}']").length == 0) {
+         $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.todo-list-state").append("{$button}");
+      }
+      $("#actualtime_button_{$task_id}_1_{$rand}").click(function(event) {
+         window.actualTime.pressedButton($task_id, $(this).attr('action'));
+      });
+   });
+
+JAVASCRIPT;
+               echo Html::scriptBlock($script);
             }
             break;
       }
