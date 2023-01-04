@@ -55,6 +55,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		$task_table = TicketTask::getTable();
 		$actualtime_table = PluginActualtimeTask::getTable();
 		$table = Ticket::getTable();
+		$user_table = User::getTable();
 
 		$sql = [
 			'SELECT' => [
@@ -74,12 +75,19 @@ class PluginActualtimeProvider extends CommonDBTM
 						$table => 'id',
 						$task_table => 'tickets_id'
 					]
+				],
+				$user_table => [
+					'ON' => [
+						$user_table => 'id',
+						$task_table => 'users_id_tech'
+					]
 				]
 			],
 			'WHERE' => [
 				$task_table . '.state' => 2,
 				$actualtime_table . '.actual_begin' => ['>=', $begin],
 				$actualtime_table . '.actual_end' => ['<=', $end],
+				$user_table.'.is_active' => 1,
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task DESC"],
 			'GROUP' => ['users_id_tech'],
@@ -181,6 +189,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		$task_table = TicketTask::getTable();
 		$actualtime_table = PluginActualtimeTask::getTable();
 		$table = Ticket::getTable();
+		$user_table = User::getTable();
 
 		$sql = [
 			'SELECT' => [
@@ -200,12 +209,19 @@ class PluginActualtimeProvider extends CommonDBTM
 						$table => 'id',
 						$task_table => 'tickets_id'
 					]
+				],
+				$user_table => [
+					'ON' => [
+						$user_table => 'id',
+						$task_table => 'users_id_tech'
+					]
 				]
 			],
 			'WHERE' => [
 				$task_table . '.state' => 2,
 				$actualtime_table . '.actual_begin' => ['>=', $begin],
 				$actualtime_table . '.actual_end' => ['<=', $end],
+				$user_table.'.is_active' => 1,
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["nb_task ASC"],
 			'GROUP' => ['users_id_tech'],
@@ -310,6 +326,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		$task_table = TicketTask::getTable();
 		$actualtime_table = PluginActualtimeTask::getTable();
 		$table = Ticket::getTable();
+		$user_table = User::getTable();
 
 		$query = [
 			'SELECT' => [
@@ -329,6 +346,12 @@ class PluginActualtimeProvider extends CommonDBTM
 						$table => 'id',
 						$task_table => 'tickets_id'
 					]
+				],
+				$user_table => [
+					'ON' => [
+						$user_table => 'id',
+						$task_table => 'users_id_tech'
+					]
 				]
 			],
 			'WHERE' => [
@@ -336,7 +359,8 @@ class PluginActualtimeProvider extends CommonDBTM
 				$task_table.'.date' => ['>=', $begin],
 				'AND' => [
 					$task_table.'.date' => ['<=', $end],
-				]
+				],
+				$user_table.'.is_active' => 1,
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["total DESC"],
 			'GROUP' => ['users_id_tech'],
@@ -440,6 +464,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		$task_table = TicketTask::getTable();
 		$actualtime_table = PluginActualtimeTask::getTable();
 		$table = Ticket::getTable();
+		$user_table = User::getTable();
 
 		$query = [
 			'SELECT' => [
@@ -453,6 +478,12 @@ class PluginActualtimeProvider extends CommonDBTM
 						$task_table => 'id',
 						$actualtime_table => 'tickettasks_id'
 					]
+				],
+				$user_table => [
+					'ON' => [
+						$user_table => 'id',
+						$task_table => 'users_id_tech'
+					]
 				]
 			],
 			'WHERE' => [
@@ -460,7 +491,8 @@ class PluginActualtimeProvider extends CommonDBTM
 				'date' => ['>=', $begin],
 				'AND' => [
 					'date' => ['<=', $end],
-				]
+				],
+				$user_table.'.is_active' => 1,
 			],
 			'ORDER' => ["total ASC"],
 			'GROUP' => ['users_id_tech'],
@@ -558,6 +590,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		$task_table = TicketTask::getTable();
 		$actualtime_table = PluginActualtimeTask::getTable();
 		$table = Ticket::getTable();
+		$user_table = User::getTable();
 
 		$sql = [
 			'SELECT' => [
@@ -577,6 +610,12 @@ class PluginActualtimeProvider extends CommonDBTM
 						$table => 'id',
 						$task_table => 'tickets_id'
 					]
+				],
+				$user_table => [
+					'ON' => [
+						$user_table => 'id',
+						$task_table => 'users_id_tech'
+					]
 				]
 			],
 			'WHERE' => [
@@ -584,7 +623,8 @@ class PluginActualtimeProvider extends CommonDBTM
 				$task_table.'.date' => ['>=', $begin],
 				'AND' => [
 					$task_table.'.date' => ['<=', $end],
-				]
+				],
+				$user_table.'.is_active' => 1,
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["total DESC"],
 			'GROUP' => ['users_id_tech'],
@@ -712,6 +752,7 @@ class PluginActualtimeProvider extends CommonDBTM
 		$task_table = TicketTask::getTable();
 		$actualtime_table = PluginActualtimeTask::getTable();
 		$table = Ticket::getTable();
+		$user_table = User::getTable();
 
 		$sql = [
 			'SELECT' => [
@@ -731,6 +772,12 @@ class PluginActualtimeProvider extends CommonDBTM
 						$table => 'id',
 						$task_table => 'tickets_id'
 					]
+				],
+				$user_table => [
+					'ON' => [
+						$user_table => 'id',
+						$task_table => 'users_id_tech'
+					]
 				]
 			],
 			'WHERE' => [
@@ -738,7 +785,8 @@ class PluginActualtimeProvider extends CommonDBTM
 				$task_table.'.date' => ['>=', $begin],
 				'AND' => [
 					$task_table.'.date' => ['<=', $end],
-				]
+				],
+				$user_table.'.is_active' => 1,
 			] + getEntitiesRestrictCriteria($table),
 			'ORDER' => ["total ASC"],
 			'GROUP' => ['users_id_tech'],

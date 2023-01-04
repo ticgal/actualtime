@@ -39,7 +39,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 	{
 
 		$cards['plugin_actualtime_moreactualtimetasksbyday'] = [
-			'widgettype' => ['bar', 'stackedbars', 'lines'],
+			'widgettype' => ['stackedbars', 'lines'],
 			'label' => __('Top 20 Actualtime tasks per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
@@ -47,7 +47,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 		];
 
 		$cards['plugin_actualtime_lessactualtimetasks'] = [
-			'widgettype' => ['bar', 'stackedbars', 'lines'],
+			'widgettype' => ['stackedbars', 'lines'],
 			'label' => __('Bottom 20 Actualtime tasks per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
@@ -55,7 +55,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 		];
 
 		$cards['plugin_actualtime_moreactualtimeusagebyday'] = [
-			'widgettype' => ['bar', 'stackedbars', 'lines'],
+			'widgettype' => ['stackedbars', 'lines'],
 			'label' => __('Top 20 Actualtime usage (hours)', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
@@ -63,14 +63,14 @@ class PluginActualtimeDashboard extends CommonDBTM
 		];
 
 		$cards['plugin_actualtime_lessactualtimeusagebyday'] = [
-			'widgettype' => ['bar', 'stackedbars', 'lines'],
+			'widgettype' => ['stackedbars', 'lines'],
 			'label' => __('Bottom 20 Actualtime usage (hours)', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessActualtimeUsageByDay'
 		];
 		$cards['plugin_actualtime_moreapercentagectualtimetasksbyday'] = [
-			'widgettype' => ['bar', 'bars', 'lines'],
+			'widgettype' => ['bars', 'lines'],
 			'label' => __('Top 20 % Actualtime usage per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
@@ -78,7 +78,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 		];
 
 		$cards['plugin_actualtime_lesspercentageactualtimetasks'] = [
-			'widgettype' => ['bar', 'bars', 'lines'],
+			'widgettype' => ['bars', 'lines'],
 			'label' => __('Bottom 20 % Actualtime usage per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
