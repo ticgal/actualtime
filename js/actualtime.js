@@ -146,15 +146,37 @@ window.actualTime = new function() {
             }
             switch (result['type']) {
                case 'warning':
-                  glpi_toast_warning(result['mensage']);
+                  var title = __('Warning');
+                  var css_class = 'bg-warning';
                   break;
                case 'info':
-                  glpi_toast_info(result['mensage']);
+                  var title = _n("Information", "Informations", 1);
+                  var css_class = 'bg-info';
                   break;
                default:
-                  glpi_toast_error(result['mensage']);
+                  var title = __('Error');
+                  var css_class = 'bg-danger';
                   break;
             }
+            toast_id++;
+
+            const html = `<div class='toast-container bottom-0 end-0 p-3 messages_after_redirect'>
+               <div id='toast_js_${toast_id}' class='toast border-0 animate_animated animate__delay-2s animate__slow' role='alert' aria-live='assertive' aria-atomic='true'>
+                  <div class='toast-header ${css_class} text-white'>
+                     <strong class='me-auto'>${title}</strong>
+                     <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='${__('Close')}'></button>
+                  </div>
+                  <div class='toast-body'>
+                     ${result['mensage']}
+                  </div>
+               </div>
+            </div>`;
+            $('body').append(html);
+
+            const toasttemp = new bootstrap.Toast(document.querySelector('#toast_js_' + toast_id), {
+               delay: 10000,
+            });
+            toasttemp.show();
          }
       });
    }
@@ -164,8 +186,8 @@ window.actualTime = new function() {
       if (!$("#toast_actualtime").length) {
          const html = `<div class='toast-container bottom-0 start-0 p-3 messages_after_redirect'  id='toast_actualtime'>
             <div class='toast border-0 animate__animated animate__tada animate__delay-2s animate__slow' role='alert' aria-live='assertive' aria-atomic='true'>
-               <div class='toast-header bg-warning text-white'>
-                  <strong class='me-auto'>${__('Warning')}</strong>
+               <div class='toast-header bg-info text-white'>
+                  <strong class='me-auto'>${_n('Information', 'Informations', 1)}</strong>
                   <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='${__('Close')}'></button>
                </div>
                <div id='toast_body' class='toast-body'></div>
