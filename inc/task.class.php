@@ -873,7 +873,7 @@ JAVASCRIPT;
                print_r(Html::scriptBlock($script));
             }
 
-            if ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE)) {
+            if ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE) && $item->fields['state'] > 0) {
                $time = self::totalEndTime($task_id);
                $text_restart = "<i class='fa-solid fa-forward'></i>";
                $text_pause = "<i class='fa-solid fa-pause'></i>";
