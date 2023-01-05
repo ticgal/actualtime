@@ -142,7 +142,7 @@ function plugin_actualtime_item_purge(TicketTask $item)
    $DB->delete(
       PluginActualtimeTask::getTable(),
       [
-         'tasks_id' => $item->fields['id']
+         'tickettasks_id' => $item->fields['id']
       ]
    );
 }
