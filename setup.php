@@ -28,6 +28,7 @@
  ----------------------------------------------------------------------
 */
 
+use Glpi\Plugin\Hooks;
 
 define('PLUGIN_ACTUALTIME_VERSION', '2.0.0');
 
@@ -79,6 +80,7 @@ function plugin_init_actualtime()
          $PLUGIN_HOOKS['add_javascript']['actualtime'] = 'js/actualtime.js';
       }
       $PLUGIN_HOOKS['item_purge']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_purge'];
+      $PLUGIN_HOOKS[Hooks::ITEM_DELETE]['actualtime'] = ['Ticket' => 'plugin_actualtime_ticket_delete'];
       $PLUGIN_HOOKS['pre_item_add']['actualtime']=[
          'ITILSolution' => 'plugin_actualtime_preSolutionAdd',
       ];

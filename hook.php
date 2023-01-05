@@ -147,6 +147,55 @@ function plugin_actualtime_item_purge(TicketTask $item)
    );
 }
 
+function plugin_actualtime_ticket_delete(Ticket $ticket)
+{
+   global $DB;
+
+   $tactualtime = PluginActualtimeTask::getTable();
+   $tticket = Ticket::getTable();
+   $ttask = TicketTask::getTable();
+
+   $query = [
+      'SELECT' => [
+         $tactualtime.'.actual_begin',
+         $tactualtime.'.id',
+      ],
+      'FROM' => $tactualtime,
+      'INNER JOIN' => [
+         $ttask => [
+            'ON' => [
+               $ttask => 'id',
+               $tactualtime => 'tickettasks_id'
+            ]
+         ],
+         $tticket => [
+            'ON' => [
+               $tticket => 'id',
+               $ttask => 'tickets_id'
+            ]
+         ]
+      ],
+      'WHERE' => [
+         'NOT' => [$tactualtime.'.actual_begin' => null],
+         $tactualtime.'.actual_end' => null,
+         $tticket.'.id' => $ticket->fields['id']
+      ]
+   ];
+   foreach ($DB->request($query) as $result) {
+      $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($result['actual_begin']));
+      $DB->update(
+         $tactualtime,
+         [
+            'actual_end'      => date("Y-m-d H:i:s"),
+            'actual_actiontime'      => $seconds,
+         ],
+         [
+            'id' => $result['id']
+         ]
+      );
+   }
+}
+
 function plugin_actualtime_getAddSearchOptions($itemtype)
 {
    $tab = [];
