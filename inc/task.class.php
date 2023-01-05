@@ -745,7 +745,7 @@ JAVASCRIPT;
       global $DB, $CFG_GLPI;
 
       $config = new PluginActualtimeConfig();
-      if (array_key_exists('state', $item->input)) {
+      if (array_key_exists('state', $item->input) && $item->fields['state']!=$item->input['state']) {
          if ($item->input['state'] != 1) {
             if (self::checkTimerActive($item->input['id'])) {
                $actual_begin = self::getActualBegin($item->input['id']);
