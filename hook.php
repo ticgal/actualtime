@@ -188,6 +188,7 @@ function plugin_actualtime_ticket_delete(Ticket $ticket)
          [
             'actual_end'      => date("Y-m-d H:i:s"),
             'actual_actiontime'      => $seconds,
+            'origin_end' => PluginActualtimetask::AUTO,
          ],
          [
             'id' => $result['id']

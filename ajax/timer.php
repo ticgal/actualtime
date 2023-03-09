@@ -45,161 +45,16 @@ if (isset($_POST["action"])) {
    $config = new PluginActualtimeConfig();
    switch ($_POST["action"]) {
       case 'start':
-         if ($plugin->isActivated('tam')) {
-            $result = [
-               'type'   => 'warning',
-            ];
-            if (PluginTamLeave::checkLeave(Session::getLoginUserID())) {
-               $result['mensage'] = __("Today is marked as absence you can not initialize the timer", 'tam');
-               echo json_encode($result);
-               break;
-            } else {
-               $timer_id = PluginTamTam::checkWorking(Session::getLoginUserID());
-               if ($timer_id == 0) {
-                  $result['mensage'] = "<a href='" . $CFG_GLPI['root_doc'] . "/front/preference.php?forcetab=PluginTamTam$1'>" . __("Timer has not been initialized", 'tam') . "</a>";
-                  echo json_encode($result);
-                  break;
-               }
-            }
-         }
-         if (PluginActualtimeTask::checkTimerActive($task_id)) {
-
-            // action=start, timer=on
-            $result = [
-               'mensage' => __("A user is already performing the task", 'actualtime'),
-               'type'   => 'warning',
-            ];
-         } else {
-
-            // action=start, timer=off
-            if (!PluginActualtimeTask::checkUserFree(Session::getLoginUserID())) {
-
-               // action=start, timer=off, current user is alerady using timer
-               $ticket_id = PluginActualtimeTask::getTicket(Session::getLoginUserID());
-               $result = [
-                  'mensage' => __("You are already doing a task", 'actualtime') . " <a onclick='window.actualTime.showTaskForm(event)' href='/front/ticket.form.php?id=" . $ticket_id . "'>" . __("Ticket") . " #$ticket_id</a>",
-                  'type'   => 'warning',
-               ];
-            } else {
-
-               // action=start, timer=off, current user is free
-               $DB->insert(
-                  'glpi_plugin_actualtime_tasks',
-                  [
-                     'tickettasks_id'     => $task_id,
-                     'actual_begin' => date("Y-m-d H:i:s"),
-                     'users_id'     => Session::getLoginUserID(),
-                     'origin_start' => PluginActualtimetask::WEB,
-                  ]
-               );
-               $result = [
-                  'mensage'   => __("Timer started", 'actualtime'),
-                  'type'     => 'info',
-                  'ticket_id' => PluginActualtimetask::getTicket(Session::getLoginUserID()),
-                  'time'      => abs(PluginActualtimeTask::totalEndTime($task_id)),
-               ];
-
-               if ($plugin->isActivated('gappextended')) {
-                  PluginGappextendedPush::sendActualtime(PluginActualtimetask::getTicket(Session::getLoginUserID()), $task_id, $result, Session::getLoginUserID(), true);
-               }
-            }
-         }
+         $result = PluginActualtimeTask::startTimer($_POST["task_id"], PluginActualtimeTask::WEB);
          echo json_encode($result);
          break;
 
       case 'end':
+         $result = PluginActualtimeTask::stopTimer($_POST["task_id"], PluginActualtimeTask::WEB);
+         echo json_encode($result);
+         break;
       case 'pause':
-         if (PluginActualtimeTask::checkTimerActive($task_id)) {
-
-            // action=end or pause, timer=on
-            if (PluginActualtimeTask::checkUser($task_id, Session::getLoginUserID())) {
-
-               // action=end or pause, timer=on, timer started by current user
-               $actual_begin = PluginActualtimeTask::getActualBegin($task_id);
-               $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
-               $DB->update(
-                  'glpi_plugin_actualtime_tasks',
-                  [
-                     'actual_end'        => date("Y-m-d H:i:s"),
-                     'actual_actiontime' => $seconds,
-                     'origin_end' => PluginActualtimetask::WEB,
-                  ],
-                  [
-                     'tickettasks_id' => $task_id,
-                     [
-                        'NOT' => ['actual_begin' => null],
-                     ],
-                     'actual_end' => null,
-                  ]
-               );
-               $result = [
-                  'mensage' => __("Timer completed", 'actualtime'),
-                  'type'   => 'info',
-                  'segment' => PluginActualtimeTask::getSegment($task_id),
-                  'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
-               ];
-               if ($_POST['action'] == 'end') {
-                  $task = new TicketTask();
-                  $task->getFromDB($task_id);
-                  $input['id'] = $task_id;
-                  $input['tickets_id'] = $task->fields['tickets_id'];
-                  $input['state'] = 2;
-                  if ($config->autoUpdateDuration()) {
-                     $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
-                     $result['duration'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
-                  }
-                  $task->update($input);
-                  Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking", sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
-               }
-               if ($plugin->isActivated('gappextended')) {
-                  $task = new TicketTask();
-                  $task->getFromDB($task_id);
-                  PluginGappextendedPush::sendActualtime($task->fields['tickets_id'], $task_id, $result, Session::getLoginUserID(), false);
-               }
-            } else {
-
-               // action=end or pause, timer=on, timer started by other user
-               $result = [
-                  'mensage' => __("Only the user who initiated the task can close it", 'actualtime'),
-                  'type'   => 'warning',
-               ];
-            }
-         } else {
-
-            // action=end or pause, timer=off
-            if ($_POST['action'] == 'pause') {
-
-               // action=pause, timer=off
-               $result = [
-                  'mensage' => __("The task had not been initialized", 'actualtime'),
-                  'type'   => 'warning',
-               ];
-            } else {
-
-               // action=end, timer=off
-               $result = [
-                  'mensage' => __("Timer completed", 'actualtime'),
-                  'type'   => 'info',
-                  'segment' => PluginActualtimeTask::getSegment($task_id),
-                  'time'    => abs(PluginActualtimeTask::totalEndTime($task_id)),
-               ];
-
-               $task = new TicketTask();
-               $task->getFromDB($task_id);
-               $input['id'] = $task_id;
-               $input['tickets_id'] = $task->fields['tickets_id'];
-               $input['state'] = 2;
-               if ($config->autoUpdateDuration()) {
-                  $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
-                  $result['duration'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
-               }
-               $task->update($input);
-               Event::log($task->getField(getForeignKeyFieldForItemType($task->getItilObjectItemType())), strtolower($task->getItilObjectItemType()), 4, "tracking", sprintf(__('%s updates a task'), $_SESSION["glpiname"]));
-               if ($plugin->isActivated('gappextended')) {
-                  PluginGappextendedPush::sendActualtime($task->fields['tickets_id'], $task_id, $result, Session::getLoginUserID(), false);
-               }
-            }
-         }
+         $result = PluginActualtimeTask::pauseTimer($_POST["task_id"], PluginActualtimeTask::WEB);
          echo json_encode($result);
          break;
 

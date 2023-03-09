@@ -167,7 +167,7 @@ window.actualTime = new function() {
                      <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='${__('Close')}'></button>
                   </div>
                   <div class='toast-body'>
-                     ${result['mensage']}
+                     ${result['message']}
                   </div>
                </div>
             </div>`;
