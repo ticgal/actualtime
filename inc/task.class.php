@@ -991,6 +991,7 @@ JAVASCRIPT;
          } else {
             $interv[$key]["url"] = $CFG_GLPI["url_base"] . Ticket::getFormURLWithID($url_id, false);
          }
+         $interv[$key]["name"] .= " - #".$url_id. " - ".$row['tickettasks_id'];
          $interv[$key]["ajaxurl"] = $CFG_GLPI["root_doc"] . "/ajax/planning.php" .
             "?action=edit_event_form" .
             "&itemtype=" . $task->getType() .
