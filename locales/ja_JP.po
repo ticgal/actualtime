@@ -3,140 +3,137 @@ msgstr ""
 "Project-Id-Version: Actualtime\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-03-15 16:50+0100\n"
-"Language: de_DE\n"
+"Language: ja_JP\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Localazy (https://localazy.com)\n"
-"Plural-Forms: nplurals=2; plural=(n==1) ? 0 : 1;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #. TRANS: d is a symbol for days in a time (displays: 3d)
 #: ajax/timer.php:74
 #, php-format
 msgid "%dd"
-msgstr "%dT"
+msgstr "%d日"
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
 #: ajax/timer.php:78
 #, php-format
 msgid "%dh"
-msgstr "%dh"
+msgstr "%d時間"
 
 #. TRANS: min is a symbol for minutes in a time (displays: 3min)
 #: ajax/timer.php:82
 #, php-format
 msgid "%dmin"
-msgstr "%dmin"
+msgstr "%d分"
 
 #. TRANS: s is a symbol for seconds in a time (displays: 3s)
 #: ajax/timer.php:86
 #, php-format
 msgid "%ds"
-msgstr "%ds"
+msgstr "%d秒"
 
 #: ajax/timer.php:97
 msgid "Timer started on"
-msgstr "Timer gestartet am"
+msgstr "タイマー開始"
 
 #: inc/config.class.php:76
 msgid "Task timer configuration"
-msgstr "Konfiguration der Aufgaben-Timer"
+msgstr "タスクタイマー設定"
 
 #: inc/config.class.php:117
 msgid "In Standard interface only (default)"
-msgstr "Nur in der Standard-Ansicht"
+msgstr "標準インターフェースのみ (デフォルト)"
 
 #: inc/config.class.php:118
 msgid "Both in Standard and Helpdesk interfaces"
-msgstr "In Standard- und Helpdesk-Ansicht"
+msgstr "標準インターフェースとヘルプデスクインターフェースの両方"
 
 #: inc/config.class.php:121
 msgid "Enable timer on tasks"
-msgstr "Timer in Aufgabe aktivieren"
+msgstr "タスクでタイマーを有効にする"
 
 #: inc/config.class.php:133
 msgid "Display pop-up window with current running timer"
-msgstr "Pop-Up mit aktuellen Timer anzeigen"
+msgstr "現在実行中のタイマーをポップアップウィンドウに表示する"
 
 #: inc/config.class.php:139
 msgid "Display actual time in closed task box ('Processing ticket' list)"
-msgstr ""
-"Aktuelle Zeit in geschlossener Taskbox anzeigen (Liste 'Ticket bearbeiten')"
+msgstr "終了したタスクのボックス（「処理中のチケット」リスト）に実時間を表示"
 
 #: inc/config.class.php:145
 msgid "Automatically open task with timer running"
-msgstr "Timer beim Öffnen der Aufgabe automatisch starten"
+msgstr "タイマーが動作している状態でタスクを自動的に開く"
 
 #: inc/config.class.php:151
 msgid "Automatically update the duration"
-msgstr "Automatische Aktualisierung der Dauer"
+msgstr "所要時間を自動更新"
 
 #: inc/config.class.php:165
 msgid "Actual time"
-msgstr "Tatsächliche Zeit"
+msgstr "実際の時間"
 
 #: inc/dashboard.class.php:43
 msgid "Top 20 Actualtime tasks per day"
-msgstr "Top 20 Aufgaben von Actualtime pro Tag"
+msgstr "1 日の実時間が長いタスク上位 20 件"
 
 #: inc/dashboard.class.php:51
 msgid "Bottom 20 Actualtime tasks per day"
-msgstr "Niedrigste 20 Aufgaben von Actualtime pro Tag"
+msgstr "1 日の実時間が短いタスク上位 20 件"
 
 #: inc/dashboard.class.php:59
 msgid "Top 20 Actualtime usage (hours)"
-msgstr "Top 20 Nutzungszeit von ActualTime (Stunden)"
+msgstr "実時間が長い上位 20 件"
 
 #: inc/dashboard.class.php:67
 msgid "Bottom 20 Actualtime usage (hours)"
-msgstr "Niedrigste 20 Nutzung von ActualTime (Stunden)"
+msgstr "実時間が短い上位 20 件"
 
 #: inc/dashboard.class.php:74
 msgid "Top 20 % Actualtime usage per day"
-msgstr "Top 20% Nutzungszeit von Actualtime pro Tag"
+msgstr "1 日の実時間が長い上位 20%"
 
 #: inc/dashboard.class.php:82
 msgid "Bottom 20 % Actualtime usage per day"
-msgstr "Niedrigste 20% Nutzungszeit von ActualTime pro Tag"
+msgstr "1 日の実時間が短い上位 20%"
 
 #: inc/running.class.php:36
 msgid "Actualtime"
-msgstr "Actual time"
+msgstr "実際の時間"
 
 #: inc/running.class.php:56
 msgid "Running timers"
-msgstr "Laufende Timer"
+msgstr "実行中のタイマー"
 
 #: inc/running.class.php:61
 msgid "Update every (s)"
-msgstr "Alle (s) aktualisieren"
+msgstr "更新間隔 (秒)"
 
 #: inc/task.class.php:49
 msgid "ActualTime"
-msgstr "ActualTime"
+msgstr "実時間"
 
 #: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:551
 #: inc/task.class.php:557 inc/task.class.php:563
 msgid "Duration Diff"
-msgstr "Zeit-Differenz"
+msgstr "時間の差"
 
 #: inc/task.class.php:264
 msgid "Actual Duration"
-msgstr "Tatsächliche Dauer"
+msgstr "実際の所要時間"
 
 #: inc/task.class.php:275
 msgid "Partial actual duration"
-msgstr "Teilweise tatsächliche Dauer"
+msgstr "部分的な実時間"
 
 #: inc/task.class.php:990
 msgid "Today is marked as absence you can not initialize the timer"
-msgstr ""
-"Der heutige Tag ist als Abwesenheit gekennzeichnet, Sie können den Timer "
-"nicht starten"
+msgstr "今日は不在となっているため、タイマーを初期化できません"
 
 #: inc/task.class.php:995
 msgid "Timer has not been initialized"
-msgstr "Der Timer wurde nicht initialisiert"
+msgstr "タイマーが初期化されていません"
 
 #: inc/task.class.php:1004
 msgid "You are already doing a waypoint"
@@ -148,24 +145,24 @@ msgstr "Technician not in charge of the task"
 
 #: inc/task.class.php:1025
 msgid "A user is already performing the task"
-msgstr "Ein anderer Benutzer bearbeitet gerade diese Aufgabe"
+msgstr "ユーザーがすでにそのタスクを実行しています"
 
 #: inc/task.class.php:1030
 msgid "You are already doing a task"
-msgstr "Du bearbeitest gerade eine andere Aufgabe"
+msgstr "あなたはすでにタスクを実行しています"
 
 #: inc/task.class.php:1048
 msgid "Timer started"
-msgstr "Timer gestarted"
+msgstr "タイマーをスタートしました"
 
 #: inc/task.class.php:1102 inc/task.class.php:1171 inc/task.class.php:1197
 msgid "Timer completed"
-msgstr "Timer beendet"
+msgstr "タイマー完了"
 
 #: inc/task.class.php:1115 inc/task.class.php:1183
 msgid "Only the user who initiated the task can close it"
-msgstr "Nur der Benutzer, der die Aufgabe erstellt hat, kann diese schließen"
+msgstr "開始したユーザーだけがタスクを閉じることができます"
 
 #: inc/task.class.php:1118
 msgid "The task had not been initialized"
-msgstr "Die Aufgabe wurde nicht initialisiert"
+msgstr "タスクは初期化されていませんでした"

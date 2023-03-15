@@ -1,15 +1,15 @@
 # Actualtime Glpi Plugin.
-# Copyright (C) 2022 TICgal
+# Copyright (C) 2023 TICgal
 # This file is distributed under the same license as the PACKAGE package.
-# TICgal, 2022
+# TICgal, 2023
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-17 09:39+0200\n"
-"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"POT-Creation-Date: 2023-03-15 16:50+0100\n"
+"PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -17,63 +17,31 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ajax/timer.php:53 inc/task.class.php:648 inc/task.class.php:650
-msgid "Today is marked as absence you can not initialize the timer"
-msgstr ""
-
-#: ajax/timer.php:59 inc/task.class.php:659
-msgid "Timer has not been initialized"
-msgstr ""
-
-#: ajax/timer.php:69 inc/task.class.php:671
-msgid "A user is already performing the task"
-msgstr ""
-
-#: ajax/timer.php:80
-msgid "You are already working on another ticket task"
-msgstr ""
-
-#: ajax/timer.php:96 inc/task.class.php:698
-msgid "Timer started"
-msgstr ""
-
-#: ajax/timer.php:136 ajax/timer.php:181
-msgid "Timer completed"
-msgstr ""
-
-#: ajax/timer.php:163
-msgid "Only the user who initiated the task can close it"
-msgstr ""
-
-#: ajax/timer.php:174
-msgid "The task had not been initialized"
-msgstr ""
-
 #. TRANS: d is a symbol for days in a time (displays: 3d)
-#: ajax/timer.php:219
+#: ajax/timer.php:74
 #, php-format
 msgid "%dd"
 msgstr ""
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
-#: ajax/timer.php:223
+#: ajax/timer.php:78
 #, php-format
 msgid "%dh"
 msgstr ""
 
 #. TRANS: min is a symbol for minutes in a time (displays: 3min)
-#: ajax/timer.php:227
+#: ajax/timer.php:82
 #, php-format
 msgid "%dmin"
 msgstr ""
 
 #. TRANS: s is a symbol for seconds in a time (displays: 3s)
-#: ajax/timer.php:231
+#: ajax/timer.php:86
 #, php-format
 msgid "%ds"
 msgstr ""
 
-#: ajax/timer.php:242
+#: ajax/timer.php:97
 msgid "Timer started on"
 msgstr ""
 
@@ -153,8 +121,8 @@ msgstr ""
 msgid "ActualTime"
 msgstr ""
 
-#: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:528
-#: inc/task.class.php:534 inc/task.class.php:540
+#: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:551
+#: inc/task.class.php:557 inc/task.class.php:563
 msgid "Duration Diff"
 msgstr ""
 
@@ -166,6 +134,42 @@ msgstr ""
 msgid "Partial actual duration"
 msgstr ""
 
-#: inc/task.class.php:682
+#: inc/task.class.php:990
+msgid "Today is marked as absence you can not initialize the timer"
+msgstr ""
+
+#: inc/task.class.php:995
+msgid "Timer has not been initialized"
+msgstr ""
+
+#: inc/task.class.php:1004
+msgid "You are already doing a waypoint"
+msgstr ""
+
+#: inc/task.class.php:1020
+msgid "Technician not in charge of the task"
+msgstr ""
+
+#: inc/task.class.php:1025
+msgid "A user is already performing the task"
+msgstr ""
+
+#: inc/task.class.php:1030
 msgid "You are already doing a task"
+msgstr ""
+
+#: inc/task.class.php:1048
+msgid "Timer started"
+msgstr ""
+
+#: inc/task.class.php:1102 inc/task.class.php:1171 inc/task.class.php:1197
+msgid "Timer completed"
+msgstr ""
+
+#: inc/task.class.php:1115 inc/task.class.php:1183
+msgid "Only the user who initiated the task can close it"
+msgstr ""
+
+#: inc/task.class.php:1118
+msgid "The task had not been initialized"
 msgstr ""
