@@ -131,12 +131,12 @@ window.actualTime = new function() {
                      $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='TicketTask'][data-items-id='"+task+"']").find("select[name='state']").val(2).trigger('change');
                      $("select[name='state']").removeAttr('data-track-changes');
                      $("[id^='actualtime_button_" + task + "_']").attr('action', '').css('background-color', 'gray').prop('disabled', true);
-                     if (typeof result["duration"] !== 'undefined') {
+                     if (typeof result["task_time"] !== 'undefined') {
                         var actiontime = $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='TicketTask'][data-items-id='"+task+"']").find("select[name='actiontime']");
                         actiontime.attr('data-track-changes', '');
-                        actiontime.val(result['duration']).trigger('change');
+                        actiontime.val(result['task_time']).trigger('change');
                         actiontime.removeAttr('data-track-changes');
-                        $("div#viewitemtickettask" + task + " span.actiontime").text(window.actualTime.timeToText(result['duration'], 1));
+                        $("div[data-itemtype='TicketTask'][data-items-id='"+task+"'] span.actiontime").text(window.actualTime.timeToText(result['task_time'], 1));
                      }
                   } else {
                      $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_restart).attr('action', 'start').css('background-color', 'green').prop('disabled', false);
