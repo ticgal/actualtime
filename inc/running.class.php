@@ -112,16 +112,37 @@ JAVASCRIPT;
 	{
 		global $DB;
 
-		if (countElementsInTable(PluginActualtimeTask::getTable(), [['NOT' => ['actual_begin' => null],], 'actual_end' => null,]) > 0) {
-			$query = [
-				'FROM' => PluginActualtimeTask::getTable(),
-				'WHERE' => [
-					[
-						'NOT' => ['actual_begin' => null],
-					],
-					'actual_end' => null,
-				]
-			];
+		$tasktable = TicketTask::getTable();
+		$tickettable = Ticket::getTable();
+
+		$query = [
+			'SELECT' => [
+				PluginActualtimeTask::getTable() . '.*',
+			],
+			'FROM' => PluginActualtimeTask::getTable(),
+			'INNER JOIN' => [
+				$tasktable => [
+					'ON' => [
+						$tasktable => 'id',
+						PluginActualtimeTask::getTable() => 'tickettasks_id'
+					]
+				],
+				$tickettable => [
+					'ON' => [
+						$tickettable => 'id',
+						$tasktable => 'tickets_id'
+					]
+				],
+			],
+			'WHERE' => [
+				[
+					'NOT' => ['actual_begin' => null],
+				],
+				'actual_end' => null,
+			] + getEntitiesRestrictCriteria($tickettable),
+		];
+		$iterator = $DB->request($query);
+		if ($iterator->count() > 0) {
 			$html = "<table class='tab_cadre_fixehov'>";
 			$html .= "<tr>";
 			$html .= "<th class='center'>" . __("Technician") . "</th>";
@@ -130,7 +151,7 @@ JAVASCRIPT;
 			$html .= "<th class='center'>" . __("Time") . "</th>";
 			$html .= "</tr>";
 
-			foreach ($DB->request($query) as $key => $row) {
+			foreach ($iterator as $key => $row) {
 				$html .= "<tr class='tab_bg_2'>";
 				$user = new User();
 				$user->getFromDB($row['users_id']);
