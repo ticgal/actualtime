@@ -1227,6 +1227,8 @@ JAVASCRIPT;
             `actual_actiontime` int {$default_key_sign} NOT NULL DEFAULT 0,
             `origin_start` INT {$default_key_sign} NOT NULL,
             `origin_end` INT {$default_key_sign} NOT NULL DEFAULT 0,
+            `override_begin` TIMESTAMP NULL DEFAULT NULL,
+            `override_end` TIMESTAMP NULL DEFAULT NULL,
             PRIMARY KEY (`id`),
             KEY `tickettasks_id` (`tickettasks_id`),
             KEY `users_id` (`users_id`)
@@ -1240,6 +1242,9 @@ JAVASCRIPT;
          $migration->dropField($table, 'latitude_end');
          $migration->dropField($table, 'longitude_end');
          $migration->changeField($table, 'origin_end', 'origin_end', 'int', ['value' => 0]);
+
+         $migration->addField($table, 'override_begin', 'timestamp', ['nodefault' => true]);
+         $migration->addField($table, 'override_end', 'timestamp', ['nodefault' => true]);
 
          $migration->migrationOneTable($table);
       }
