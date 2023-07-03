@@ -30,6 +30,7 @@
 
 class PluginActualtimeRunning extends CommonGLPI
 {
+	static $rightname = 'plugin_actualtime_running';
 
 	static function getMenuName()
 	{

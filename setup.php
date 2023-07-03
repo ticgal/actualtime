@@ -67,6 +67,8 @@ function plugin_init_actualtime()
 
       // Standard settings link, on Setup - Plugins page
       $PLUGIN_HOOKS['config_page']['actualtime'] = 'front/config.form.php';
+
+      Plugin::registerClass('PluginActualtimeProfile', ['addtabon' => 'Profile']);
       // Add settings form as a tab on Setup - General page
       Plugin::registerClass('PluginActualtimeConfig', ['addtabon' => 'Config']);
 
@@ -81,7 +83,7 @@ function plugin_init_actualtime()
       }
       $PLUGIN_HOOKS['item_purge']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_purge'];
       $PLUGIN_HOOKS[Hooks::ITEM_DELETE]['actualtime'] = ['Ticket' => 'plugin_actualtime_ticket_delete'];
-      $PLUGIN_HOOKS['pre_item_add']['actualtime']=[
+      $PLUGIN_HOOKS['pre_item_add']['actualtime'] = [
          'ITILSolution' => 'plugin_actualtime_preSolutionAdd',
       ];
 
@@ -92,7 +94,9 @@ function plugin_init_actualtime()
 
       $PLUGIN_HOOKS['item_add']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_add'];
 
-      $PLUGIN_HOOKS['menu_toadd']['actualtime'] = ['admin' => 'PluginActualtimeRunning'];
+      if (Session::haveRight('plugin_actualtime_running', READ)) {
+         $PLUGIN_HOOKS['menu_toadd']['actualtime'] = ['admin' => 'PluginActualtimeRunning'];
+      }
 
       Plugin::registerClass('PluginActualtimeTask', ['planning_types' => true]);
 
