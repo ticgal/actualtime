@@ -114,10 +114,15 @@ JAVASCRIPT;
 
 		$tasktable = TicketTask::getTable();
 		$tickettable = Ticket::getTable();
+		$locationtable = Location::getTable();
 
 		$query = [
 			'SELECT' => [
 				PluginActualtimeTask::getTable() . '.*',
+				$tasktable . '.tickets_id',
+				$locationtable . '.name',
+				$locationtable . '.latitude',
+				$locationtable . '.longitude',
 			],
 			'FROM' => PluginActualtimeTask::getTable(),
 			'INNER JOIN' => [
@@ -134,6 +139,14 @@ JAVASCRIPT;
 					]
 				],
 			],
+			'LEFT JOIN' => [
+				$locationtable => [
+					'ON' => [
+						$locationtable => 'id',
+						$tickettable => 'locations_id'
+					]
+				],
+			],
 			'WHERE' => [
 				[
 					'NOT' => ['actual_begin' => null],
@@ -141,28 +154,46 @@ JAVASCRIPT;
 				'actual_end' => null,
 			] + getEntitiesRestrictCriteria($tickettable),
 		];
-		$iterator = $DB->request($query);
-		if ($iterator->count() > 0) {
+		$iteratortime = $DB->request($query);
+		if ($iteratortime->count() > 0) {
 			$html = "<table class='tab_cadre_fixehov'>";
 			$html .= "<tr>";
 			$html .= "<th class='center'>" . __("Technician") . "</th>";
-			$html .= "<th class='center'>" . __("Entity") . "</th>";
-			$html .= "<th class='center'>" . __("Ticket") . " - " . __("Task") . "</th>";
+			$html .= "<th class='center'>" . Entity::getTypeName() . "</th>";
+			$html .= "<th class='center'>" . Location::getTypeName() . "</th>";
+			$html .= "<th class='center'>" . _n('Associated element', 'Associated elements', 1) . "</th>";
+			$html .= "<th class='center'>" . Ticket::getTypeName() . " - " . CommonITILTask::getTypeName() . "</th>";
 			$html .= "<th class='center'>" . __("Time") . "</th>";
 			$html .= "</tr>";
 
-			foreach ($iterator as $key => $row) {
+			foreach ($iteratortime as $key => $row) {
 				$html .= "<tr class='tab_bg_2'>";
 				$user = new User();
 				$user->getFromDB($row['users_id']);
 				$html .= "<td class='center'><a href='" . $user->getLinkURL() . "'>" . $user->getFriendlyName() . "</a></td>";
-				$task_id = $row['tickettasks_id'];
-				$task = new TicketTask();
-				$task->getFromDB($row['tickettasks_id']);
 				$ticket = new Ticket();
-				$ticket->getFromDB($task->fields['tickets_id']);
+				$ticket->getFromDB($row['tickets_id']);
 				$html .= "<td class='center'>" . Entity::getFriendlyNameById($ticket->fields['entities_id']) . "</td>";
-				$html .= "<td class='center'><a href='" . $ticket->getLinkURL() . "'>" . $ticket->getID() . " - " . $task->getID() . "</a></td>";
+				$html .= "<td class='center'>" . $row['name'] . "</td>";
+				$html .= "<td class='center'>";
+				$html .= "<ul class='list left'>";
+				$types_iterator = Item_Ticket::getDistinctTypes($row['tickets_id']);
+				foreach ($types_iterator as $type) {
+					$itemtype = $type['itemtype'];
+					if (!($item = getItemForItemtype($itemtype))) {
+						continue;
+					}
+					$html .= "<li>" . $item::getTypeName() . "</li>";
+					$iterator = Item_Ticket::getTypeItems($row['tickets_id'], $itemtype);
+					$html .= "<ul>";
+					foreach ($iterator as $data) {
+						$html .= "<li>" . $data['name'] . "</li>";
+					}
+					$html .= "</ul>";
+				}
+				$html .= "</ul>";
+				$html .= "</td>";
+				$html .= "<td class='center'><a href='" . $ticket->getLinkURL() . "'>" . $ticket->getID() . " - " . $row['tickettasks_id'] . "</a></td>";
 				$html .= "<td class='center'>" . HTML::timestampToString(PluginActualtimeTask::totalEndTime($row['tickettasks_id'])) . "</td>";
 				$html .= "</tr>";
 			}
