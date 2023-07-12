@@ -1,5 +1,13 @@
 # Actualtime
 
+## 2.1.1 - 12/07/2023
+### Features
+- Permission to view activated timers
+- Filter activated timers by entities
+- Show location and assets in activated timers
+### Bugfixes
+- Fix update actiontime
+
 ## 2.1.0 - 15/03/2023
 ### Features
 - Show ticket and task id in planning
