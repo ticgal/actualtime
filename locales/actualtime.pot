@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-15 16:50+0100\n"
+"POT-Creation-Date: 2023-07-12 14:48+0200\n"
 "PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -105,15 +105,19 @@ msgstr ""
 msgid "Bottom 20 % Actualtime usage per day"
 msgstr ""
 
-#: inc/running.class.php:36
-msgid "Actualtime"
+#: inc/profile.class.php:79
+msgid "General"
 msgstr ""
 
-#: inc/running.class.php:56
+#: inc/profile.class.php:98 inc/running.class.php:57
 msgid "Running timers"
 msgstr ""
 
-#: inc/running.class.php:61
+#: inc/running.class.php:37
+msgid "Actualtime"
+msgstr ""
+
+#: inc/running.class.php:62
 msgid "Update every (s)"
 msgstr ""
 

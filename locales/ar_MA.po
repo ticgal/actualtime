@@ -3,12 +3,13 @@ msgstr ""
 "Project-Id-Version: ActualTime\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-12 14:48+0200\n"
-"Language: it_IT\n"
+"Language: ar_MA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Localazy (https://localazy.com)\n"
-"Plural-Forms: nplurals=2; plural=(n==1) ? 0 : 1;\n"
+"Plural-Forms: nplurals=6; plural=(n==0) ? 0 : (n==1) ? 1 : (n==2) ? 2 : "
+"(n%100>=3 && n%100<=10) ? 3 : (n%100>=11 && n%100<=99) ? 4 : 5;\n"
 
 #. TRANS: d is a symbol for days in a time (displays: 3d)
 #: ajax/timer.php:74
@@ -36,23 +37,23 @@ msgstr "%ds"
 
 #: ajax/timer.php:97
 msgid "Timer started on"
-msgstr "Timer avviato alle"
+msgstr "Timer started on"
 
 #: inc/config.class.php:76
 msgid "Task timer configuration"
-msgstr "Configurazione del timer dell'attività"
+msgstr "Task timer configuration"
 
 #: inc/config.class.php:117
 msgid "In Standard interface only (default)"
-msgstr "Solo nell'interfaccia standard (impostazione predefinita)"
+msgstr "In Standard interface only (default)"
 
 #: inc/config.class.php:118
 msgid "Both in Standard and Helpdesk interfaces"
-msgstr "Sia nell'interfaccia Standard che Helpdesk"
+msgstr "Both in Standard and Helpdesk interfaces"
 
 #: inc/config.class.php:121
 msgid "Enable timer on tasks"
-msgstr "Abilita il timer sulle attività"
+msgstr "Enable timer on tasks"
 
 #: inc/config.class.php:133
 msgid "Display pop-up window with current running timer"
@@ -64,19 +65,19 @@ msgstr "Display actual time in closed task box ('Processing ticket' list)"
 
 #: inc/config.class.php:145
 msgid "Automatically open task with timer running"
-msgstr "Aprire automaticamente l'attività con il timer in esecuzione"
+msgstr "Automatically open task with timer running"
 
 #: inc/config.class.php:151
 msgid "Automatically update the duration"
-msgstr "Aggiorna automaticamente la durata"
+msgstr "Automatically update the duration"
 
 #: inc/config.class.php:165
 msgid "Actual time"
-msgstr "Tempo effettivo"
+msgstr "Actual time"
 
 #: inc/dashboard.class.php:43
 msgid "Top 20 Actualtime tasks per day"
-msgstr "Top 20 compiti al giorno Actualtime"
+msgstr "Top 20 Actualtime tasks per day"
 
 #: inc/dashboard.class.php:51
 msgid "Bottom 20 Actualtime tasks per day"
@@ -84,7 +85,7 @@ msgstr "Bottom 20 Actualtime tasks per day"
 
 #: inc/dashboard.class.php:59
 msgid "Top 20 Actualtime usage (hours)"
-msgstr "Top 20 utilizzo Actualtime (ore)"
+msgstr "Top 20 Actualtime usage (hours)"
 
 #: inc/dashboard.class.php:67
 msgid "Bottom 20 Actualtime usage (hours)"
@@ -92,7 +93,7 @@ msgstr "Bottom 20 Actualtime usage (hours)"
 
 #: inc/dashboard.class.php:74
 msgid "Top 20 % Actualtime usage per day"
-msgstr "Top 20 % Actualtime utilizzo al giorno"
+msgstr "Top 20 % Actualtime usage per day"
 
 #: inc/dashboard.class.php:82
 msgid "Bottom 20 % Actualtime usage per day"
@@ -104,7 +105,7 @@ msgstr "General"
 
 #: inc/profile.class.php:98 inc/running.class.php:57
 msgid "Running timers"
-msgstr "Timer in esecuzione"
+msgstr "Running timers"
 
 #: inc/running.class.php:37
 msgid "Actualtime"
@@ -112,7 +113,7 @@ msgstr "Actualtime"
 
 #: inc/running.class.php:62
 msgid "Update every (s)"
-msgstr "Aggiorna ogni (s)"
+msgstr "Update every (s)"
 
 #: inc/task.class.php:49
 msgid "ActualTime"
@@ -125,7 +126,7 @@ msgstr "Duration Diff"
 
 #: inc/task.class.php:264
 msgid "Actual Duration"
-msgstr "Durata Attuale"
+msgstr "Actual Duration"
 
 #: inc/task.class.php:275
 msgid "Partial actual duration"
@@ -133,12 +134,11 @@ msgstr "Partial actual duration"
 
 #: inc/task.class.php:990
 msgid "Today is marked as absence you can not initialize the timer"
-msgstr ""
-"Oggi è contrassegnato come assenza, non è possibile inizializzare il timer"
+msgstr "Today is marked as absence you can not initialize the timer"
 
 #: inc/task.class.php:995
 msgid "Timer has not been initialized"
-msgstr "Il timer non è stato inizializzato"
+msgstr "لم يتم تهيئة الوقت "
 
 #: inc/task.class.php:1004
 msgid "You are already doing a waypoint"
@@ -150,24 +150,24 @@ msgstr "Technician not in charge of the task"
 
 #: inc/task.class.php:1025
 msgid "A user is already performing the task"
-msgstr "Un utente sta già eseguendo l'attività"
+msgstr "A user is already performing the task"
 
 #: inc/task.class.php:1030
 msgid "You are already doing a task"
-msgstr "Stai già svolgendo un compito"
+msgstr "You are already doing a task"
 
 #: inc/task.class.php:1048
 msgid "Timer started"
-msgstr "Timer avviato"
+msgstr "الوقت بدأ"
 
 #: inc/task.class.php:1102 inc/task.class.php:1171 inc/task.class.php:1197
 msgid "Timer completed"
-msgstr "Timer completato"
+msgstr "الوقت إنتهى"
 
 #: inc/task.class.php:1115 inc/task.class.php:1183
 msgid "Only the user who initiated the task can close it"
-msgstr "Solo l'utente che ha avviato l'attività può chiuderla."
+msgstr "يمكن فقط للمستخدم الذي بدأ المهمة إغلاقها"
 
 #: inc/task.class.php:1118
 msgid "The task had not been initialized"
-msgstr "L'attività non era stata inizializzata"
+msgstr ""
