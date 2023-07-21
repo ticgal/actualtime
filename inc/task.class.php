@@ -1027,7 +1027,32 @@ JAVASCRIPT;
       } else {
          if (!self::checkUserFree(Session::getLoginUserID())) {
             $ticket_id = self::getTicket(Session::getLoginUserID());
-            $result['message'] = __("You are already doing a task", 'actualtime') . " " . __("Ticket") . "$ticket_id";
+            //$result['message'] = __("You are already doing a task", 'actualtime') . " " . __("Ticket") . "$ticket_id";
+            $ticket = new Ticket();
+            $url = $ticket->getFormURLWithID($ticket_id);
+
+            $DB = DBConnection::getReadConnection();
+            $iterator = $DB->request([
+               'FROM' => TicketTask::getTable(),
+               'WHERE' => ['tickets_id' => $ticket_id]
+            ]);
+
+            $active_task = '';
+            foreach($iterator as $tickettask) {
+               if(self::checkTimerActive($tickettask['id'])) {
+                  $active_task = $tickettask['id'];
+                  break;
+               }
+            }
+
+            $message = sprintf(__('You are already working on %s', 'actualtime'), __('Ticket'));
+            $link = '<a href="'.$url.'">#' . $ticket_id . '</a>';
+            $message .= ' ' . $link;
+            if($active_task != '') {
+               $message .= ' (' . __('Task') . ' #' . $active_task . ')';
+            }
+
+            $result['message'] = $message;
             return $result;
          } else {
 
