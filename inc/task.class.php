@@ -187,6 +187,12 @@ class PluginActualtimeTask extends CommonDBTM
                $task_id = $item->getID();
                $rand = mt_rand();
                $buttons = ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE));
+               $disable = false;
+               if ($config->fields['planned_task'] && !is_null($item->fields['begin'])) {
+                  if ($item->fields['begin'] > date("Y-m-d H:i:s")) {
+                     $disable = true;
+                  }
+               }
                $time = self::totalEndTime($task_id);
                $text_restart = "<i class='fa-solid fa-forward'></i>";
                $text_pause = "<i class='fa-solid fa-pause'></i>";
@@ -208,7 +214,7 @@ JAVASCRIPT;
                   $color2 = 'gray';
                   $disabled2 = 'disabled';
 
-                  if ($item->getField('state') == 1) {
+                  if ($item->getField('state') == 1 && !$disable) {
 
                      if (self::checkTimerActive($task_id)) {
 
@@ -826,7 +832,13 @@ JAVASCRIPT;
                $action1 = '';
                $color1 = 'gray';
                $disabled1 = 'disabled';
-               if ($item->getField('state') == 1) {
+               $disable = false;
+               if ($config->fields['planned_task'] && !is_null($item->fields['begin'])) {
+                  if ($item->fields['begin'] > date("Y-m-d H:i:s")) {
+                     $disable = true;
+                  }
+               }
+               if ($item->getField('state') == 1 && !$disable) {
 
                   if (self::checkTimerActive($task_id)) {
 
@@ -983,6 +995,8 @@ JAVASCRIPT;
             'users_id'     => Session::getLoginUserID(),
          ]
       );
+      
+      $config = new PluginActualtimeConfig();
 
       $plugin = new Plugin();
       if ($plugin->isActivated('tam')) {
@@ -1019,6 +1033,13 @@ JAVASCRIPT;
       if (Session::getLoginUserID() != $task->fields['users_id_tech']) {
          $result['message'] = __("Technician not in charge of the task", 'gappextended');
          return $result;
+      }
+
+      if ($config->fields['planned_task'] && !is_null($task->fields['begin'])) {
+         if ($task->fields['begin'] > date("Y-m-d H:i:s")) {
+            $result['message'] = sprintf(__("You cannot start a timer because the task was scheduled for %d.", 'actualtime'), $task->fields['begin']);
+            return $result;
+         }
       }
 
       if (self::checkTimerActive($task_id)) {

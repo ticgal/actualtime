@@ -117,6 +117,9 @@ class PluginActualtimeConfig extends CommonDBTM
          0 => __('In Standard interface only (default)', 'actualtime'),
          1 => __('Both in Standard and Helpdesk interfaces', 'actualtime'),
       ];
+      echo "<table class='tab_cadre_fixe'><thead>";
+      echo "<th colspan='4'>" . self::getTypeName() . '</th></thead>';
+
       echo "<tr class='tab_bg_1'>";
       echo "<td>" . __("Enable timer on tasks", "actualtime") . "</td><td>";
       Dropdown::showFromArray(
@@ -150,6 +153,12 @@ class PluginActualtimeConfig extends CommonDBTM
       echo "<tr class='tab_bg_1' name='optional$rand'>";
       echo "<td>" . __("Automatically update the duration", "actualtime") . "</td><td>";
       Dropdown::showYesNo('autoupdate_duration', $config->autoUpdateDuration(), -1);
+      echo "</td>";
+      echo "</tr>";
+
+      echo "<tr class='tab_bg_1' name='optional$rand'>";
+      echo "<td>" . __("Block timer on planned task", "actualtime") . "</td><td>";
+      Dropdown::showYesNo('planned_task', $config->fields['planned_task'], -1);
       echo "</td>";
       echo "</tr>";
 
@@ -244,6 +253,7 @@ class PluginActualtimeConfig extends CommonDBTM
                       `showtimerinbox` TINYINT NOT NULL DEFAULT '1',
                       `autoopenrunning` TINYINT NOT NULL DEFAULT '0',
                       `autoupdate_duration` TINYINT NOT NULL DEFAULT '0',
+                      `planned_task` TINYINT NOT NULL DEFAULT '0',
                       PRIMARY KEY (`id`)
          ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
          $DB->query($query) or die($DB->error());
@@ -256,6 +266,8 @@ class PluginActualtimeConfig extends CommonDBTM
          $migration->changeField($table, 'showtimerinbox', 'showtimerinbox', 'bool', ['value' => 1]);
          $migration->changeField($table, 'autoopenrunning', 'autoopenrunning', 'bool', ['value' => 0]);
          $migration->dropField($table, 'autoopennew');
+         
+         $migration->addField($table, 'planned_task', 'bool');
 
          $migration->migrationOneTable($table);
       }
