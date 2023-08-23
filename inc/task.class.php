@@ -832,13 +832,8 @@ JAVASCRIPT;
                $action1 = '';
                $color1 = 'gray';
                $disabled1 = 'disabled';
-               $disable = false;
-               if ($config->fields['planned_task'] && !is_null($item->fields['begin'])) {
-                  if ($item->fields['begin'] > date("Y-m-d H:i:s")) {
-                     $disable = true;
-                  }
-               }
-               if ($item->getField('state') == 1 && !$disable) {
+               $disable = self::disableButton($item);
+               if ($item->getField('state') == 1 && !$disable['disable']) {
 
                   if (self::checkTimerActive($task_id)) {
 
@@ -978,6 +973,50 @@ JAVASCRIPT;
       return $html;
    }
 
+   static function disableButton($task)
+   {
+      global $DB;
+
+      $config = new PluginActualtimeConfig();
+
+      $result = [
+         'disable' => false,
+         'message' => '',
+      ];
+      if ($config->fields['planned_task'] && !is_null($task->fields['begin'])) {
+         if ($task->fields['begin'] > date("Y-m-d H:i:s")) {
+            $result['disable'] = true;
+            $result['message'] = sprintf(__("You cannot start a timer because the task was scheduled for %d.", 'actualtime'), $task->fields['begin']);
+            return $result;
+         }
+      }
+
+      if ($config->fields['multiple_day']) {
+
+         $query = [
+            'SELECT' => [
+               new QueryExpression(
+                  "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("actual_end") . "),'%Y-%m-%d') AS date"
+               ),
+            ],
+            'FROM' => self::getTable(),
+            'WHERE' => [
+               'tickettasks_id' => $task->getID(),
+            ]
+         ];
+         $req = $DB->request($query);
+         if ($row = $req->current()) {
+            if ($row['date'] < date("Y-m-d")) {
+               $result['disable'] = true;
+               $result['message'] = __("You cannot add a timer on a different day.", 'actualtime');
+               return $result;
+            }
+         }
+      }
+
+      return $result;
+   }
+
    static function startTimer($task_id, $origin = self::AUTO)
    {
       global $DB, $CFG_GLPI;;
@@ -995,8 +1034,6 @@ JAVASCRIPT;
             'users_id'     => Session::getLoginUserID(),
          ]
       );
-      
-      $config = new PluginActualtimeConfig();
 
       $plugin = new Plugin();
       if ($plugin->isActivated('tam')) {
@@ -1035,71 +1072,70 @@ JAVASCRIPT;
          return $result;
       }
 
-      if ($config->fields['planned_task'] && !is_null($task->fields['begin'])) {
-         if ($task->fields['begin'] > date("Y-m-d H:i:s")) {
-            $result['message'] = sprintf(__("You cannot start a timer because the task was scheduled for %d.", 'actualtime'), $task->fields['begin']);
-            return $result;
-         }
-      }
-
       if (self::checkTimerActive($task_id)) {
          $result['message'] = __("A user is already performing the task", 'actualtime');
          return $result;
+      }
+
+      $disable = self::disableButton($task);
+      if ($disable['disable']) {
+         $result['message'] = $disable['message'];
+         return $result;
+      }
+
+      if (!self::checkUserFree(Session::getLoginUserID())) {
+         $ticket_id = self::getTicket(Session::getLoginUserID());
+         //$result['message'] = __("You are already doing a task", 'actualtime') . " " . __("Ticket") . "$ticket_id";
+         $ticket = new Ticket();
+         $url = $ticket->getFormURLWithID($ticket_id);
+
+         $DB = DBConnection::getReadConnection();
+         $iterator = $DB->request([
+            'FROM' => TicketTask::getTable(),
+            'WHERE' => ['tickets_id' => $ticket_id]
+         ]);
+
+         $active_task = '';
+         foreach ($iterator as $tickettask) {
+            if (self::checkTimerActive($tickettask['id'])) {
+               $active_task = $tickettask['id'];
+               break;
+            }
+         }
+
+         $message = sprintf(__('You are already working on %s', 'actualtime'), __('Ticket'));
+         $link = '<a href="' . $url . '">#' . $ticket_id . '</a>';
+         $message .= ' ' . $link;
+         if ($active_task != '') {
+            $message .= ' (' . __('Task') . ' #' . $active_task . ')';
+         }
+
+         $result['message'] = $message;
+         return $result;
       } else {
-         if (!self::checkUserFree(Session::getLoginUserID())) {
-            $ticket_id = self::getTicket(Session::getLoginUserID());
-            //$result['message'] = __("You are already doing a task", 'actualtime') . " " . __("Ticket") . "$ticket_id";
-            $ticket = new Ticket();
-            $url = $ticket->getFormURLWithID($ticket_id);
 
-            $DB = DBConnection::getReadConnection();
-            $iterator = $DB->request([
-               'FROM' => TicketTask::getTable(),
-               'WHERE' => ['tickets_id' => $ticket_id]
-            ]);
+         // action=start, timer=off, current user is free
+         $DB->insert(
+            'glpi_plugin_actualtime_tasks',
+            [
+               'tickettasks_id' => $task_id,
+               'actual_begin'   => date("Y-m-d H:i:s"),
+               'users_id'       => Session::getLoginUserID(),
+               'origin_start'   => $origin,
+            ]
+         );
 
-            $active_task = '';
-            foreach($iterator as $tickettask) {
-               if(self::checkTimerActive($tickettask['id'])) {
-                  $active_task = $tickettask['id'];
-                  break;
-               }
-            }
+         $timer_id = $DB->insertId();
 
-            $message = sprintf(__('You are already working on %s', 'actualtime'), __('Ticket'));
-            $link = '<a href="'.$url.'">#' . $ticket_id . '</a>';
-            $message .= ' ' . $link;
-            if($active_task != '') {
-               $message .= ' (' . __('Task') . ' #' . $active_task . ')';
-            }
+         $result = [
+            'message'   => __("Timer started", 'actualtime'),
+            'type'      => 'info',
+            'ticket_id' => self::getTicket(Session::getLoginUserID()),
+            'time'      => abs(self::totalEndTime($task_id)),
+         ];
 
-            $result['message'] = $message;
-            return $result;
-         } else {
-
-            // action=start, timer=off, current user is free
-            $DB->insert(
-               'glpi_plugin_actualtime_tasks',
-               [
-                  'tickettasks_id' => $task_id,
-                  'actual_begin'   => date("Y-m-d H:i:s"),
-                  'users_id'       => Session::getLoginUserID(),
-                  'origin_start'   => $origin,
-               ]
-            );
-
-            $timer_id = $DB->insertId();
-
-            $result = [
-               'message'   => __("Timer started", 'actualtime'),
-               'type'      => 'info',
-               'ticket_id' => self::getTicket(Session::getLoginUserID()),
-               'time'      => abs(self::totalEndTime($task_id)),
-            ];
-
-            if ($plugin->isActivated('gappextended')) {
-               PluginGappextendedPush::sendActualtime(self::getTicket(Session::getLoginUserID()), $task_id, $result, Session::getLoginUserID(), true);
-            }
+         if ($plugin->isActivated('gappextended')) {
+            PluginGappextendedPush::sendActualtime(self::getTicket(Session::getLoginUserID()), $task_id, $result, Session::getLoginUserID(), true);
          }
       }
 

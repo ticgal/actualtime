@@ -162,6 +162,12 @@ class PluginActualtimeConfig extends CommonDBTM
       echo "</td>";
       echo "</tr>";
 
+      echo "<tr class='tab_bg_1' name='optional$rand'>";
+      echo "<td>" . __("Block multiple days on task", "actualtime") . "</td><td>";
+      Dropdown::showYesNo('multiple_day', $config->fields['multiple_day'], -1);
+      echo "</td>";
+      echo "</tr>";
+
       $config->showFormButtons(['candel' => false]);
 
       return false;
@@ -254,6 +260,7 @@ class PluginActualtimeConfig extends CommonDBTM
                       `autoopenrunning` TINYINT NOT NULL DEFAULT '0',
                       `autoupdate_duration` TINYINT NOT NULL DEFAULT '0',
                       `planned_task` TINYINT NOT NULL DEFAULT '0',
+                      `multiple_day` TINYINT NOT NULL DEFAULT '0',
                       PRIMARY KEY (`id`)
          ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset} COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
          $DB->query($query) or die($DB->error());
@@ -268,6 +275,7 @@ class PluginActualtimeConfig extends CommonDBTM
          $migration->dropField($table, 'autoopennew');
          
          $migration->addField($table, 'planned_task', 'bool');
+         $migration->addField($table, 'multiple_day', 'bool');
 
          $migration->migrationOneTable($table);
       }
