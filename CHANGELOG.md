@@ -1,5 +1,12 @@
 # Actualtime
 
+## 2.1.2 - 05/09/2023
+### Features
+- Add block timer on different day
+- Add block timer on planned task
+### Bugfixes
+- Fix warning string
+
 ## 2.1.1 - 12/07/2023
 ### Features
 - Permission to view activated timers
