@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ActualTime\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-12 14:48+0200\n"
+"POT-Creation-Date: 2023-09-05 12:36+0200\n"
 "Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -50,28 +50,36 @@ msgstr "Yalnızca Standart arabirimde (varsayılan)"
 msgid "Both in Standard and Helpdesk interfaces"
 msgstr "Hem Standart hem de Yardım Masası arabirimlerinde"
 
-#: inc/config.class.php:121
+#: inc/config.class.php:124
 msgid "Enable timer on tasks"
 msgstr "Görevlerde zamanlayıcıyı etkinleştir"
 
-#: inc/config.class.php:133
+#: inc/config.class.php:136
 msgid "Display pop-up window with current running timer"
 msgstr "Geçerli çalışan zamanlayıcıyla açılır pencereyi göster"
 
-#: inc/config.class.php:139
+#: inc/config.class.php:142
 msgid "Display actual time in closed task box ('Processing ticket' list)"
 msgstr ""
 "Gerçek zamanı kapalı görev kutusunda görüntüleyin (“Bilet işleme” listesi)"
 
-#: inc/config.class.php:145
+#: inc/config.class.php:148
 msgid "Automatically open task with timer running"
 msgstr "Zamanlayıcı çalışırken görevi otomatik olarak aç"
 
-#: inc/config.class.php:151
+#: inc/config.class.php:154
 msgid "Automatically update the duration"
 msgstr "Süreyi otomatik olarak güncelle"
 
-#: inc/config.class.php:165
+#: inc/config.class.php:160
+msgid "Block timer on planned task"
+msgstr "Block timer on planned task"
+
+#: inc/config.class.php:166
+msgid "Block multiple days on task"
+msgstr "Block multiple days on task"
+
+#: inc/config.class.php:180
 msgid "Actual time"
 msgstr "Gerçek zaman"
 
@@ -119,55 +127,65 @@ msgstr "Her (\"x\" saniye) de güncelle"
 msgid "ActualTime"
 msgstr "Gerçek Zaman"
 
-#: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:551
-#: inc/task.class.php:557 inc/task.class.php:563
+#: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:557
+#: inc/task.class.php:563 inc/task.class.php:569
 msgid "Duration Diff"
 msgstr "Süre farkı"
 
-#: inc/task.class.php:264
+#: inc/task.class.php:270
 msgid "Actual Duration"
 msgstr "Gerçek Süre"
 
-#: inc/task.class.php:275
+#: inc/task.class.php:281
 msgid "Partial actual duration"
 msgstr "Kısmi gerçek süre"
 
-#: inc/task.class.php:990
+#: inc/task.class.php:989
+#, php-format
+msgid "You cannot start a timer because the task was scheduled for %d."
+msgstr "You cannot start a timer because the task was scheduled for %d."
+
+#: inc/task.class.php:1011
+msgid "You cannot add a timer on a different day."
+msgstr "You cannot add a timer on a different day."
+
+#: inc/task.class.php:1041
 msgid "Today is marked as absence you can not initialize the timer"
 msgstr "Bugün yok olarak işaretlendi, zamanlayıcıyı başlatamazsınız"
 
-#: inc/task.class.php:995
+#: inc/task.class.php:1046
 msgid "Timer has not been initialized"
 msgstr "Zamanlayıcı başlatılmadı"
 
-#: inc/task.class.php:1004
+#: inc/task.class.php:1055
 msgid "You are already doing a waypoint"
 msgstr "Zaten bir yol noktası yapıyorsun"
 
-#: inc/task.class.php:1020
+#: inc/task.class.php:1071
 msgid "Technician not in charge of the task"
 msgstr "Görevden sorumlu olmayan teknisyen"
 
-#: inc/task.class.php:1025
+#: inc/task.class.php:1076
 msgid "A user is already performing the task"
 msgstr "Bir kullanıcı zaten görevi gerçekleştiriyor"
 
-#: inc/task.class.php:1030
-msgid "You are already doing a task"
-msgstr "Zaten bir görev yapıyorsunuz"
+#: inc/task.class.php:1106
+#, php-format
+msgid "You are already working on %s"
+msgstr "You are already working on %s"
 
-#: inc/task.class.php:1048
+#: inc/task.class.php:1131
 msgid "Timer started"
 msgstr "Zamanlayıcı başlatıldı"
 
-#: inc/task.class.php:1102 inc/task.class.php:1171 inc/task.class.php:1197
+#: inc/task.class.php:1184 inc/task.class.php:1253 inc/task.class.php:1279
 msgid "Timer completed"
 msgstr "Zamanlayıcı tamamlandı"
 
-#: inc/task.class.php:1115 inc/task.class.php:1183
+#: inc/task.class.php:1197 inc/task.class.php:1265
 msgid "Only the user who initiated the task can close it"
 msgstr "Sadece görevi başlatan kullanıcı görevi kapatabilir"
 
-#: inc/task.class.php:1118
+#: inc/task.class.php:1200
 msgid "The task had not been initialized"
 msgstr "Görev başlatılmamıştı"
