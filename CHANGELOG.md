@@ -1,13 +1,24 @@
 # Actualtime
 
-## 2.1.2 - 05/09/2023
+## 2.2.0 -15/09/2023
+### Features
+- Add block timer on different day
+- Add block timer on planned task
+- Permission to view activated timers
+- Filter activated timers by entities
+- Show location and assets in activated timers
+### Bugfixes
+- Fix warning string
+- Fix update actiontime
+
+## 2.1.2 - Internal - 05/09/2023
 ### Features
 - Add block timer on different day
 - Add block timer on planned task
 ### Bugfixes
 - Fix warning string
 
-## 2.1.1 - 12/07/2023
+## 2.1.1 - Internal - 12/07/2023
 ### Features
 - Permission to view activated timers
 - Filter activated timers by entities
