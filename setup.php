@@ -37,11 +37,12 @@ define('PLUGIN_ACTUALTIME_VERSION', '2.2.0');
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "10.0.0");
 // Maximum GLPI version, exclusive
 define("PLUGIN_ACTUALTIME_MAX_GLPI", "10.1.0");
+define("PLUGIN_ACTUALTIME_NAME", "ActualTime");
 
 function plugin_version_actualtime()
 {
    return [
-      'name'       => 'ActualTime',
+      'name'           => PLUGIN_ACTUALTIME_NAME,
       'version'        => PLUGIN_ACTUALTIME_VERSION,
       'author'         => '<a href="https://tic.gal">TICgal</a>',
       'homepage'       => 'https://tic.gal/en/project/actualtime-plugin-glpi/',

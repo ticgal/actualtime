@@ -34,7 +34,7 @@ class PluginActualtimeRunning extends CommonGLPI
 
 	static function getMenuName()
 	{
-		return __("Actualtime", "actualtime");
+		return PLUGIN_ACTUALTIME_NAME;
 	}
 
 	static function getMenuContent()

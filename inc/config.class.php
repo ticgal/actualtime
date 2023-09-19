@@ -73,7 +73,7 @@ class PluginActualtimeConfig extends CommonDBTM
     */
    static function getTypeName($nb = 0)
    {
-      return __("Task timer configuration", "actualtime");
+      return __("ActualTime Setup", "actualtime");
    }
 
    static function getInstance()
@@ -157,13 +157,13 @@ class PluginActualtimeConfig extends CommonDBTM
       echo "</tr>";
 
       echo "<tr class='tab_bg_1' name='optional$rand'>";
-      echo "<td>" . __("Block timer on planned task", "actualtime") . "</td><td>";
+      echo "<td>" . __("Enable Timer Only on Scheduled Task Day", "actualtime") . "</td><td>";
       Dropdown::showYesNo('planned_task', $config->fields['planned_task'], -1);
       echo "</td>";
       echo "</tr>";
 
       echo "<tr class='tab_bg_1' name='optional$rand'>";
-      echo "<td>" . __("Block multiple days on task", "actualtime") . "</td><td>";
+      echo "<td>" . __("Enable Timer Only on Task's Start Day", "actualtime") . "</td><td>";
       Dropdown::showYesNo('multiple_day', $config->fields['multiple_day'], -1);
       echo "</td>";
       echo "</tr>";
@@ -177,7 +177,7 @@ class PluginActualtimeConfig extends CommonDBTM
    {
 
       if ($item->getType() == 'Config') {
-         return __("Actual time", "actualtime");
+         return PLUGIN_ACTUALTIME_NAME;
       }
       return '';
    }

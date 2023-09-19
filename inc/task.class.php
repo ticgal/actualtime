@@ -46,13 +46,13 @@ class PluginActualtimeTask extends CommonDBTM
 
    static function getTypeName($nb = 0)
    {
-      return __('ActualTime', 'Actualtime');
+      return PLUGIN_ACTUALTIME_NAME;
    }
 
    static public function rawSearchOptionsToAdd()
    {
 
-      $tab['actualtime'] = 'ActualTime';
+      $tab['actualtime'] = PLUGIN_ACTUALTIME_NAME;
 
       $tab['7000'] = [
          'table' => self::getTable(),

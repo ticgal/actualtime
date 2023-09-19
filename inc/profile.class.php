@@ -40,7 +40,7 @@ class PluginActualtimeProfile extends Profile
 	{
 		switch ($item->getType()) {
 			case 'Profile':
-				return self::createTabEntry('Actualtime');
+				return self::createTabEntry(PLUGIN_ACTUALTIME_NAME);
 				break;
 		}
 	}
