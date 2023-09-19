@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-15 14:10+0200\n"
+"POT-Creation-Date: 2023-09-19 14:08+0200\n"
 "PO-Revision-Date: 2023-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgid "Timer started on"
 msgstr ""
 
 #: inc/config.class.php:76
-msgid "Task timer configuration"
+msgid "ActualTime Setup"
 msgstr ""
 
 #: inc/config.class.php:117
@@ -78,15 +78,11 @@ msgid "Automatically update the duration"
 msgstr ""
 
 #: inc/config.class.php:160
-msgid "Block timer on planned task"
+msgid "Enable Timer Only on Scheduled Task Day"
 msgstr ""
 
 #: inc/config.class.php:166
-msgid "Block multiple days on task"
-msgstr ""
-
-#: inc/config.class.php:180
-msgid "Actual time"
+msgid "Enable Timer Only on Task's Start Day"
 msgstr ""
 
 #: inc/dashboard.class.php:43
@@ -121,16 +117,8 @@ msgstr ""
 msgid "Running timers"
 msgstr ""
 
-#: inc/running.class.php:37
-msgid "Actualtime"
-msgstr ""
-
 #: inc/running.class.php:62
 msgid "Update every (s)"
-msgstr ""
-
-#: inc/task.class.php:49
-msgid "ActualTime"
 msgstr ""
 
 #: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:557
