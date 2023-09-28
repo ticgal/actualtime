@@ -1002,6 +1002,7 @@ JAVASCRIPT;
             'FROM' => self::getTable(),
             'WHERE' => [
                'tickettasks_id' => $task->getID(),
+               'NOT' => ['actual_end' => null],
             ]
          ];
          $req = $DB->request($query);
