@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ActualTime\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-09-19 14:08+0200\n"
+"POT-Creation-Date: 2023-10-05 11:36+0200\n"
 "Language: ar_MA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -133,47 +133,47 @@ msgstr "Partial actual duration"
 msgid "You cannot start a timer because the task was scheduled for %d."
 msgstr "You cannot start a timer because the task was scheduled for %d."
 
-#: inc/task.class.php:1011
+#: inc/task.class.php:1012
 msgid "You cannot add a timer on a different day."
 msgstr "You cannot add a timer on a different day."
 
-#: inc/task.class.php:1041
+#: inc/task.class.php:1042
 msgid "Today is marked as absence you can not initialize the timer"
 msgstr "Today is marked as absence you can not initialize the timer"
 
-#: inc/task.class.php:1046
+#: inc/task.class.php:1047
 msgid "Timer has not been initialized"
 msgstr "لم يتم تهيئة الوقت "
 
-#: inc/task.class.php:1055
+#: inc/task.class.php:1056
 msgid "You are already doing a waypoint"
 msgstr "You are already doing a waypoint"
 
-#: inc/task.class.php:1071
+#: inc/task.class.php:1072
 msgid "Technician not in charge of the task"
 msgstr "Technician not in charge of the task"
 
-#: inc/task.class.php:1076
+#: inc/task.class.php:1077
 msgid "A user is already performing the task"
 msgstr "A user is already performing the task"
 
-#: inc/task.class.php:1106
+#: inc/task.class.php:1107
 #, php-format
 msgid "You are already working on %s"
 msgstr "You are already working on %s"
 
-#: inc/task.class.php:1131
+#: inc/task.class.php:1132
 msgid "Timer started"
 msgstr "الوقت بدأ"
 
-#: inc/task.class.php:1184 inc/task.class.php:1253 inc/task.class.php:1279
+#: inc/task.class.php:1185 inc/task.class.php:1254 inc/task.class.php:1280
 msgid "Timer completed"
 msgstr "الوقت إنتهى"
 
-#: inc/task.class.php:1197 inc/task.class.php:1265
+#: inc/task.class.php:1198 inc/task.class.php:1266
 msgid "Only the user who initiated the task can close it"
 msgstr "يمكن فقط للمستخدم الذي بدأ المهمة إغلاقها"
 
-#: inc/task.class.php:1200
+#: inc/task.class.php:1201
 msgid "The task had not been initialized"
 msgstr ""
