@@ -71,10 +71,13 @@ window.actualTime = new function() {
       return text;
    }
 
-   this.showTimerPopup = function(ticket) {
+   this.showTimerPopup = function(id, link, name) {
       // only if enabled in settings
       if (popup_div && toast != null) {
-         $("#toast_body").html(popup_div.replace(/%t/g, ticket));
+         popup_div = popup_div.replace(/%t/g, id);
+         popup_div = popup_div.replace(/%l/g, link);
+         popup_div = popup_div.replace(/%n/g, name);
+         $("#toast_body").html(popup_div);
          toast.show();
       }
    }
@@ -97,12 +100,12 @@ window.actualTime = new function() {
       $("[id^='actualtime_timer_" + task + "_']").text(timestr);
    }
 
-   this.pressedButton = function(task, val) {
+   this.pressedButton = function(task, itemtype, val) {
       jQuery.ajax({
          type: "POST",
          url: this.ajax_url,
          dataType: 'json',
-         data: {action: val, task_id: task},
+         data: {action: val, task_id: task, itemtype: itemtype},
          success: function (result) {
             if (result['type'] == 'info') {
                if (val == 'start') {
@@ -111,7 +114,7 @@ window.actualTime = new function() {
                   $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_pause).attr('action', 'pause').css('background-color', 'orange').prop('disabled', false);
                   $("[id^='actualtime_button_" + task + "_1_']").html('<span>' + text_pause + '</span>');
                   $("[id^='actualtime_button_" + task + "_2_']").attr('action', 'end').css('background-color', 'red').prop('disabled', false);
-                  window.actualTime.showTimerPopup(result['ticket_id']);
+                  window.actualTime.showTimerPopup(result['ticket_id'], result['link'], result['name']);
                   $("[id^='actualtime_faclock_" + task + "_']").addClass('fa-clock').css('color', 'red');
                   return;
                } else if ((val == 'end') || (val == 'pause')) {
@@ -128,15 +131,15 @@ window.actualTime = new function() {
                      // Update state fields also (as Done)
                      $("select[name='state']").attr('data-track-changes', '');
                      $("span.state.state_1[onclick='change_task_state(" + task + ", this)']").attr('title', text_done).toggleClass('state_1 state_2');
-                     $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='TicketTask'][data-items-id='"+task+"']").find("select[name='state']").val(2).trigger('change');
+                     $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"']").find("select[name='state']").val(2).trigger('change');
                      $("select[name='state']").removeAttr('data-track-changes');
                      $("[id^='actualtime_button_" + task + "_']").attr('action', '').css('background-color', 'gray').prop('disabled', true);
                      if (typeof result["task_time"] !== 'undefined') {
-                        var actiontime = $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='TicketTask'][data-items-id='"+task+"']").find("select[name='actiontime']");
+                        var actiontime = $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"']").find("select[name='actiontime']");
                         actiontime.attr('data-track-changes', '');
                         actiontime.val(result['task_time']).trigger('change');
                         actiontime.removeAttr('data-track-changes');
-                        $("div[data-itemtype='TicketTask'][data-items-id='"+task+"'] span.actiontime").text(window.actualTime.timeToText(result['task_time'], 1));
+                        $("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"'] span.actiontime").text(window.actualTime.timeToText(result['task_time'], 1));
                      }
                   } else {
                      $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_restart).attr('action', 'start').css('background-color', 'green').prop('disabled', false);
@@ -221,9 +224,9 @@ window.actualTime = new function() {
             text_done = result['text_done'];
             popup_div = result['popup_div'];
 
-            if (result['ticket_id']) {
+            if (result['parent_id']) {
                window.actualTime.startCount(result['task_id'], result['time']);
-               window.actualTime.showTimerPopup(result['ticket_id']);
+               window.actualTime.showTimerPopup(result['parent_id'], result['link'], result['name']);
             }
          }
       });

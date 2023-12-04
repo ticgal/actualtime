@@ -85,14 +85,18 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
       $query = [
          'SELECT' => [
             PluginActualtimeTask::getTable().'.id',
-            PluginActualtimeTask::getTable().'.tickettasks_id',
+            PluginActualtimeTask::getTable().'.items_id',
          ],
          'FROM' => 'glpi_tickettasks',
          'INNER JOIN' => [
             PluginActualtimeTask::getTable() => [
                'ON' => [
-                  PluginActualtimeTask::getTable() => 'tickettasks_id',
-                  'glpi_tickettasks' => 'id'
+                  PluginActualtimeTask::getTable() => 'items_id',
+                  'glpi_tickettasks' => 'id', [
+                     'AND' => [
+                        PluginActualtimeTask::getTable().'.itemtype' => 'TicketTask',
+                     ]
+                  ]
                ]
             ],
          ],
@@ -103,7 +107,7 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
       ];
       $task = new TicketTask();
       foreach ($DB->request($query) as $id => $row) {
-         $task_id = $row['tickettasks_id'];
+         $task_id = $row['items_id'];
 
          $actual_begin = PluginActualtimeTask::getActualBegin($task_id);
          $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
@@ -116,7 +120,8 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
                'origin_end' => PluginActualtimetask::AUTO,
             ],
             [
-               'tickettasks_id' => $task_id,
+               'items_id' => $task_id,
+               'itemtype' => 'TicketTask',
                [
                   'NOT' => ['actual_begin' => null],
                ],
@@ -128,32 +133,34 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
          $input['tickets_id'] = $task->fields['tickets_id'];
          $input['state'] = 2;
          if ($config->autoUpdateDuration()) {
-            $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
+            $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id, $task->getType()) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
          }
          $task->update($input);
       }
    }
 }
 
-function plugin_actualtime_item_purge(TicketTask $item)
+function plugin_actualtime_item_purge(CommonITILTask $item)
 {
    global $DB;
 
    $DB->delete(
       PluginActualtimeTask::getTable(),
       [
-         'tickettasks_id' => $item->fields['id']
+         'items_id' => $item->fields['id'],
+         'itemtype' => $item->getType(),
       ]
    );
 }
 
-function plugin_actualtime_ticket_delete(Ticket $ticket)
+function plugin_actualtime_ticket_delete(CommonITILObject $parent)
 {
    global $DB;
 
    $tactualtime = PluginActualtimeTask::getTable();
-   $tticket = Ticket::getTable();
-   $ttask = TicketTask::getTable();
+   $tparent = $parent::getTable();
+   $taskitemtype = $parent->getTaskClass();
+   $ttask = $taskitemtype::getTable();
 
    $query = [
       'SELECT' => [
@@ -165,20 +172,24 @@ function plugin_actualtime_ticket_delete(Ticket $ticket)
          $ttask => [
             'ON' => [
                $ttask => 'id',
-               $tactualtime => 'tickettasks_id'
+               $tactualtime => 'items_id', [
+						'AND' => [
+							$tactualtime.'.itemtype' => $taskitemtype,
+						]
+					]
             ]
          ],
-         $tticket => [
+         $tparent => [
             'ON' => [
-               $tticket => 'id',
-               $ttask => 'tickets_id'
+               $tparent => 'id',
+               $ttask =>  $parent->getForeignKeyField()
             ]
          ]
       ],
       'WHERE' => [
          'NOT' => [$tactualtime.'.actual_begin' => null],
          $tactualtime.'.actual_end' => null,
-         $tticket.'.id' => $ticket->fields['id']
+         $tparent.'.id' => $parent->fields['id']
       ]
    ];
    foreach ($DB->request($query) as $result) {
@@ -205,7 +216,59 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
       case Ticket::getType():
          $config = new PluginActualtimeConfig();
          if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
-           return PluginActualtimeTask::rawSearchOptionsToAdd();
+            $tab['actualtime'] = PLUGIN_ACTUALTIME_NAME;
+
+            $tab['7000'] = [
+               'table' => PluginActualtimeTask::getTable(),
+               'field' => 'actual_actiontime',
+               'name' => __('Total duration'),
+               'datatype' => 'specific',
+               'parent' => Ticket::class,
+               'joinparams' => [
+                  'beforejoin' => [
+                     'table' => 'glpi_tickettasks',
+                     'joinparams' => [
+                        'jointype' => 'child'
+                     ]
+                  ],
+                  'jointype' => 'child',
+               ],
+               'type' => 'total'
+            ];
+            $tab['7001'] = [
+               'table' => PluginActualtimeTask::getTable(),
+               'field' => 'actual_actiontime',
+               'name' => __("Duration Diff", "actiontime"),
+               'datatype' => 'specific',
+               'parent' => Ticket::class,
+               'joinparams' => [
+                  'beforejoin' => [
+                     'table' => 'glpi_tickettasks',
+                     'joinparams' => [
+                        'jointype' => 'child'
+                     ]
+                  ],
+                  'jointype' => 'child',
+               ],
+               'type' => 'diff'
+            ];
+            $tab['7002'] = [
+               'table' => PluginActualtimeTask::getTable(),
+               'field' => 'actual_actiontime',
+               'name' => __("Duration Diff", "actiontime") . " (%)",
+               'datatype' => 'specific',
+               'parent' => Ticket::class,
+               'joinparams' => [
+                  'beforejoin' => [
+                     'table' => 'glpi_tickettasks',
+                     'joinparams' => [
+                        'jointype' => 'child'
+                     ]
+                  ],
+                  'jointype' => 'child',
+               ],
+               'type' => 'diff%'
+            ];
          }
          break;
       case 'TicketTask':
@@ -218,6 +281,7 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
                'field' => 'actual_actiontime',
                'name' => __('Task duration'),
                'datatype' => 'specific',
+               'parent' => Ticket::class,
                'joinparams' => [
                   'beforejoin' => [
                      'table' => 'glpi_tickettasks',
