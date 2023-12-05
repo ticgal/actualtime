@@ -240,7 +240,11 @@ JAVASCRIPT;
 			foreach ($iteratortime as $key => $row) {
 				$task = new $row['itemtype']();
 				$task->getFromDB($row['items_id']);
-				$parent = getItemForItemtype($task->getItilObjectItemType());
+				if (is_a($task, CommonDBChild::class, true)) {
+					$parent = getItemForItemtype($task::$itemtype);
+				} else {
+					$parent = getItemForItemtype($task->getItilObjectItemType());
+				}
 				$parent->getFromDB($task->fields[$parent->getForeignKeyField()]);
 				$html .= "<tr class='tab_bg_2'>";
 				$user = new User();
@@ -254,7 +258,11 @@ JAVASCRIPT;
 				}
 				$html .= "<td class='center'>";
 				$html .= "<ul class='list left'>";
-				$item_link = getItemForItemtype($parent->getItemLinkClass());
+				if (is_a($parent, CommonITILObject::class, true)) {
+					$item_link = getItemForItemtype($parent->getItemLinkClass());
+				} else {
+					$item_link = new Item_Project();
+				}
 				$types_iterator = $item_link::getDistinctTypes($task->fields[$parent->getForeignKeyField()]);
 				foreach ($types_iterator as $type) {
 					$itemtype = $type['itemtype'];
@@ -271,7 +279,7 @@ JAVASCRIPT;
 				}
 				$html .= "</ul>";
 				$html .= "</td>";
-				$html .= "<td class='center'><a href='" . $parent->getLinkURL() . "'>" . $parent->getTypeName() . " - " . $parent->getID() . " - " . $row['items_id'] . "</a></td>";
+				$html .= "<td class='center'><a href='" . $parent->getLinkURL() . "'>" . $parent->getTypeName(1) . " - " . $parent->getID() . " - " . $row['items_id'] . "</a></td>";
 				$html .= "<td class='center'>" . HTML::timestampToString(PluginActualtimeTask::totalEndTime($row['items_id'], $row['itemtype'])) . "</td>";
 				$html .= "</tr>";
 			}

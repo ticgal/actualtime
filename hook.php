@@ -140,7 +140,7 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
    }
 }
 
-function plugin_actualtime_item_purge(CommonITILTask $item)
+function plugin_actualtime_item_purge(CommonDBTM $item)
 {
    global $DB;
 
@@ -153,7 +153,7 @@ function plugin_actualtime_item_purge(CommonITILTask $item)
    );
 }
 
-function plugin_actualtime_ticket_delete(CommonITILObject $parent)
+function plugin_actualtime_parent_delete(CommonITILObject $parent)
 {
    global $DB;
 
@@ -190,6 +190,53 @@ function plugin_actualtime_ticket_delete(CommonITILObject $parent)
          'NOT' => [$tactualtime.'.actual_begin' => null],
          $tactualtime.'.actual_end' => null,
          $tparent.'.id' => $parent->fields['id']
+      ]
+   ];
+   foreach ($DB->request($query) as $result) {
+      $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($result['actual_begin']));
+      $DB->update(
+         $tactualtime,
+         [
+            'actual_end'      => date("Y-m-d H:i:s"),
+            'actual_actiontime'      => $seconds,
+            'origin_end' => PluginActualtimetask::AUTO,
+         ],
+         [
+            'id' => $result['id']
+         ]
+      );
+   }
+}
+
+function plugin_actualtime_project_delete(Project $project)
+{
+   global $DB;
+
+   $tactualtime = PluginActualtimeTask::getTable();
+   $ttask = ProjectTask::getTable();
+
+   $query = [
+      'SELECT' => [
+         $tactualtime.'.actual_begin',
+         $tactualtime.'.id',
+      ],
+      'FROM' => $tactualtime,
+      'INNER JOIN' => [
+         $ttask => [
+            'ON' => [
+               $ttask => 'id',
+               $tactualtime => 'items_id', [
+						'AND' => [
+							$tactualtime.'.itemtype' => 'ProjectTask',
+						]
+					]
+            ]
+         ],
+      ],
+      'WHERE' => [
+         'NOT' => [$tactualtime.'.actual_begin' => null],
+         $tactualtime.'.actual_end' => null,
+         $ttask.'.projects_id' => $project->fields['id']
       ]
    ];
    foreach ($DB->request($query) as $result) {

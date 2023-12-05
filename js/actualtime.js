@@ -134,7 +134,7 @@ window.actualTime = new function() {
                      $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"']").find("select[name='state']").val(2).trigger('change');
                      $("select[name='state']").removeAttr('data-track-changes');
                      $("[id^='actualtime_button_" + task + "_']").attr('action', '').css('background-color', 'gray').prop('disabled', true);
-                     if (typeof result["task_time"] !== 'undefined') {
+                     if (typeof result["task_time"] !== 'undefined' && result["task_time"] != 0) {
                         var actiontime = $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"']").find("select[name='actiontime']");
                         actiontime.attr('data-track-changes', '');
                         actiontime.val(result['task_time']).trigger('change');

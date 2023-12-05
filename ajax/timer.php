@@ -102,11 +102,15 @@ if (isset($_POST["action"])) {
          $result['task_id'] = $task_id;
          $result['itemtype'] = PluginActualtimeTask::getItemtype(Session::getLoginUserID());
          $task = getItemForItemtype($result['itemtype']);
-         $parent = getItemForItemtype($task->getItilObjectItemType());
+         if (is_a($task, CommonDBChild::class, true)) {
+            $parent = getItemForItemtype($task::$itemtype);
+         } else {
+            $parent = getItemForItemtype($task->getItilObjectItemType());
+         }
          $result['parent_id'] = PluginActualtimetask::getParent(Session::getLoginUserID());
          $parent->getFromDB($result['parent_id']);
          $result['link'] = $parent->getLinkURL();
-         $result['name'] = $parent->getTypeName();
+         $result['name'] = $parent->getTypeName(1);
          $result['time'] = abs(PluginActualtimeTask::totalEndTime($task_id, $result['itemtype']));
       }
    }
