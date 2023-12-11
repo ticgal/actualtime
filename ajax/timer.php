@@ -126,7 +126,11 @@ if (isset($_POST["action"])) {
       $item = getItemForItemtype($itemtype);
       $item->getFromDB($task_id);
       $rand = mt_rand();
-      $parent = getItemForItemtype($item->getItilObjectItemType());
+      if (is_a($item, CommonDBChild::class, true)) {
+         $parent = getItemForItemtype($item::$itemtype);
+      } else {
+         $parent = getItemForItemtype($item->getItilObjectItemType());
+      }
       $parent->getFromDB(PluginActualtimeTask::getParent(Session::getLoginUserID()));
       $options['parent'] = $parent;
       echo  "<div class='modal-header'>";
