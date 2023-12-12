@@ -1640,6 +1640,7 @@ JAVASCRIPT;
          $migration->addField($table, 'itemtype', 'varchar(255) NOT NULL', ['after' => 'id', 'update' => "'TicketTask'"]);
          $migration->addField($table, 'items_id', "int {$default_key_sign} NOT NULL DEFAULT '0'", ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')]);
          $migration->addKey($table, ['itemtype', 'items_id'], 'item');
+         $migration->dropField($table, 'tickettasks_id');
 
          $migration->migrationOneTable($table);
       }
