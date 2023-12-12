@@ -1332,7 +1332,7 @@ JAVASCRIPT;
          foreach ($finished_states_it as $finished_state) {
             $finished_states_ids[] = $finished_state['id'];
          }
-         if (in_array($task->getField('state'), $finished_states_ids)) {
+         if (in_array($task->getField('projectstates_id'), $finished_states_ids)) {
             $result['message'] = __("Task completed.");
             return $result;
          }
@@ -1362,7 +1362,11 @@ JAVASCRIPT;
       }
 
       if (!self::checkUserFree(Session::getLoginUserID())) {
-         $parent = getItemForItemtype($task->getItilObjectItemType());
+         if (is_a($task, CommonDBChild::class, true)) {
+            $parent = getItemForItemtype($task::$itemtype);
+         } else {
+            $parent = getItemForItemtype($task->getItilObjectItemType());
+         }
          $parent_key = $parent->getForeignKeyField();
          $parent_id = $task->fields[$parent_key];
          //$result['message'] = __("You are already doing a task", 'actualtime') . " " . __("Ticket") . "$ticket_id";
@@ -1382,7 +1386,7 @@ JAVASCRIPT;
             }
          }
 
-         $message = sprintf(__('You are already working on %s', 'actualtime'), __('Ticket'));
+         $message = sprintf(__('You are already working on %s', 'actualtime'), $parent::getTypeName(1));
          $link = '<a href="' . $url . '">#' . $parent_id . '</a>';
          $message .= ' ' . $link;
          if ($active_task != '') {
@@ -1415,6 +1419,7 @@ JAVASCRIPT;
          $result = [
             'message'   => __("Timer started", 'actualtime'),
             'type'      => 'info',
+            'timer_id'  => $timer_id,
             'parent_id' => $parent_id,
             'time'      => abs(self::totalEndTime($task_id, $itemtype)),
             'link'      => $parent::getFormURLWithID($parent_id),
