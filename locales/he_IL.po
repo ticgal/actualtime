@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ActualTime\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-05 11:36+0200\n"
+"POT-Creation-Date: 2024-01-16 14:02+0100\n"
 "Language: he_IL\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,31 +11,35 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (((n<0 || n>10)) "
 "&& (n%10==0)) ? 2 : 3;\n"
 
+#: hook.php:288 hook.php:305 inc/task.class.php:78 inc/task.class.php:95
+msgid "Duration Diff"
+msgstr "Duration Diff"
+
 #. TRANS: d is a symbol for days in a time (displays: 3d)
-#: ajax/timer.php:74
+#: ajax/timer.php:75
 #, php-format
 msgid "%dd"
 msgstr "%dd"
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
-#: ajax/timer.php:78
+#: ajax/timer.php:79
 #, php-format
 msgid "%dh"
 msgstr "%dh"
 
 #. TRANS: min is a symbol for minutes in a time (displays: 3min)
-#: ajax/timer.php:82
+#: ajax/timer.php:83
 #, php-format
 msgid "%dmin"
 msgstr "דקה %d"
 
 #. TRANS: s is a symbol for seconds in a time (displays: 3s)
-#: ajax/timer.php:86
+#: ajax/timer.php:87
 #, php-format
 msgid "%ds"
 msgstr "%ds"
 
-#: ajax/timer.php:97
+#: ajax/timer.php:98
 msgid "Timer started on"
 msgstr "טיימר התחיל"
 
@@ -115,65 +119,60 @@ msgstr "טיימרים פועלים"
 msgid "Update every (s)"
 msgstr "עדכן כל (ים)"
 
-#: inc/task.class.php:76 inc/task.class.php:92 inc/task.class.php:557
-#: inc/task.class.php:563 inc/task.class.php:569
-msgid "Duration Diff"
-msgstr "Duration Diff"
-
-#: inc/task.class.php:270
+#: inc/task.class.php:278
 msgid "Actual Duration"
 msgstr "Actual Duration"
 
-#: inc/task.class.php:281
+#: inc/task.class.php:289
 msgid "Partial actual duration"
 msgstr "Partial actual duration"
 
-#: inc/task.class.php:989
+#: inc/task.class.php:1230 inc/task.class.php:1236
 #, php-format
 msgid "You cannot start a timer because the task was scheduled for %d."
 msgstr "You cannot start a timer because the task was scheduled for %d."
 
-#: inc/task.class.php:1012
+#: inc/task.class.php:1261
 msgid "You cannot add a timer on a different day."
 msgstr "You cannot add a timer on a different day."
 
-#: inc/task.class.php:1042
+#: inc/task.class.php:1292
 msgid "Today is marked as absence you can not initialize the timer"
 msgstr "היום מסומן כהיעדרות, אתה לא יכול לאתחל את הטיימר"
 
-#: inc/task.class.php:1047
+#: inc/task.class.php:1297
 msgid "Timer has not been initialized"
 msgstr "שעון העצר לא אותחל"
 
-#: inc/task.class.php:1056
+#: inc/task.class.php:1306
 msgid "You are already doing a waypoint"
 msgstr "You are already doing a waypoint"
 
-#: inc/task.class.php:1072
+#: inc/task.class.php:1343 inc/task.class.php:1348
 msgid "Technician not in charge of the task"
 msgstr "Technician not in charge of the task"
 
-#: inc/task.class.php:1077
+#: inc/task.class.php:1354
 msgid "A user is already performing the task"
 msgstr "אדם אחד כבר מבצע את המשימה"
 
-#: inc/task.class.php:1107
+#: inc/task.class.php:1389
 #, php-format
 msgid "You are already working on %s"
 msgstr "You are already working on %s"
 
-#: inc/task.class.php:1132
+#: inc/task.class.php:1420
 msgid "Timer started"
 msgstr "Timer started"
 
-#: inc/task.class.php:1185 inc/task.class.php:1254 inc/task.class.php:1280
+#: inc/task.class.php:1478 inc/task.class.php:1553 inc/task.class.php:1587
 msgid "Timer completed"
 msgstr "טיימר הושלם"
 
-#: inc/task.class.php:1198 inc/task.class.php:1266
+#: inc/task.class.php:1492 inc/task.class.php:1570
 msgid "Only the user who initiated the task can close it"
 msgstr "רק המשתמש שיזם את המשימה יכול לסגור אותה"
 
-#: inc/task.class.php:1201
+#: inc/task.class.php:1495
 msgid "The task had not been initialized"
 msgstr "המשימה לא אותחלה"
