@@ -1,5 +1,12 @@
 # Actualtime
 
+## 3.0.0 - 16/01/2024
+### Features
+- Add compatibility with project task
+### Bugfixes
+- Fix autostart css
+- Fix disabled button
+
 ## 2.2.0 -15/09/2023
 ### Features
 - Add block timer on different day
