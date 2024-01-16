@@ -30,7 +30,7 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_ACTUALTIME_VERSION', '2.2.0');
+define('PLUGIN_ACTUALTIME_VERSION', '2.2.0.1');
 
 
 // Minimal GLPI version, inclusive
@@ -76,14 +76,26 @@ function plugin_init_actualtime()
       $config = new PluginActualtimeConfig();
 
       $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
-      $PLUGIN_HOOKS['show_item_stats']['actualtime'] = ['Ticket' => 'plugin_actualtime_item_stats'];
-      $PLUGIN_HOOKS['pre_item_update']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_update'];
+      $PLUGIN_HOOKS['show_item_stats']['actualtime'] = [
+         'Ticket' => 'plugin_actualtime_item_stats',
+         'Change' => 'plugin_actualtime_item_stats'
+      ];
+      $PLUGIN_HOOKS['pre_item_update']['actualtime'] = [
+         'TicketTask' => 'plugin_actualtime_item_update',
+         'ProjectTask' => 'plugin_actualtime_item_update',
+      ];
       $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
       if (Session::getLoginUserID()) {
          $PLUGIN_HOOKS['add_javascript']['actualtime'] = 'js/actualtime.js';
       }
-      $PLUGIN_HOOKS['item_purge']['actualtime'] = ['TicketTask' => 'plugin_actualtime_item_purge'];
-      $PLUGIN_HOOKS[Hooks::ITEM_DELETE]['actualtime'] = ['Ticket' => 'plugin_actualtime_ticket_delete'];
+      $PLUGIN_HOOKS['item_purge']['actualtime'] = [
+         'TicketTask' => 'plugin_actualtime_item_purge',
+         'ProjectTask' => 'plugin_actualtime_item_purge',
+      ];
+      $PLUGIN_HOOKS[Hooks::ITEM_DELETE]['actualtime'] = [
+         'Ticket' => 'plugin_actualtime_parent_delete',
+         'Project' => 'plugin_actualtime_project_delete',
+      ];
       $PLUGIN_HOOKS['pre_item_add']['actualtime'] = [
          'ITILSolution' => 'plugin_actualtime_preSolutionAdd',
       ];

@@ -42,24 +42,25 @@ global $CFG_GLPI;
 if (isset($_POST["action"])) {
    $plugin = new Plugin();
    $task_id = $_POST["task_id"];
+   $itemtype = $_POST["itemtype"];
    $config = new PluginActualtimeConfig();
    switch ($_POST["action"]) {
       case 'start':
-         $result = PluginActualtimeTask::startTimer($_POST["task_id"], PluginActualtimeTask::WEB);
+         $result = PluginActualtimeTask::startTimer($_POST["task_id"], $itemtype, PluginActualtimeTask::WEB);
          echo json_encode($result);
          break;
 
       case 'end':
-         $result = PluginActualtimeTask::stopTimer($_POST["task_id"], PluginActualtimeTask::WEB);
+         $result = PluginActualtimeTask::stopTimer($_POST["task_id"], $itemtype, PluginActualtimeTask::WEB);
          echo json_encode($result);
          break;
       case 'pause':
-         $result = PluginActualtimeTask::pauseTimer($_POST["task_id"], PluginActualtimeTask::WEB);
+         $result = PluginActualtimeTask::pauseTimer($_POST["task_id"], $itemtype, PluginActualtimeTask::WEB);
          echo json_encode($result);
          break;
 
       case 'count':
-         echo abs(PluginActualtimeTask::totalEndTime($task_id));
+         echo abs(PluginActualtimeTask::totalEndTime($task_id, $itemtype));
          break;
    }
 } else if (isset($_GET["footer"])) {
@@ -94,13 +95,23 @@ if (isset($_POST["action"])) {
    $config = new PluginActualtimeConfig();
    if ($config->showTimerPopup()) {
       // popup_div exists only if settings allow display pop-up timer
-      $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='window.actualTime.showTaskForm(event)' href='{$CFG_GLPI['root_doc']}/front/ticket.form.php?id=%t'>" . __("Ticket") . " #%t</a> -> <span></span></div>";
+      $result['popup_div'] = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime') . " <a onclick='window.actualTime.showTaskForm(event)' href='%l'>%n #%t</a> -> <span></span></div>";
       $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
       if ($task_id) {
          // Only if timer is active
          $result['task_id'] = $task_id;
-         $result['ticket_id'] = PluginActualtimetask::getTicket(Session::getLoginUserID());
-         $result['time'] = abs(PluginActualtimeTask::totalEndTime($task_id));
+         $result['itemtype'] = PluginActualtimeTask::getItemtype(Session::getLoginUserID());
+         $task = getItemForItemtype($result['itemtype']);
+         if (is_a($task, CommonDBChild::class, true)) {
+            $parent = getItemForItemtype($task::$itemtype);
+         } else {
+            $parent = getItemForItemtype($task->getItilObjectItemType());
+         }
+         $result['parent_id'] = PluginActualtimetask::getParent(Session::getLoginUserID());
+         $parent->getFromDB($result['parent_id']);
+         $result['link'] = $parent->getLinkURL();
+         $result['name'] = $parent->getTypeName(1);
+         $result['time'] = abs(PluginActualtimeTask::totalEndTime($task_id, $result['itemtype']));
       }
    }
    echo json_encode($result);
@@ -111,9 +122,16 @@ if (isset($_POST["action"])) {
    parse_str($parts['query'], $query);
    if (isset($query['showform'])) {
       $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
+      $itemtype = PluginActualtimeTask::getItemtype(Session::getLoginUserID());
+      $item = getItemForItemtype($itemtype);
+      $item->getFromDB($task_id);
       $rand = mt_rand();
-      $parent = getItemForItemtype("Ticket");
-      $parent->getFromDB(PluginActualtimeTask::getTicket(Session::getLoginUserID()));
+      if (is_a($item, CommonDBChild::class, true)) {
+         $parent = getItemForItemtype($item::$itemtype);
+      } else {
+         $parent = getItemForItemtype($item->getItilObjectItemType());
+      }
+      $parent->getFromDB(PluginActualtimeTask::getParent(Session::getLoginUserID()));
       $options['parent'] = $parent;
       echo  "<div class='modal-header'>";
       echo "<h4 class='modal-title'>".__('Update of a task')."</h4>";
@@ -121,10 +139,8 @@ if (isset($_POST["action"])) {
       echo "</div>";
       echo "<div class='modal-body'>";
       echo "<div class='center'>";
-      echo "<a class='btn btn-outline-secondary' href='" . urldecode($CFG_GLPI['url_base'] . "/index.php?redirect=" . strtolower($parent->getType()) . "_" . PluginActualtimeTask::getTicket(Session::getLoginUserID()) . "&noAUTO=1") . "'><i class='ti ti-eye'></i><span>" . __("View this item in his context") . "</span></a>";
+      echo "<a class='btn btn-outline-secondary' href='" . urldecode($CFG_GLPI['url_base'] . "/index.php?redirect=" . strtolower($parent->getType()) . "_" . PluginActualtimeTask::getParent(Session::getLoginUserID()) . "&noAUTO=1") . "'><i class='ti ti-eye'></i><span>" . __("View this item in his context") . "</span></a>";
       echo "</div><hr>";
-      $item = getItemForItemtype("TicketTask");
-      $item->getFromDB($task_id);
       $item->showForm($task_id, $options);
       echo "</div>";
    }
