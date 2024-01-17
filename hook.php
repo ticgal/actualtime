@@ -278,7 +278,8 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
                         'jointype' => 'child'
                      ]
                   ],
-                  'jointype' => 'child',
+                  'jointype' => 'itemtype_item',
+                  'specific_itemtype'  => TicketTask::class,
                ],
                'type' => 'total'
             ];
@@ -295,7 +296,8 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
                         'jointype' => 'child'
                      ]
                   ],
-                  'jointype' => 'child',
+                  'jointype' => 'itemtype_item',
+                  'specific_itemtype'  => TicketTask::class,
                ],
                'type' => 'diff'
             ];
@@ -312,7 +314,8 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
                         'jointype' => 'child'
                      ]
                   ],
-                  'jointype' => 'child',
+                  'jointype' => 'itemtype_item',
+                  'specific_itemtype'  => TicketTask::class,
                ],
                'type' => 'diff%'
             ];
