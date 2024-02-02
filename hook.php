@@ -339,8 +339,8 @@ function plugin_actualtime_getAddSearchOptions($itemtype)
                         'jointype' => 'child'
                      ]
                   ],
-                  'jointype' => 'child',
-                  'linkfield' => 'tasks_id'
+                  'jointype' => 'itemtype_item',
+                  'specific_itemtype'  => TicketTask::class,
                ],
                'type' => 'task'
             ];
