@@ -1427,7 +1427,7 @@ JAVASCRIPT;
          ];
 
          if ($plugin->isActivated('gappextended')) {
-            PluginGappextendedPush::sendActualtime(self::getParent(Session::getLoginUserID()), $task_id, $result, Session::getLoginUserID(), true);
+            PluginGappextendedPush::sendActualtime(self::getParent(Session::getLoginUserID()), $task_id, $result, Session::getLoginUserID(), true, $parent::getType());
          }
       }
 
@@ -1485,8 +1485,12 @@ JAVASCRIPT;
             if ($plugin->isActivated('gappextended')) {
                $task = new $itemtype();
                $task->getFromDB($task_id);
-               $parent = $task->getItilObjectItemType();
-               PluginGappextendedPush::sendActualtime($task->fields[getForeignKeyFieldForItemType($parent)], $task_id, $result, Session::getLoginUserID(), false);
+               if (is_a($task, CommonDBChild::class, true)) {
+                  $parent = $task::$itemtype;
+               } else {
+                  $parent = $task->getItilObjectItemType();
+               }
+               PluginGappextendedPush::sendActualtime($task->fields[getForeignKeyFieldForItemType($parent)], $task_id, $result, Session::getLoginUserID(), false, $parent);
             }
          } else {
             $result['message'] = __("Only the user who initiated the task can close it", 'actualtime');
@@ -1564,7 +1568,7 @@ JAVASCRIPT;
                } else {
                   $parent = $task->getItilObjectItemType();
                }
-               PluginGappextendedPush::sendActualtime($task->fields[getForeignKeyFieldForItemType($parent)], $task_id, $result, Session::getLoginUserID(), false);
+               PluginGappextendedPush::sendActualtime($task->fields[getForeignKeyFieldForItemType($parent)], $task_id, $result, Session::getLoginUserID(), false, $parent);
             }
          } else {
             $result['message'] = __("Only the user who initiated the task can close it", 'actualtime');
