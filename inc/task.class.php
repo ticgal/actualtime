@@ -326,7 +326,7 @@ JAVASCRIPT;
                echo Html::scriptBlock($script);
             } else {
                //echo Html::scriptBlock('');
-               $div = "<div id='actualtime_autostart' class='form-field row col-12 mb-2'><label class='col-form-label col-xxl-5 text-xxl-end' for='autostart'><i class='fas fa-stopwatch fa-fw me-1' title='" . __('Autostart') . "'></i></label><div class='col-xxl-7 field-container'><label class='form-check form-switch mt-2'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1' class='form-check-input'></label></div></div>";
+               $div = "<div id='actualtime_autostart' class='form-field row col-12 mb-2'><label class='col-form-label col-2 text-xxl-end' for='autostart'><i class='fas fa-stopwatch fa-fw me-1' title='" . __('Autostart') . "'></i></label><div class='col-10 field-container'><label class='form-check form-switch mt-2'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1' class='form-check-input'></label></div></div>";
                $script = <<<JAVASCRIPT
                $(document).ready(function() {
                   if($("#actualtime_autostart").length==0){
