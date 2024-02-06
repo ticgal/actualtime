@@ -189,10 +189,17 @@ class PluginActualtimeTask extends CommonDBTM
       $config = new PluginActualtimeConfig();
 
       switch ($item->getType()) {
+         case 'ChangeTask':
          case 'TicketTask':
             if ($item->getID()) {
 
                $task_id = $item->getID();
+               if (is_a($item, CommonDBChild::class, true)) {
+                  $parent = getItemForItemtype($item::$itemtype);
+               } else {
+                  $parent = getItemForItemtype($item->getItilObjectItemType());
+               }
+               $parent_key = getForeignKeyFieldForItemType($parent::getType());
                $rand = mt_rand();
                $buttons = ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE));
                $disable = false;
@@ -306,17 +313,17 @@ JAVASCRIPT;
                }
 
                $submit_buton = "<button id='actualtime_addme_{$rand}' form='actualtime_form_addme_{$rand}' type='submit' name='update' class='btn btn-icon btn-sm btn-ghost-secondary float-end mt-1 ms-1'><i class='fas fa-male'></i></button>";
-               $form = "<form method='POST' action='/front/tickettask.form.php' class='d-none' id='actualtime_form_addme_{$rand}' data-submit-once>";
+               $form = "<form method='POST' action='/front/".strtolower($itemtype).".form.php' class='d-none' id='actualtime_form_addme_{$rand}' data-submit-once>";
                $form .= "<input type='hidden' name='id' value='{$task_id}'";
-               $form .= "<input type='hidden' name='itemtype' value='Ticket'>";
+               $form .= "<input type='hidden' name='itemtype' value='".$parent::getType()."'>";
                $form .= "<input type='hidden' name='users_id_tech' value='" . Session::getLoginUserID() . "'>";
-               $form .= "<input type='hidden' name='tickets_id' value='" . $item->fields['tickets_id'] . "'>";
+               $form .= "<input type='hidden' name='{$parent_key}' value='" . $item->fields[$parent_key] . "'>";
                $form .= "<input type='hidden' name='_glpi_csrf_token' value='" . Session::getNewCSRFToken() . "'>";
                $form .= "</form>";
                $script = <<<JAVASCRIPT
                   $(document).ready(function() {
                      if($("#actualtime_addme_{$rand}").length==0){
-                        $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.itiltask form select[name='users_id_tech']").parent().append("{$submit_buton}");
+                        $("div[data-itemtype='{$itemtype}'][data-items-id='{$task_id}'] div.itiltask form select[name='users_id_tech']").parent().append("{$submit_buton}");
                      }
                      if($("#actualtime_form_addme_{$rand}").length==0){
                         $("#itil-object-container").parent().append("{$form}");
@@ -330,7 +337,7 @@ JAVASCRIPT;
                $script = <<<JAVASCRIPT
                $(document).ready(function() {
                   if($("#actualtime_autostart").length==0){
-                     $("#new-TicketTask-block div.itiltask form > div.row div.row:first").append("{$div}");
+                     $("#new-{$itemtype}-block div.itiltask form > div.row div.row:first").append("{$div}");
                   }
                });
 JAVASCRIPT;
@@ -1007,6 +1014,7 @@ JAVASCRIPT;
       $config = new PluginActualtimeConfig();
       switch ($item->getType()) {
          case 'TicketTask':
+         case 'ChangeTask':
 
             $task_id = $item->getID();
             // Auto open needs to use correct item randomic number
@@ -1031,7 +1039,7 @@ JAVASCRIPT;
                $script = <<<JAVASCRIPT
 $(document).ready(function() {
    if ($("[id^='actualtime_faclock_{$task_id}_']").length == 0) {
-      $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.card-body div.timeline-header div.creator")
+      $("div[data-itemtype='{$itemtype}'][data-items-id='{$task_id}'] div.card-body div.timeline-header div.creator")
          .append("{$icon}");
          if ($time > 0) {
          window.actualTime.fillCurrentTime($task_id, $time);
@@ -1046,11 +1054,11 @@ JAVASCRIPT;
                // New created task or user has running timer on this task
                // Open edit window automatically
                $ticket_id = $item->fields['tickets_id'];
-               $div = "<div id='actualtime_autoEdit_{$task_id}_{$rand}' onclick='javascript:viewEditSubitem$ticket_id$rand(event, \"TicketTask\", $task_id, this, \"viewitemTicketTask$task_id$rand\")'></div>";
+               $div = "<div id='actualtime_autoEdit_{$task_id}_{$rand}' onclick='javascript:viewEditSubitem$ticket_id$rand(event, \"{$itemtype}\", $task_id, this, \"viewitem{$itemtype}$task_id$rand\")'></div>";
                echo $div;
                $script = <<<JAVASCRIPT
 $(document).ready(function() {
-   $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.card-body a.edit-timeline-item").trigger('click');
+   $("div[data-itemtype='{$itemtype}'][data-items-id='{$task_id}'] div.card-body a.edit-timeline-item").trigger('click');
 });
 JAVASCRIPT;
 
@@ -1091,7 +1099,7 @@ JAVASCRIPT;
 
    $(document).ready(function() {
       if ($("[id^='actualtime_button_{$task_id}_1_{$rand}']").length == 0) {
-         $("div[data-itemtype='TicketTask'][data-items-id='{$task_id}'] div.todo-list-state").append("{$button}");
+         $("div[data-itemtype='{$itemtype}'][data-items-id='{$task_id}'] div.todo-list-state").append("{$button}");
       }
       $("#actualtime_button_{$task_id}_1_{$rand}").click(function(event) {
          window.actualTime.pressedButton($task_id, "{$itemtype}", $(this).attr('action'));

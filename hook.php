@@ -76,40 +76,44 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
 {
    global $DB, $CFG_GLPI;
 
-   if ($solution->input['itemtype'] == Ticket::getType()) {
+   if ($solution->input['itemtype'] == Ticket::getType() || $solution->input['itemtype'] == Change::getType()) {
 
+      $parent = new $solution->input['itemtype']();
+      $taskitemtype = $parent->getTaskClass();
+      $ttask = $taskitemtype::getTable();
+      $parent_key = getForeignKeyFieldForItemType($parent::getType());
       $config = new PluginActualtimeConfig();
       
-      $ticket_id = $solution->input['items_id'];
+      $parent_id = $solution->input['items_id'];
 
       $query = [
          'SELECT' => [
             PluginActualtimeTask::getTable().'.id',
             PluginActualtimeTask::getTable().'.items_id',
          ],
-         'FROM' => 'glpi_tickettasks',
+         'FROM' => $ttask,
          'INNER JOIN' => [
             PluginActualtimeTask::getTable() => [
                'ON' => [
                   PluginActualtimeTask::getTable() => 'items_id',
-                  'glpi_tickettasks' => 'id', [
+                  $ttask => 'id', [
                      'AND' => [
-                        PluginActualtimeTask::getTable().'.itemtype' => 'TicketTask',
+                        PluginActualtimeTask::getTable().'.itemtype' => $taskitemtype,
                      ]
                   ]
                ]
             ],
          ],
          'WHERE' => [
-            'tickets_id' => $ticket_id,
+            $parent_key => $parent_id,
             'actual_end' => null,
          ]
       ];
-      $task = new TicketTask();
+      $task = new $taskitemtype();
       foreach ($DB->request($query) as $id => $row) {
          $task_id = $row['items_id'];
 
-         $actual_begin = PluginActualtimeTask::getActualBegin($task_id);
+         $actual_begin = PluginActualtimeTask::getActualBegin($task_id, $taskitemtype);
          $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
 
          $DB->update(
@@ -121,7 +125,7 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
             ],
             [
                'items_id' => $task_id,
-               'itemtype' => 'TicketTask',
+               'itemtype' => $taskitemtype,
                [
                   'NOT' => ['actual_begin' => null],
                ],
@@ -130,7 +134,7 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
          );
          $task->getFromDB($task_id);
          $input['id'] = $task_id;
-         $input['tickets_id'] = $task->fields['tickets_id'];
+         $input[$parent_key] = $task->fields[$parent_key];
          $input['state'] = 2;
          if ($config->autoUpdateDuration()) {
             $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id, $task->getType()) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
