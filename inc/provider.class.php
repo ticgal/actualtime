@@ -67,7 +67,11 @@ class PluginActualtimeProvider extends CommonDBTM
 				$actualtime_table => [
 					'FKEY' => [
 						$task_table => 'id',
-						$actualtime_table => 'tickettasks_id',
+						$actualtime_table => 'items_id', [
+							'AND' => [
+								$actualtime_table.'.itemtype' => TicketTask::getType()
+							]
+						]
 					]
 				],
 				$table => [
@@ -113,7 +117,11 @@ class PluginActualtimeProvider extends CommonDBTM
 					$actualtime_table => [
 						'FKEY' => [
 							$task_table => 'id',
-							$actualtime_table => 'tickettasks_id',
+							$actualtime_table => 'items_id', [
+								'AND' => [
+									$actualtime_table.'.itemtype' => TicketTask::getType()
+								]
+							]
 						]
 					],
 					$table => [
@@ -201,7 +209,11 @@ class PluginActualtimeProvider extends CommonDBTM
 				$actualtime_table => [
 					'FKEY' => [
 						$task_table => 'id',
-						$actualtime_table => 'tickettasks_id',
+						$actualtime_table => 'items_id', [
+							'AND' => [
+								$actualtime_table.'.itemtype' => TicketTask::getType()
+							]
+						]
 					]
 				],
 				$table => [
@@ -250,7 +262,11 @@ class PluginActualtimeProvider extends CommonDBTM
 					$actualtime_table => [
 						'FKEY' => [
 							$task_table => 'id',
-							$actualtime_table => 'tickettasks_id',
+							$actualtime_table => 'items_id', [
+								'AND' => [
+									$actualtime_table.'.itemtype' => TicketTask::getType()
+								]
+							]
 						]
 					],
 					$table => [
@@ -338,7 +354,11 @@ class PluginActualtimeProvider extends CommonDBTM
 				$task_table => [
 					'ON' => [
 						$task_table => 'id',
-						$actualtime_table => 'tickettasks_id'
+						$actualtime_table => 'items_id', [
+							'AND' => [
+								$actualtime_table.'.itemtype' => TicketTask::getType()
+							]
+						]
 					]
 				],
 				$table => [
@@ -386,7 +406,11 @@ class PluginActualtimeProvider extends CommonDBTM
 					$task_table => [
 						'ON' => [
 							$task_table => 'id',
-							$actualtime_table => 'tickettasks_id'
+							$actualtime_table => 'items_id', [
+								'AND' => [
+									$actualtime_table.'.itemtype' => TicketTask::getType()
+								]
+							]
 						]
 					],
 					$table => [
@@ -476,7 +500,11 @@ class PluginActualtimeProvider extends CommonDBTM
 				$task_table => [
 					'ON' => [
 						$task_table => 'id',
-						$actualtime_table => 'tickettasks_id'
+						$actualtime_table => 'items_id', [
+							'AND' => [
+								$actualtime_table.'.itemtype' => TicketTask::getType()
+							]
+						]
 					]
 				],
 				$user_table => [
@@ -518,7 +546,11 @@ class PluginActualtimeProvider extends CommonDBTM
 					$task_table => [
 						'ON' => [
 							$task_table => 'id',
-							$actualtime_table => 'tickettasks_id'
+							$actualtime_table => 'items_id', [
+								'AND' => [
+									$actualtime_table.'.itemtype' => TicketTask::getType()
+								]
+							]
 						]
 					]
 				],
@@ -602,7 +634,11 @@ class PluginActualtimeProvider extends CommonDBTM
 				$task_table => [
 					'ON' => [
 						$task_table => 'id',
-						$actualtime_table => 'tickettasks_id'
+						$actualtime_table => 'items_id', [
+							'AND' => [
+								$actualtime_table.'.itemtype' => TicketTask::getType()
+							]
+						]
 					]
 				],
 				$table => [
@@ -650,7 +686,11 @@ class PluginActualtimeProvider extends CommonDBTM
 					$task_table => [
 						'ON' => [
 							$task_table => 'id',
-							$actualtime_table => 'tickettasks_id'
+							$actualtime_table => 'items_id', [
+								'AND' => [
+									$actualtime_table.'.itemtype' => TicketTask::getType()
+								]
+							]
 						]
 					],
 					$table => [
@@ -764,7 +804,11 @@ class PluginActualtimeProvider extends CommonDBTM
 				$task_table => [
 					'ON' => [
 						$task_table => 'id',
-						$actualtime_table => 'tickettasks_id'
+						$actualtime_table => 'items_id', [
+							'AND' => [
+								$actualtime_table.'.itemtype' => TicketTask::getType()
+							]
+						]
 					]
 				],
 				$table => [
@@ -812,7 +856,11 @@ class PluginActualtimeProvider extends CommonDBTM
 					$task_table => [
 						'ON' => [
 							$task_table => 'id',
-							$actualtime_table => 'tickettasks_id'
+							$actualtime_table => 'items_id', [
+								'AND' => [
+									$actualtime_table.'.itemtype' => TicketTask::getType()
+								]
+							]
 						]
 					],
 					$table => [

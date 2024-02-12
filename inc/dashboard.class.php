@@ -40,7 +40,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_moreactualtimetasksbyday'] = [
 			'widgettype' => ['stackedbars', 'lines'],
-			'label' => __('Top 20 Actualtime tasks per day', 'actualtime'),
+			'label' => Ticket::getTypeName().' - '.__('Top 20 Actualtime tasks per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::moreActualtimeTasksByDay'
@@ -48,7 +48,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_lessactualtimetasks'] = [
 			'widgettype' => ['stackedbars', 'lines'],
-			'label' => __('Bottom 20 Actualtime tasks per day', 'actualtime'),
+			'label' => Ticket::getTypeName().' - '.__('Bottom 20 Actualtime tasks per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessActualtimeTasksByDay'
@@ -56,7 +56,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_moreactualtimeusagebyday'] = [
 			'widgettype' => ['stackedbars', 'lines'],
-			'label' => __('Top 20 Actualtime usage (hours)', 'actualtime'),
+			'label' => Ticket::getTypeName().' - '.__('Top 20 Actualtime usage (hours)', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::moreActualtimeUsageByDay'
@@ -64,14 +64,14 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_lessactualtimeusagebyday'] = [
 			'widgettype' => ['stackedbars', 'lines'],
-			'label' => __('Bottom 20 Actualtime usage (hours)', 'actualtime'),
+			'label' => Ticket::getTypeName().' - '.__('Bottom 20 Actualtime usage (hours)', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessActualtimeUsageByDay'
 		];
 		$cards['plugin_actualtime_moreapercentagectualtimetasksbyday'] = [
 			'widgettype' => ['bars', 'lines'],
-			'label' => __('Top 20 % Actualtime usage per day', 'actualtime'),
+			'label' => Ticket::getTypeName().' - '.__('Top 20 % Actualtime usage per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::morePercentageActualtimeTasksByDay'
@@ -79,7 +79,7 @@ class PluginActualtimeDashboard extends CommonDBTM
 
 		$cards['plugin_actualtime_lesspercentageactualtimetasks'] = [
 			'widgettype' => ['bars', 'lines'],
-			'label' => __('Bottom 20 % Actualtime usage per day', 'actualtime'),
+			'label' => Ticket::getTypeName().' - '.__('Bottom 20 % Actualtime usage per day', 'actualtime'),
 			'group' => 'Actualtime',
 			'filters' => ['dates'],
 			'provider' => 'PluginActualtimeProvider::lessPercentageActualtimeTasksByDay'
