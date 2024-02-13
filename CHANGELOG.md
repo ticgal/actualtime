@@ -3,6 +3,7 @@
 ## 3.0.0 - 16/01/2024
 ### Features
 - Add compatibility with project task
+- Add compatibility with change task
 ### Bugfixes
 - Fix autostart css
 - Fix disabled button
