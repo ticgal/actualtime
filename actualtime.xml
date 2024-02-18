@@ -95,12 +95,11 @@
       	<en>
 		<tag>ticket</tag>
     		<tag>task</tag>
+		<tag>change</tag>
+		<tag>project</tag>
+		<tag>calendar</tag>
 		<tag>statistics</tag>
 	</en>
-	<es>
-		<tag>peticiones</tag>
-    		<tag>tareas</tag>
-	</es>
    </tags>
    <screenshots>
       <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-1.png</screenshot>
