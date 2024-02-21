@@ -1646,8 +1646,8 @@ JAVASCRIPT;
          $migration->dropField($table, 'longitude_end');
          $migration->changeField($table, 'origin_end', 'origin_end', 'int', ['value' => 0]);
 
-         $migration->addField($table, 'override_begin', 'timestamp', ['nodefault' => true]);
-         $migration->addField($table, 'override_end', 'timestamp', ['nodefault' => true]);
+         $migration->addField($table, 'override_begin', 'timestamp', ['nodefault' => true, 'null' => true]);
+         $migration->addField($table, 'override_end', 'timestamp', ['nodefault' => true, 'null' => true]);
 
          $migration->addField($table, 'itemtype', 'varchar(255) NOT NULL', ['after' => 'id', 'update' => "'TicketTask'"]);
          $migration->addField($table, 'items_id', "int {$default_key_sign} NOT NULL DEFAULT '0'", ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')]);
