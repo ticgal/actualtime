@@ -64,7 +64,7 @@ function plugin_actualtime_item_stats($item)
 
 function plugin_actualtime_item_update($item)
 {
-   PluginActualtimeTask::preUpdate($item);
+   return PluginActualtimeTask::preUpdate($item);
 }
 
 function plugin_actualtime_item_add($item)

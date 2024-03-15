@@ -922,6 +922,8 @@ JAVASCRIPT;
             }
          }
       }
+
+      return $item;
    }
 
    static function postShowTab($params)
@@ -1532,6 +1534,7 @@ JAVASCRIPT;
          $task->getFromDB($task_id);
          $input['id'] = $task_id;
          $input['state'] = 2;
+         $input['plugin_actualtime'] = true;
          if ($config->autoUpdateDuration()) {
             if (isset($task->fields['actiontime'])) {
                $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id, $itemtype) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
