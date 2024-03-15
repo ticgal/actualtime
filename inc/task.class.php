@@ -881,99 +881,44 @@ JAVASCRIPT;
 
       $config = new PluginActualtimeConfig();
       $itemtype = $item->getType();
-      if (array_key_exists('state', $item->input) && array_key_exists('state', $item->fields)) {
-         if ($item->fields['state'] != $item->input['state']) {
-            if ($item->input['state'] != 1) {
-               if (self::checkTimerActive($item->input['id'], $item->getType())) {
-                  $actual_begin = self::getActualBegin($item->input['id'], $item->getType());
-                  $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
-                  $DB->update(
-                     'glpi_plugin_actualtime_tasks',
-                     [
-                        'actual_end' => date("Y-m-d H:i:s"),
-                        'actual_actiontime' => $seconds,
-                        'origin_end' => self::AUTO,
-                     ],
-                     [
-                        'items_id' => $item->input['id'],
-                        'itemtype' => $item->getType(),
-                        [
-                           'NOT' => ['actual_begin' => null],
-                        ],
-                        'actual_end' => null,
-                     ]
-                  );
+      if (!array_key_exists('plugin_actualtime', $item->input)) {
+         if (array_key_exists('state', $item->input) && array_key_exists('state', $item->fields)) {
+            if ($item->fields['state'] != $item->input['state']) {
+               if ($item->input['state'] != 1) {
+                  self::stopTimer($item->input['id'], $itemtype, self::AUTO);
                   if ($config->autoUpdateDuration()) {
-                     $item->input['actiontime'] = ceil(self::totalEndTime($item->input['id'], $itemtype) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
+                     unset($item->input['actiontime']);
                   }
-               } elseif (self::totalEndTime($item->input['id'], $itemtype) > 0 && $config->autoUpdateDuration()) {
-                  $item->input['actiontime'] = ceil(self::totalEndTime($item->input['id'], $itemtype) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
                }
             }
          }
-      }
-      if (array_key_exists('users_id_tech', $item->input)) {
-         if ($item->input['users_id_tech'] != $item->fields['users_id_tech']) {
-            if (self::checkTimerActive($item->input['id'], $item->getType())) {
-               $actual_begin = self::getActualBegin($item->input['id'], $item->getType());
-               $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
-               $DB->update(
-                  'glpi_plugin_actualtime_tasks',
-                  [
-                     'actual_end'      => date("Y-m-d H:i:s"),
-                     'actual_actiontime'      => $seconds,
-                     'origin_end' => self::AUTO,
-                  ],
-                  [
-                     'items_id' => $item->input['id'],
-                     'itemtype' => $item->getType(),
-                     [
-                        'NOT' => ['actual_begin' => null],
-                     ],
-                     'actual_end' => null,
-                  ]
-               );
+         if (array_key_exists('users_id_tech', $item->input)) {
+            if ($item->input['users_id_tech'] != $item->fields['users_id_tech']) {
+               self::stopTimer($item->input['id'], $itemtype, self::AUTO);
                if ($config->autoUpdateDuration()) {
-                  $item->input['actiontime'] = ceil(self::totalEndTime($item->input['id'], $item->getType()) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
+                  unset($item->input['actiontime']);
                }
             }
          }
-      }
-      if (array_key_exists('projectstates_id', $item->input)) {
-         $finished_states_it = $DB->request(
-            [
-               'SELECT' => ['id'],
-               'FROM'   => ProjectState::getTable(),
-               'WHERE'  => [
-                  'is_finished' => 1
-               ],
-            ]
-         );
-         $finished_states_ids = [];
-         foreach ($finished_states_it as $finished_state) {
-            $finished_states_ids[] = $finished_state['id'];
-         }
-         if (in_array($item->input['projectstates_id'], $finished_states_ids)) {
-            $actual_begin = self::getActualBegin($item->input['id'], $item->getType());
-            $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
-            $DB->update(
-               'glpi_plugin_actualtime_tasks',
+         if (array_key_exists('projectstates_id', $item->input)) {
+            $finished_states_it = $DB->request(
                [
-                  'actual_end'      => date("Y-m-d H:i:s"),
-                  'actual_actiontime'      => $seconds,
-                  'origin_end' => self::AUTO,
-               ],
-               [
-                  'items_id' => $item->input['id'],
-                  'itemtype' => $item->getType(),
-                  [
-                     'NOT' => ['actual_begin' => null],
+                  'SELECT' => ['id'],
+                  'FROM'   => ProjectState::getTable(),
+                  'WHERE'  => [
+                     'is_finished' => 1
                   ],
-                  'actual_end' => null,
                ]
             );
-            if ($config->autoUpdateDuration()) {
-               $item->input['effective_duration'] = ceil(self::totalEndTime($item->input['id'], $item->getType()) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
+            $finished_states_ids = [];
+            foreach ($finished_states_it as $finished_state) {
+               $finished_states_ids[] = $finished_state['id'];
+            }
+            if (in_array($item->input['projectstates_id'], $finished_states_ids)) {
+               self::stopTimer($item->input['id'], $itemtype, self::AUTO);
+               if ($config->autoUpdateDuration()) {
+                  unset($item->input['effective_duration']);
+               }
             }
          }
       }
@@ -1552,6 +1497,7 @@ JAVASCRIPT;
             $task->getFromDB($task_id);
             $input['id'] = $task_id;
             $input['state'] = 2;
+            $input['plugin_actualtime'] = true;
             if ($config->autoUpdateDuration()) {
                if (isset($task->fields['actiontime'])) {
                   $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id, $itemtype) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);

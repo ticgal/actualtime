@@ -82,7 +82,6 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
       $taskitemtype = $parent->getTaskClass();
       $ttask = $taskitemtype::getTable();
       $parent_key = getForeignKeyFieldForItemType($parent::getType());
-      $config = new PluginActualtimeConfig();
       
       $parent_id = $solution->input['items_id'];
 
@@ -109,37 +108,10 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
             'actual_end' => null,
          ]
       ];
-      $task = new $taskitemtype();
       foreach ($DB->request($query) as $id => $row) {
          $task_id = $row['items_id'];
 
-         $actual_begin = PluginActualtimeTask::getActualBegin($task_id, $taskitemtype);
-         $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
-
-         $DB->update(
-            'glpi_plugin_actualtime_tasks',
-            [
-               'actual_end'        => date("Y-m-d H:i:s"),
-               'actual_actiontime' => $seconds,
-               'origin_end' => PluginActualtimetask::AUTO,
-            ],
-            [
-               'items_id' => $task_id,
-               'itemtype' => $taskitemtype,
-               [
-                  'NOT' => ['actual_begin' => null],
-               ],
-               'actual_end' => null,
-            ]
-         );
-         $task->getFromDB($task_id);
-         $input['id'] = $task_id;
-         $input[$parent_key] = $task->fields[$parent_key];
-         $input['state'] = 2;
-         if ($config->autoUpdateDuration()) {
-            $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id, $task->getType()) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
-         }
-         $task->update($input);
+         PluginActualtimeTask::stopTimer($task_id, $taskitemtype, PluginActualtimeTask::AUTO);
       }
    }
 }
