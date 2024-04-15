@@ -1,5 +1,11 @@
 # Actualtime
 
+## 3.0.1 - 15/04/2024
+### Features
+- Use global functions
+### Bugfixes
+- Fix field update
+
 ## 3.0.0 - 16/02/2024
 ### Features
 - Add compatibility with project task
