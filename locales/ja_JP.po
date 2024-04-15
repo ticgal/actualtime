@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ActualTime\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-16 09:51+0100\n"
+"POT-Creation-Date: 2024-04-15 10:52+0200\n"
 "Language: ja_JP\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,7 +10,7 @@ msgstr ""
 "X-Generator: Localazy (https://localazy.com)\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: hook.php:293 hook.php:311 inc/task.class.php:78 inc/task.class.php:95
+#: hook.php:265 hook.php:283 inc/task.class.php:78 inc/task.class.php:95
 msgid "Duration Diff"
 msgstr "時間の差"
 
@@ -44,7 +44,7 @@ msgstr "タイマー開始"
 
 #: inc/config.class.php:76
 msgid "ActualTime Setup"
-msgstr "ActualTime Setup"
+msgstr "実時間の設定"
 
 #: inc/config.class.php:117
 msgid "In Standard interface only (default)"
@@ -76,11 +76,11 @@ msgstr "所要時間を自動更新"
 
 #: inc/config.class.php:160
 msgid "Enable Timer Only on Scheduled Task Day"
-msgstr "Enable Timer Only on Scheduled Task Day"
+msgstr "スケジュールしたタスク日にのみタイマーを有効に"
 
 #: inc/config.class.php:166
 msgid "Enable Timer Only on Task's Start Day"
-msgstr "Enable Timer Only on Task's Start Day"
+msgstr "タスクの開始日のみタイマーを有効に"
 
 #: inc/dashboard.class.php:43
 msgid "Top 20 Actualtime tasks per day"
@@ -126,52 +126,52 @@ msgstr "実所要時間"
 msgid "Partial actual duration"
 msgstr "部分的な実時間"
 
-#: inc/task.class.php:1238 inc/task.class.php:1244
+#: inc/task.class.php:1185 inc/task.class.php:1191
 #, php-format
 msgid "You cannot start a timer because the task was scheduled for %d."
-msgstr "You cannot start a timer because the task was scheduled for %d."
+msgstr "タスクが %d からに予定しているため、タイマーをスタートできません。"
 
-#: inc/task.class.php:1269
+#: inc/task.class.php:1216
 msgid "You cannot add a timer on a different day."
-msgstr "You cannot add a timer on a different day."
+msgstr "別の日にタイマーを追加することはできません。"
 
-#: inc/task.class.php:1300
+#: inc/task.class.php:1247
 msgid "Today is marked as absence you can not initialize the timer"
 msgstr "本日不在となっているため、タイマーを初期化できません"
 
-#: inc/task.class.php:1305
+#: inc/task.class.php:1252
 msgid "Timer has not been initialized"
 msgstr "タイマーが初期化されていません"
 
-#: inc/task.class.php:1314
+#: inc/task.class.php:1261
 msgid "You are already doing a waypoint"
 msgstr "すでに中間地点で作業中です"
 
-#: inc/task.class.php:1351 inc/task.class.php:1356
+#: inc/task.class.php:1298 inc/task.class.php:1303
 msgid "Technician not in charge of the task"
 msgstr "タスクを担当していない技術者"
 
-#: inc/task.class.php:1362
+#: inc/task.class.php:1309
 msgid "A user is already performing the task"
 msgstr "そのタスクはユーザーがすでに実行中"
 
-#: inc/task.class.php:1397
+#: inc/task.class.php:1344
 #, php-format
 msgid "You are already working on %s"
-msgstr "You are already working on %s"
+msgstr "あなたはすでに %s の作業中です。"
 
-#: inc/task.class.php:1428
+#: inc/task.class.php:1375
 msgid "Timer started"
 msgstr "タイマーをスタートしました"
 
-#: inc/task.class.php:1486 inc/task.class.php:1565 inc/task.class.php:1599
+#: inc/task.class.php:1433 inc/task.class.php:1513 inc/task.class.php:1548
 msgid "Timer completed"
 msgstr "タイマー完了"
 
-#: inc/task.class.php:1504 inc/task.class.php:1582
+#: inc/task.class.php:1451 inc/task.class.php:1530
 msgid "Only the user who initiated the task can close it"
 msgstr "開始ユーザーのみタスクを終了可"
 
-#: inc/task.class.php:1507
+#: inc/task.class.php:1454
 msgid "The task had not been initialized"
 msgstr "タスクは初期化されていませんでした"
