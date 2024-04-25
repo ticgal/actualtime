@@ -442,6 +442,13 @@ JAVASCRIPT;
                   || $config->showInHelpdesk()
                ) {
 
+                  if (PluginActualtimeSourcetimer::checkItemtypeRight($itemtype) && (countElementsInTable(PluginActualtimeTask::getTable(), ['items_id' => $task_id, 'itemtype' => $itemtype, 'NOT' => ['actual_end' => NULL]]) > 0) && PluginActualtimeSourcetimer::canModify($itemtype, $task_id)) {
+                     $html .= "<div class='dropdown ms-2'>";
+                     $html .= "<a href='#' data-bs-toggle='modal' data-bs-target='#add_time_{$task_id}'>";
+                     $html .= "<span class='fas fa-calendar-plus control_item' title='" . __("Modify timers", "actualtime") . "'></span>";
+                     $html .= "</a></div>";
+                  }
+
                   $html .= "<div class='row center'>";
                   $html .= "<div class='col-12 col-md-7'>";
                   $html .= "<div class='b'>" . __("Actual Duration", 'actualtime') . "</div>";
@@ -845,7 +852,21 @@ JAVASCRIPT;
       ];
       $html = "";
       foreach ($DB->request($query) as $id => $row) {
-         $html .= "<div class='row center'><div class='col-12 col-md-7'>" . $row['actual_begin'] . "</div><div class='col-12 col-md-5'>" . HTML::timestampToString($row['actual_actiontime']) . "</div></div>";
+         
+         $html .= "<div class='row center'><div class='col-12 col-md-7'>" . $row['actual_begin'] . "</div>";
+         $html .= "<div class='col-12 col-md-5'>" . HTML::timestampToString($row['actual_actiontime']);
+         if (countElementsInTable(PluginActualtimeSourcetimer::getTable(), ['plugin_actualtime_tasks_id' => $row['id']]) > 0) {
+            $source = new PluginActualtimeSourcetimer();
+            $source->getFromDBByCrit([
+               'plugin_actualtime_tasks_id' => $row['id']
+            ]);
+            $comment = __("Original end date", "actualtime") . ": " . $source->fields['source_end'] . "<br>";
+            $comment .= __("Original duration", "actualtime") . ": " . HTML::timestampToString($source->fields['source_actiontime']) . "<br>";
+            $comment .= sprintf(__("First modification by %s", "actualtime"), getUserName($source->fields['users_id']));
+            $html .= Html::showToolTip($comment, ['display' => false]);
+         }
+         $html .= "</div>";
+         $html .= "</div>";
       }
       return $html;
    }
@@ -1556,6 +1577,32 @@ JAVASCRIPT;
       return $result;
    }
 
+   public function prepareInputForUpdate($input)
+	{
+      $input = parent::prepareInputForUpdate($input);
+
+      if (isset($input['is_modified'])) {
+         $this->getFromDB($input['id']);
+         $itemtype = $this->fields['itemtype'];
+         $item_id = $this->fields['items_id'];
+         
+         $task = new $itemtype();
+			if ($task->getFromDB($item_id)) {
+            if (is_a($task, CommonDBChild::class, true)) {
+               $parent = getItemForItemtype($task::$itemtype);
+            } else {
+               $parent = getItemForItemtype($task->getItilObjectItemType());
+            }
+            $item_id = $task->fields[$parent->getForeignKeyField()];
+            $itemtype = $parent::getType();
+         }
+
+         Log::history($item_id, $itemtype, ['0', $this->fields['actual_end'], $input['actual_end']]);
+      }
+
+      return $input;
+   }
+
    static function install(Migration $migration)
    {
       global $DB;
@@ -1581,6 +1628,7 @@ JAVASCRIPT;
             `origin_end` INT {$default_key_sign} NOT NULL DEFAULT 0,
             `override_begin` TIMESTAMP NULL DEFAULT NULL,
             `override_end` TIMESTAMP NULL DEFAULT NULL,
+            `is_modified` TINYINT NOT NULL DEFAULT '0',
             PRIMARY KEY (`id`),
             KEY `item` (`itemtype`, `items_id`),
             KEY `users_id` (`users_id`)
@@ -1602,6 +1650,8 @@ JAVASCRIPT;
          $migration->addField($table, 'items_id', "int {$default_key_sign} NOT NULL DEFAULT '0'", ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')]);
          $migration->addKey($table, ['itemtype', 'items_id'], 'item');
          $migration->dropField($table, 'tickettasks_id');
+
+         $migration->addField($table, 'is_modified', 'bool');
 
          $migration->migrationOneTable($table);
       }

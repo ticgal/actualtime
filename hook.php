@@ -72,6 +72,18 @@ function plugin_actualtime_item_add($item)
    PluginActualtimeTask::afterAdd($item);
 }
 
+function plugin_actualtime_postshowitem($params = []) {
+   $item = isset($params['item']) ? $params['item'] : null;
+   if (is_null($item)) {
+      return false;
+   }
+   PluginActualtimeTask::postShowItem($params);
+   
+   if (isset($_SESSION['glpiactiveprofile']['interface']) && $_SESSION['glpiactiveprofile']['interface'] == 'central') {
+      PluginActualtimeSourcetimer::postShowItem($params);
+   }
+}
+
 function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
 {
    global $DB, $CFG_GLPI;
