@@ -854,8 +854,12 @@ JAVASCRIPT;
       foreach ($DB->request($query) as $id => $row) {
          
          $html .= "<div class='row center'><div class='col-12 col-md-7'>" . $row['actual_begin'] . "</div>";
-         $html .= "<div class='col-12 col-md-5'>" . HTML::timestampToString($row['actual_actiontime']);
-         if (countElementsInTable(PluginActualtimeSourcetimer::getTable(), ['plugin_actualtime_tasks_id' => $row['id']]) > 0) {
+         $style = "";
+         if ($row['is_modified']) {
+            $style = "color: red;font-weight: bold;font-style: italic;";
+         }
+         $html .= "<div class='col-12 col-md-5' style='$style'>" . HTML::timestampToString($row['actual_actiontime']);
+         if ($row['is_modified']) {
             $source = new PluginActualtimeSourcetimer();
             $source->getFromDBByCrit([
                'plugin_actualtime_tasks_id' => $row['id']
@@ -1002,7 +1006,11 @@ JAVASCRIPT;
                $timercolor = (self::checkTimerActive($task_id, $itemtype) ? 'red' : 'black');
                // Anchor to find correct span, even when user has no update
                // right on status checkbox
-               $icon = "<span class='badge text-wrap ms-1 d-none d-md-block' style='color:{$timercolor}'><i id='actualtime_faclock_{$task_id}_{$rand}' class='fa{$fa_icon}'></i> <span id='actualtime_timer_{$task_id}_box_{$rand}'></span></span>";
+               $italic = '';
+               if (countElementsInTable(self::getTable(), ['items_id' => $task_id, 'itemtype' => $itemtype, 'is_modified' => 1]) > 0) {
+                  $italic = 'font-style: italic;';
+               }
+               $icon = "<span class='badge text-wrap ms-1 d-none d-md-block' style='color:{$timercolor};{$italic}'><i id='actualtime_faclock_{$task_id}_{$rand}' class='fa{$fa_icon}'></i> <span id='actualtime_timer_{$task_id}_box_{$rand}'></span></span>";
                echo "<div id='actualtime_anchor_{$task_id}_{$rand}'></div>";
                $script = <<<JAVASCRIPT
 $(document).ready(function() {
