@@ -27,14 +27,16 @@
  @since     2018-2022
  ----------------------------------------------------------------------
 */
+global $CFG_GLPI;
 
 include("../../../inc/includes.php");
 
 if (!isset($_POST["itemtype"])) {
 	Html::back();
 }
-if (PluginActualtimeSourcetimer::checkItemtypeRight($_POST["itemtype"]) && PluginActualtimeSourcetimer::canModify($_POST["itemtype"], $_POST["items_is"])) {
+if (PluginActualtimeSourcetimer::checkItemtypeRight($_POST["itemtype"]) && PluginActualtimeSourcetimer::canModify($_POST["itemtype"], $_POST["items_id"])) {
 	if (isset($_POST["update"])) {
+		$config = new PluginActualtimeConfig;
 		foreach ($_POST['actual_end'] as $key => $value) {
 			if (!empty($value)) {
 				$actualtime = new PluginActualtimeTask();
@@ -61,6 +63,22 @@ if (PluginActualtimeSourcetimer::checkItemtypeRight($_POST["itemtype"]) && Plugi
 					}
 				}
 			}
+		}
+
+		if ($config->autoUpdateDuration()) {
+			$task_id = $_POST["items_id"];
+			$itemtype = $_POST["itemtype"];
+			$task = new $itemtype();
+			$task->getFromDB($task_id);
+			$input = [
+				'id' => $task_id,
+			];
+			if (isset($task->fields['actiontime'])) {
+			   $input['actiontime'] = ceil(PluginActualtimeTask::totalEndTime($task_id, $itemtype) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
+			} else {
+			   $input['effective_duration'] = ceil(PluginActualtimeTask::totalEndTime($task_id, $itemtype) / ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP)) * ($CFG_GLPI["time_step"] * MINUTE_TIMESTAMP);
+			}
+			$task->update($input);
 		}
 	}
 }

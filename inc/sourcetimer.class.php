@@ -150,7 +150,7 @@ JAVASCRIPT;
 
       echo "<form name='form' id='form' method='post' action='" . $this->getFormURL() . "' enctype='multipart/form-data'>";
       echo Html::hidden('itemtype', ['value' => $itemtype]);
-      echo Html::hidden('items_is', ['value' => $items_id]);
+      echo Html::hidden('items_id', ['value' => $items_id]);
 
       $query = [
          'FROM' => PluginActualtimeTask::getTable(),
