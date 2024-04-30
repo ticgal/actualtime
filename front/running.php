@@ -36,7 +36,7 @@ $plugin = new Plugin();
 if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) {
    Html::displayNotFoundError();
 }
-Session::checkRight('user', READ);
+Session::checkRight('plugin_actualtime_running', READ);
 
 Html::header(PluginActualtimeRunning::getTypeName(Session::getPluralNumber()), '', "admin", "pluginactualtimerunning");
 
