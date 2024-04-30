@@ -1,5 +1,11 @@
 # Actualtime
 
+## 3.1.0 - 30/04/2024
+### Features
+- Modify the end date of timers
+### Bugfixes
+- Fix permissions check of the timers running
+
 ## 3.0.1 - 15/04/2024
 ### Features
 - Use global functions
