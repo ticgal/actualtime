@@ -80,6 +80,16 @@ class PluginActualtimeProfile extends Profile
 			]
 		);
 
+		if ($profile->fields['interface'] == 'central') {
+			$profile->displayRightsChoiceMatrix(
+				self::getCentralRights(),
+				[
+					'canedit'       => $canedit,
+					'default_class' => 'tab_bg_2',
+				]
+			);
+		}
+
 		$profile->showLegend();
 		if ($canedit) {
 			echo "<div class='center'>";
@@ -93,11 +103,24 @@ class PluginActualtimeProfile extends Profile
 
 	public static function getGeneralRights()
 	{
-		return [[
-			'rights' => [READ => __('Read')],
-			'label' => __("Running timers", "actualtime"),
-			'field' => 'plugin_actualtime_running'
-		]];
+		return [
+			[
+				'rights' => [READ => __('Read')],
+				'label' => __("Running timers", "actualtime"),
+				'field' => 'plugin_actualtime_running'
+			]
+		];
+	}
+
+	public static function getCentralRights()
+	{
+		return [
+			[
+				'itemtype' => PluginActualtimeSourcetimer::getType(),
+				'label' => __("Modify timers", "actualtime"),
+				'field' => PluginActualtimeSourcetimer::$rightname
+			]
+		];
 	}
 
 	static function uninstall()

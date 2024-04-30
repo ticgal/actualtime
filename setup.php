@@ -30,7 +30,7 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_ACTUALTIME_VERSION', '3.0.1');
+define('PLUGIN_ACTUALTIME_VERSION', '3.1.0-beta1');
 
 
 // Minimal GLPI version, inclusive
@@ -85,7 +85,7 @@ function plugin_init_actualtime()
          'ChangeTask' => 'plugin_actualtime_item_update',
          'ProjectTask' => 'plugin_actualtime_item_update',
       ];
-      $PLUGIN_HOOKS['post_show_item']['actualtime'] = ['PluginActualtimeTask', 'postShowItem'];
+      $PLUGIN_HOOKS[Hooks::POST_SHOW_ITEM]['actualtime'] = 'plugin_actualtime_postshowitem';
       if (Session::getLoginUserID()) {
          $PLUGIN_HOOKS['add_javascript']['actualtime'] = 'js/actualtime.js';
       }

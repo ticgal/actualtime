@@ -28,18 +28,25 @@
  ----------------------------------------------------------------------
 */
 
-include('../../../inc/includes.php');
+include("../../../inc/includes.php");
 
-global $CFG_GLPI;
+header("Content-Type: text/html; charset=UTF-8");
+Html::header_nocache();
 
-$plugin = new Plugin();
-if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) {
-   Html::displayNotFoundError();
+Session::checkLoginUser();
+
+if (isset($_REQUEST["itemtype"]) && isset($_REQUEST["task_id"])){
+	if (PluginActualtimeSourcetimer::checkItemtypeRight($_REQUEST["itemtype"])) {
+		Html::popHeader(
+			PluginActualtimeSourcetimer::getTypeName(1),
+			$_SERVER['PHP_SELF'],
+			false,
+			'',
+			'',
+			PluginActualtimeSourcetimer::getType()
+		);
+		$source = new PluginActualtimeSourcetimer();
+		$source->modalForm($_REQUEST["itemtype"], $_REQUEST["task_id"]);
+		Html::popFooter();
+	}
 }
-Session::checkRight('plugin_actualtime_running', READ);
-
-Html::header(PluginActualtimeRunning::getTypeName(Session::getPluralNumber()), '', "admin", "pluginactualtimerunning");
-
-PluginActualtimeRunning::show();
-
-Html::footer();
