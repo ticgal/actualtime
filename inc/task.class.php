@@ -1493,7 +1493,7 @@ JAVASCRIPT;
       $plugin = new Plugin();
 
       if (self::checkTimerActive($task_id, $itemtype)) {
-         if (self::checkUser($task_id, $itemtype, Session::getLoginUserID())) {
+         if (self::checkUser($task_id, $itemtype, Session::getLoginUserID()) || $origin == self::AUTO) {
             $actual_begin = self::getActualBegin($task_id, $itemtype);
             $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($actual_begin));
             $actualtime = new self();
@@ -1553,7 +1553,7 @@ JAVASCRIPT;
                } else {
                   $parent = $task->getItilObjectItemType();
                }
-               PluginGappextendedPush::sendActualtime($task->fields[getForeignKeyFieldForItemType($parent)], $task_id, $result, Session::getLoginUserID(), false, $parent);
+               PluginGappextendedPush::sendActualtime($task->fields[getForeignKeyFieldForItemType($parent)], $task_id, $result, $actualtime->fields['users_id'], false, $parent);
             }
          } else {
             $result['message'] = __("Only the user who initiated the task can close it", 'actualtime');
