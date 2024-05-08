@@ -1554,6 +1554,19 @@ JAVASCRIPT;
                   $parent = $task->getItilObjectItemType();
                }
                PluginGappextendedPush::sendActualtime($task->fields[getForeignKeyFieldForItemType($parent)], $task_id, $result, $actualtime->fields['users_id'], false, $parent);
+
+               $timerquery = [
+						'FROM' => PluginGappextendedTimer::getTable(),
+						'WHERE' => [
+							'items_id' => $timer_id,
+							'itemtype' => PluginActualtimeTask::getType()
+						]
+					];
+
+					foreach ($DB->request($timerquery) as $timerrow) {
+						$timer = new PluginGappextendedTimer();
+						$timer->delete(['id' => $timerrow['id']]);
+					}
             }
          } else {
             $result['message'] = __("Only the user who initiated the task can close it", 'actualtime');
