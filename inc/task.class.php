@@ -919,7 +919,7 @@ JAVASCRIPT;
          }
          if (array_key_exists('users_id_tech', $item->input)) {
             if ($item->input['users_id_tech'] != $item->fields['users_id_tech']) {
-               self::stopTimer($item->input['id'], $itemtype, self::AUTO);
+               self::pauseTimer($item->input['id'], $itemtype, self::AUTO);
                if ($config->autoUpdateDuration()) {
                   unset($item->input['actiontime']);
                }
