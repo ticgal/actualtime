@@ -1277,7 +1277,7 @@ JAVASCRIPT;
             return $result;
          } else {
             $timer_id = PluginTamTam::checkWorking(Session::getLoginUserID());
-            if ($timer_id == 0) {
+            if ($timer_id == 0 || PluginTamTam::checkCurrentTamType() == 'coffee_break') {
                $result['message'] = "<a href='" . $CFG_GLPI['root_doc'] . "/front/preference.php?forcetab=PluginTamTam$1'>" . __("Timer has not been initialized", 'tam') . "</a>";
                return $result;
             }
