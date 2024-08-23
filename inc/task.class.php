@@ -190,6 +190,7 @@ class PluginActualtimeTask extends CommonDBTM
 
       switch ($item->getType()) {
          case 'ChangeTask':
+         case 'ProblemTask':
          case 'TicketTask':
             if ($item->getID()) {
 
@@ -986,6 +987,7 @@ JAVASCRIPT;
       $config = new PluginActualtimeConfig();
       switch ($item->getType()) {
          case 'TicketTask':
+         case 'ProblemTask':
          case 'ChangeTask':
 
             $task_id = $item->getID();

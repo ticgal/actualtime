@@ -88,7 +88,7 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution)
 {
    global $DB, $CFG_GLPI;
 
-   if ($solution->input['itemtype'] == Ticket::getType() || $solution->input['itemtype'] == Change::getType()) {
+   if ($solution->input['itemtype'] == Ticket::getType() || $solution->input['itemtype'] == Change::getType() || $solution->input['itemtype'] == Problem::getType()) {
 
       $parent = new $solution->input['itemtype']();
       $taskitemtype = $parent->getTaskClass();

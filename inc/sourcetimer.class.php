@@ -38,6 +38,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
    const TICKET  = 1024;
    const CHANGE = 2048;
    const PROJECT  = 4096;
+   const PROBLEM  = 8192;
 
    public function getRights($interface = 'central')
    {
@@ -46,6 +47,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
             self::TICKET  => __('Modify tickets', 'actualtime'),
             self::CHANGE => __('Modify changes', 'actualtime'),
             self::PROJECT => __('Modify projects', 'actualtime'),
+            self::PROBLEM => __('Modify problems', 'actualtime'),
          ];
       }
       return [];
@@ -59,6 +61,9 @@ class PluginActualtimeSourcetimer extends CommonDBTM
             break;
          case 'ChangeTask':
             return Session::haveRight(self::$rightname, self::CHANGE);
+            break;
+         case 'ProblemTask':
+            return Session::haveRight(self::$rightname, self::PROBLEM);
             break;
          case 'ProjectTask':
             return Session::haveRight(self::$rightname, self::PROJECT);
@@ -75,6 +80,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
 
       switch ($itemtype) {
          case 'TicketTask':
+         case 'ProblemTask':
          case 'ChangeTask':
             $task = new $itemtype();
             if ($task->getFromDB($items_id)) {

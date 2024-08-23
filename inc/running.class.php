@@ -186,6 +186,42 @@ JAVASCRIPT;
 				$atable.'.actual_end' => null,
 			] + getEntitiesRestrictCriteria($changetable),
 		]);
+		
+		//Problem
+		$problemtable = Problem::getTable();
+		$tasktable = ProblemTask::getTable();
+
+		$queryproblem = new \QuerySubQuery([
+			'SELECT' => [
+				$atable . '.*',
+				$tasktable . '.problems_id',
+			],
+			'FROM' => $atable,
+			'INNER JOIN' => [
+				$tasktable => [
+					'ON' => [
+						$tasktable => 'id',
+						$atable => 'items_id',[
+							'AND' => [
+								$atable.'.itemtype' => ProblemTask::getType()
+							]
+						]
+					]
+				],
+				$problemtable => [
+					'ON' => [
+						$problemtable => 'id',
+						$tasktable => 'problems_id'
+					]
+				],
+			],
+			'WHERE' => [
+				[
+					'NOT' => [$atable.'.actual_begin' => null],
+				],
+				$atable.'.actual_end' => null,
+			] + getEntitiesRestrictCriteria($problemtable),
+		]);
 
 		//Project
 		$projecttable = Project::getTable();
@@ -223,7 +259,7 @@ JAVASCRIPT;
 			] + getEntitiesRestrictCriteria($projecttable),
 		]);
 
-		$union = new \QueryUnion([$queryticket, $querychange, $queryproject]);
+		$union = new \QueryUnion([$queryticket, $querychange, $queryproblem, $queryproject]);
 
 		$iteratortime = $DB->request(['FROM' => $union]);
 		if ($iteratortime->count() > 0) {

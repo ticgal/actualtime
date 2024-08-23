@@ -78,11 +78,13 @@ function plugin_init_actualtime()
       $PLUGIN_HOOKS['post_item_form']['actualtime'] = ['PluginActualtimeTask', 'postForm'];
       $PLUGIN_HOOKS['show_item_stats']['actualtime'] = [
          'Ticket' => 'plugin_actualtime_item_stats',
-         'Change' => 'plugin_actualtime_item_stats'
+         'Change' => 'plugin_actualtime_item_stats',
+         'Problem' => 'plugin_actualtime_item_stats'
       ];
       $PLUGIN_HOOKS['pre_item_update']['actualtime'] = [
          'TicketTask' => 'plugin_actualtime_item_update',
          'ChangeTask' => 'plugin_actualtime_item_update',
+         'ProblemTask' => 'plugin_actualtime_item_update',
          'ProjectTask' => 'plugin_actualtime_item_update',
       ];
       $PLUGIN_HOOKS[Hooks::POST_SHOW_ITEM]['actualtime'] = 'plugin_actualtime_postshowitem';
@@ -92,11 +94,13 @@ function plugin_init_actualtime()
       $PLUGIN_HOOKS['item_purge']['actualtime'] = [
          'TicketTask' => 'plugin_actualtime_item_purge',
          'ChangeTask' => 'plugin_actualtime_item_purge',
+         'ProblemTask' => 'plugin_actualtime_item_purge',
          'ProjectTask' => 'plugin_actualtime_item_purge',
       ];
       $PLUGIN_HOOKS[Hooks::ITEM_DELETE]['actualtime'] = [
          'Ticket' => 'plugin_actualtime_parent_delete',
          'Change' => 'plugin_actualtime_parent_delete',
+         'Problem' => 'plugin_actualtime_parent_delete',
          'Project' => 'plugin_actualtime_project_delete',
       ];
       $PLUGIN_HOOKS['pre_item_add']['actualtime'] = [
@@ -110,7 +114,8 @@ function plugin_init_actualtime()
 
       $PLUGIN_HOOKS['item_add']['actualtime'] = [
          'TicketTask' => 'plugin_actualtime_item_add',
-         'ChangeTask' => 'plugin_actualtime_item_add'
+         'ChangeTask' => 'plugin_actualtime_item_add',
+         'ProblemTask' => 'plugin_actualtime_item_add'
       ];
 
       if (Session::haveRight('plugin_actualtime_running', READ)) {
