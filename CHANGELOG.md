@@ -1,5 +1,12 @@
 # Actualtime
 
+## 3.1.1 - 10/10/2024
+### Bugfixes
+- Fix change tech
+- Fix warning
+- Fix solution check
+- Fix tam check
+
 ## 3.1.0 - 30/04/2024
 ### Features
 - Modify the end date of timers
