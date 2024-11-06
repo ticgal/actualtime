@@ -81,7 +81,7 @@ function plugin_init_actualtime(): void
         // Add settings form as a tab on Setup - General page
         Plugin::registerClass(PluginActualtimeConfig::class, ['addtabon' => 'Config']);
 
-        Plugin::registerClass('PluginActualtimeTask', ['planning_types' => true]);
+        Plugin::registerClass(PluginActualtimeTask::class, ['planning_types' => true]);
 
         // Hooks
         $PLUGIN_HOOKS[Hooks::POST_ITEM_FORM]['actualtime'] = [PluginActualtimeTask::class, 'postForm'];
@@ -118,23 +118,23 @@ function plugin_init_actualtime(): void
             ChangeTask::class   => 'plugin_actualtime_item_add'
         ];
 
+        $PLUGIN_HOOKS[Hooks::POST_SHOW_ITEM]['actualtime'] = 'plugin_actualtime_postshowitem';
+
+        $PLUGIN_HOOKS[Hooks::DASHBOARD_CARDS]['actualtime'] = [PluginActualtimeDashboard::class, 'dashboardCards'];
+
         $config = new PluginActualtimeConfig();
         if ($config->showTimerPopup()) {
            // This hook is not needed if not showing popup
             $PLUGIN_HOOKS[Hooks::POST_SHOW_TAB]['actualtime'] = [PluginActualtimeTask::class, 'postShowTab'];
         }
 
-        if (Session::haveRight('plugin_actualtime_running', READ)) {
-            $PLUGIN_HOOKS['menu_toadd']['actualtime'] = ['admin' => 'PluginActualtimeRunning'];
-        }
-
-        $PLUGIN_HOOKS[Hooks::POST_SHOW_ITEM]['actualtime'] = 'plugin_actualtime_postshowitem';
-
         if (Session::getLoginUserID()) {
             $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = 'js/actualtime.js';
         }
 
-        $PLUGIN_HOOKS[Hooks::DASHBOARD_CARDS]['actualtime'] = [PluginActualtimeDashboard::class, 'dashboardCards'];
+        if (Session::haveRight('plugin_actualtime_running', READ)) {
+            $PLUGIN_HOOKS['menu_toadd']['actualtime'] = ['admin' => 'PluginActualtimeRunning'];
+        }
 
         // Standard settings link, on Setup - Plugins page
         $PLUGIN_HOOKS['config_page']['actualtime'] = 'front/config.form.php';

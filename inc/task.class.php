@@ -1521,28 +1521,44 @@ JAVASCRIPT;
             }
             $parent_key = $parent->getForeignKeyField();
             $parent_id = $task->fields[$parent_key];
-           //$result['message'] = __("You are already doing a task", 'actualtime') . " " . __("Ticket") . "$ticket_id";
-            $url = $parent->getFormURLWithID($parent_id);
 
+            $active_task_id = 0;
+            $active_task_itemtype = '';
+            $active_task_parent_id = 0;
+            $active_task_parent_itemtype = '';
             $DB = DBConnection::getReadConnection();
             $iterator = $DB->request([
-            'FROM' => $itemtype::getTable(),
-            'WHERE' => [$parent_key => $parent_id]
+                'FROM'  => self::getTable(),
+                'WHERE' => [
+                    'users_id'      => Session::getLoginUserID(),
+                    'actual_end'    => null,
+                ],
+                'LIMIT' => 1
             ]);
-
-            $active_task = '';
-            foreach ($iterator as $parenttask) {
-                if (self::checkTimerActive($parenttask['id'], $itemtype)) {
-                    $active_task = $parenttask['id'];
-                    break;
+            if ($row = $iterator->current()) {
+                // Active task found, get its id and itemtype
+                $active_task_id = $row['items_id'];
+                $active_task_itemtype = $row['itemtype'];
+                $tmp_task = new $active_task_itemtype();
+                if ($tmp_task->getFromDB($active_task_id)) {
+                    // get parent id and itemtype, allowing TicketTask, ProjectTask, ChangeTask..
+                    $dbu = new DbUtils();
+                    $active_task_parent_itemtype = $tmp_task->getItilObjectItemType();
+                    $tmp_parent_table = $dbu->getTableForItemType($active_task_parent_itemtype);
+                    $tmp_key = $dbu->getForeignKeyFieldForTable($tmp_parent_table);
+                    $active_task_parent_id = $tmp_task->fields[$tmp_key] ?? 0;
                 }
             }
 
-            $message = sprintf(__('You are already working on %s', 'actualtime'), $parent::getTypeName(1));
-            $link = '<a href="' . $url . '">#' . $parent_id . '</a>';
-            $message .= ' ' . $link;
-            if ($active_task != '') {
-                $message .= ' (' . __('Task') . ' #' . $active_task . ')';
+            $message = __('Error');
+            if ($active_task_parent_itemtype != "" && $active_task_parent_id > 0) {
+                $url = (new $active_task_parent_itemtype())->getFormURLWithID($active_task_parent_id);
+                $message = sprintf(__('You are already working on %s', 'actualtime'), $active_task_parent_itemtype);
+                $link = '<a href="' . $url . '">#' . $active_task_parent_id . '</a>';
+                $message .= ' ' . $link;
+                if ($active_task_id > 0) {
+                    $message .= ' (' . __('Task') . ' #' . $active_task_id . ')';
+                }
             }
 
             $result['message'] = $message;

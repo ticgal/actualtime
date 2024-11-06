@@ -115,7 +115,10 @@ if (isset($_POST["action"])) {
 } else {
    // For modal windows
     $parts = parse_url($_SERVER['REQUEST_URI']);
-    parse_str($parts['query'], $query);
+    $query = [];
+    if (isset($parts['query'])) {
+        parse_str($parts['query'], $query);
+    }
     if (isset($query['showform'])) {
         $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
         $itemtype = PluginActualtimeTask::getItemtype(Session::getLoginUserID());
