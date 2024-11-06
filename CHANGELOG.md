@@ -1,5 +1,9 @@
 # Actualtime
 
+## 3.1.2 - 06/11/2024
+### Bugfixes
+- Fix active task alert showing and redirecting to the correct page
+
 ## 3.1.1 - 10/10/2024
 ### Bugfixes
 - Fix change tech
