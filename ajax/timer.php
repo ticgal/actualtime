@@ -122,6 +122,9 @@ if (isset($_POST["action"])) {
     if (isset($query['showform'])) {
         $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
         $itemtype = PluginActualtimeTask::getItemtype(Session::getLoginUserID());
+        if ($task_id == 0 || $itemtype == '') {
+            exit;
+        }
         $item = getItemForItemtype($itemtype);
         $item->getFromDB($task_id);
         $rand = mt_rand();

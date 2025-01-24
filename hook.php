@@ -124,6 +124,10 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
     /** @var \DBmysql $DB */
     global $DB;
 
+    if (!isset($solution->input) || empty($solution->input)) {
+        return;
+    }
+
     if (
         $solution->input['itemtype'] == Ticket::getType()
         || $solution->input['itemtype'] == Change::getType()

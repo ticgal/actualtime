@@ -38,34 +38,25 @@ class PluginActualtimeProfile extends Profile
     public static $rightname = 'profile';
 
     /**
-     * getTabNameForItem
-     *
-     * @param  mixed $item
-     * @param  mixed $withtemplate
-     * @return string
+     * {@inheritDoc}
      */
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string
     {
         switch ($item->getType()) {
             case 'Profile':
                 return self::createTabEntry(PLUGIN_ACTUALTIME_NAME);
-                break;
         }
         return '';
     }
 
     /**
-     * displayTabContentForItem
-     *
-     * @param  mixed $item
-     * @param  mixed $tabnum
-     * @param  mixed $withtemplate
-     * @return bool
+     * {@inheritDoc}
      */
     public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0): bool
     {
         switch ($item->getType()) {
-            case 'Profile':
+            case Profile::class:
+                /** @var Profile $item */
                 $profile = new self();
                 $profile->showForm($item->getID());
                 break;
@@ -74,11 +65,7 @@ class PluginActualtimeProfile extends Profile
     }
 
     /**
-     * showForm
-     *
-     * @param  mixed $profiles_id
-     * @param  mixed $options
-     * @return bool
+     * {@inheritDoc}
      */
     public function showForm($profiles_id, $options = []): bool
     {
@@ -123,6 +110,8 @@ class PluginActualtimeProfile extends Profile
             Html::closeForm();
         }
         echo "</div>";
+
+        return true;
     }
 
     /**
@@ -160,13 +149,15 @@ class PluginActualtimeProfile extends Profile
     /**
      * uninstall
      *
+     * @param Migration $migration
      * @return void
      */
-    public static function uninstall(): void
+    public static function uninstall(Migration $migration): void
     {
         /** @var \DBmysql $DB */
         global $DB;
 
+        $migration->displayMessage("Deleting actualtime profile rights");
         $table = ProfileRight::getTable();
         $query = "DELETE FROM $table WHERE `name` LIKE '%plugin_actualtime%'";
         $DB->request($query) or die($DB->error());

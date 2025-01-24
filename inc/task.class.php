@@ -1152,7 +1152,7 @@ JAVASCRIPT;
                 if ($config->autoOpenRunning() && self::checkUser($task_id, $itemtype, Session::getLoginUserID())) {
                    // New created task or user has running timer on this task
                    // Open edit window automatically
-                    $ticket_id = $item->fields['tickets_id'];
+                    $ticket_id = $item->fields[$itemtype::getForeignKeyField()];
                     $div = "<div id='actualtime_autoEdit_{$task_id}_{$rand}' onclick='javascript:viewEditSubitem$ticket_id$rand(event, \"{$itemtype}\", $task_id, this, \"viewitem{$itemtype}$task_id$rand\")'></div>";
                     echo $div;
                     $script = <<<JAVASCRIPT
@@ -1817,6 +1817,7 @@ JAVASCRIPT;
             $task->getFromDB($task_id);
             $input['id'] = $task_id;
             $input['state'] = 2;
+            $input['pending'] = 0;
             $input['plugin_actualtime'] = true;
             if ($config->autoUpdateDuration()) {
                 $totalendtime = PluginActualtimeTask::totalEndTime($task_id, $itemtype);
