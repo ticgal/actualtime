@@ -1,5 +1,11 @@
 # Actualtime
 
+## [3.1.3] - 2025/01/27
+### Fixed
+- Conflict with pending reasons with glpi solutions
+- Fix ChangeTasks foreign key and integration
+- Better control over null values
+
 ## 3.1.2 - 06/11/2024
 ### Bugfixes
 - Fix active task alert showing and redirecting to the correct page
