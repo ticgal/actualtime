@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2024 by the TICgal Team.
+ * Copyright (C) 2018-2025 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -18,16 +18,16 @@
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
- * --------------------------------------------------------------------------
+ * -------------------------------------------------------------------------
  * @package   ActualTime
- * @author    the TICgal team
- * @copyright Copyright (c) 2018-2024 TICgal team
+ * @author    the TICGAL team
+ * @copyright Copyright (c) 2018-2025 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
  * @since     2018
- * ----------------------------------------------------------------------
- */
+ * -------------------------------------------------------------------------
+  */
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -46,7 +46,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
      *
      * @param  mixed $interface
      * @return array
-     */
+      */
     public function getRights($interface = 'central'): array
     {
         if ($interface == 'central') {
@@ -65,7 +65,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
      *
      * @param  mixed $itemtype
      * @return bool
-     */
+      */
     public static function checkItemtypeRight($itemtype): bool
     {
         switch ($itemtype) {
@@ -88,10 +88,10 @@ class PluginActualtimeSourcetimer extends CommonDBTM
      * @param  mixed $itemtype
      * @param  mixed $items_id
      * @return bool
-     */
+      */
     public static function canModify($itemtype, $items_id): bool
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         switch ($itemtype) {
@@ -139,7 +139,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
      *
      * @param  mixed $params
      * @return void
-     */
+      */
     public static function postShowItem($params): void
     {
         $item = $params['item'];
@@ -197,10 +197,10 @@ JAVASCRIPT;
      * @param  mixed $itemtype
      * @param  mixed $items_id
      * @return void
-     */
+      */
     public function modalForm($itemtype, $items_id): void
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         echo "<form name='form' id='form' method='post' action='" . $this->getFormURL();
@@ -252,10 +252,10 @@ JAVASCRIPT;
      *
      * @param  Migration $migration
      * @return void
-     */
+      */
     public static function install(Migration $migration): void
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $default_charset = DBConnection::getDefaultCharset();

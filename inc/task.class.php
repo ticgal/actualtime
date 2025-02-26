@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2024 by the TICgal Team.
+ * Copyright (C) 2018-2025 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -18,16 +18,16 @@
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
- * --------------------------------------------------------------------------
+ * -------------------------------------------------------------------------
  * @package   ActualTime
- * @author    the TICgal team
- * @copyright Copyright (c) 2018-2024 TICgal team
+ * @author    the TICGAL team
+ * @copyright Copyright (c) 2018-2025 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
  * @since     2018
- * ----------------------------------------------------------------------
- */
+ * -------------------------------------------------------------------------
+  */
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -44,7 +44,7 @@ class PluginActualtimeTask extends CommonDBTM
 
     /**
      * {@inheritdoc}
-     */
+      */
     public static function getTypeName($nb = 0): string
     {
         return PLUGIN_ACTUALTIME_NAME;
@@ -52,7 +52,7 @@ class PluginActualtimeTask extends CommonDBTM
 
     /**
      * {@inheritdoc}
-     */
+      */
     public static function rawSearchOptionsToAdd(): array
     {
         $tab['actualtime'] = ['name' => PLUGIN_ACTUALTIME_NAME];
@@ -117,10 +117,10 @@ class PluginActualtimeTask extends CommonDBTM
 
     /**
      * {@inheritdoc}
-     */
+      */
     public static function getSpecificValueToDisplay($field, $values, array $options = []): string
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
         if (!is_array($values)) {
             $values = [$field => $values];
@@ -187,10 +187,10 @@ class PluginActualtimeTask extends CommonDBTM
      *
      * @param  mixed $params
      * @return void
-     */
+      */
     public static function postForm($params): void
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $item = $params['item'];
@@ -503,10 +503,10 @@ JAVASCRIPT;
      * @param  mixed $task_id
      * @param  mixed $itemtype
      * @return bool
-     */
+      */
     public static function checkTech($task_id, $itemtype): bool
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -530,10 +530,10 @@ JAVASCRIPT;
      * @param  mixed $task_id
      * @param  mixed $itemtype
      * @return bool
-     */
+      */
     public static function checkTimerActive($task_id, $itemtype): bool
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -561,10 +561,10 @@ JAVASCRIPT;
      * @param  mixed $task_id
      * @param  mixed $itemtype
      * @return int
-     */
+      */
     public static function totalEndTime($task_id, $itemtype): int
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -613,10 +613,10 @@ JAVASCRIPT;
      * @param  mixed $itemtype
      * @param  mixed $user_id
      * @return bool
-     */
+      */
     public static function checkUser($task_id, $itemtype, $user_id): bool
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -646,10 +646,10 @@ JAVASCRIPT;
     *
     * @return Boolean (true if technitian IS NOT ACTIVE in any task)
     * (opposite behaviour from original version until 1.1.0)
-    **/
+    * */
     public static function checkUserFree($user_id): bool
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -675,7 +675,7 @@ JAVASCRIPT;
      *
      * @param  mixed $user_id
      * @return mixed
-     */
+      */
     public static function getParent($user_id)
     {
         if ($task_id = self::getTask($user_id)) {
@@ -701,10 +701,10 @@ JAVASCRIPT;
      *
      * @param  mixed $user_id
      * @return int
-     */
+      */
     public static function getTask($user_id): int
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -730,10 +730,10 @@ JAVASCRIPT;
      *
      * @param  mixed $user_id
      * @return string
-     */
+      */
     public static function getItemtype($user_id): string
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -763,10 +763,10 @@ JAVASCRIPT;
      * @param  mixed $task_id
      * @param  mixed $itemtype
      * @return string
-     */
+      */
     public static function getActualBegin($task_id, $itemtype): string
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -787,10 +787,10 @@ JAVASCRIPT;
      *
      * @param  CommonITILObject $parent
      * @return void
-     */
+      */
     public static function showStats(CommonITILObject $parent): void
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $config = new PluginActualtimeConfig();
@@ -920,10 +920,10 @@ JAVASCRIPT;
      * @param  mixed $task_id
      * @param  mixed $itemtype
      * @return string
-     */
+      */
     public static function getSegment($task_id, $itemtype): string
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $query = [
@@ -968,7 +968,7 @@ JAVASCRIPT;
      *
      * @param  CommonITILTask $item
      * @return void
-     */
+      */
     public static function afterAdd(CommonITILTask $item): void
     {
         if (isset($item->input['autostart']) && $item->input['autostart']) {
@@ -998,10 +998,10 @@ JAVASCRIPT;
      *
      * @param  CommonDBTM $item
      * @return CommonDBTM
-     */
+      */
     public static function preUpdate(CommonDBTM $item): CommonDBTM
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $config = new PluginActualtimeConfig();
@@ -1056,7 +1056,7 @@ JAVASCRIPT;
      *
      * @param  mixed $params
      * @return void
-     */
+      */
     public static function postShowTab($params): void
     {
         if ($itemtype = self::getItemtype(Session::getLoginUserID())) {
@@ -1084,7 +1084,7 @@ JAVASCRIPT;
      *
      * @param  mixed $params
      * @return void
-     */
+      */
     public static function postShowItem($params): void
     {
         $item = $params['item'];
@@ -1199,13 +1199,13 @@ JAVASCRIPT;
      *
      * @param  mixed $options
      * @return array
-     */
+      */
     public static function populatePlanning($options = []): array
     {
         /**
          * @var \DBmysql $DB
          * @var array $CFG_GLPI
-         */
+          */
         global $DB, $CFG_GLPI;
 
         $default_options = [
@@ -1313,7 +1313,7 @@ JAVASCRIPT;
      * @param  mixed $type
      * @param  mixed $complete
      * @return string
-     */
+      */
     public static function displayPlanningItem(array $val, $who, $type = "", $complete = 0): string
     {
         $html = "<strong>" . $val["name"] . "</strong>";
@@ -1330,10 +1330,10 @@ JAVASCRIPT;
      *
      * @param  mixed $task
      * @return array
-     */
+      */
     public static function disableButton($task): array
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $config = new PluginActualtimeConfig();
@@ -1392,13 +1392,13 @@ JAVASCRIPT;
      * @param  mixed $itemtype
      * @param  mixed $origin
      * @return array
-     */
+      */
     public static function startTimer($task_id, $itemtype, $origin = self::AUTO): array
     {
         /**
          * @var \DBmysql $DB
          * @var array $CFG_GLPI
-         */
+          */
         global $DB, $CFG_GLPI;
 
         $result = [
@@ -1602,10 +1602,10 @@ JAVASCRIPT;
      * @param  mixed $itemtype
      * @param  mixed $origin
      * @return array
-     */
+      */
     public static function pauseTimer($task_id, $itemtype, $origin = self::AUTO): array
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $result = [
@@ -1698,13 +1698,13 @@ JAVASCRIPT;
      * @param  mixed $itemtype
      * @param  mixed $origin
      * @return array
-     */
+      */
     public static function stopTimer($task_id, $itemtype, $origin = self::AUTO): array
     {
         /**
          * @var \DBmysql $DB
          * @var array $CFG_GLPI
-         */
+          */
         global $DB, $CFG_GLPI;
 
         $config = new PluginActualtimeConfig();
@@ -1832,7 +1832,7 @@ JAVASCRIPT;
 
     /**
      * {@inheritdoc}
-     */
+      */
     public function prepareInputForUpdate($input)
     {
         $input = parent::prepareInputForUpdate($input);
@@ -1864,10 +1864,10 @@ JAVASCRIPT;
      *
      * @param  Migration $migration
      * @return void
-     */
+      */
     public static function install(Migration $migration): void
     {
-        /** @var \DBmysql $DB */
+        /** @var \DBmysql $DB  */
         global $DB;
 
         $default_charset = DBConnection::getDefaultCharset();
@@ -1925,7 +1925,7 @@ JAVASCRIPT;
      *
      * @param  Migration $migration
      * @return void
-     */
+      */
     public static function uninstall(Migration $migration): void
     {
         $table = self::getTable();

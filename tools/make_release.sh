@@ -60,7 +60,7 @@ if [ -f $PARENT_FOLDER_PATH"/composer.json" ]; then
             exit 1
         else
             echo "Downloading dependencies"
-            composer install
+            composer install --no-dev
             if [ "$MOVE_TO_PUBLIC" = 1 ]; then
                 mv "$PARENT_FOLDER_PATH/vendor" "$PARENT_FOLDER_PATH/public"
             fi

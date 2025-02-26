@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2024 by the TICgal Team.
+ * Copyright (C) 2018-2025 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -18,16 +18,16 @@
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
  * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
- * --------------------------------------------------------------------------
+ * -------------------------------------------------------------------------
  * @package   ActualTime
- * @author    the TICgal team
- * @copyright Copyright (c) 2018-2024 TICgal team
+ * @author    the TICGAL team
+ * @copyright Copyright (c) 2018-2025 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
  * @since     2018
- * ----------------------------------------------------------------------
- */
+ * -------------------------------------------------------------------------
+  */
 
 include('../../../inc/includes.php');
 
