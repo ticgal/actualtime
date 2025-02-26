@@ -104,7 +104,7 @@ if (isset($_POST["action"])) {
             } else {
                 $parent = getItemForItemtype($task->getItilObjectItemType());
             }
-            $result['parent_id'] = PluginActualtimetask::getParent(Session::getLoginUserID());
+            $result['parent_id'] = PluginActualtimeTask::getParent(Session::getLoginUserID());
             $parent->getFromDB($result['parent_id']);
             $result['link'] = $parent->getLinkURL();
             $result['name'] = $parent->getTypeName(1);

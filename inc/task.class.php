@@ -43,10 +43,7 @@ class PluginActualtimeTask extends CommonDBTM
     public const ANDROID    = 3;
 
     /**
-     * getTypeName
-     *
-     * @param  mixed $nb
-     * @return string
+     * {@inheritdoc}
      */
     public static function getTypeName($nb = 0): string
     {
@@ -54,13 +51,11 @@ class PluginActualtimeTask extends CommonDBTM
     }
 
     /**
-     * rawSearchOptionsToAdd
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public static function rawSearchOptionsToAdd(): array
     {
-        $tab['actualtime'] = PLUGIN_ACTUALTIME_NAME;
+        $tab['actualtime'] = ['name' => PLUGIN_ACTUALTIME_NAME];
 
         $tab['7000'] = [
             'table'             => self::getTable(),
@@ -121,12 +116,7 @@ class PluginActualtimeTask extends CommonDBTM
     }
 
     /**
-     * getSpecificValueToDisplay
-     *
-     * @param  mixed $field
-     * @param  mixed $values
-     * @param  mixed $options
-     * @return string
+     * {@inheritdoc}
      */
     public static function getSpecificValueToDisplay($field, $values, array $options = []): string
     {
@@ -159,8 +149,7 @@ class PluginActualtimeTask extends CommonDBTM
                 switch ($options['searchopt']['type']) {
                     case 'diff':
                         $diff = $total_time - $actual_totaltime;
-                        return HTML::timestampToString($diff);
-                    break;
+                        return Html::timestampToString($diff);
 
                     case 'diff%':
                         if ($total_time == 0) {
@@ -169,32 +158,27 @@ class PluginActualtimeTask extends CommonDBTM
                             $diffpercent = 100 * ($total_time - $actual_totaltime) / $total_time;
                         }
                         return round($diffpercent, 2) . "%";
-                    break;
 
                     case 'task':
                         $query = [
                         'SELECT' => [
-                        'actual_actiontime'
+                            'actual_actiontime'
                         ],
                         'FROM' => self::getTable(),
                         'WHERE' => [
-                        'items_id' => $options['raw_data']['id'],
-                        'itemtype' => $itemtype,
+                            'items_id' => $options['raw_data']['id'],
+                            'itemtype' => $itemtype,
                         ]
                         ];
                         $task_time = 0;
                         foreach ($DB->request($query) as $actiontime) {
                             $task_time += $actiontime["actual_actiontime"];
                         }
-                        return HTML::timestampToString($task_time);
-                    break;
-
-                    default:
-                        return HTML::timestampToString($actual_totaltime);
-                    break;
+                        return Html::timestampToString($task_time);
                 }
-                break;
+                return Html::timestampToString($actual_totaltime);
         }
+
         return parent::getSpecificValueToDisplay($field, $values, $options);
     }
 
@@ -215,8 +199,9 @@ class PluginActualtimeTask extends CommonDBTM
         $config = new PluginActualtimeConfig();
 
         switch ($item->getType()) {
-            case 'ChangeTask':
-            case 'TicketTask':
+            case ChangeTask::class:
+            case TicketTask::class:
+            case ProblemTask::class:
                 if ($item->getID()) {
                     $task_id = $item->getID();
                     if (is_a($item, CommonDBChild::class, true)) {
@@ -800,7 +785,7 @@ JAVASCRIPT;
     /**
      * showStats
      *
-     * @param  mixed $parent
+     * @param  CommonITILObject $parent
      * @return void
      */
     public static function showStats(CommonITILObject $parent): void
@@ -833,8 +818,8 @@ JAVASCRIPT;
             $html = "<table class='tab_cadre_fixe'>";
             $html .= "<tr><th colspan='2'>ActualTime</th></tr>";
 
-            $html .= "<tr class='tab_bg_2'><td>" . __("Total duration") . "</td><td>" . HTML::timestampToString($total_time) . "</td></tr>";
-            $html .= "<tr class='tab_bg_2'><td>ActualTime - " . __("Total duration") . "</td><td>" . HTML::timestampToString($actual_totaltime) . "</td></tr>";
+            $html .= "<tr class='tab_bg_2'><td>" . __("Total duration") . "</td><td>" . Html::timestampToString($total_time) . "</td></tr>";
+            $html .= "<tr class='tab_bg_2'><td>ActualTime - " . __("Total duration") . "</td><td>" . Html::timestampToString($actual_totaltime) . "</td></tr>";
 
             $diff = $total_time - $actual_totaltime;
             if ($diff < 0) {
@@ -842,7 +827,7 @@ JAVASCRIPT;
             } else {
                 $color = 'black';
             }
-            $html .= "<tr class='tab_bg_2'><td>" . __("Duration Diff", "actiontime") . "</td><td style='color:" . $color . "'>" . HTML::timestampToString($diff) . "</td></tr>";
+            $html .= "<tr class='tab_bg_2'><td>" . __("Duration Diff", "actiontime") . "</td><td style='color:" . $color . "'>" . Html::timestampToString($diff) . "</td></tr>";
             if ($total_time == 0) {
                 $diffpercent = 0;
             } else {
@@ -903,15 +888,15 @@ JAVASCRIPT;
             foreach ($list as $key => $value) {
                 $html .= "<tr class='tab_bg_2'><td>" . $value['name'] . "</td>";
 
-                $html .= "<td>" . HTML::timestampToString($value['total']) . "</td>";
+                $html .= "<td>" . Html::timestampToString($value['total']) . "</td>";
 
-                $html .= "<td>" . HTML::timestampToString($value['actual_total']) . "</td>";
+                $html .= "<td>" . Html::timestampToString($value['actual_total']) . "</td>";
                 if (($value['total'] - $value['actual_total']) < 0) {
                     $color = 'red';
                 } else {
                     $color = 'black';
                 }
-                $html .= "<td style='color:" . $color . "'>" . HTML::timestampToString($value['total'] - $value['actual_total']) . "</td>";
+                $html .= "<td style='color:" . $color . "'>" . Html::timestampToString($value['total'] - $value['actual_total']) . "</td>";
                 if ($value['total'] == 0) {
                     $html .= "<td style='color:" . $color . "'>0%</td></tr>";
                 } else {
@@ -961,14 +946,14 @@ JAVASCRIPT;
             if ($row['is_modified']) {
                 $style = "color: red;font-weight: bold;font-style: italic;";
             }
-            $html .= "<div class='col-12 col-md-5' style='$style'>" . HTML::timestampToString($row['actual_actiontime']);
+            $html .= "<div class='col-12 col-md-5' style='$style'>" . Html::timestampToString($row['actual_actiontime']);
             if ($row['is_modified']) {
                 $source = new PluginActualtimeSourcetimer();
                 $source->getFromDBByCrit([
                 'plugin_actualtime_tasks_id' => $row['id']
                 ]);
                 $comment = __("Original end date", "actualtime") . ": " . $source->fields['source_end'] . "<br>";
-                $comment .= __("Original duration", "actualtime") . ": " . HTML::timestampToString($source->fields['source_actiontime']) . "<br>";
+                $comment .= __("Original duration", "actualtime") . ": " . Html::timestampToString($source->fields['source_actiontime']) . "<br>";
                 $comment .= sprintf(__("First modification by %s", "actualtime"), getUserName($source->fields['users_id']));
                 $html .= Html::showToolTip($comment, ['display' => false]);
             }
@@ -981,7 +966,7 @@ JAVASCRIPT;
     /**
      * afterAdd
      *
-     * @param  mixed $item
+     * @param  CommonITILTask $item
      * @return void
      */
     public static function afterAdd(CommonITILTask $item): void
@@ -1011,10 +996,10 @@ JAVASCRIPT;
     /**
      * preUpdate
      *
-     * @param  mixed $item
+     * @param  CommonDBTM $item
      * @return CommonDBTM
      */
-    public static function preUpdate(CommonDBTM $item)
+    public static function preUpdate(CommonDBTM $item): CommonDBTM
     {
         /** @var \DBmysql $DB */
         global $DB;
@@ -1081,7 +1066,7 @@ JAVASCRIPT;
             } else {
                 $parent = getItemForItemtype($task->getItilObjectItemType());
             }
-            if ($parent_id = PluginActualtimetask::getParent(Session::getLoginUserID())) {
+            if ($parent_id = PluginActualtimeTask::getParent(Session::getLoginUserID())) {
                 $link = $parent->getFormURLWithID($parent_id);
                 $name = $parent->getTypeName(1);
                 $script = <<<JAVASCRIPT
@@ -1110,8 +1095,9 @@ JAVASCRIPT;
         $itemtype = $item->getType();
         $config = new PluginActualtimeConfig();
         switch ($item->getType()) {
-            case 'TicketTask':
-            case 'ChangeTask':
+            case TicketTask::class:
+            case ChangeTask::class:
+            case ProblemTask::class:
                 $task_id = $item->getID();
                // Auto open needs to use correct item randomic number
                 $rand = $params['options']['rand'];
@@ -1357,13 +1343,13 @@ JAVASCRIPT;
             'message' => '',
         ];
         if ($config->fields['planned_task']) {
-            if (isset($task->fields['begin']) && !is_null($task->fields['begin'])) {
+            if (isset($task->fields['begin'])) {
                 if ($task->fields['begin'] > date("Y-m-d H:i:s")) {
                     $result['disable'] = true;
                     $result['message'] = sprintf(__("You cannot start a timer because the task was scheduled for %d.", 'actualtime'), $task->fields['begin']);
                     return $result;
                 }
-            } elseif (isset($task->fields['real_start_date']) && !is_null($task->fields['real_start_date'])) {
+            } elseif (isset($task->fields['real_start_date'])) {
                 if ($task->fields['real_start_date'] > date("Y-m-d H:i:s")) {
                     $result['disable'] = true;
                     $result['message'] = sprintf(__("You cannot start a timer because the task was scheduled for %d.", 'actualtime'), $task->fields['begin']);
@@ -1845,10 +1831,7 @@ JAVASCRIPT;
     }
 
     /**
-     * prepareInputForUpdate
-     *
-     * @param  mixed $input
-     * @return mixed
+     * {@inheritdoc}
      */
     public function prepareInputForUpdate($input)
     {
@@ -1879,7 +1862,7 @@ JAVASCRIPT;
     /**
      * install
      *
-     * @param  mixed $migration
+     * @param  Migration $migration
      * @return void
      */
     public static function install(Migration $migration): void
@@ -1914,7 +1897,7 @@ JAVASCRIPT;
                 KEY `users_id` (`users_id`)
             ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->request($query) or die($DB->error());
+            $DB->doQueryOrDie($query, $DB->error());
         } else {
             $migration->changeField($table, 'tasks_id', 'tickettasks_id', 'int');
             $migration->dropField($table, 'latitude_start');
@@ -1940,7 +1923,7 @@ JAVASCRIPT;
     /**
      * uninstall
      *
-     * @param  mixed $migration
+     * @param  Migration $migration
      * @return void
      */
     public static function uninstall(Migration $migration): void

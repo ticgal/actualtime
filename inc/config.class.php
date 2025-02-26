@@ -43,10 +43,11 @@ class PluginActualtimeConfig extends CommonDBTM
     private static $instance = null;
 
     /**
-    * PluginActualtimeConfig constructor.
-    */
+     * {@inheritDoc}
+     */
     public function __construct()
     {
+        /** @var \DBmysql $DB */
         global $DB;
 
         if ($DB->tableExists($this->getTable())) {
@@ -55,10 +56,7 @@ class PluginActualtimeConfig extends CommonDBTM
     }
 
     /**
-     * getTypeName
-     *
-     * @param  mixed $nb
-     * @return string
+     * {@inheritDoc}
      */
     public static function getTypeName($nb = 0): string
     {
@@ -156,11 +154,7 @@ class PluginActualtimeConfig extends CommonDBTM
     }
 
     /**
-     * getTabNameForItem
-     *
-     * @param  mixed $item
-     * @param  mixed $withtemplate
-     * @return string
+     * {@inheritDoc}
      */
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string
     {
@@ -171,12 +165,7 @@ class PluginActualtimeConfig extends CommonDBTM
     }
 
     /**
-     * displayTabContentForItem
-     *
-     * @param  mixed $item
-     * @param  mixed $tabnum
-     * @param  mixed $withtemplate
-     * @return bool
+     * {@inheritDoc}
      */
     public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0): bool
     {
@@ -224,7 +213,7 @@ class PluginActualtimeConfig extends CommonDBTM
      * Auto open the form for the task with a currently running timer
      * when listing tickets' tasks?
      *
-     * @return boo
+     * @return bool
      */
     public function autoOpenRunning(): bool
     {
@@ -274,7 +263,7 @@ class PluginActualtimeConfig extends CommonDBTM
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->request($query) or die($DB->error());
+            $DB->doQueryOrDie($query, $DB->error());
             $config->add([
                 'id' => 1,
                 'displayinfofor' => 0,

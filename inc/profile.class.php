@@ -160,6 +160,6 @@ class PluginActualtimeProfile extends Profile
         $migration->displayMessage("Deleting actualtime profile rights");
         $table = ProfileRight::getTable();
         $query = "DELETE FROM $table WHERE `name` LIKE '%plugin_actualtime%'";
-        $DB->request($query) or die($DB->error());
+        $DB->doQueryOrDie($query, $DB->error());
     }
 }

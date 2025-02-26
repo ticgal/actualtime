@@ -39,6 +39,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
     public const TICKET     = 1024;
     public const CHANGE     = 2048;
     public const PROJECT    = 4096;
+    public const PROBLEM    = 8192;
 
     /**
      * getRights
@@ -53,6 +54,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
                 self::TICKET    => __('Modify tickets', 'actualtime'),
                 self::CHANGE    => __('Modify changes', 'actualtime'),
                 self::PROJECT   => __('Modify projects', 'actualtime'),
+                self::PROBLEM   => __('Modify problems', 'actualtime'),
             ];
         }
         return [];
@@ -69,16 +71,14 @@ class PluginActualtimeSourcetimer extends CommonDBTM
         switch ($itemtype) {
             case 'TicketTask':
                 return Session::haveRight(self::$rightname, self::TICKET);
-            break;
             case 'ChangeTask':
                 return Session::haveRight(self::$rightname, self::CHANGE);
-            break;
+            case 'ProblemTask':
+                return Session::haveRight(self::$rightname, self::PROBLEM);
             case 'ProjectTask':
                 return Session::haveRight(self::$rightname, self::PROJECT);
-            break;
             default:
                 return false;
-            break;
         }
     }
 
@@ -97,6 +97,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
         switch ($itemtype) {
             case 'TicketTask':
             case 'ChangeTask':
+            case 'ProblemTask':
                 $task = new $itemtype();
                 if ($task->getFromDB($items_id)) {
                     $parent = getItemForItemtype($task->getItilObjectItemType());
@@ -249,7 +250,7 @@ JAVASCRIPT;
     /**
      * install
      *
-     * @param  mixed $migration
+     * @param  Migration $migration
      * @return void
      */
     public static function install(Migration $migration): void
@@ -278,7 +279,7 @@ JAVASCRIPT;
                 KEY `users_id` (`users_id`)
             ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->request($query) or die($DB->error());
+            $DB->doQueryOrDie($query, $DB->error());
         }
     }
 }

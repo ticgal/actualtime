@@ -116,7 +116,7 @@ function plugin_actualtime_postshowitem($params = []): void
 /**
  * plugin_actualtime_preSolutionAdd
  *
- * @param  mixed $solution
+ * @param  ITILSolution $solution
  * @return void
  */
 function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
@@ -124,13 +124,14 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
     /** @var \DBmysql $DB */
     global $DB;
 
-    if (!isset($solution->input) || empty($solution->input)) {
+    if (empty($solution->input)) {
         return;
     }
 
     if (
         $solution->input['itemtype'] == Ticket::getType()
         || $solution->input['itemtype'] == Change::getType()
+        || $solution->input['itemtype'] == Problem::getType()
     ) {
         $parent = new $solution->input['itemtype']();
         $taskitemtype = $parent->getTaskClass();
@@ -173,7 +174,7 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
 /**
  * plugin_actualtime_item_purge
  *
- * @param  mixed $item
+ * @param  CommonDBTM $item
  * @return void
  */
 function plugin_actualtime_item_purge(CommonDBTM $item): void
@@ -193,7 +194,7 @@ function plugin_actualtime_item_purge(CommonDBTM $item): void
 /**
  * plugin_actualtime_parent_delete
  *
- * @param  mixed $parent
+ * @param  CommonITILObject $parent
  * @return void
  */
 function plugin_actualtime_parent_delete(CommonITILObject $parent): void
@@ -243,7 +244,7 @@ function plugin_actualtime_parent_delete(CommonITILObject $parent): void
             [
                 'actual_end'        => date("Y-m-d H:i:s"),
                 'actual_actiontime' => $seconds,
-                'origin_end'        => PluginActualtimetask::AUTO,
+                'origin_end'        => PluginActualtimeTask::AUTO,
             ],
             [
                 'id' => $result['id']
@@ -255,7 +256,7 @@ function plugin_actualtime_parent_delete(CommonITILObject $parent): void
 /**
  * plugin_actualtime_project_delete
  *
- * @param  mixed $project
+ * @param  Project $project
  * @return void
  */
 function plugin_actualtime_project_delete(Project $project): void
@@ -297,7 +298,7 @@ function plugin_actualtime_project_delete(Project $project): void
             [
                 'actual_end'        => date("Y-m-d H:i:s"),
                 'actual_actiontime' => $seconds,
-                'origin_end'        => PluginActualtimetask::AUTO,
+                'origin_end'        => PluginActualtimeTask::AUTO,
             ],
             [
                 'id' => $result['id']

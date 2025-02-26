@@ -31,7 +31,7 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_ACTUALTIME_VERSION', '3.1.3');
+define('PLUGIN_ACTUALTIME_VERSION', '3.2.0-alpha.1');
 
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "10.0.10");
@@ -88,24 +88,28 @@ function plugin_init_actualtime(): void
 
         $PLUGIN_HOOKS[Hooks::SHOW_ITEM_STATS]['actualtime'] = [
             Ticket::class       => 'plugin_actualtime_item_stats',
-            Change::class       => 'plugin_actualtime_item_stats'
+            Change::class       => 'plugin_actualtime_item_stats',
+            Problem::class      => 'plugin_actualtime_item_stats',
         ];
 
         $PLUGIN_HOOKS[Hooks::PRE_ITEM_UPDATE]['actualtime'] = [
             TicketTask::class   => 'plugin_actualtime_item_update',
             ChangeTask::class   => 'plugin_actualtime_item_update',
+            ProblemTask::class  => 'plugin_actualtime_item_update',
             ProjectTask::class  => 'plugin_actualtime_item_update',
         ];
 
         $PLUGIN_HOOKS[Hooks::ITEM_DELETE]['actualtime'] = [
             Ticket::class       => 'plugin_actualtime_parent_delete',
             Change::class       => 'plugin_actualtime_parent_delete',
+            Problem::class      => 'plugin_actualtime_parent_delete',
             Project::class      => 'plugin_actualtime_project_delete',
         ];
 
         $PLUGIN_HOOKS[Hooks::ITEM_PURGE]['actualtime'] = [
             TicketTask::class   => 'plugin_actualtime_item_purge',
             ChangeTask::class   => 'plugin_actualtime_item_purge',
+            ProblemTask::class  => 'plugin_actualtime_item_purge',
             ProjectTask::class  => 'plugin_actualtime_item_purge',
         ];
 
@@ -115,7 +119,8 @@ function plugin_init_actualtime(): void
 
         $PLUGIN_HOOKS[Hooks::ITEM_ADD]['actualtime'] = [
             TicketTask::class   => 'plugin_actualtime_item_add',
-            ChangeTask::class   => 'plugin_actualtime_item_add'
+            ChangeTask::class   => 'plugin_actualtime_item_add',
+            ProblemTask::class  => 'plugin_actualtime_item_add',
         ];
 
         $PLUGIN_HOOKS[Hooks::POST_SHOW_ITEM]['actualtime'] = 'plugin_actualtime_postshowitem';
