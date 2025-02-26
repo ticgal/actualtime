@@ -54,7 +54,7 @@ class PluginActualtimeTask extends atoum {
     * ticket with already created task to start timer. In future we should
     * probably emulate those tests. Now, just testing some results methods
     * should return if there is no tasks at all.
-    */
+   */
 
    public function testCheckTech() {
       $this

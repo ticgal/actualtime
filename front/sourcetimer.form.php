@@ -27,7 +27,7 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 include("../../../inc/includes.php");
 
@@ -77,7 +77,7 @@ if (
                 'id' => $task_id,
             ];
 
-            /** @var array $CFG_GLPI  */
+            /** @var array $CFG_GLPI */
             global $CFG_GLPI;
             $totaltime = PluginActualtimeTask::totalEndTime($task_id, $itemtype);
             $step = $CFG_GLPI["time_step"];

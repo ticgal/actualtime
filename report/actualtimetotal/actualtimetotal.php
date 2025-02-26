@@ -1,6 +1,6 @@
 <?php
 
-/*
+/**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
  * Copyright (C) 2018-2025 by the TICGAL Team.

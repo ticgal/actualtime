@@ -27,7 +27,7 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 class PluginActualtimeRunning extends CommonGLPI
 {
@@ -35,7 +35,7 @@ class PluginActualtimeRunning extends CommonGLPI
 
     /**
      * {@inheritDoc}
-      */
+     */
     public static function getMenuName(): string
     {
         return PLUGIN_ACTUALTIME_NAME;
@@ -43,7 +43,7 @@ class PluginActualtimeRunning extends CommonGLPI
 
     /**
      * {@inheritDoc}
-      */
+     */
     public static function getMenuContent(): array
     {
         $menu = [
@@ -59,7 +59,7 @@ class PluginActualtimeRunning extends CommonGLPI
      * show
      *
      * @return bool
-      */
+     */
     public static function show(): bool
     {
         $rand = mt_rand();
@@ -123,10 +123,10 @@ JAVASCRIPT;
      * listRunning
      *
      * @return string
-      */
+     */
     public static function listRunning(): string
     {
-        /** @var \DBmysql $DB  */
+        /** @var \DBmysql $DB */
         global $DB;
 
         $atable = PluginActualtimeTask::getTable();

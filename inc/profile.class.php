@@ -27,7 +27,7 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -39,7 +39,7 @@ class PluginActualtimeProfile extends Profile
 
     /**
      * {@inheritDoc}
-      */
+     */
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string
     {
         switch ($item->getType()) {
@@ -51,12 +51,12 @@ class PluginActualtimeProfile extends Profile
 
     /**
      * {@inheritDoc}
-      */
+     */
     public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0): bool
     {
         switch ($item->getType()) {
             case Profile::class:
-                /** @var Profile $item  */
+                /** @var Profile $item */
                 $profile = new self();
                 $profile->showForm($item->getID());
                 break;
@@ -66,7 +66,7 @@ class PluginActualtimeProfile extends Profile
 
     /**
      * {@inheritDoc}
-      */
+     */
     public function showForm($profiles_id, array $options = []): bool
     {
         if (!Session::haveRight("profile", READ)) {
@@ -118,7 +118,7 @@ class PluginActualtimeProfile extends Profile
      * getGeneralRights
      *
      * @return array
-      */
+     */
     public static function getGeneralRights(): array
     {
         return [
@@ -134,7 +134,7 @@ class PluginActualtimeProfile extends Profile
      * getCentralRights
      *
      * @return array
-      */
+     */
     public static function getCentralRights(): array
     {
         return [
@@ -151,10 +151,10 @@ class PluginActualtimeProfile extends Profile
      *
      * @param Migration $migration
      * @return void
-      */
+     */
     public static function uninstall(Migration $migration): void
     {
-        /** @var \DBmysql $DB  */
+        /** @var \DBmysql $DB */
         global $DB;
 
         $migration->displayMessage("Deleting actualtime profile rights");

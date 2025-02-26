@@ -27,7 +27,7 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -40,7 +40,7 @@ class PluginActualtimeDashboard extends CommonDBTM
      *
      * @param  mixed $cards
      * @return array
-      */
+     */
     public static function dashboardCards($cards): array
     {
         $cards['plugin_actualtime_moreactualtimetasksbyday'] = [

@@ -27,7 +27,7 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -40,7 +40,7 @@ class PluginActualtimeProvider extends CommonDBTM
      *
      * @param  mixed $params
      * @return array
-      */
+     */
     public static function moreActualtimeTasksByDay($params = []): array
     {
         $DB = DBConnection::getReadConnection();
@@ -187,7 +187,7 @@ class PluginActualtimeProvider extends CommonDBTM
      *
      * @param  mixed $params
      * @return array
-      */
+     */
     public static function lessActualtimeTasksByDay($params = []): array
     {
         $DB = DBConnection::getReadConnection();
@@ -338,7 +338,7 @@ class PluginActualtimeProvider extends CommonDBTM
      *
      * @param  mixed $params
      * @return array
-      */
+     */
     public static function moreActualtimeUsageByDay($params = []): array
     {
         $DB = DBConnection::getReadConnection();
@@ -490,7 +490,7 @@ class PluginActualtimeProvider extends CommonDBTM
      *
      * @param  mixed $params
      * @return array
-      */
+     */
     public static function lessActualtimeUsageByDay($params = []): array
     {
         $DB = DBConnection::getReadConnection();
@@ -630,7 +630,7 @@ class PluginActualtimeProvider extends CommonDBTM
      *
      * @param  mixed $params
      * @return array
-      */
+     */
     public static function morePercentageActualtimeTasksByDay($params = []): array
     {
         $DB = DBConnection::getReadConnection();
@@ -806,7 +806,7 @@ class PluginActualtimeProvider extends CommonDBTM
      *
      * @param  mixed $params
      * @return array
-      */
+     */
     public static function lessPercentageActualtimeTasksByDay($params = []): array
     {
         $DB = DBConnection::getReadConnection();

@@ -27,14 +27,14 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 /**
  * plugin_actualtime_install
  * Install all necessary elements for the plugin
  *
  * @return bool
-  */
+ */
 function plugin_actualtime_install(): bool
 {
     $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
@@ -63,7 +63,7 @@ function plugin_actualtime_install(): bool
  *
  * @param  mixed $item
  * @return void
-  */
+ */
 function plugin_actualtime_item_stats($item): void
 {
     PluginActualtimeTask::showStats($item);
@@ -74,7 +74,7 @@ function plugin_actualtime_item_stats($item): void
  *
  * @param  mixed $item
  * @return mixed
-  */
+ */
 function plugin_actualtime_item_update($item)
 {
     return PluginActualtimeTask::preUpdate($item);
@@ -85,7 +85,7 @@ function plugin_actualtime_item_update($item)
  *
  * @param  mixed $item
  * @return mixed
-  */
+ */
 function plugin_actualtime_item_add($item)
 {
     PluginActualtimeTask::afterAdd($item);
@@ -96,7 +96,7 @@ function plugin_actualtime_item_add($item)
  *
  * @param  array $params
  * @return void
-  */
+ */
 function plugin_actualtime_postshowitem($params = []): void
 {
     $item = isset($params['item']) ? $params['item'] : null;
@@ -118,10 +118,10 @@ function plugin_actualtime_postshowitem($params = []): void
  *
  * @param  ITILSolution $solution
  * @return void
-  */
+ */
 function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
 {
-    /** @var \DBmysql $DB  */
+    /** @var \DBmysql $DB */
     global $DB;
 
     if (empty($solution->input)) {
@@ -176,10 +176,10 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
  *
  * @param  CommonDBTM $item
  * @return void
-  */
+ */
 function plugin_actualtime_item_purge(CommonDBTM $item): void
 {
-    /** @var \DBmysql $DB  */
+    /** @var \DBmysql $DB */
     global $DB;
 
     $DB->delete(
@@ -196,10 +196,10 @@ function plugin_actualtime_item_purge(CommonDBTM $item): void
  *
  * @param  CommonITILObject $parent
  * @return void
-  */
+ */
 function plugin_actualtime_parent_delete(CommonITILObject $parent): void
 {
-    /** @var \DBmysql $DB  */
+    /** @var \DBmysql $DB */
     global $DB;
 
     $tactualtime = PluginActualtimeTask::getTable();
@@ -258,10 +258,10 @@ function plugin_actualtime_parent_delete(CommonITILObject $parent): void
  *
  * @param  Project $project
  * @return void
-  */
+ */
 function plugin_actualtime_project_delete(Project $project): void
 {
-    /** @var \DBmysql $DB  */
+    /** @var \DBmysql $DB */
     global $DB;
 
     $tactualtime = PluginActualtimeTask::getTable();
@@ -312,7 +312,7 @@ function plugin_actualtime_project_delete(Project $project): void
  *
  * @param  mixed $itemtype
  * @return array
-  */
+ */
 function plugin_actualtime_getAddSearchOptions($itemtype): array
 {
     $tab = [];
@@ -416,7 +416,7 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
  * Uninstall previously installed elements of the plugin
  *
  * @return bool
-  */
+ */
 function plugin_actualtime_uninstall(): bool
 {
     $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);

@@ -27,7 +27,7 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
@@ -35,7 +35,7 @@ if (!defined('GLPI_ROOT')) {
 
 /**
  * Class PluginActualtimeConfig
-  */
+ */
 class PluginActualtimeConfig extends CommonDBTM
 {
     public static $rightname = 'config';
@@ -44,10 +44,10 @@ class PluginActualtimeConfig extends CommonDBTM
 
     /**
      * {@inheritDoc}
-      */
+     */
     public function __construct()
     {
-        /** @var \DBmysql $DB  */
+        /** @var \DBmysql $DB */
         global $DB;
 
         if ($DB->tableExists($this->getTable())) {
@@ -57,7 +57,7 @@ class PluginActualtimeConfig extends CommonDBTM
 
     /**
      * {@inheritDoc}
-      */
+     */
     public static function getTypeName($nb = 0): string
     {
         return __("ActualTime Setup", "actualtime");
@@ -67,7 +67,7 @@ class PluginActualtimeConfig extends CommonDBTM
      * getInstance
      *
      * @return PluginActualtimeConfig
-      */
+     */
     public static function getInstance(): PluginActualtimeConfig
     {
         if (!isset(self::$instance)) {
@@ -83,7 +83,7 @@ class PluginActualtimeConfig extends CommonDBTM
      * showConfigForm
      *
      * @return bool
-      */
+     */
     public static function showConfigForm(): bool
     {
         $rand = mt_rand();
@@ -155,7 +155,7 @@ class PluginActualtimeConfig extends CommonDBTM
 
     /**
      * {@inheritDoc}
-      */
+     */
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string
     {
         if ($item->getType() == 'Config') {
@@ -166,7 +166,7 @@ class PluginActualtimeConfig extends CommonDBTM
 
     /**
      * {@inheritDoc}
-      */
+     */
     public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0): bool
     {
         if ($item->getType() == 'Config') {
@@ -180,7 +180,7 @@ class PluginActualtimeConfig extends CommonDBTM
      * Is displaying timer pop-up on every page enabled in plugin settings?
      *
      * @return bool
-      */
+     */
     public function showTimerPopup(): bool
     {
         return ($this->fields['showtimerpopup'] ? true : false);
@@ -191,7 +191,7 @@ class PluginActualtimeConfig extends CommonDBTM
      * Is actual time information (timers) shown also in Helpdesk interface?
      *
      * @return bool
-      */
+     */
     public function showInHelpdesk(): bool
     {
         return ($this->fields['displayinfofor'] == 1);
@@ -202,7 +202,7 @@ class PluginActualtimeConfig extends CommonDBTM
      * Is timer shown in closed task box at 'Actions historical' page?
      *
      * @return bool
-      */
+     */
     public function showTimerInBox(): bool
     {
         return ($this->fields['showtimerinbox'] ? true : false);
@@ -214,7 +214,7 @@ class PluginActualtimeConfig extends CommonDBTM
      * when listing tickets' tasks?
      *
      * @return bool
-      */
+     */
     public function autoOpenRunning(): bool
     {
         return ($this->fields['autoopenrunning'] ? true : false);
@@ -225,7 +225,7 @@ class PluginActualtimeConfig extends CommonDBTM
      * return numeric boolean
      *
      * @return bool
-      */
+     */
     public function autoUpdateDuration(): bool
     {
         return $this->fields['autoupdate_duration'];
@@ -236,10 +236,10 @@ class PluginActualtimeConfig extends CommonDBTM
      *
      * @param  Migration $migration
      * @return void
-      */
+     */
     public static function install(Migration $migration): void
     {
-        /** @var \DBmysql $DB  */
+        /** @var \DBmysql $DB */
         global $DB;
 
         $default_charset = DBConnection::getDefaultCharset();
@@ -286,10 +286,10 @@ class PluginActualtimeConfig extends CommonDBTM
      *
      * @param  Migration $migration
      * @return void
-      */
+     */
     public static function uninstall(Migration $migration): void
     {
-        /** @var \DBmysql $DB  */
+        /** @var \DBmysql $DB */
         global $DB;
 
         $table = self::getTable();

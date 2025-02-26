@@ -27,7 +27,7 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 include("../../../inc/includes.php");
 
@@ -36,7 +36,7 @@ Html::header_nocache();
 
 Session::checkLoginUser();
 
-/** @var array $CFG_GLPI  */
+/** @var array $CFG_GLPI */
 global $CFG_GLPI;
 
 if (isset($_POST["action"])) {

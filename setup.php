@@ -27,7 +27,7 @@
  * @link      https://www.tic.gal/
  * @since     2018
  * -------------------------------------------------------------------------
-  */
+ */
 
 use Glpi\Plugin\Hooks;
 
@@ -43,7 +43,7 @@ define("PLUGIN_ACTUALTIME_NAME", "ActualTime");
  * plugin_version_actualtime
  *
  * @return array
-  */
+ */
 function plugin_version_actualtime(): array
 {
     return [
@@ -65,10 +65,10 @@ function plugin_version_actualtime(): array
  * plugin_init_actualtime
  *
  * @return void
-  */
+ */
 function plugin_init_actualtime(): void
 {
-    /** @var array $PLUGIN_HOOKS  */
+    /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
     $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['actualtime'] = true;

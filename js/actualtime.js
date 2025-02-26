@@ -1,4 +1,4 @@
-/* global CFG_GLPI  */
+/* global CFG_GLPI */
 window.actualTime = new function() {
    this.ajax_url = CFG_GLPI.root_doc + '/plugins/actualtime/ajax/timer.php';
    var timer;
