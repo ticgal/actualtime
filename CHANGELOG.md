@@ -1,5 +1,12 @@
 # Actualtime
 
+## [3.2.0] - 2025/02/27
+### Added
+- Actualtimes for Problem tasks, contributed by Gambware
+
+### Fixed
+- Task in progress message redirecting to the correct ticket
+
 ## [3.1.3] - 2025/01/27
 ### Fixed
 - Conflict with pending reasons with glpi solutions
