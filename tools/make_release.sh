@@ -1,69 +1,98 @@
 #!/bin/bash
-#
-# -------------------------------------------------------------------------
-# make_release.sh
-# Based on fusioninventory-for-glpi make_release.sh
-# Copyright (C) 2018-2019 by TICgal 
-# https://github.com/ticgal/actualtime
-# -------------------------------------------------------------------------
-# LICENSE
-# This file is part of the actualtime plugin.
-# actualtime plugin is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# actualtime plugin is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with actualtime. If not, see <http://www.gnu.org/licenses/>.
-# --------------------------------------------------------------------------
-# @package   actualtime
-# @author    TICgal
-# @copyright Copyright (c) 2018-2019 TICgal
-# @license   AGPL License 3.0 or (at your option) any later version
-#            http://www.gnu.org/licenses/agpl-3.0-standalone.html
-# @link      https://tic.gal
-# @since     2018
-# --------------------------------------------------------------------------
 
-PLUGINNAME="actualtime"
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+PARENT_FOLDER_PATH=$(dirname "$SCRIPT_DIR")
+PLUGINNAME=$(basename "$PARENT_FOLDER_PATH")
 
-if [ ! "$#" -eq 2 ]
-then
-    echo "Usage $0 fi_git_dir release"
-    exit
+if [ ! "$#" -eq 1 ]; then
+    echo "Usage $0 <release>"
+    exit 1
 fi
 
-read -p "Are translations up to date? [Y/n] " -n 1 -r
-echo    # (optional) move to a new line
-if [[ ! $REPLY =~ ^[Yy]$ ]] 
-    then
-    [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
+INIT_PWD=$PWD
+if [ ! "$PARENT_FOLDER_PATH" = "$INIT_PWD" ]; then
+    cd $PARENT_FOLDER_PATH
 fi
 
-INIT_DIR=$1
-RELEASE=$2
+# Check core file
+if [ ! -f setup.php ]; then
+    echo "setup.php not found"
+    exit 1
+fi
+
+# Check if the version is in the setup.php file
+RELEASE=$1
+SEMVER_REGEX="^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(\\-[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?(\\+[0-9A-Za-z-]+(\\.[0-9A-Za-z-]+)*)?$"
+if grep --quiet "'$RELEASE'" setup.php; then
+    if [[ $RELEASE =~ $SEMVER_REGEX ]]; then
+        echo "$RELEASE found in setup.php"
+    else
+        echo "Version $RELEASE does not match the semantic versioning format"
+        exit 1
+    fi
+else
+    echo "$RELEASE has not been found in setup.php"
+    exit 1
+fi
+
+# Download dependencies if necessary
+if [ -f $PARENT_FOLDER_PATH"/composer.json" ]; then
+    INSTALL_COMPOSER=0
+    MOVE_TO_PUBLIC=0
+
+    if [ ! -d "$PARENT_FOLDER_PATH/vendor" ]; then
+        if [ -d "$PARENT_FOLDER_PATH/public" ] && [ -d "$PARENT_FOLDER_PATH/public/vendor" ]; then
+            if [ ! "$(ls -A "$PARENT_FOLDER_PATH/public/vendor")" ]; then
+                INSTALL_COMPOSER=1
+                MOVE_TO_PUBLIC=1
+            fi
+        else
+            INSTALL_COMPOSER=1
+        fi
+    elif [ ! "$(ls -A "$PARENT_FOLDER_PATH/vendor")" ]; then
+        INSTALL_COMPOSER=1
+    fi
+
+    if [ "$INSTALL_COMPOSER" = 1 ]; then
+        VERIFICA_COMPOSER=$(which "composer")
+        if [ -z $VERIFICA_COMPOSER ]; then
+            echo "Composer is not installed"
+            exit 1
+        else
+            echo "Downloading dependencies"
+            composer install --no-dev
+            if [ "$MOVE_TO_PUBLIC" = 1 ]; then
+                mv "$PARENT_FOLDER_PATH/vendor" "$PARENT_FOLDER_PATH/public"
+            fi
+        fi
+    fi
+fi
+
+# Update locales if necessary
+if [ -d "$PARENT_FOLDER_PATH/locales" ]; then
+    if [ -f "$PARENT_FOLDER_PATH/locales/localazy.keys.json" ]; then
+        read -p "Are translations up to date? [Y/n] " -n 1 -r
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            if [ -f "$PARENT_FOLDER_PATH/tools/extract_template.sh" ]; then
+                echo "Extract locales"
+                ./tools/extract_template.sh
+            elif [ -f "$PARENT_FOLDER_PATH/tools/generate_locales.sh" ]; then
+                echo "Generate locales"
+                ./tools/generate_locales.sh
+            fi
+        fi
+    fi
+fi
+
+# Perform PHPStan analysis
+if [ -f "$PARENT_FOLDER_PATH/tools/phpstan.sh" ]; then
+    echo "Initiating PHPStan analysis"
+    chmod +x $PARENT_FOLDER_PATH/tools/phpstan.sh
+    bash $PARENT_FOLDER_PATH/tools/phpstan.sh
+fi
 
 # remove old tmp files
-if [ ! -e /tmp/$PLUGINNAME ]
-then
-    echo "Deleting temp directory"
-    rm -rf /tmp/$PLUGINNAME
-fi
-
-# test plugin_cvs_dir
-if [ ! -e $INIT_DIR ] 
-then
-    echo "$1 does not exist"
-    exit 
-fi
-
-INIT_PWD=$PWD;
-
-if [ -e /tmp/$PLUGINNAME ]
-then
+if [ -e /tmp/$PLUGINNAME ]; then
     echo "Delete existing temp directory"
     rm -rf /tmp/$PLUGINNAME
 fi
@@ -71,22 +100,14 @@ fi
 echo "Copy to  /tmp directory"
 git checkout-index -a -f --prefix=/tmp/$PLUGINNAME/
 
+if [ -e vendor ]; then
+    cp -R vendor/ /tmp/$PLUGINNAME/
+fi
+
 echo "Move to this directory"
 cd /tmp/$PLUGINNAME
 
-echo "Check version"
-if grep --quiet $RELEASE setup.php; then
-    echo "$RELEASE found in setup.php, OK."
-else
-    echo "$RELEASE has not been found in setup.php. Exiting."
-    exit 1
-fi
-
-echo "Compile locale files"
-./tools/generate_locales.sh
-
 echo "Delete various scripts and directories"
-rm -rf vendor
 rm -rf RoboFile.php
 rm -rf tools
 rm -rf phpunit
@@ -95,7 +116,6 @@ rm -rf .gitignore
 rm -rf .travis.yml
 rm -rf .coveralls.yml
 rm -rf phpunit.xml.dist
-rm -rf composer.json
 rm -rf composer.lock
 rm -rf .composer.hash
 rm -rf ISSUE_TEMPLATE.md
@@ -103,12 +123,13 @@ rm -rf PULL_REQUEST_TEMPLATE.md
 rm -rf .tx
 rm -rf $PLUGINNAME.xml
 rm -rf screenshots
+rm -rf locales/localazy*
 
 echo "Creating tarball"
 cd ..
-tar czf "$PLUGINNAME-$RELEASE.tar.tgz" $PLUGINNAME
+tar cjf "$PLUGINNAME-$RELEASE.tar.bz2" $PLUGINNAME
 
-cd $INIT_PWD;
+cd $INIT_PWD
 
 echo "Deleting temp directory"
 rm -rf /tmp/$PLUGINNAME

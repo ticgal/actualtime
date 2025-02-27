@@ -71,10 +71,13 @@ window.actualTime = new function() {
       return text;
    }
 
-   this.showTimerPopup = function(ticket) {
+   this.showTimerPopup = function(id, link, name) {
       // only if enabled in settings
       if (popup_div && toast != null) {
-         $("#toast_body").html(popup_div.replace(/%t/g, ticket));
+         popup_div = popup_div.replace(/%t/g, id);
+         popup_div = popup_div.replace(/%l/g, link);
+         popup_div = popup_div.replace(/%n/g, name);
+         $("#toast_body").html(popup_div);
          toast.show();
       }
    }
@@ -97,12 +100,12 @@ window.actualTime = new function() {
       $("[id^='actualtime_timer_" + task + "_']").text(timestr);
    }
 
-   this.pressedButton = function(task, val) {
+   this.pressedButton = function(task, itemtype, val) {
       jQuery.ajax({
          type: "POST",
          url: this.ajax_url,
          dataType: 'json',
-         data: {action: val, task_id: task},
+         data: {action: val, task_id: task, itemtype: itemtype},
          success: function (result) {
             if (result['type'] == 'info') {
                if (val == 'start') {
@@ -111,7 +114,7 @@ window.actualTime = new function() {
                   $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_pause).attr('action', 'pause').css('background-color', 'orange').prop('disabled', false);
                   $("[id^='actualtime_button_" + task + "_1_']").html('<span>' + text_pause + '</span>');
                   $("[id^='actualtime_button_" + task + "_2_']").attr('action', 'end').css('background-color', 'red').prop('disabled', false);
-                  window.actualTime.showTimerPopup(result['ticket_id']);
+                  window.actualTime.showTimerPopup(result['parent_id'], result['link'], result['name']);
                   $("[id^='actualtime_faclock_" + task + "_']").addClass('fa-clock').css('color', 'red');
                   return;
                } else if ((val == 'end') || (val == 'pause')) {
@@ -128,15 +131,15 @@ window.actualTime = new function() {
                      // Update state fields also (as Done)
                      $("select[name='state']").attr('data-track-changes', '');
                      $("span.state.state_1[onclick='change_task_state(" + task + ", this)']").attr('title', text_done).toggleClass('state_1 state_2');
-                     $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='TicketTask'][data-items-id='"+task+"']").find("select[name='state']").val(2).trigger('change');
+                     $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"']").find("select[name='state']").val(2).trigger('change');
                      $("select[name='state']").removeAttr('data-track-changes');
                      $("[id^='actualtime_button_" + task + "_']").attr('action', '').css('background-color', 'gray').prop('disabled', true);
-                     if (typeof result["duration"] !== 'undefined') {
-                        var actiontime = $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='TicketTask'][data-items-id='"+task+"']").find("select[name='actiontime']");
+                     if (typeof result["task_time"] !== 'undefined' && result["task_time"] != 0) {
+                        var actiontime = $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"']").find("select[name='actiontime']");
                         actiontime.attr('data-track-changes', '');
-                        actiontime.val(result['duration']).trigger('change');
+                        actiontime.val(result['task_time']).trigger('change');
                         actiontime.removeAttr('data-track-changes');
-                        $("div#viewitemtickettask" + task + " span.actiontime").text(window.actualTime.timeToText(result['duration'], 1));
+                        $("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"'] span.actiontime").text(window.actualTime.timeToText(result['task_time'], 1));
                      }
                   } else {
                      $("[id^='actualtime_button_" + task + "_1_']").attr('value', text_restart).attr('action', 'start').css('background-color', 'green').prop('disabled', false);
@@ -146,15 +149,37 @@ window.actualTime = new function() {
             }
             switch (result['type']) {
                case 'warning':
-                  glpi_toast_warning(result['mensage']);
+                  var title = __('Warning');
+                  var css_class = 'bg-warning';
                   break;
                case 'info':
-                  glpi_toast_info(result['mensage']);
+                  var title = _n("Information", "Informations", 1);
+                  var css_class = 'bg-info';
                   break;
                default:
-                  glpi_toast_error(result['mensage']);
+                  var title = __('Error');
+                  var css_class = 'bg-danger';
                   break;
             }
+            toast_id++;
+
+            const html = `<div class='toast-container bottom-0 end-0 p-3 messages_after_redirect'>
+               <div id='toast_js_${toast_id}' class='toast border-0 animate_animated animate__delay-2s animate__slow' role='alert' aria-live='assertive' aria-atomic='true'>
+                  <div class='toast-header ${css_class} text-white'>
+                     <strong class='me-auto'>${title}</strong>
+                     <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='${__('Close')}'></button>
+                  </div>
+                  <div class='toast-body'>
+                     ${result['message']}
+                  </div>
+               </div>
+            </div>`;
+            $('body').append(html);
+
+            const toasttemp = new bootstrap.Toast(document.querySelector('#toast_js_' + toast_id), {
+               delay: 10000,
+            });
+            toasttemp.show();
          }
       });
    }
@@ -164,8 +189,8 @@ window.actualTime = new function() {
       if (!$("#toast_actualtime").length) {
          const html = `<div class='toast-container bottom-0 start-0 p-3 messages_after_redirect'  id='toast_actualtime'>
             <div class='toast border-0 animate__animated animate__tada animate__delay-2s animate__slow' role='alert' aria-live='assertive' aria-atomic='true'>
-               <div class='toast-header bg-warning text-white'>
-                  <strong class='me-auto'>${__('Warning')}</strong>
+               <div class='toast-header bg-info text-white'>
+                  <strong class='me-auto'>${_n('Information', 'Informations', 1)}</strong>
                   <button type='button' class='btn-close' data-bs-dismiss='toast' aria-label='${__('Close')}'></button>
                </div>
                <div id='toast_body' class='toast-body'></div>
@@ -199,9 +224,9 @@ window.actualTime = new function() {
             text_done = result['text_done'];
             popup_div = result['popup_div'];
 
-            if (result['ticket_id']) {
+            if (result['parent_id']) {
                window.actualTime.startCount(result['task_id'], result['time']);
-               window.actualTime.showTimerPopup(result['ticket_id']);
+               window.actualTime.showTimerPopup(result['parent_id'], result['link'], result['name']);
             }
          }
       });

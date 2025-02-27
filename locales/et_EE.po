@@ -1,0 +1,210 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ActualTime\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-06 14:55+0100\n"
+"Language: et_EE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Localazy (https://localazy.com)\n"
+"Plural-Forms: nplurals=2; plural=(n==1) ? 0 : 1;\n"
+
+#: hook.php:343 hook.php:362 inc/task.class.php:87 inc/task.class.php:105
+#: inc/task.class.php:845 inc/task.class.php:851 inc/task.class.php:857
+msgid "Duration Diff"
+msgstr "Kestuste vahe"
+
+#. TRANS: d is a symbol for days in a time (displays: 3d)
+#: ajax/timer.php:70
+#, php-format
+msgid "%dd"
+msgstr "%dp"
+
+#. TRANS: h is a symbol for hours in a time (displays: 3h)
+#: ajax/timer.php:74
+#, php-format
+msgid "%dh"
+msgstr "%dt"
+
+#. TRANS: min is a symbol for minutes in a time (displays: 3min)
+#: ajax/timer.php:78
+#, php-format
+msgid "%dmin"
+msgstr "%dmin"
+
+#. TRANS: s is a symbol for seconds in a time (displays: 3s)
+#: ajax/timer.php:82
+#, php-format
+msgid "%ds"
+msgstr "%dsek"
+
+#: ajax/timer.php:93
+msgid "Timer started on"
+msgstr "Taimer käivitus"
+
+#: inc/config.class.php:65
+msgid "ActualTime Setup"
+msgstr "ActualTime'i seadistus"
+
+#: inc/config.class.php:99
+msgid "In Standard interface only (default)"
+msgstr "Vaid tavaliideses (vaikimisi valik)"
+
+#: inc/config.class.php:100
+msgid "Both in Standard and Helpdesk interfaces"
+msgstr "Nii tavaliideses kui kasutatoe liideses"
+
+#: inc/config.class.php:106
+msgid "Enable timer on tasks"
+msgstr "Kasuta tegevustes taimerit"
+
+#: inc/config.class.php:118
+msgid "Display pop-up window with current running timer"
+msgstr "Näita hüpikakent hetkel tiksuva taimeriga"
+
+#: inc/config.class.php:124
+msgid "Display actual time in closed task box ('Processing ticket' list)"
+msgstr ""
+"Näita tegelikku aega suletud tegevuse väljal (loendis „Töötluses olevad "
+"teated“)"
+
+#: inc/config.class.php:130
+msgid "Automatically open task with timer running"
+msgstr "Käivita taimer tegevuse avamisel automaatselt"
+
+#: inc/config.class.php:136
+msgid "Automatically update the duration"
+msgstr "Uuenda kestust automaatselt"
+
+#: inc/config.class.php:142
+msgid "Enable Timer Only on Scheduled Task Day"
+msgstr "Kasuta taimerit vaid tegevuseks plaanitud päeval"
+
+#: inc/config.class.php:148
+msgid "Enable Timer Only on Task's Start Day"
+msgstr "Kasuta taimerit vaid tegevuse alguspäeval"
+
+#: inc/dashboard.class.php:48
+msgid "Top 20 Actualtime tasks per day"
+msgstr "Esimesed 20 Actualtime'i tegevust päevas"
+
+#: inc/dashboard.class.php:56
+msgid "Bottom 20 Actualtime tasks per day"
+msgstr "Esimesed 20 Actualtime'i tegevust päevas"
+
+#: inc/dashboard.class.php:64
+msgid "Top 20 Actualtime usage (hours)"
+msgstr "Esimesed 20 Actualtime'i kasutust (tundides)"
+
+#: inc/dashboard.class.php:72
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr "Viimased 20 Actualtime'i kasutust (tundides)"
+
+#: inc/dashboard.class.php:79
+msgid "Top 20 % Actualtime usage per day"
+msgstr "Esimesed 20% Actualtime'i kasutust päevas"
+
+#: inc/dashboard.class.php:87
+msgid "Bottom 20 % Actualtime usage per day"
+msgstr "Viimased 20% Actualtime'i kasutust päevas"
+
+#: inc/profile.class.php:103
+msgid "General"
+msgstr "Üldist"
+
+#: inc/profile.class.php:138 inc/running.class.php:71
+msgid "Running timers"
+msgstr "Hetkel tiksuvad taimerid"
+
+#: inc/profile.class.php:154 inc/sourcetimer.class.php:173
+#: inc/sourcetimer.class.php:188 inc/task.class.php:476
+msgid "Modify timers"
+msgstr "Modify timers"
+
+#: inc/running.class.php:76
+msgid "Update every (s)"
+msgstr "Uuenduse välp (sekundites)"
+
+#: inc/sourcetimer.class.php:53
+msgid "Modify tickets"
+msgstr "Modify tickets"
+
+#: inc/sourcetimer.class.php:54
+msgid "Modify changes"
+msgstr "Modify changes"
+
+#: inc/sourcetimer.class.php:55
+msgid "Modify projects"
+msgstr "Modify projects"
+
+#: inc/task.class.php:321 inc/task.class.php:482
+msgid "Actual Duration"
+msgstr "Tegelik kestus"
+
+#: inc/task.class.php:332 inc/task.class.php:493
+msgid "Partial actual duration"
+msgstr "Osaline tegelik kestus"
+
+#: inc/task.class.php:970
+msgid "Original end date"
+msgstr "Original end date"
+
+#: inc/task.class.php:971
+msgid "Original duration"
+msgstr "Original duration"
+
+#: inc/task.class.php:972
+#, php-format
+msgid "First modification by %s"
+msgstr "First modification by %s"
+
+#: inc/task.class.php:1362 inc/task.class.php:1368
+#, php-format
+msgid "You cannot start a timer because the task was scheduled for %d."
+msgstr "Sa ei saa käivitada taimerit, sest tegevus on määratud vastutajale %d."
+
+#: inc/task.class.php:1392
+msgid "You cannot add a timer on a different day."
+msgstr "Sa ei saa lisada taimerit teiseks päevaks"
+
+#: inc/task.class.php:1435
+msgid "Today is marked as absence you can not initialize the timer"
+msgstr "Tänane päev pole märgitud tööpäevaks ja sa ei saa taimerit käivitada"
+
+#: inc/task.class.php:1441
+msgid "Timer has not been initialized"
+msgstr "Taimer on initsialiseerimata"
+
+#: inc/task.class.php:1458
+msgid "You are already doing a waypoint"
+msgstr "Vahetegevus on sul juba töös"
+
+#: inc/task.class.php:1495 inc/task.class.php:1500
+msgid "Technician not in charge of the task"
+msgstr "See tegevus pole antud vastutaja ülesandeks"
+
+#: inc/task.class.php:1506
+msgid "A user is already performing the task"
+msgstr "Keegi teine on selle tegevuse juba töösse võtnud"
+
+#: inc/task.class.php:1556
+#, php-format
+msgid "You are already working on %s"
+msgstr "%s on sul juba töös"
+
+#: inc/task.class.php:1587
+msgid "Timer started"
+msgstr "Taimer on käivitatud"
+
+#: inc/task.class.php:1661 inc/task.class.php:1776 inc/task.class.php:1834
+msgid "Timer completed"
+msgstr "Taimer lõpetas"
+
+#: inc/task.class.php:1699 inc/task.class.php:1813
+msgid "Only the user who initiated the task can close it"
+msgstr "Ainult tegevusega alustanud kasutaja saab seda sulgeda"
+
+#: inc/task.class.php:1702
+msgid "The task had not been initialized"
+msgstr "Tegevus on initsialiseerimata"

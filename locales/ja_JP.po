@@ -1,0 +1,208 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ActualTime\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-06 14:55+0100\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Localazy (https://localazy.com)\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: hook.php:343 hook.php:362 inc/task.class.php:87 inc/task.class.php:105
+#: inc/task.class.php:845 inc/task.class.php:851 inc/task.class.php:857
+msgid "Duration Diff"
+msgstr "時間の差"
+
+#. TRANS: d is a symbol for days in a time (displays: 3d)
+#: ajax/timer.php:70
+#, php-format
+msgid "%dd"
+msgstr "%d日"
+
+#. TRANS: h is a symbol for hours in a time (displays: 3h)
+#: ajax/timer.php:74
+#, php-format
+msgid "%dh"
+msgstr "%d時間"
+
+#. TRANS: min is a symbol for minutes in a time (displays: 3min)
+#: ajax/timer.php:78
+#, php-format
+msgid "%dmin"
+msgstr "%d分"
+
+#. TRANS: s is a symbol for seconds in a time (displays: 3s)
+#: ajax/timer.php:82
+#, php-format
+msgid "%ds"
+msgstr "%d秒"
+
+#: ajax/timer.php:93
+msgid "Timer started on"
+msgstr "タイマー開始"
+
+#: inc/config.class.php:65
+msgid "ActualTime Setup"
+msgstr "実時間の設定"
+
+#: inc/config.class.php:99
+msgid "In Standard interface only (default)"
+msgstr "標準インターフェースのみ (デフォルト)"
+
+#: inc/config.class.php:100
+msgid "Both in Standard and Helpdesk interfaces"
+msgstr "標準インターフェース・ヘルプデスク インターフェースとも"
+
+#: inc/config.class.php:106
+msgid "Enable timer on tasks"
+msgstr "タスクでタイマーを有効にする"
+
+#: inc/config.class.php:118
+msgid "Display pop-up window with current running timer"
+msgstr "現在稼働中のタイマーをポップアップウィンドウで表示"
+
+#: inc/config.class.php:124
+msgid "Display actual time in closed task box ('Processing ticket' list)"
+msgstr "終了タスクのボックスに実時間を表示（「対応中のチケット」リスト）"
+
+#: inc/config.class.php:130
+msgid "Automatically open task with timer running"
+msgstr "タイマーを稼働させタスクを自動的に開く"
+
+#: inc/config.class.php:136
+msgid "Automatically update the duration"
+msgstr "所要時間を自動更新"
+
+#: inc/config.class.php:142
+msgid "Enable Timer Only on Scheduled Task Day"
+msgstr "スケジュールしたタスク日にのみタイマーを有効に"
+
+#: inc/config.class.php:148
+msgid "Enable Timer Only on Task's Start Day"
+msgstr "タスクの開始日のみタイマーを有効に"
+
+#: inc/dashboard.class.php:48
+msgid "Top 20 Actualtime tasks per day"
+msgstr "1 日の実時間が長いタスク上位 20 件"
+
+#: inc/dashboard.class.php:56
+msgid "Bottom 20 Actualtime tasks per day"
+msgstr "1 日の実時間が短いタスク上位 20 件"
+
+#: inc/dashboard.class.php:64
+msgid "Top 20 Actualtime usage (hours)"
+msgstr "実時間が長い上位 20 件"
+
+#: inc/dashboard.class.php:72
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr "実時間が短い上位 20 件"
+
+#: inc/dashboard.class.php:79
+msgid "Top 20 % Actualtime usage per day"
+msgstr "1 日の実時間が長い上位 20%"
+
+#: inc/dashboard.class.php:87
+msgid "Bottom 20 % Actualtime usage per day"
+msgstr "1 日の実時間が短い上位 20%"
+
+#: inc/profile.class.php:103
+msgid "General"
+msgstr "一般"
+
+#: inc/profile.class.php:138 inc/running.class.php:71
+msgid "Running timers"
+msgstr "実行中のタイマー"
+
+#: inc/profile.class.php:154 inc/sourcetimer.class.php:173
+#: inc/sourcetimer.class.php:188 inc/task.class.php:476
+msgid "Modify timers"
+msgstr "Modify timers"
+
+#: inc/running.class.php:76
+msgid "Update every (s)"
+msgstr "更新間隔 (秒)"
+
+#: inc/sourcetimer.class.php:53
+msgid "Modify tickets"
+msgstr "Modify tickets"
+
+#: inc/sourcetimer.class.php:54
+msgid "Modify changes"
+msgstr "Modify changes"
+
+#: inc/sourcetimer.class.php:55
+msgid "Modify projects"
+msgstr "Modify projects"
+
+#: inc/task.class.php:321 inc/task.class.php:482
+msgid "Actual Duration"
+msgstr "実所要時間"
+
+#: inc/task.class.php:332 inc/task.class.php:493
+msgid "Partial actual duration"
+msgstr "部分的な実時間"
+
+#: inc/task.class.php:970
+msgid "Original end date"
+msgstr "Original end date"
+
+#: inc/task.class.php:971
+msgid "Original duration"
+msgstr "Original duration"
+
+#: inc/task.class.php:972
+#, php-format
+msgid "First modification by %s"
+msgstr "First modification by %s"
+
+#: inc/task.class.php:1362 inc/task.class.php:1368
+#, php-format
+msgid "You cannot start a timer because the task was scheduled for %d."
+msgstr "タスクが %d からに予定しているため、タイマーをスタートできません。"
+
+#: inc/task.class.php:1392
+msgid "You cannot add a timer on a different day."
+msgstr "別の日にタイマーを追加することはできません。"
+
+#: inc/task.class.php:1435
+msgid "Today is marked as absence you can not initialize the timer"
+msgstr "本日不在となっているため、タイマーを初期化できません"
+
+#: inc/task.class.php:1441
+msgid "Timer has not been initialized"
+msgstr "タイマーが初期化されていません"
+
+#: inc/task.class.php:1458
+msgid "You are already doing a waypoint"
+msgstr "すでに中間地点で作業中です"
+
+#: inc/task.class.php:1495 inc/task.class.php:1500
+msgid "Technician not in charge of the task"
+msgstr "タスクを担当していない技術者"
+
+#: inc/task.class.php:1506
+msgid "A user is already performing the task"
+msgstr "そのタスクはユーザーがすでに実行中"
+
+#: inc/task.class.php:1556
+#, php-format
+msgid "You are already working on %s"
+msgstr "あなたはすでに %s の作業中です。"
+
+#: inc/task.class.php:1587
+msgid "Timer started"
+msgstr "タイマーをスタートしました"
+
+#: inc/task.class.php:1661 inc/task.class.php:1776 inc/task.class.php:1834
+msgid "Timer completed"
+msgstr "タイマー完了"
+
+#: inc/task.class.php:1699 inc/task.class.php:1813
+msgid "Only the user who initiated the task can close it"
+msgstr "開始ユーザーのみタスクを終了可"
+
+#: inc/task.class.php:1702
+msgid "The task had not been initialized"
+msgstr "タスクは初期化されていませんでした"

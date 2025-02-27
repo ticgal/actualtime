@@ -1,0 +1,211 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ActualTime\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-06 14:55+0100\n"
+"Language: vi_VN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Localazy (https://localazy.com)\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: hook.php:343 hook.php:362 inc/task.class.php:87 inc/task.class.php:105
+#: inc/task.class.php:845 inc/task.class.php:851 inc/task.class.php:857
+msgid "Duration Diff"
+msgstr "Khoảng thời gian chênh lệch"
+
+#. TRANS: d is a symbol for days in a time (displays: 3d)
+#: ajax/timer.php:70
+#, php-format
+msgid "%dd"
+msgstr "%d ngày"
+
+#. TRANS: h is a symbol for hours in a time (displays: 3h)
+#: ajax/timer.php:74
+#, php-format
+msgid "%dh"
+msgstr "%d giờ"
+
+#. TRANS: min is a symbol for minutes in a time (displays: 3min)
+#: ajax/timer.php:78
+#, php-format
+msgid "%dmin"
+msgstr "%d phút"
+
+#. TRANS: s is a symbol for seconds in a time (displays: 3s)
+#: ajax/timer.php:82
+#, php-format
+msgid "%ds"
+msgstr "%d giây"
+
+#: ajax/timer.php:93
+msgid "Timer started on"
+msgstr "Bắt đầu tính giờ cho"
+
+#: inc/config.class.php:65
+msgid "ActualTime Setup"
+msgstr "ActualTime Setup"
+
+#: inc/config.class.php:99
+msgid "In Standard interface only (default)"
+msgstr "Chỉ trong giao diện chuẩn (mặc định)"
+
+#: inc/config.class.php:100
+msgid "Both in Standard and Helpdesk interfaces"
+msgstr "Cả giao diện chuẩn và giao diện hỗ trợ"
+
+#: inc/config.class.php:106
+msgid "Enable timer on tasks"
+msgstr "Bật tính giờ cho công việc"
+
+#: inc/config.class.php:118
+msgid "Display pop-up window with current running timer"
+msgstr "Hiện popup thời gian"
+
+#: inc/config.class.php:124
+msgid "Display actual time in closed task box ('Processing ticket' list)"
+msgstr ""
+"Hiển thị thời gian thực tế trong hộp nhiệm vụ đã đóng (danh sách 'Xử lý "
+"phiếu”)"
+
+#: inc/config.class.php:130
+msgid "Automatically open task with timer running"
+msgstr "Tự động mở công việc với thời gian đang chạy"
+
+#: inc/config.class.php:136
+msgid "Automatically update the duration"
+msgstr "Tự động cạp nhật khoảng thời gian"
+
+#: inc/config.class.php:142
+msgid "Enable Timer Only on Scheduled Task Day"
+msgstr "Enable Timer Only on Scheduled Task Day"
+
+#: inc/config.class.php:148
+msgid "Enable Timer Only on Task's Start Day"
+msgstr "Enable Timer Only on Task's Start Day"
+
+#: inc/dashboard.class.php:48
+msgid "Top 20 Actualtime tasks per day"
+msgstr "20 nhiệm vụ thực tế hàng đầu mỗi ngày"
+
+#: inc/dashboard.class.php:56
+msgid "Bottom 20 Actualtime tasks per day"
+msgstr "20 nhiệm vụ thực tế dưới cùng mỗi ngày"
+
+#: inc/dashboard.class.php:64
+msgid "Top 20 Actualtime usage (hours)"
+msgstr "Top 20 Thời gian sử dụng thực tế (giờ)"
+
+#: inc/dashboard.class.php:72
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr "Dưới 20 Thời gian sử dụng thực tế (giờ)"
+
+#: inc/dashboard.class.php:79
+msgid "Top 20 % Actualtime usage per day"
+msgstr "20% mức sử dụng thời gian thực tế hàng đầu mỗi ngày"
+
+#: inc/dashboard.class.php:87
+msgid "Bottom 20 % Actualtime usage per day"
+msgstr "Dưới 20 % Thời gian sử dụng thực tế mỗi ngày"
+
+#: inc/profile.class.php:103
+msgid "General"
+msgstr "General"
+
+#: inc/profile.class.php:138 inc/running.class.php:71
+msgid "Running timers"
+msgstr "Đang chạy bộ hẹn giờ"
+
+#: inc/profile.class.php:154 inc/sourcetimer.class.php:173
+#: inc/sourcetimer.class.php:188 inc/task.class.php:476
+msgid "Modify timers"
+msgstr "Modify timers"
+
+#: inc/running.class.php:76
+msgid "Update every (s)"
+msgstr "Cập nhật từng (giây)"
+
+#: inc/sourcetimer.class.php:53
+msgid "Modify tickets"
+msgstr "Modify tickets"
+
+#: inc/sourcetimer.class.php:54
+msgid "Modify changes"
+msgstr "Modify changes"
+
+#: inc/sourcetimer.class.php:55
+msgid "Modify projects"
+msgstr "Modify projects"
+
+#: inc/task.class.php:321 inc/task.class.php:482
+msgid "Actual Duration"
+msgstr "Thời lượng thực tế"
+
+#: inc/task.class.php:332 inc/task.class.php:493
+msgid "Partial actual duration"
+msgstr "Một phần thời lượng thực tế"
+
+#: inc/task.class.php:970
+msgid "Original end date"
+msgstr "Original end date"
+
+#: inc/task.class.php:971
+msgid "Original duration"
+msgstr "Original duration"
+
+#: inc/task.class.php:972
+#, php-format
+msgid "First modification by %s"
+msgstr "First modification by %s"
+
+#: inc/task.class.php:1362 inc/task.class.php:1368
+#, php-format
+msgid "You cannot start a timer because the task was scheduled for %d."
+msgstr "You cannot start a timer because the task was scheduled for %d."
+
+#: inc/task.class.php:1392
+msgid "You cannot add a timer on a different day."
+msgstr "You cannot add a timer on a different day."
+
+#: inc/task.class.php:1435
+msgid "Today is marked as absence you can not initialize the timer"
+msgstr ""
+"Hôm nay được đánh dấu là vắng mặt, bạn không thể khởi tạo bộ đếm thời gian"
+
+#: inc/task.class.php:1441
+msgid "Timer has not been initialized"
+msgstr "Chưa khởi tạo thời gian"
+
+#: inc/task.class.php:1458
+msgid "You are already doing a waypoint"
+msgstr "Bạn đã làm một điểm tham chiếu"
+
+#: inc/task.class.php:1495 inc/task.class.php:1500
+msgid "Technician not in charge of the task"
+msgstr "Kỹ thuật viên không phụ trách nhiệm vụ"
+
+#: inc/task.class.php:1506
+msgid "A user is already performing the task"
+msgstr "Người dùng đã thực hiện việc này"
+
+#: inc/task.class.php:1556
+#, php-format
+msgid "You are already working on %s"
+msgstr "You are already working on %s"
+
+#: inc/task.class.php:1587
+msgid "Timer started"
+msgstr "Bắt đầu đếm giờ"
+
+#: inc/task.class.php:1661 inc/task.class.php:1776 inc/task.class.php:1834
+msgid "Timer completed"
+msgstr "Thời gian hoàn thành"
+
+#: inc/task.class.php:1699 inc/task.class.php:1813
+msgid "Only the user who initiated the task can close it"
+msgstr "Chỉ ai bắt đầu việc này mới có thể kết thúc nó"
+
+#: inc/task.class.php:1702
+msgid "The task had not been initialized"
+msgstr "Chưa khởi tạo công việc"

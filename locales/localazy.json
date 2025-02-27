@@ -3,7 +3,9 @@
     "type": "pot",
     "deprecate": "project",
     "files": [
-      "actualtime.pot",
+      {
+        "pattern": "actualtime.pot"
+      },
       {
         "group": "existing",
         "file": "actualtime.pot",

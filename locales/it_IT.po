@@ -1,0 +1,211 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ActualTime\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-06 14:55+0100\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Localazy (https://localazy.com)\n"
+"Plural-Forms: nplurals=2; plural=(n==1) ? 0 : 1;\n"
+
+#: hook.php:343 hook.php:362 inc/task.class.php:87 inc/task.class.php:105
+#: inc/task.class.php:845 inc/task.class.php:851 inc/task.class.php:857
+msgid "Duration Diff"
+msgstr "Differenza di durata"
+
+#. TRANS: d is a symbol for days in a time (displays: 3d)
+#: ajax/timer.php:70
+#, php-format
+msgid "%dd"
+msgstr "%dd"
+
+#. TRANS: h is a symbol for hours in a time (displays: 3h)
+#: ajax/timer.php:74
+#, php-format
+msgid "%dh"
+msgstr "%dh"
+
+#. TRANS: min is a symbol for minutes in a time (displays: 3min)
+#: ajax/timer.php:78
+#, php-format
+msgid "%dmin"
+msgstr "%dmin"
+
+#. TRANS: s is a symbol for seconds in a time (displays: 3s)
+#: ajax/timer.php:82
+#, php-format
+msgid "%ds"
+msgstr "%ds"
+
+#: ajax/timer.php:93
+msgid "Timer started on"
+msgstr "Timer avviato alle"
+
+#: inc/config.class.php:65
+msgid "ActualTime Setup"
+msgstr "ActualTime Setup"
+
+#: inc/config.class.php:99
+msgid "In Standard interface only (default)"
+msgstr "Solo nell'interfaccia standard (impostazione predefinita)"
+
+#: inc/config.class.php:100
+msgid "Both in Standard and Helpdesk interfaces"
+msgstr "Sia nell'interfaccia Standard che Helpdesk"
+
+#: inc/config.class.php:106
+msgid "Enable timer on tasks"
+msgstr "Abilita il timer sulle attività"
+
+#: inc/config.class.php:118
+msgid "Display pop-up window with current running timer"
+msgstr "Visualizza la finestra pop-up con il timer corrente"
+
+#: inc/config.class.php:124
+msgid "Display actual time in closed task box ('Processing ticket' list)"
+msgstr ""
+"Visualizza l'ora effettiva nella casella delle attività chiuse "
+"('Elaborazionebiglietto' elenco)"
+
+#: inc/config.class.php:130
+msgid "Automatically open task with timer running"
+msgstr "Aprire automaticamente l'attività con il timer in esecuzione"
+
+#: inc/config.class.php:136
+msgid "Automatically update the duration"
+msgstr "Aggiorna automaticamente la durata"
+
+#: inc/config.class.php:142
+msgid "Enable Timer Only on Scheduled Task Day"
+msgstr "Enable Timer Only on Scheduled Task Day"
+
+#: inc/config.class.php:148
+msgid "Enable Timer Only on Task's Start Day"
+msgstr "Enable Timer Only on Task's Start Day"
+
+#: inc/dashboard.class.php:48
+msgid "Top 20 Actualtime tasks per day"
+msgstr "Top 20 compiti al giorno Actualtime"
+
+#: inc/dashboard.class.php:56
+msgid "Bottom 20 Actualtime tasks per day"
+msgstr "Ultime 20 attività giornaliere in tempo reale"
+
+#: inc/dashboard.class.php:64
+msgid "Top 20 Actualtime usage (hours)"
+msgstr "Top 20 utilizzo Actualtime (ore)"
+
+#: inc/dashboard.class.php:72
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr "Ultime 20 ore di utilizzo in tempo reale"
+
+#: inc/dashboard.class.php:79
+msgid "Top 20 % Actualtime usage per day"
+msgstr "Top 20 % Actualtime utilizzo al giorno"
+
+#: inc/dashboard.class.php:87
+msgid "Bottom 20 % Actualtime usage per day"
+msgstr "Tempo di utilizzo inferiore del 20%"
+
+#: inc/profile.class.php:103
+msgid "General"
+msgstr "Generale"
+
+#: inc/profile.class.php:138 inc/running.class.php:71
+msgid "Running timers"
+msgstr "Timer in esecuzione"
+
+#: inc/profile.class.php:154 inc/sourcetimer.class.php:173
+#: inc/sourcetimer.class.php:188 inc/task.class.php:476
+msgid "Modify timers"
+msgstr "Modify timers"
+
+#: inc/running.class.php:76
+msgid "Update every (s)"
+msgstr "Aggiorna ogni (s)"
+
+#: inc/sourcetimer.class.php:53
+msgid "Modify tickets"
+msgstr "Modify tickets"
+
+#: inc/sourcetimer.class.php:54
+msgid "Modify changes"
+msgstr "Modify changes"
+
+#: inc/sourcetimer.class.php:55
+msgid "Modify projects"
+msgstr "Modify projects"
+
+#: inc/task.class.php:321 inc/task.class.php:482
+msgid "Actual Duration"
+msgstr "Durata Attuale"
+
+#: inc/task.class.php:332 inc/task.class.php:493
+msgid "Partial actual duration"
+msgstr "Durata effettiva parziale"
+
+#: inc/task.class.php:970
+msgid "Original end date"
+msgstr "Original end date"
+
+#: inc/task.class.php:971
+msgid "Original duration"
+msgstr "Original duration"
+
+#: inc/task.class.php:972
+#, php-format
+msgid "First modification by %s"
+msgstr "First modification by %s"
+
+#: inc/task.class.php:1362 inc/task.class.php:1368
+#, php-format
+msgid "You cannot start a timer because the task was scheduled for %d."
+msgstr "You cannot start a timer because the task was scheduled for %d."
+
+#: inc/task.class.php:1392
+msgid "You cannot add a timer on a different day."
+msgstr "You cannot add a timer on a different day."
+
+#: inc/task.class.php:1435
+msgid "Today is marked as absence you can not initialize the timer"
+msgstr ""
+"Oggi è contrassegnato come assenza, non è possibile inizializzare il timer"
+
+#: inc/task.class.php:1441
+msgid "Timer has not been initialized"
+msgstr "Il timer non è stato inizializzato"
+
+#: inc/task.class.php:1458
+msgid "You are already doing a waypoint"
+msgstr "Stai già facendo un waypoint"
+
+#: inc/task.class.php:1495 inc/task.class.php:1500
+msgid "Technician not in charge of the task"
+msgstr "Tecnico non incaricato dell'incarico"
+
+#: inc/task.class.php:1506
+msgid "A user is already performing the task"
+msgstr "Un utente sta già eseguendo l'attività"
+
+#: inc/task.class.php:1556
+#, php-format
+msgid "You are already working on %s"
+msgstr "You are already working on %s"
+
+#: inc/task.class.php:1587
+msgid "Timer started"
+msgstr "Timer avviato"
+
+#: inc/task.class.php:1661 inc/task.class.php:1776 inc/task.class.php:1834
+msgid "Timer completed"
+msgstr "Timer completato"
+
+#: inc/task.class.php:1699 inc/task.class.php:1813
+msgid "Only the user who initiated the task can close it"
+msgstr "Solo l'utente che ha avviato l'attività può chiuderla."
+
+#: inc/task.class.php:1702
+msgid "The task had not been initialized"
+msgstr "L'attività non era stata inizializzata"

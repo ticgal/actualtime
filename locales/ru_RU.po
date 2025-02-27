@@ -1,0 +1,212 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ActualTime\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-06 14:55+0100\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Localazy (https://localazy.com)\n"
+"Plural-Forms: nplurals=3; plural=((n%10==1) && (n%100!=11)) ? 0 : ((n%10>=2 "
+"&& n%10<=4) && ((n%100<12 || n%100>14))) ? 1 : 2;\n"
+
+#: hook.php:343 hook.php:362 inc/task.class.php:87 inc/task.class.php:105
+#: inc/task.class.php:845 inc/task.class.php:851 inc/task.class.php:857
+msgid "Duration Diff"
+msgstr "Разница в длительности"
+
+#. TRANS: d is a symbol for days in a time (displays: 3d)
+#: ajax/timer.php:70
+#, php-format
+msgid "%dd"
+msgstr "%dд"
+
+#. TRANS: h is a symbol for hours in a time (displays: 3h)
+#: ajax/timer.php:74
+#, php-format
+msgid "%dh"
+msgstr "%dч"
+
+#. TRANS: min is a symbol for minutes in a time (displays: 3min)
+#: ajax/timer.php:78
+#, php-format
+msgid "%dmin"
+msgstr "%dмин"
+
+#. TRANS: s is a symbol for seconds in a time (displays: 3s)
+#: ajax/timer.php:82
+#, php-format
+msgid "%ds"
+msgstr "%dс"
+
+#: ajax/timer.php:93
+msgid "Timer started on"
+msgstr "Таймер запущен на"
+
+#: inc/config.class.php:65
+msgid "ActualTime Setup"
+msgstr "Настройка ActualTime"
+
+#: inc/config.class.php:99
+msgid "In Standard interface only (default)"
+msgstr "Только в стандартном интерфейсе (по умолчанию)"
+
+#: inc/config.class.php:100
+msgid "Both in Standard and Helpdesk interfaces"
+msgstr "И в стандартном интерфейсе, и в интерфейсе службы поддержки"
+
+#: inc/config.class.php:106
+msgid "Enable timer on tasks"
+msgstr "Включить таймер для задач"
+
+#: inc/config.class.php:118
+msgid "Display pop-up window with current running timer"
+msgstr "Показать всплывающее окно с текущим таймером работы"
+
+#: inc/config.class.php:124
+msgid "Display actual time in closed task box ('Processing ticket' list)"
+msgstr ""
+"Отображение фактического времени в поле закрытого задания (список "
+"\"Обработка заявки\")"
+
+#: inc/config.class.php:130
+msgid "Automatically open task with timer running"
+msgstr "Автоматически открывать задачу с запущенным таймером"
+
+#: inc/config.class.php:136
+msgid "Automatically update the duration"
+msgstr "Автоматически обновлять продолжительность"
+
+#: inc/config.class.php:142
+msgid "Enable Timer Only on Scheduled Task Day"
+msgstr "Включить таймер только в день запланированного задания"
+
+#: inc/config.class.php:148
+msgid "Enable Timer Only on Task's Start Day"
+msgstr "Включить таймер только в день начала задачи"
+
+#: inc/dashboard.class.php:48
+msgid "Top 20 Actualtime tasks per day"
+msgstr "Топ 20 задач Actualtime в день"
+
+#: inc/dashboard.class.php:56
+msgid "Bottom 20 Actualtime tasks per day"
+msgstr "Нижние 20 задач фактического времени в день"
+
+#: inc/dashboard.class.php:64
+msgid "Top 20 Actualtime usage (hours)"
+msgstr "Топ 20 фактического использования (часов)"
+
+#: inc/dashboard.class.php:72
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr "Нижние 20 Фактическое время использования (часы)"
+
+#: inc/dashboard.class.php:79
+msgid "Top 20 % Actualtime usage per day"
+msgstr "Топ 20 % Actualtime использования в день"
+
+#: inc/dashboard.class.php:87
+msgid "Bottom 20 % Actualtime usage per day"
+msgstr "Нижние 20 % фактического времени использования в день"
+
+#: inc/profile.class.php:103
+msgid "General"
+msgstr "Общие"
+
+#: inc/profile.class.php:138 inc/running.class.php:71
+msgid "Running timers"
+msgstr "Запущенные таймеры"
+
+#: inc/profile.class.php:154 inc/sourcetimer.class.php:173
+#: inc/sourcetimer.class.php:188 inc/task.class.php:476
+msgid "Modify timers"
+msgstr "Modify timers"
+
+#: inc/running.class.php:76
+msgid "Update every (s)"
+msgstr "Обновить каждый (-е)"
+
+#: inc/sourcetimer.class.php:53
+msgid "Modify tickets"
+msgstr "Modify tickets"
+
+#: inc/sourcetimer.class.php:54
+msgid "Modify changes"
+msgstr "Modify changes"
+
+#: inc/sourcetimer.class.php:55
+msgid "Modify projects"
+msgstr "Modify projects"
+
+#: inc/task.class.php:321 inc/task.class.php:482
+msgid "Actual Duration"
+msgstr "Фактическая продолжительность"
+
+#: inc/task.class.php:332 inc/task.class.php:493
+msgid "Partial actual duration"
+msgstr "Частичная фактическая продолжительность"
+
+#: inc/task.class.php:970
+msgid "Original end date"
+msgstr "Original end date"
+
+#: inc/task.class.php:971
+msgid "Original duration"
+msgstr "Original duration"
+
+#: inc/task.class.php:972
+#, php-format
+msgid "First modification by %s"
+msgstr "First modification by %s"
+
+#: inc/task.class.php:1362 inc/task.class.php:1368
+#, php-format
+msgid "You cannot start a timer because the task was scheduled for %d."
+msgstr ""
+"Вы не можете запустить таймер, потому что задача была запланирована на %d."
+
+#: inc/task.class.php:1392
+msgid "You cannot add a timer on a different day."
+msgstr "Вы не можете добавить таймер в другой день."
+
+#: inc/task.class.php:1435
+msgid "Today is marked as absence you can not initialize the timer"
+msgstr "Сегодня помечен как отсутствие, вы не можете инициализировать таймер"
+
+#: inc/task.class.php:1441
+msgid "Timer has not been initialized"
+msgstr "Таймер не инициализирован"
+
+#: inc/task.class.php:1458
+msgid "You are already doing a waypoint"
+msgstr "Вы уже выполняете путевую точку"
+
+#: inc/task.class.php:1495 inc/task.class.php:1500
+msgid "Technician not in charge of the task"
+msgstr "Техник, не отвечающий за выполнение задачи"
+
+#: inc/task.class.php:1506
+msgid "A user is already performing the task"
+msgstr "Пользователь уже выполняет задачу"
+
+#: inc/task.class.php:1556
+#, php-format
+msgid "You are already working on %s"
+msgstr "Вы уже работаете над %s"
+
+#: inc/task.class.php:1587
+msgid "Timer started"
+msgstr "Таймер запущен"
+
+#: inc/task.class.php:1661 inc/task.class.php:1776 inc/task.class.php:1834
+msgid "Timer completed"
+msgstr "Таймер завершен"
+
+#: inc/task.class.php:1699 inc/task.class.php:1813
+msgid "Only the user who initiated the task can close it"
+msgstr "Закрыть задачу может только пользователь, инициировавший задачу"
+
+#: inc/task.class.php:1702
+msgid "The task had not been initialized"
+msgstr "Задача не была инициализирована"

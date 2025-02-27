@@ -1,0 +1,209 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ActualTime\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-06 14:55+0100\n"
+"Language: sr_RS@Cyrl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Localazy (https://localazy.com)\n"
+"Plural-Forms: nplurals=3; plural=((n%10==1) && (n%100!=11)) ? 0 : ((n%10>=2 "
+"&& n%10<=4) && ((n%100<12 || n%100>14))) ? 1 : 2;\n"
+
+#: hook.php:343 hook.php:362 inc/task.class.php:87 inc/task.class.php:105
+#: inc/task.class.php:845 inc/task.class.php:851 inc/task.class.php:857
+msgid "Duration Diff"
+msgstr "Duration Diff"
+
+#. TRANS: d is a symbol for days in a time (displays: 3d)
+#: ajax/timer.php:70
+#, php-format
+msgid "%dd"
+msgstr "%dd"
+
+#. TRANS: h is a symbol for hours in a time (displays: 3h)
+#: ajax/timer.php:74
+#, php-format
+msgid "%dh"
+msgstr "%dh"
+
+#. TRANS: min is a symbol for minutes in a time (displays: 3min)
+#: ajax/timer.php:78
+#, php-format
+msgid "%dmin"
+msgstr "%dmin"
+
+#. TRANS: s is a symbol for seconds in a time (displays: 3s)
+#: ajax/timer.php:82
+#, php-format
+msgid "%ds"
+msgstr "%ds"
+
+#: ajax/timer.php:93
+msgid "Timer started on"
+msgstr "Тајмер је покренут"
+
+#: inc/config.class.php:65
+msgid "ActualTime Setup"
+msgstr "ActualTime Setup"
+
+#: inc/config.class.php:99
+msgid "In Standard interface only (default)"
+msgstr "In Standard interface only (default)"
+
+#: inc/config.class.php:100
+msgid "Both in Standard and Helpdesk interfaces"
+msgstr "Both in Standard and Helpdesk interfaces"
+
+#: inc/config.class.php:106
+msgid "Enable timer on tasks"
+msgstr "Enable timer on tasks"
+
+#: inc/config.class.php:118
+msgid "Display pop-up window with current running timer"
+msgstr "Display pop-up window with current running timer"
+
+#: inc/config.class.php:124
+msgid "Display actual time in closed task box ('Processing ticket' list)"
+msgstr "Display actual time in closed task box ('Processing ticket' list)"
+
+#: inc/config.class.php:130
+msgid "Automatically open task with timer running"
+msgstr "Automatically open task with timer running"
+
+#: inc/config.class.php:136
+msgid "Automatically update the duration"
+msgstr "Automatically update the duration"
+
+#: inc/config.class.php:142
+msgid "Enable Timer Only on Scheduled Task Day"
+msgstr "Enable Timer Only on Scheduled Task Day"
+
+#: inc/config.class.php:148
+msgid "Enable Timer Only on Task's Start Day"
+msgstr "Enable Timer Only on Task's Start Day"
+
+#: inc/dashboard.class.php:48
+msgid "Top 20 Actualtime tasks per day"
+msgstr "Top 20 Actualtime tasks per day"
+
+#: inc/dashboard.class.php:56
+msgid "Bottom 20 Actualtime tasks per day"
+msgstr "Bottom 20 Actualtime tasks per day"
+
+#: inc/dashboard.class.php:64
+msgid "Top 20 Actualtime usage (hours)"
+msgstr "Top 20 Actualtime usage (hours)"
+
+#: inc/dashboard.class.php:72
+msgid "Bottom 20 Actualtime usage (hours)"
+msgstr "Bottom 20 Actualtime usage (hours)"
+
+#: inc/dashboard.class.php:79
+msgid "Top 20 % Actualtime usage per day"
+msgstr "Top 20 % Actualtime usage per day"
+
+#: inc/dashboard.class.php:87
+msgid "Bottom 20 % Actualtime usage per day"
+msgstr "Bottom 20 % Actualtime usage per day"
+
+#: inc/profile.class.php:103
+msgid "General"
+msgstr "General"
+
+#: inc/profile.class.php:138 inc/running.class.php:71
+msgid "Running timers"
+msgstr "Running timers"
+
+#: inc/profile.class.php:154 inc/sourcetimer.class.php:173
+#: inc/sourcetimer.class.php:188 inc/task.class.php:476
+msgid "Modify timers"
+msgstr "Modify timers"
+
+#: inc/running.class.php:76
+msgid "Update every (s)"
+msgstr "Update every (s)"
+
+#: inc/sourcetimer.class.php:53
+msgid "Modify tickets"
+msgstr "Modify tickets"
+
+#: inc/sourcetimer.class.php:54
+msgid "Modify changes"
+msgstr "Modify changes"
+
+#: inc/sourcetimer.class.php:55
+msgid "Modify projects"
+msgstr "Modify projects"
+
+#: inc/task.class.php:321 inc/task.class.php:482
+msgid "Actual Duration"
+msgstr "Actual Duration"
+
+#: inc/task.class.php:332 inc/task.class.php:493
+msgid "Partial actual duration"
+msgstr "Partial actual duration"
+
+#: inc/task.class.php:970
+msgid "Original end date"
+msgstr "Original end date"
+
+#: inc/task.class.php:971
+msgid "Original duration"
+msgstr "Original duration"
+
+#: inc/task.class.php:972
+#, php-format
+msgid "First modification by %s"
+msgstr "First modification by %s"
+
+#: inc/task.class.php:1362 inc/task.class.php:1368
+#, php-format
+msgid "You cannot start a timer because the task was scheduled for %d."
+msgstr "You cannot start a timer because the task was scheduled for %d."
+
+#: inc/task.class.php:1392
+msgid "You cannot add a timer on a different day."
+msgstr "You cannot add a timer on a different day."
+
+#: inc/task.class.php:1435
+msgid "Today is marked as absence you can not initialize the timer"
+msgstr "Today is marked as absence you can not initialize the timer"
+
+#: inc/task.class.php:1441
+msgid "Timer has not been initialized"
+msgstr "Тајмер није иницијализован"
+
+#: inc/task.class.php:1458
+msgid "You are already doing a waypoint"
+msgstr "You are already doing a waypoint"
+
+#: inc/task.class.php:1495 inc/task.class.php:1500
+msgid "Technician not in charge of the task"
+msgstr "Technician not in charge of the task"
+
+#: inc/task.class.php:1506
+msgid "A user is already performing the task"
+msgstr "Корисник већ обавља задатак"
+
+#: inc/task.class.php:1556
+#, php-format
+msgid "You are already working on %s"
+msgstr "You are already working on %s"
+
+#: inc/task.class.php:1587
+msgid "Timer started"
+msgstr "Tajmer je počeo"
+
+#: inc/task.class.php:1661 inc/task.class.php:1776 inc/task.class.php:1834
+msgid "Timer completed"
+msgstr "Тајмер је завршен"
+
+#: inc/task.class.php:1699 inc/task.class.php:1813
+msgid "Only the user who initiated the task can close it"
+msgstr "Само корисник који је покренуо задатак може да га затвори"
+
+#: inc/task.class.php:1702
+msgid "The task had not been initialized"
+msgstr "Задатак није био иницијализован"

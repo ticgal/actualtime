@@ -1,0 +1,22 @@
+parameters:
+    parallel:
+        maximumNumberOfProcesses: 2
+    level: 4
+    bootstrapFiles:
+        - '../../../../inc/based_config.php'
+        - '../../../../inc/db.function.php'
+    excludePaths:
+        - '**/vendor/*'
+        - '**/tests/*'
+        - '**/tools/*'
+    paths:
+        - ..
+    stubFiles:
+        - './stubs/glpi_constants.php'
+    ignoreErrors:
+        - '/Property CommonDBTM::\$input \(array\<mixed\>\) does not accept false/'
+        - '/Access to property \$fields on an unknown class Plugin\w+/'
+        - '/Access to constant \w+ on an unknown class Plugin\w+/'
+        - '/Call to (static )?method \w+\(\) on an unknown class Plugin\w+/'
+        - '/Instantiated class Plugin\w+ not found/'
+    reportUnmatchedIgnoredErrors: false
