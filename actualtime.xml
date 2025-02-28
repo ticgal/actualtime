@@ -13,7 +13,7 @@
 		<es>El módulo ActualTime se alinea con tu organización añadiendo la posibilidad de registrar el tiempo real de ejecución de cada tarea en GLPI</es>
       </long>
    </description>
-   <homepage>https://tic.gal/en/project/actualtime-plugin-glpi/</homepage>
+   <homepage>https://tic.gal/glpi/glpi-plugins/actualtime-the-time-tracking-plugin-for-glpi/</homepage>
    <download>https://github.com/ticgal/actualtime/releases</download>
    <issues>https://github.com/ticgal/actualtime/issues</issues>
    <readme>https://github.com/ticgal/actualtime/blob/master/README.md</readme>
