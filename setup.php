@@ -49,7 +49,7 @@ function plugin_version_actualtime(): array
     return [
         'name'          => PLUGIN_ACTUALTIME_NAME,
         'version'       => PLUGIN_ACTUALTIME_VERSION,
-        'author'        => '<a href="https://tic.gal">TICgal</a>',
+        'author'        => '<a href="https://tic.gal">TICGAL</a>',
         'homepage'      => 'https://tic.gal/en/project/actualtime-plugin-glpi/',
         'license'       => 'AGPLv3+',
         'requirements'  => [
