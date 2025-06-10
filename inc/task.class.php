@@ -1528,12 +1528,19 @@ JAVASCRIPT;
                 $active_task_itemtype = $row['itemtype'];
                 $tmp_task = new $active_task_itemtype();
                 if ($tmp_task->getFromDB($active_task_id)) {
-                    // get parent id and itemtype, allowing TicketTask, ProjectTask, ChangeTask..
                     $dbu = new DbUtils();
-                    $active_task_parent_itemtype = $tmp_task->getItilObjectItemType();
-                    $tmp_parent_table = $dbu->getTableForItemType($active_task_parent_itemtype);
-                    $tmp_key = $dbu->getForeignKeyFieldForTable($tmp_parent_table);
-                    $active_task_parent_id = $tmp_task->fields[$tmp_key] ?? 0;
+                    // get parent id and itemtype, allowing TicketTask, ProblemTask, ChangeTask..
+                    if ($tmp_task instanceof CommonITILTask) {
+                        $active_task_parent_itemtype = $tmp_task->getItilObjectItemType();
+                    } else {
+                        //ProjectTask
+                        $active_task_parent_itemtype = $tmp_task::$itemtype ?? '';
+                    }
+                    if ($active_task_parent_itemtype) {
+                        $tmp_parent_table = $dbu->getTableForItemType($active_task_parent_itemtype);
+                        $tmp_key = $dbu->getForeignKeyFieldForTable($tmp_parent_table);
+                        $active_task_parent_id = $tmp_task->fields[$tmp_key] ?? 0;
+                    }
                 }
             }
 

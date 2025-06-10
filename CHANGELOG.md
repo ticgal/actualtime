@@ -1,5 +1,9 @@
 # Actualtime
 
+## [3.2.1] - 2025/06/10
+### Fixed
+- ProjectTask parent key to start the timer
+
 ## [3.2.0] - 2025/02/27
 ### Added
 - Actualtimes for Problem tasks, contributed by Gambware
