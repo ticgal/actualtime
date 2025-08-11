@@ -56,8 +56,8 @@ function plugin_version_actualtime(): array
             'glpi'   => [
                 'min' => PLUGIN_ACTUALTIME_MIN_GLPI,
                 'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
-            ]
-        ]
+            ],
+        ],
     ];
 }
 
@@ -129,7 +129,7 @@ function plugin_init_actualtime(): void
 
         $config = new PluginActualtimeConfig();
         if ($config->showTimerPopup()) {
-           // This hook is not needed if not showing popup
+            // This hook is not needed if not showing popup
             $PLUGIN_HOOKS[Hooks::POST_SHOW_TAB]['actualtime'] = [PluginActualtimeTask::class, 'postShowTab'];
         }
 

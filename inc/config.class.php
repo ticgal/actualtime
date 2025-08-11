@@ -106,8 +106,8 @@ class PluginActualtimeConfig extends CommonDBTM
             'displayinfofor',
             $values,
             [
-                'value' => $config->fields['displayinfofor']
-            ]
+                'value' => $config->fields['displayinfofor'],
+            ],
         );
         echo "</td>";
         echo "</tr>";

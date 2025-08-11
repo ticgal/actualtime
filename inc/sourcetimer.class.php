@@ -118,9 +118,9 @@ class PluginActualtimeSourcetimer extends CommonDBTM
                             'SELECT' => ['id'],
                             'FROM'   => ProjectState::getTable(),
                             'WHERE'  => [
-                                'is_finished' => 1
+                                'is_finished' => 1,
                             ],
-                        ]
+                        ],
                     );
                     $finished_states_ids = [];
                     foreach ($finished_states_it as $finished_state) {
@@ -146,7 +146,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
     {
         $item = $params['item'];
         if (!is_object($item) || !method_exists($item, 'getType')) {
-           // Sometimes, params['item'] is just an array, like 'Solution'
+            // Sometimes, params['item'] is just an array, like 'Solution'
             return;
         }
         $itemtype = $item->getType();
@@ -158,8 +158,8 @@ class PluginActualtimeSourcetimer extends CommonDBTM
             [
                 'items_id'  => $item->getID(),
                 'itemtype'  => $itemtype,
-                'NOT'       => ['actual_end' => null]
-            ]
+                'NOT'       => ['actual_end' => null],
+            ],
         );
         if ($count == 0) {
             return;
@@ -189,7 +189,7 @@ JAVASCRIPT;
                 'reloadonclose' => true,
                 'title'         => __('Modify timers', 'actualtime'),
                 'height'        => '700',
-            ]
+            ],
         );
     }
 

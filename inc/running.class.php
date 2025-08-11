@@ -49,7 +49,7 @@ class PluginActualtimeRunning extends CommonGLPI
         $menu = [
             'title' => self::getMenuName(),
             'page' => self::getSearchURL(false),
-            'icon' => 'fas fa-stopwatch'
+            'icon' => 'fas fa-stopwatch',
         ];
 
         return $menu;
@@ -148,16 +148,16 @@ JAVASCRIPT;
                         $tasktable => 'id',
                         $atable => 'items_id',[
                             'AND' => [
-                                $atable . '.itemtype' => TicketTask::getType()
-                            ]
-                        ]
-                    ]
+                                $atable . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $tickettable => [
                     'ON' => [
                         $tickettable => 'id',
-                        $tasktable => 'tickets_id'
-                    ]
+                        $tasktable => 'tickets_id',
+                    ],
                 ],
             ],
             'WHERE' => [
@@ -184,16 +184,16 @@ JAVASCRIPT;
                         $tasktable => 'id',
                         $atable => 'items_id',[
                             'AND' => [
-                                $atable . '.itemtype' => ChangeTask::getType()
-                            ]
-                        ]
-                    ]
+                                $atable . '.itemtype' => ChangeTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $changetable => [
                     'ON' => [
                         $changetable => 'id',
-                        $tasktable => 'changes_id'
-                    ]
+                        $tasktable => 'changes_id',
+                    ],
                 ],
             ],
             'WHERE' => [
@@ -220,16 +220,16 @@ JAVASCRIPT;
                         $tasktable => 'id',
                         $atable => 'items_id',[
                             'AND' => [
-                                $atable . '.itemtype' => ProblemTask::getType()
-                            ]
-                        ]
-                    ]
+                                $atable . '.itemtype' => ProblemTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $problemtable => [
                     'ON' => [
                         $problemtable => 'id',
-                        $tasktable => 'problems_id'
-                    ]
+                        $tasktable => 'problems_id',
+                    ],
                 ],
             ],
             'WHERE' => [
@@ -256,16 +256,16 @@ JAVASCRIPT;
                         $tasktable => 'id',
                         $atable => 'items_id',[
                             'AND' => [
-                                $atable . '.itemtype' => ProjectTask::getType()
-                            ]
-                        ]
-                    ]
+                                $atable . '.itemtype' => ProjectTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $projecttable => [
                     'ON' => [
                         $projecttable => 'id',
-                        $tasktable => 'projects_id'
-                    ]
+                        $tasktable => 'projects_id',
+                    ],
                 ],
             ],
             'WHERE' => [

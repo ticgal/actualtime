@@ -41,7 +41,7 @@ Html::header(
     PluginActualtimeRunning::getTypeName(Session::getPluralNumber()),
     '',
     "admin",
-    "pluginactualtimerunning"
+    "pluginactualtimerunning",
 );
 
 PluginActualtimeRunning::show();

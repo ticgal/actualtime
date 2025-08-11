@@ -47,11 +47,11 @@ class PluginActualtimeProvider extends CommonDBTM
 
         $data = [
             'labels' => [],
-            'series' => []
+            'series' => [],
         ];
 
         $year   = date("Y") - 15;
-        $begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
         $end    = date("Y-m-d");
         if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
             $begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
@@ -76,23 +76,23 @@ class PluginActualtimeProvider extends CommonDBTM
                         $task_table => 'id',
                         $actualtime_table => 'items_id', [
                             'AND' => [
-                                $actualtime_table . '.itemtype' => TicketTask::getType()
-                            ]
-                        ]
-                    ]
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $table => [
                     'FKEY' => [
                         $table => 'id',
-                        $task_table => 'tickets_id'
-                    ]
+                        $task_table => 'tickets_id',
+                    ],
                 ],
                 $user_table => [
                     'ON' => [
                         $user_table => 'id',
-                        $task_table => 'users_id_tech'
-                    ]
-                ]
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
             ],
             'WHERE' => [
                 $task_table . '.state' => 2,
@@ -102,7 +102,7 @@ class PluginActualtimeProvider extends CommonDBTM
             ] + getEntitiesRestrictCriteria($table),
             'ORDER' => ["nb_task DESC"],
             'GROUP' => ['users_id_tech'],
-            'LIMIT' => 20
+            'LIMIT' => 20,
         ];
 
         $techs_id = [];
@@ -114,7 +114,7 @@ class PluginActualtimeProvider extends CommonDBTM
             $query = [
                 'SELECT' => [
                     new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
                     ),
                     "COUNT DISTINCT" => $task_table . ".id AS nb_task",
                     $task_table . ".users_id_tech AS tech",
@@ -126,17 +126,17 @@ class PluginActualtimeProvider extends CommonDBTM
                             $task_table => 'id',
                             $actualtime_table => 'items_id', [
                                 'AND' => [
-                                    $actualtime_table . '.itemtype' => TicketTask::getType()
-                                ]
-                            ]
-                        ]
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
                     ],
                     $table => [
                         'FKEY' => [
                             $table => 'id',
-                            $task_table => 'tickets_id'
-                        ]
-                    ]
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
                 ],
                 'WHERE' => [
                     $task_table . '.state' => 2,
@@ -178,7 +178,7 @@ class PluginActualtimeProvider extends CommonDBTM
         return [
             'data'  => $data,
             'label' => $params['label'],
-            'icon'  => 'fa-solid fa-stopwatch'
+            'icon'  => 'fa-solid fa-stopwatch',
         ];
     }
 
@@ -194,11 +194,11 @@ class PluginActualtimeProvider extends CommonDBTM
 
         $data = [
             'labels' => [],
-            'series' => []
+            'series' => [],
         ];
 
         $year   = date("Y") - 15;
-        $begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
         $end    = date("Y-m-d");
 
         if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
@@ -224,23 +224,23 @@ class PluginActualtimeProvider extends CommonDBTM
                         $task_table => 'id',
                         $actualtime_table => 'items_id', [
                             'AND' => [
-                                $actualtime_table . '.itemtype' => TicketTask::getType()
-                            ]
-                        ]
-                    ]
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $table => [
                     'FKEY' => [
                         $table => 'id',
-                        $task_table => 'tickets_id'
-                    ]
+                        $task_table => 'tickets_id',
+                    ],
                 ],
                 $user_table => [
                     'ON' => [
                         $user_table => 'id',
-                        $task_table => 'users_id_tech'
-                    ]
-                ]
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
             ],
             'WHERE' => [
                 $task_table . '.state' => 2,
@@ -253,7 +253,7 @@ class PluginActualtimeProvider extends CommonDBTM
             'HAVING' => [
                 'nb_task' => ['>', 0],
             ],
-            'LIMIT' => 20
+            'LIMIT' => 20,
         ];
 
         $techs_id = [];
@@ -265,7 +265,7 @@ class PluginActualtimeProvider extends CommonDBTM
             $query = [
                 'SELECT' => [
                     new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
                     ),
                     "COUNT DISTINCT" => $task_table . ".id AS nb_task",
                     $task_table . ".users_id_tech AS tech",
@@ -277,17 +277,17 @@ class PluginActualtimeProvider extends CommonDBTM
                             $task_table => 'id',
                             $actualtime_table => 'items_id', [
                                 'AND' => [
-                                    $actualtime_table . '.itemtype' => TicketTask::getType()
-                                ]
-                            ]
-                        ]
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
                     ],
                     $table => [
                         'FKEY' => [
                             $table => 'id',
-                            $task_table => 'tickets_id'
-                        ]
-                    ]
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
                 ],
                 'WHERE' => [
                     $task_table . '.state' => 2,
@@ -329,7 +329,7 @@ class PluginActualtimeProvider extends CommonDBTM
         return [
             'data'  => $data,
             'label' => $params['label'],
-            'icon'  => 'fa-solid fa-stopwatch'
+            'icon'  => 'fa-solid fa-stopwatch',
         ];
     }
 
@@ -345,11 +345,11 @@ class PluginActualtimeProvider extends CommonDBTM
 
         $data = [
             'labels' => [],
-            'series' => []
+            'series' => [],
         ];
 
         $year   = date("Y") - 15;
-        $begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
         $end    = date("Y-m-d");
 
         if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
@@ -366,7 +366,7 @@ class PluginActualtimeProvider extends CommonDBTM
         $query = [
             'SELECT' => [
                 'SUM' => $actualtime_table . '.actual_actiontime AS total',
-                'users_id_tech'
+                'users_id_tech',
             ],
             'FROM' => $actualtime_table,
             'INNER JOIN' => [
@@ -375,23 +375,23 @@ class PluginActualtimeProvider extends CommonDBTM
                         $task_table => 'id',
                         $actualtime_table => 'items_id', [
                             'AND' => [
-                                $actualtime_table . '.itemtype' => TicketTask::getType()
-                            ]
-                        ]
-                    ]
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $table => [
                     'ON' => [
                         $table => 'id',
-                        $task_table => 'tickets_id'
-                    ]
+                        $task_table => 'tickets_id',
+                    ],
                 ],
                 $user_table => [
                     'ON' => [
                         $user_table => 'id',
-                        $task_table => 'users_id_tech'
-                    ]
-                ]
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
             ],
             'WHERE' => [
                 $task_table . '.state' => 2,
@@ -415,7 +415,7 @@ class PluginActualtimeProvider extends CommonDBTM
             $sql = [
                 'SELECT' => [
                     new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
                     ),
                     'SUM' => 'actual_actiontime AS total',
                     'users_id_tech',
@@ -427,17 +427,17 @@ class PluginActualtimeProvider extends CommonDBTM
                             $task_table => 'id',
                             $actualtime_table => 'items_id', [
                                 'AND' => [
-                                    $actualtime_table . '.itemtype' => TicketTask::getType()
-                                ]
-                            ]
-                        ]
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
                     ],
                     $table => [
                         'ON' => [
                             $table => 'id',
-                            $task_table => 'tickets_id'
-                        ]
-                    ]
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
                 ],
                 'WHERE' => [
                     $task_table . '.state' => 2,
@@ -445,7 +445,7 @@ class PluginActualtimeProvider extends CommonDBTM
                     $task_table . '.date' => ['>=', $begin],
                     'AND' => [
                         $task_table . '.date' => ['<=', $end],
-                    ]
+                    ],
                 ] + getEntitiesRestrictCriteria($table),
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -481,7 +481,7 @@ class PluginActualtimeProvider extends CommonDBTM
         return [
             'data'  => $data,
             'label' => $params['label'],
-            'icon'  => 'fa-solid fa-stopwatch'
+            'icon'  => 'fa-solid fa-stopwatch',
         ];
     }
 
@@ -497,11 +497,11 @@ class PluginActualtimeProvider extends CommonDBTM
 
         $data = [
             'labels' => [],
-            'series' => []
+            'series' => [],
         ];
 
         $year   = date("Y") - 15;
-        $begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
         $end    = date("Y-m-d");
 
         if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
@@ -518,7 +518,7 @@ class PluginActualtimeProvider extends CommonDBTM
         $query = [
             'SELECT' => [
                 'SUM' => $actualtime_table . '.actual_actiontime AS total',
-                'users_id_tech'
+                'users_id_tech',
             ],
             'FROM' => $actualtime_table,
             'INNER JOIN' => [
@@ -527,17 +527,17 @@ class PluginActualtimeProvider extends CommonDBTM
                         $task_table => 'id',
                         $actualtime_table => 'items_id', [
                             'AND' => [
-                                $actualtime_table . '.itemtype' => TicketTask::getType()
-                            ]
-                        ]
-                    ]
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $user_table => [
                     'ON' => [
                         $user_table => 'id',
-                        $task_table => 'users_id_tech'
-                    ]
-                ]
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
             ],
             'WHERE' => [
                 $task_table . '.state' => 2,
@@ -561,7 +561,7 @@ class PluginActualtimeProvider extends CommonDBTM
             $sql = [
                 'SELECT' => [
                     new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
                     ),
                     'SUM' => 'actual_actiontime AS total',
                     'users_id_tech',
@@ -573,11 +573,11 @@ class PluginActualtimeProvider extends CommonDBTM
                             $task_table => 'id',
                             $actualtime_table => 'items_id', [
                                 'AND' => [
-                                    $actualtime_table . '.itemtype' => TicketTask::getType()
-                                ]
-                            ]
-                        ]
-                    ]
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
                 'WHERE' => [
                     $task_table . '.state' => 2,
@@ -585,7 +585,7 @@ class PluginActualtimeProvider extends CommonDBTM
                     'date' => ['>=', $begin],
                     'AND' => [
                         'date' => ['<=', $end],
-                    ]
+                    ],
                 ],
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -621,7 +621,7 @@ class PluginActualtimeProvider extends CommonDBTM
         return [
             'data'  => $data,
             'label' => $params['label'],
-            'icon'  => 'fa-solid fa-stopwatch'
+            'icon'  => 'fa-solid fa-stopwatch',
         ];
     }
 
@@ -637,11 +637,11 @@ class PluginActualtimeProvider extends CommonDBTM
 
         $data = [
             'labels' => [],
-            'series' => []
+            'series' => [],
         ];
 
         $year   = date("Y") - 15;
-        $begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
         $end    = date("Y-m-d");
 
         if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
@@ -658,7 +658,7 @@ class PluginActualtimeProvider extends CommonDBTM
         $sql = [
             'SELECT' => [
                 'SUM' => $actualtime_table . '.actual_actiontime AS total',
-                'users_id_tech'
+                'users_id_tech',
             ],
             'FROM' => $actualtime_table,
             'INNER JOIN' => [
@@ -667,23 +667,23 @@ class PluginActualtimeProvider extends CommonDBTM
                         $task_table => 'id',
                         $actualtime_table => 'items_id', [
                             'AND' => [
-                                $actualtime_table . '.itemtype' => TicketTask::getType()
-                            ]
-                        ]
-                    ]
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $table => [
                     'ON' => [
                         $table => 'id',
-                        $task_table => 'tickets_id'
-                    ]
+                        $task_table => 'tickets_id',
+                    ],
                 ],
                 $user_table => [
                     'ON' => [
                         $user_table => 'id',
-                        $task_table => 'users_id_tech'
-                    ]
-                ]
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
             ],
             'WHERE' => [
                 $task_table . '.state' => 2,
@@ -707,7 +707,7 @@ class PluginActualtimeProvider extends CommonDBTM
             $query = [
                 'SELECT' => [
                     new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
                     ),
                     'SUM' => 'actual_actiontime AS total',
                     'users_id_tech',
@@ -719,17 +719,17 @@ class PluginActualtimeProvider extends CommonDBTM
                             $task_table => 'id',
                             $actualtime_table => 'items_id', [
                                 'AND' => [
-                                    $actualtime_table . '.itemtype' => TicketTask::getType()
-                                ]
-                            ]
-                        ]
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
                     ],
                     $table => [
                         'ON' => [
                             $table => 'id',
-                            $task_table => 'tickets_id'
-                        ]
-                    ]
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
                 ],
                 'WHERE' => [
                     $task_table . '.state' => 2,
@@ -737,7 +737,7 @@ class PluginActualtimeProvider extends CommonDBTM
                     $task_table . '.date' => ['>=', $begin],
                     'AND' => [
                         $task_table . '.date' => ['<=', $end],
-                    ]
+                    ],
                 ] + getEntitiesRestrictCriteria($table),
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -765,14 +765,14 @@ class PluginActualtimeProvider extends CommonDBTM
                             $table => [
                                 'ON' => [
                                     $table => 'id',
-                                    $task_table => 'tickets_id'
-                                ]
-                            ]
+                                    $task_table => 'tickets_id',
+                                ],
+                            ],
                         ],
                         'WHERE' => [
                             $task_table . '.state' => 2,
                             $task_table . ".users_id_tech" => $key,
-                            $task_table . ".date" => ['LIKE', $period . '%']
+                            $task_table . ".date" => ['LIKE', $period . '%'],
                         ] + getEntitiesRestrictCriteria($table),
                     ];
                     $total = 0;
@@ -797,7 +797,7 @@ class PluginActualtimeProvider extends CommonDBTM
         return [
             'data'  => $data,
             'label' => $params['label'],
-            'icon'  => 'fa-solid fa-stopwatch'
+            'icon'  => 'fa-solid fa-stopwatch',
         ];
     }
 
@@ -813,11 +813,11 @@ class PluginActualtimeProvider extends CommonDBTM
 
         $data = [
             'labels' => [],
-            'series' => []
+            'series' => [],
         ];
 
         $year   = date("Y") - 15;
-        $begin  = date("Y-m-d", mktime(1, 0, 0, (int)date("m"), (int)date("d"), $year));
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
         $end    = date("Y-m-d");
 
         if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
@@ -834,7 +834,7 @@ class PluginActualtimeProvider extends CommonDBTM
         $sql = [
             'SELECT' => [
                 'SUM' => $actualtime_table . '.actual_actiontime AS total',
-                'users_id_tech'
+                'users_id_tech',
             ],
             'FROM' => $actualtime_table,
             'INNER JOIN' => [
@@ -843,23 +843,23 @@ class PluginActualtimeProvider extends CommonDBTM
                         $task_table => 'id',
                         $actualtime_table => 'items_id', [
                             'AND' => [
-                                $actualtime_table . '.itemtype' => TicketTask::getType()
-                            ]
-                        ]
-                    ]
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $table => [
                     'ON' => [
                         $table => 'id',
-                        $task_table => 'tickets_id'
-                    ]
+                        $task_table => 'tickets_id',
+                    ],
                 ],
                 $user_table => [
                     'ON' => [
                         $user_table => 'id',
-                        $task_table => 'users_id_tech'
-                    ]
-                ]
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
             ],
             'WHERE' => [
                 $task_table . '.state' => 2,
@@ -883,7 +883,7 @@ class PluginActualtimeProvider extends CommonDBTM
             $query = [
                 'SELECT' => [
                     new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period"
+                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
                     ),
                     'SUM' => 'actual_actiontime AS total',
                     'users_id_tech',
@@ -895,17 +895,17 @@ class PluginActualtimeProvider extends CommonDBTM
                             $task_table => 'id',
                             $actualtime_table => 'items_id', [
                                 'AND' => [
-                                    $actualtime_table . '.itemtype' => TicketTask::getType()
-                                ]
-                            ]
-                        ]
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
                     ],
                     $table => [
                         'ON' => [
                             $table => 'id',
-                            $task_table => 'tickets_id'
-                        ]
-                    ]
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
                 ],
                 'WHERE' => [
                     $task_table . '.state' => 2,
@@ -913,7 +913,7 @@ class PluginActualtimeProvider extends CommonDBTM
                     $task_table . '.date' => ['>=', $begin],
                     'AND' => [
                         $task_table . '.date' => ['<=', $end],
-                    ]
+                    ],
                 ] + getEntitiesRestrictCriteria($table),
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -941,14 +941,14 @@ class PluginActualtimeProvider extends CommonDBTM
                             $table => [
                                 'ON' => [
                                     $table => 'id',
-                                    $task_table => 'tickets_id'
-                                ]
-                            ]
+                                    $task_table => 'tickets_id',
+                                ],
+                            ],
                         ],
                         'WHERE' => [
                             $task_table . '.state' => 2,
                             $task_table . ".users_id_tech" => $key,
-                            $task_table . ".date" => ['LIKE', $period . '%']
+                            $task_table . ".date" => ['LIKE', $period . '%'],
                         ] + getEntitiesRestrictCriteria($table),
                     ];
                     $total = 0;
@@ -973,7 +973,7 @@ class PluginActualtimeProvider extends CommonDBTM
         return [
             'data'  => $data,
             'label' => $params['label'],
-            'icon'  => 'fa-solid fa-stopwatch'
+            'icon'  => 'fa-solid fa-stopwatch',
         ];
     }
 }

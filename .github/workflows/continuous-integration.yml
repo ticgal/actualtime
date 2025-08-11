@@ -1,0 +1,45 @@
+name: "Continuous integration"
+
+on:
+  push:
+    branches:
+      - "feature/**"
+      - "bugfix/**"
+    tags:
+      - "*"
+  workflow_dispatch:
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  generate-ci-matrix:
+    name: "Generate CI matrix"
+    runs-on: "ubuntu-latest"
+    outputs:
+      matrix: ${{ steps.generate-ci-matrix.outputs.matrix }}
+    steps:
+      - name: "Generate CI matrix"
+        id: "generate-ci-matrix"
+        run: |
+          MATRIX='
+            {
+              "include": [
+                {"glpi-version": "10.0.x", "php-version": "8.4", "db-image": "mariadb:11.4"}
+              ]
+            }
+          '
+          echo "matrix=$(echo $MATRIX | jq -c .)" >> $GITHUB_OUTPUT
+  ci:
+    name: "GLPI ${{ matrix.glpi-version }} - php:${{ matrix.php-version }} - ${{ matrix.db-image }}"
+    needs: "generate-ci-matrix"
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-ci-matrix.outputs.matrix) }}
+    uses: "glpi-project/plugin-ci-workflows/.github/workflows/continuous-integration.yml@v1"
+    with:
+      plugin-key: "actualtime"
+      glpi-version: "${{ matrix.glpi-version }}"
+      php-version: "${{ matrix.php-version }}"
+      db-image: "${{ matrix.db-image }}"

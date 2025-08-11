@@ -87,8 +87,8 @@ class PluginActualtimeProfile extends Profile
             [
                 'canedit'       => $canedit,
                 'default_class' => 'tab_bg_2',
-                'title'         => __('General', 'actualtime')
-            ]
+                'title'         => __('General', 'actualtime'),
+            ],
         );
 
         if ($profile->fields['interface'] == 'central') {
@@ -97,7 +97,7 @@ class PluginActualtimeProfile extends Profile
                 [
                     'canedit'       => $canedit,
                     'default_class' => 'tab_bg_2',
-                ]
+                ],
             );
         }
 
@@ -125,8 +125,8 @@ class PluginActualtimeProfile extends Profile
             [
                 'rights' => [READ => __('Read')],
                 'label' => __("Running timers", "actualtime"),
-                'field' => 'plugin_actualtime_running'
-            ]
+                'field' => 'plugin_actualtime_running',
+            ],
         ];
     }
 
@@ -141,8 +141,8 @@ class PluginActualtimeProfile extends Profile
             [
                 'itemtype' => PluginActualtimeSourcetimer::getType(),
                 'label' => __("Modify timers", "actualtime"),
-                'field' => PluginActualtimeSourcetimer::$rightname
-            ]
+                'field' => PluginActualtimeSourcetimer::$rightname,
+            ],
         ];
     }
 

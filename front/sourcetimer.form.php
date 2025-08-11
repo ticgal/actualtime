@@ -50,7 +50,7 @@ if (
                             'id'                => $key,
                             'actual_end'        => $value,
                             'actual_actiontime' => $seconds,
-                            'is_modified'       => 1
+                            'is_modified'       => 1,
                         ];
                         if ($actualtime->fields['is_modified'] == 0) {
                             $source = new PluginActualtimeSourcetimer();
