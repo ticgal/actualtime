@@ -29,6 +29,8 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+
 if (!defined('GLPI_ROOT')) {
     die("Sorry. You can't access directly to this file");
 }
@@ -185,8 +187,8 @@ JAVASCRIPT;
             Plugin::getWebDir('actualtime') . "/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
             [
                 'reloadonclose' => true,
-                'dialog_class'  => 'modal-xl',
-                'title'         => __('Modify timers', 'actualtime')
+                'title'         => __('Modify timers', 'actualtime'),
+                'height'        => '700',
             ]
         );
     }
@@ -194,19 +196,14 @@ JAVASCRIPT;
     /**
      * modalForm
      *
-     * @param  mixed $itemtype
-     * @param  mixed $items_id
+     * @param  string $itemtype
+     * @param  int $items_id
      * @return void
      */
-    public function modalForm($itemtype, $items_id): void
+    public function modalForm(string $itemtype, int $items_id): void
     {
         /** @var \DBmysql $DB */
         global $DB;
-
-        echo "<form name='form' id='form' method='post' action='" . $this->getFormURL();
-        echo "' enctype='multipart/form-data'>";
-        echo Html::hidden('itemtype', ['value' => $itemtype]);
-        echo Html::hidden('items_id', ['value' => $items_id]);
 
         $query = [
             'FROM' => PluginActualtimeTask::getTable(),
@@ -217,34 +214,51 @@ JAVASCRIPT;
             ],
         ];
 
-        foreach ($DB->request($query) as $data) {
-            echo "<div id='mainformtable'>";
-            echo "<div class='card-body row'>";
-
-            echo "<div class='form-field row col-12 mb-2'>";
-            echo "<label class='col-form-label col-2 text-xxl-end'>" . __('Start date') . "</label>";
-            echo "<label class='col-form-label col-2'>" . $data['actual_begin'] . "</label>";
-            echo "<label class='col-form-label col-2 text-xxl-end'>" . __('End date') . "</label>";
-            echo "<div class='col-6  field-container'>";
-            Html::showDateTimeField('actual_end[' . $data['id'] . ']', ['value' => $data['actual_end']]);
-            echo "</div>";
-            echo "</div>";
-
-            echo "</div>";
-            echo "</div>";
+        $actualtimes = [];
+        $userdata = [];
+        foreach ($DB->request($query) as $rows_id => $data) {
+            if (empty($userdata)) {
+                $href = User::getFormURLWithID($data['users_id']);
+                $username = User::getFriendlyNameById($data['users_id']);
+                $userdata['user'] = "<a href=\"{$href}\" target=\"_blank\">{$username}</a>";
+            }
+            $actualtimes[$rows_id] = $data;
         }
 
-        echo "<div class='card-body mx-n2 mb-4 border-top d-flex flex-row-reverse align-items-start flex-wrap'>";
-        echo "<button class='btn btn-primary me-2' type='submit' name='update' value='1'>";
-        echo "<i class='far fa-save'></i>";
-        echo "<span>" . _x('button', 'Save') . "</span>";
-        echo "</button>";
-        echo "</div>";
-        echo Html::hidden('_glpi_csrf_token', ['value' => Session::getNewCSRFToken()]);
-        echo "</div>";
-        echo "</form>";
+        $duration = 0;
+        $max_hour = 8;
+        foreach ($actualtimes as $rows_id => $data) {
+            $data['rand'] = mt_rand();
+            $data['min_date'] = $data['actual_begin'];
+            $next_row = $rows_id + 1;
+            $max_seconds = $max_hour * 60 * 60 - $duration;
+            $limit = strtotime($data['min_date'] . " + {$max_seconds} seconds");
+            $a_limit = date('Y-m-d H:i:s', $limit);
+            if (isset($actualtimes[$next_row])) {
+                $max_date = $actualtimes[$next_row]['actual_begin'];
+                if ($max_date > $a_limit) {
+                    $max_date = $a_limit;
+                }
+                $data['max_date'] = $max_date;
+                $max_seconds = strtotime($max_date) - strtotime($data['actual_end']);
+            } else {
+                $data['max_date'] = $a_limit;
+            }
+            $data['limit'] = Html::timestampToString($max_seconds);
+            $actualtimes[$rows_id] = $data;
+            $duration += (int) $data['actual_actiontime'];
+        }
+        $userdata['duration'] = Html::timestampToString($duration);
+        $userdata['limit'] = Html::timestampToString($max_hour * 60 * 60);
 
-        Html::closeForm();
+        $template = "@actualtime/forms/modify_timers.html.twig";
+        TemplateRenderer::getInstance()->display($template, [
+            'itemtype'      => $itemtype,
+            'items_id'      => $items_id,
+            'actualtimes'   => $actualtimes,
+            'userdata'      => $userdata,
+            'target'        => $this->getFormURL(),
+        ]);
     }
 
     /**
