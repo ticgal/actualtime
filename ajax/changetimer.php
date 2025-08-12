@@ -42,6 +42,8 @@ if (isset($_REQUEST["itemtype"]) && isset($_REQUEST["task_id"])) {
             PluginActualtimeSourcetimer::getTypeName(1),
             $_SERVER['PHP_SELF'],
             true,
+            'actualtime',
+            'sourcetimer'
         );
         $source = new PluginActualtimeSourcetimer();
         $source->modalForm($_REQUEST["itemtype"], (int) $_REQUEST["task_id"]);
