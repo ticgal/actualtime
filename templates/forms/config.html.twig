@@ -1,0 +1,80 @@
+{#
+#}
+
+{% import 'components/form/fields_macros.html.twig' as fields %}
+
+{% if options is not defined %}
+{% set options = {} %}
+{% endif %}
+
+{{ include('components/form/header.html.twig', {'in_twig': true, 'no_header': true}) }}
+
+<div class="row">
+    <div class="row ps-4">
+
+        {{ fields.dropdownArrayField(
+            'displayinfofor',
+            item.fields['displayinfofor'],
+            displayvalues,
+            __('Enable timer on tasks', 'actualtime'),
+            options|merge({'width': 'auto'})
+        ) }}
+
+        {{ fields.dropdownYesNo(
+            'showtimerpopup',
+            item.fields['showtimerpopup'],
+            __('Display pop-up window with current running timer', 'actualtime'),
+            options
+        ) }}
+
+        {{ fields.dropdownYesNo(
+            'showtimerinbox',
+            item.fields['showtimerinbox'],
+            __('Display actual time in closed task box (\'Processing ticket\' list)', 'actualtime'),
+            options
+        ) }}
+
+        {{ fields.dropdownYesNo(
+            'autoopenrunning',
+            item.fields['autoopenrunning'],
+            __('Automatically open task with timer running', 'actualtime'),
+            options
+        ) }}
+
+        {{ fields.dropdownYesNo(
+            'autoupdate_duration',
+            item.fields['autoupdate_duration'],
+            __('Automatically update the duration', 'actualtime'),
+            options
+        ) }}
+
+        {{ fields.dropdownYesNo(
+            'planned_task',
+            item.fields['planned_task'],
+            __('Enable Timer Only on Scheduled Task Day', 'actualtime'),
+            options
+        ) }}
+
+        {{ fields.dropdownYesNo(
+            'multiple_day',
+            item.fields['multiple_day'],
+            __('Enable Timer Only on Task\'s Start Day', 'actualtime'),
+            options
+        ) }}
+
+        {{ fields.numberField(
+            'daily_limit',
+            item.fields['daily_limit'],
+            __('Daily limit in hours for actualtime', 'actualtime'),
+            options|merge({
+                'input_addclass': 'w-auto',
+                'min': 0,
+                'max': 24,
+                'step': 1
+            })
+        ) }}
+
+    </div>
+</div>
+
+{{ include('components/form/buttons.html.twig') }}

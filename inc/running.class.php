@@ -29,6 +29,7 @@
  * -------------------------------------------------------------------------
  */
 
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeRunning extends CommonGLPI
 {
     public static $rightname = 'plugin_actualtime_running';
@@ -48,8 +49,8 @@ class PluginActualtimeRunning extends CommonGLPI
     {
         $menu = [
             'title' => self::getMenuName(),
-            'page' => self::getSearchURL(false),
-            'icon' => 'fas fa-stopwatch',
+            'page'  => self::getSearchURL(false),
+            'icon'  => 'fas fa-stopwatch',
         ];
 
         return $menu;
@@ -70,7 +71,16 @@ class PluginActualtimeRunning extends CommonGLPI
         echo "<div class='right' style='padding:10px;max-width: 950px;margin: 0px auto 5px auto;'>";
 
         echo "<label style='padding:2px'>" . __("Update every (s)", "actualtime") . " </label>";
-        Dropdown::showNumber('interval', ['value' => 5, 'min' => 5, 'max' => MINUTE_TIMESTAMP, 'step' => 10, 'rand' => $rand]);
+        Dropdown::showNumber(
+            'interval',
+            [
+                'value' => 5,
+                'min'   => 5,
+                'max'   => MINUTE_TIMESTAMP,
+                'step'  => 10,
+                'rand'  => $rand,
+            ],
+        );
         echo "<label style='padding:2px'>" . __("Disable") . " </label>";
         Dropdown::showYesNo('disable', 0, -1, ['use_checkbox' => true, 'rand' => $rand]);
         echo "<i id='refresh' class='fa fa-sync pointer' style='margin-left: 10px;font-size: 15px'></i>";
@@ -286,7 +296,9 @@ JAVASCRIPT;
             $html .= "<th class='center'>" . Entity::getTypeName() . "</th>";
             $html .= "<th class='center'>" . Location::getTypeName() . "</th>";
             $html .= "<th class='center'>" . _n('Associated element', 'Associated elements', 1) . "</th>";
-            $html .= "<th class='center'>" . CommonITILObject::getTypeName() . " - " . CommonITILTask::getTypeName() . "</th>";
+            $html .= "<th class='center'>";
+            $html .= CommonITILObject::getTypeName() . " - " . CommonITILTask::getTypeName();
+            $html .= "</th>";
             $html .= "<th class='center'>" . __("Time") . "</th>";
             $html .= "</tr>";
 
@@ -302,13 +314,17 @@ JAVASCRIPT;
                 $html .= "<tr class='tab_bg_2'>";
                 $user = new User();
                 $user->getFromDB($row['users_id']);
-                $html .= "<td class='center'><a href='" . $user->getLinkURL() . "'>" . $user->getFriendlyName() . "</a></td>";
-                $html .= "<td class='center'>" . Entity::getFriendlyNameById($parent->fields['entities_id']) . "</td>";
+                $html .= "<td class='center'>";
+                $html .= "<a href='" . $user->getLinkURL() . "'>" . $user->getFriendlyName() . "</a>";
+                $html .= "</td>";
+                $html .= "<td class='center'>";
+                $html .= Entity::getFriendlyNameById($parent->fields['entities_id']);
+                $html .= "</td>";
+                $html .= "<td class='center'>";
                 if (isset($parent->fields['locations_id'])) {
-                    $html .= "<td class='center'>" . Location::getFriendlyNameById($parent->fields['locations_id']) . "</td>";
-                } else {
-                    $html .= "<td class='center'></td>";
+                    $html .= Location::getFriendlyNameById($parent->fields['locations_id']);
                 }
+                $html .= "</td>";
                 $html .= "<td class='center'>";
                 $html .= "<ul class='list left'>";
                 if (is_a($parent, CommonITILObject::class, true)) {
@@ -335,7 +351,8 @@ JAVASCRIPT;
                 $html .= "<td class='center'><a href='" . $parent->getLinkURL() . "'>";
                 $html .= $parent->getTypeName(1) . " - " . $parent->getID() . " - " . $row['items_id'] . "</a></td>";
                 $html .= "<td class='center'>";
-                $html .= Html::timestampToString(PluginActualtimeTask::totalEndTime($row['items_id'], $row['itemtype']));
+                $timestamp = PluginActualtimeTask::totalEndTime($row['items_id'], $row['itemtype']);
+                $html .= Html::timestampToString($timestamp);
                 $html .= "</td>";
                 $html .= "</tr>";
             }

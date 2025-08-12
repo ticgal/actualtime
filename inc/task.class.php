@@ -29,12 +29,9 @@
  * -------------------------------------------------------------------------
  */
 
-if (!defined('GLPI_ROOT')) {
-    die("Sorry. You can't access directly to this file");
-}
-
 include_once('config.class.php');
 
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeTask extends CommonDBTM
 {
     public static $rightname = 'task';
@@ -1877,23 +1874,21 @@ JAVASCRIPT;
         /** @var \DBmysql $DB */
         global $DB;
 
-        $default_charset = DBConnection::getDefaultCharset();
-        $default_collation = DBConnection::getDefaultCollation();
-        $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+        $default_charset    = DBConnection::getDefaultCharset();
+        $default_collation  = DBConnection::getDefaultCollation();
+        $default_key_sign   = DBConnection::getDefaultPrimaryKeySignOption();
 
         $table = self::getTable();
-
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
-
             $query = "CREATE TABLE IF NOT EXISTS $table (
-                `id` int {$default_key_sign} NOT NULL auto_increment,
-                `itemtype` varchar(255) NOT NULL,
-                `items_id` int {$default_key_sign} NOT NULL DEFAULT '0',
+                `id` INT {$default_key_sign} NOT NULL AUTO_INCREMENT,
+                `itemtype` VARCHAR(255) NOT NULL,
+                `items_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
                 `actual_begin` TIMESTAMP NULL DEFAULT NULL,
                 `actual_end` TIMESTAMP NULL DEFAULT NULL,
-                `users_id` int {$default_key_sign} NOT NULL,
-                `actual_actiontime` int {$default_key_sign} NOT NULL DEFAULT 0,
+                `users_id` INT {$default_key_sign} NOT NULL,
+                `actual_actiontime` INT {$default_key_sign} NOT NULL DEFAULT 0,
                 `origin_start` INT {$default_key_sign} NOT NULL,
                 `origin_end` INT {$default_key_sign} NOT NULL DEFAULT 0,
                 `override_begin` TIMESTAMP NULL DEFAULT NULL,
@@ -1904,7 +1899,7 @@ JAVASCRIPT;
                 KEY `users_id` (`users_id`)
             ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->doQueryOrDie($query, $DB->error());
+            $DB->doQuery($query);
         } else {
             $migration->changeField($table, 'tasks_id', 'tickettasks_id', 'int');
             $migration->dropField($table, 'latitude_start');
@@ -1916,8 +1911,18 @@ JAVASCRIPT;
             $migration->addField($table, 'override_begin', 'timestamp', ['nodefault' => true, 'null' => true]);
             $migration->addField($table, 'override_end', 'timestamp', ['nodefault' => true, 'null' => true]);
 
-            $migration->addField($table, 'itemtype', 'varchar(255) NOT NULL', ['after' => 'id', 'update' => "'TicketTask'"]);
-            $migration->addField($table, 'items_id', "int {$default_key_sign} NOT NULL DEFAULT '0'", ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')]);
+            $migration->addField(
+                $table,
+                'itemtype',
+                'varchar(255) NOT NULL',
+                ['after' => 'id', 'update' => "'TicketTask'"],
+            );
+            $migration->addField(
+                $table,
+                'items_id',
+                "int {$default_key_sign} NOT NULL DEFAULT '0'",
+                ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')],
+            );
             $migration->addKey($table, ['itemtype', 'items_id'], 'item');
             $migration->dropField($table, 'tickettasks_id');
 

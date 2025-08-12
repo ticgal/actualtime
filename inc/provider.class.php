@@ -29,19 +29,18 @@
  * -------------------------------------------------------------------------
  */
 
-if (!defined('GLPI_ROOT')) {
-    die("Sorry. You can't access directly to this file");
-}
+use Glpi\Dashboard\Provider;
 
-class PluginActualtimeProvider extends CommonDBTM
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
+class PluginActualtimeProvider extends Provider
 {
     /**
      * moreActualtimeTasksByDay
      *
-     * @param  mixed $params
+     * @param  array $params
      * @return array
      */
-    public static function moreActualtimeTasksByDay($params = []): array
+    public static function moreActualtimeTasksByDay(array $params = []): array
     {
         $DB = DBConnection::getReadConnection();
 
@@ -111,11 +110,10 @@ class PluginActualtimeProvider extends CommonDBTM
         }
 
         if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
             $query = [
                 'SELECT' => [
-                    new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
-                    ),
+                    new QueryExpression($period),
                     "COUNT DISTINCT" => $task_table . ".id AS nb_task",
                     $task_table . ".users_id_tech AS tech",
                 ],
@@ -185,10 +183,10 @@ class PluginActualtimeProvider extends CommonDBTM
     /**
      * lessActualtimeTasksByDay
      *
-     * @param  mixed $params
+     * @param  array $params
      * @return array
      */
-    public static function lessActualtimeTasksByDay($params = []): array
+    public static function lessActualtimeTasksByDay(array $params = []): array
     {
         $DB = DBConnection::getReadConnection();
 
@@ -262,11 +260,10 @@ class PluginActualtimeProvider extends CommonDBTM
         }
 
         if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
             $query = [
                 'SELECT' => [
-                    new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
-                    ),
+                    new QueryExpression($period),
                     "COUNT DISTINCT" => $task_table . ".id AS nb_task",
                     $task_table . ".users_id_tech AS tech",
                 ],
@@ -336,10 +333,10 @@ class PluginActualtimeProvider extends CommonDBTM
     /**
      * moreActualtimeUsageByDay
      *
-     * @param  mixed $params
+     * @param  array $params
      * @return array
      */
-    public static function moreActualtimeUsageByDay($params = []): array
+    public static function moreActualtimeUsageByDay(array $params = []): array
     {
         $DB = DBConnection::getReadConnection();
 
@@ -412,11 +409,10 @@ class PluginActualtimeProvider extends CommonDBTM
         }
 
         if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
             $sql = [
                 'SELECT' => [
-                    new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
-                    ),
+                    new QueryExpression($period),
                     'SUM' => 'actual_actiontime AS total',
                     'users_id_tech',
                 ],
@@ -488,10 +484,10 @@ class PluginActualtimeProvider extends CommonDBTM
     /**
      * lessActualtimeUsageByDay
      *
-     * @param  mixed $params
+     * @param  array $params
      * @return array
      */
-    public static function lessActualtimeUsageByDay($params = []): array
+    public static function lessActualtimeUsageByDay(array $params = []): array
     {
         $DB = DBConnection::getReadConnection();
 
@@ -558,11 +554,10 @@ class PluginActualtimeProvider extends CommonDBTM
         }
 
         if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
             $sql = [
                 'SELECT' => [
-                    new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
-                    ),
+                    new QueryExpression($period),
                     'SUM' => 'actual_actiontime AS total',
                     'users_id_tech',
                 ],
@@ -628,10 +623,10 @@ class PluginActualtimeProvider extends CommonDBTM
     /**
      * morePercentageActualtimeTasksByDay
      *
-     * @param  mixed $params
+     * @param  array $params
      * @return array
      */
-    public static function morePercentageActualtimeTasksByDay($params = []): array
+    public static function morePercentageActualtimeTasksByDay(array $params = []): array
     {
         $DB = DBConnection::getReadConnection();
 
@@ -704,11 +699,10 @@ class PluginActualtimeProvider extends CommonDBTM
         }
 
         if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
             $query = [
                 'SELECT' => [
-                    new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
-                    ),
+                    new QueryExpression($period),
                     'SUM' => 'actual_actiontime AS total',
                     'users_id_tech',
                 ],
@@ -804,10 +798,10 @@ class PluginActualtimeProvider extends CommonDBTM
     /**
      * lessPercentageActualtimeTasksByDay
      *
-     * @param  mixed $params
+     * @param  array $params
      * @return array
      */
-    public static function lessPercentageActualtimeTasksByDay($params = []): array
+    public static function lessPercentageActualtimeTasksByDay(array $params = []): array
     {
         $DB = DBConnection::getReadConnection();
 
@@ -880,11 +874,10 @@ class PluginActualtimeProvider extends CommonDBTM
         }
 
         if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
             $query = [
                 'SELECT' => [
-                    new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period",
-                    ),
+                    new QueryExpression($period),
                     'SUM' => 'actual_actiontime AS total',
                     'users_id_tech',
                 ],

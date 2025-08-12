@@ -29,65 +29,65 @@
  * -------------------------------------------------------------------------
  */
 
-if (!defined('GLPI_ROOT')) {
-    die("Sorry. You can't access directly to this file");
-}
-
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeDashboard extends CommonDBTM
 {
     /**
      * dashboardCards
      *
-     * @param  mixed $cards
+     * @param  ?array $cards
      * @return array
      */
-    public static function dashboardCards($cards): array
+    public static function dashboardCards(?array $cards = []): array
     {
+        $cards = $cards ?? [];
+        $group = 'Actualtime';
+
         $cards['plugin_actualtime_moreactualtimetasksbyday'] = [
-            'widgettype' => ['stackedbars', 'lines'],
-            'label' => Ticket::getTypeName() . ' - ' . __('Top 20 Actualtime tasks per day', 'actualtime'),
-            'group' => 'Actualtime',
-            'filters' => ['dates'],
-            'provider' => 'PluginActualtimeProvider::moreActualtimeTasksByDay',
+            'widgettype'    => ['stackedbars', 'lines'],
+            'label'         => Ticket::getTypeName() . ' - ' . __('Top 20 Actualtime tasks per day', 'actualtime'),
+            'group'         => $group,
+            'filters'       => ['dates'],
+            'provider'      => PluginActualtimeProvider::class . '::moreActualtimeTasksByDay',
         ];
 
         $cards['plugin_actualtime_lessactualtimetasks'] = [
-            'widgettype' => ['stackedbars', 'lines'],
-            'label' => Ticket::getTypeName() . ' - ' . __('Bottom 20 Actualtime tasks per day', 'actualtime'),
-            'group' => 'Actualtime',
-            'filters' => ['dates'],
-            'provider' => 'PluginActualtimeProvider::lessActualtimeTasksByDay',
+            'widgettype'    => ['stackedbars', 'lines'],
+            'label'         => Ticket::getTypeName() . ' - ' . __('Bottom 20 Actualtime tasks per day', 'actualtime'),
+            'group'         => $group,
+            'filters'       => ['dates'],
+            'provider'      => PluginActualtimeProvider::class . '::lessActualtimeTasksByDay',
         ];
 
         $cards['plugin_actualtime_moreactualtimeusagebyday'] = [
-            'widgettype' => ['stackedbars', 'lines'],
-            'label' => Ticket::getTypeName() . ' - ' . __('Top 20 Actualtime usage (hours)', 'actualtime'),
-            'group' => 'Actualtime',
-            'filters' => ['dates'],
-            'provider' => 'PluginActualtimeProvider::moreActualtimeUsageByDay',
+            'widgettype'    => ['stackedbars', 'lines'],
+            'label'         => Ticket::getTypeName() . ' - ' . __('Top 20 Actualtime usage (hours)', 'actualtime'),
+            'group'         => $group,
+            'filters'       => ['dates'],
+            'provider'      => PluginActualtimeProvider::class . '::moreActualtimeUsageByDay',
         ];
 
         $cards['plugin_actualtime_lessactualtimeusagebyday'] = [
-            'widgettype' => ['stackedbars', 'lines'],
-            'label' => Ticket::getTypeName() . ' - ' . __('Bottom 20 Actualtime usage (hours)', 'actualtime'),
-            'group' => 'Actualtime',
-            'filters' => ['dates'],
-            'provider' => 'PluginActualtimeProvider::lessActualtimeUsageByDay',
+            'widgettype'    => ['stackedbars', 'lines'],
+            'label'         => Ticket::getTypeName() . ' - ' . __('Bottom 20 Actualtime usage (hours)', 'actualtime'),
+            'group'         => $group,
+            'filters'       => ['dates'],
+            'provider'      => PluginActualtimeProvider::class . '::lessActualtimeUsageByDay',
         ];
         $cards['plugin_actualtime_moreapercentagectualtimetasksbyday'] = [
-            'widgettype' => ['bars', 'lines'],
-            'label' => Ticket::getTypeName() . ' - ' . __('Top 20 % Actualtime usage per day', 'actualtime'),
-            'group' => 'Actualtime',
-            'filters' => ['dates'],
-            'provider' => 'PluginActualtimeProvider::morePercentageActualtimeTasksByDay',
+            'widgettype'    => ['bars', 'lines'],
+            'label'         => Ticket::getTypeName() . ' - ' . __('Top 20 % Actualtime usage per day', 'actualtime'),
+            'group'         => $group,
+            'filters'       => ['dates'],
+            'provider'      => PluginActualtimeProvider::class . '::morePercentageActualtimeTasksByDay',
         ];
 
         $cards['plugin_actualtime_lesspercentageactualtimetasks'] = [
-            'widgettype' => ['bars', 'lines'],
-            'label' => Ticket::getTypeName() . ' - ' . __('Bottom 20 % Actualtime usage per day', 'actualtime'),
-            'group' => 'Actualtime',
-            'filters' => ['dates'],
-            'provider' => 'PluginActualtimeProvider::lessPercentageActualtimeTasksByDay',
+            'widgettype'    => ['bars', 'lines'],
+            'label'         => Ticket::getTypeName() . ' - ' . __('Bottom 20 % Actualtime usage per day', 'actualtime'),
+            'group'         => $group,
+            'filters'       => ['dates'],
+            'provider'      => PluginActualtimeProvider::class . '::lessPercentageActualtimeTasksByDay',
         ];
 
         return $cards;

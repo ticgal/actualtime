@@ -29,13 +29,12 @@
  * -------------------------------------------------------------------------
  */
 
-if (!defined('GLPI_ROOT')) {
-    die("Sorry. You can't access directly to this file");
-}
+use Glpi\Application\View\TemplateRenderer;
 
 /**
  * Class PluginActualtimeConfig
  */
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeConfig extends CommonDBTM
 {
     public static $rightname = 'config';
@@ -86,81 +85,33 @@ class PluginActualtimeConfig extends CommonDBTM
      */
     public static function showConfigForm(): bool
     {
-        $rand = mt_rand();
-
         $config = new self();
-        $config->getFromDB(1);
-
-        $config->showFormHeader(['colspan' => 4]);
-
-        $values = [
+        $displayvalues = [
             0 => __('In Standard interface only (default)', 'actualtime'),
             1 => __('Both in Standard and Helpdesk interfaces', 'actualtime'),
         ];
-        echo "<table class='tab_cadre_fixe'><thead>";
-        echo "<th colspan='4'>" . self::getTypeName() . '</th></thead>';
 
-        echo "<tr class='tab_bg_1'>";
-        echo "<td>" . __("Enable timer on tasks", "actualtime") . "</td><td>";
-        Dropdown::showFromArray(
-            'displayinfofor',
-            $values,
-            [
-                'value' => $config->fields['displayinfofor'],
+        $template = "@actualtime/forms/config.html.twig";
+        TemplateRenderer::getInstance()->display($template, [
+            'item'          => $config,
+            'displayvalues' => $displayvalues,
+            'options'       => [
+                'full_width' => true,
             ],
-        );
-        echo "</td>";
-        echo "</tr>";
+        ]);
 
-        echo "<tr class='tab_bg_1'>";
-        echo "<td>" . __("Display pop-up window with current running timer", "actualtime") . "</td><td>";
-        Dropdown::showYesNo('showtimerpopup', $config->showTimerPopup(), -1);
-        echo "</td>";
-        echo "</tr>";
-
-        echo "<tr class='tab_bg_1'>";
-        echo "<td>" . __("Display actual time in closed task box ('Processing ticket' list)", "actualtime") . "</td><td>";
-        Dropdown::showYesNo('showtimerinbox', $config->showTimerInBox(), -1);
-        echo "</td>";
-        echo "</tr>";
-
-        echo "<tr class='tab_bg_1' name='optional$rand'>";
-        echo "<td>" . __("Automatically open task with timer running", "actualtime") . "</td><td>";
-        Dropdown::showYesNo('autoopenrunning', $config->autoOpenRunning(), -1);
-        echo "</td>";
-        echo "</tr>";
-
-        echo "<tr class='tab_bg_1' name='optional$rand'>";
-        echo "<td>" . __("Automatically update the duration", "actualtime") . "</td><td>";
-        Dropdown::showYesNo('autoupdate_duration', $config->autoUpdateDuration(), -1);
-        echo "</td>";
-        echo "</tr>";
-
-        echo "<tr class='tab_bg_1' name='optional$rand'>";
-        echo "<td>" . __("Enable Timer Only on Scheduled Task Day", "actualtime") . "</td><td>";
-        Dropdown::showYesNo('planned_task', $config->fields['planned_task'], -1);
-        echo "</td>";
-        echo "</tr>";
-
-        echo "<tr class='tab_bg_1' name='optional$rand'>";
-        echo "<td>" . __("Enable Timer Only on Task's Start Day", "actualtime") . "</td><td>";
-        Dropdown::showYesNo('multiple_day', $config->fields['multiple_day'], -1);
-        echo "</td>";
-        echo "</tr>";
-
-        $config->showFormButtons(['candel' => false]);
-
-        return false;
+        return true;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string|array
     {
         if ($item->getType() == 'Config') {
             return PLUGIN_ACTUALTIME_NAME;
         }
+
         return '';
     }
 
@@ -170,9 +121,10 @@ class PluginActualtimeConfig extends CommonDBTM
     public static function displayTabContentForItem(CommonGLPI $item, $tabnum = 1, $withtemplate = 0): bool
     {
         if ($item->getType() == 'Config') {
-            self::showConfigForm();
+            return self::showConfigForm();
         }
-        return true;
+
+        return false;
     }
 
     /**
@@ -242,28 +194,28 @@ class PluginActualtimeConfig extends CommonDBTM
         /** @var \DBmysql $DB */
         global $DB;
 
-        $default_charset = DBConnection::getDefaultCharset();
-        $default_collation = DBConnection::getDefaultCollation();
-        $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+        $default_charset    = DBConnection::getDefaultCharset();
+        $default_collation  = DBConnection::getDefaultCollation();
+        $default_key_sign   = DBConnection::getDefaultPrimaryKeySignOption();
 
         $table = self::getTable();
         $config = new self();
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
-
             $query = "CREATE TABLE IF NOT EXISTS $table (
-                `id` int {$default_key_sign} NOT NULL auto_increment,
-                `displayinfofor` smallint NOT NULL DEFAULT '0',
+                `id` INT {$default_key_sign} NOT NULL AUTO_INCREMENT,
+                `displayinfofor` SMALLINT NOT NULL DEFAULT '0',
                 `showtimerpopup` TINYINT NOT NULL DEFAULT '1',
                 `showtimerinbox` TINYINT NOT NULL DEFAULT '1',
                 `autoopenrunning` TINYINT NOT NULL DEFAULT '0',
                 `autoupdate_duration` TINYINT NOT NULL DEFAULT '0',
                 `planned_task` TINYINT NOT NULL DEFAULT '0',
                 `multiple_day` TINYINT NOT NULL DEFAULT '0',
+                `daily_limit` INT NOT NULL DEFAULT '8',
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->doQueryOrDie($query, $DB->error());
+            $DB->doQuery($query);
             $config->add([
                 'id' => 1,
                 'displayinfofor' => 0,
@@ -276,6 +228,9 @@ class PluginActualtimeConfig extends CommonDBTM
 
             $migration->addField($table, 'planned_task', 'bool');
             $migration->addField($table, 'multiple_day', 'bool');
+            // * 3.2.2
+            // daily limit in hours for actualtime
+            $migration->addField($table, 'daily_limit', 'int', ['value' => 8]);
 
             $migration->migrationOneTable($table);
         }
@@ -289,13 +244,8 @@ class PluginActualtimeConfig extends CommonDBTM
      */
     public static function uninstall(Migration $migration): void
     {
-        /** @var \DBmysql $DB */
-        global $DB;
-
         $table = self::getTable();
-        if ($DB->TableExists($table)) {
-            $migration->displayMessage("Uninstalling $table");
-            $migration->dropTable($table);
-        }
+        $migration->displayMessage("Uninstalling $table");
+        $migration->dropTable($table);
     }
 }

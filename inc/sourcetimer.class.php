@@ -31,10 +31,7 @@
 
 use Glpi\Application\View\TemplateRenderer;
 
-if (!defined('GLPI_ROOT')) {
-    die("Sorry. You can't access directly to this file");
-}
-
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeSourcetimer extends CommonDBTM
 {
     public static $rightname = 'plugin_actualtime_sourcetimer';
@@ -178,7 +175,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
         $html .= "</a></div>";
         $script = <<<JAVASCRIPT
 $(document).ready(function() {
-	$("div[data-itemtype='{$itemtype}'][data-items-id='{$task_id}'] div.timeline-item-buttons").prepend("{$html}");
+    $("div[data-itemtype='{$itemtype}'][data-items-id='{$task_id}'] div.timeline-item-buttons").prepend("{$html}");
 });
 JAVASCRIPT;
         echo Html::scriptBlock($script);
@@ -225,8 +222,12 @@ JAVASCRIPT;
             $actualtimes[$rows_id] = $data;
         }
 
+        $config = PluginActualtimeConfig::getInstance();
         $duration = 0;
-        $max_hour = 8;
+        $max_hour = $config->fields['daily_limit'];
+        if ($max_hour == 0) {
+            $max_hour = 24;
+        }
         foreach ($actualtimes as $rows_id => $data) {
             $data['rand'] = mt_rand();
             $data['min_date'] = $data['actual_begin'];
@@ -272,28 +273,26 @@ JAVASCRIPT;
         /** @var \DBmysql $DB */
         global $DB;
 
-        $default_charset = DBConnection::getDefaultCharset();
-        $default_collation = DBConnection::getDefaultCollation();
-        $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+        $default_charset    = DBConnection::getDefaultCharset();
+        $default_collation  = DBConnection::getDefaultCollation();
+        $default_key_sign   = DBConnection::getDefaultPrimaryKeySignOption();
 
         $table = self::getTable();
-
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
-
             $query = "CREATE TABLE IF NOT EXISTS $table (
-                `id` int {$default_key_sign} NOT NULL auto_increment,
-                `plugin_actualtime_tasks_id` int {$default_key_sign} NOT NULL DEFAULT '0',
-                `users_id` int {$default_key_sign} NOT NULL DEFAULT '0',
+                `id` INT {$default_key_sign} NOT NULL AUTO_INCREMENT,
+                `plugin_actualtime_tasks_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
+                `users_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
                 `source_end` TIMESTAMP NULL DEFAULT NULL,
-                `source_actiontime` int {$default_key_sign} NOT NULL DEFAULT 0,
+                `source_actiontime` INT {$default_key_sign} NOT NULL DEFAULT 0,
                 `date_creation` TIMESTAMP NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),
                 UNIQUE KEY `plugin_actualtime_tasks_id` (`plugin_actualtime_tasks_id`),
                 KEY `users_id` (`users_id`)
             ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->doQueryOrDie($query, $DB->error());
+            $DB->doQuery($query);
         }
     }
 }
