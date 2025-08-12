@@ -83,7 +83,7 @@ function plugin_init_actualtime(): void
 
         // Hooks
         $PLUGIN_HOOKS[Hooks::POST_ITEM_FORM]['actualtime'] = [
-            PluginActualtimeTask::class, 'postForm'
+            PluginActualtimeTask::class, 'postForm',
         ];
 
         $PLUGIN_HOOKS[Hooks::SHOW_ITEM_STATS]['actualtime'] = [
@@ -126,14 +126,14 @@ function plugin_init_actualtime(): void
         $PLUGIN_HOOKS[Hooks::POST_SHOW_ITEM]['actualtime'] = 'plugin_actualtime_postshowitem';
 
         $PLUGIN_HOOKS[Hooks::DASHBOARD_CARDS]['actualtime'] = [
-            PluginActualtimeDashboard::class, 'dashboardCards'
+            PluginActualtimeDashboard::class, 'dashboardCards',
         ];
 
         $config = new PluginActualtimeConfig();
         if ($config->showTimerPopup()) {
             // This hook is not needed if not showing popup
             $PLUGIN_HOOKS[Hooks::POST_SHOW_TAB]['actualtime'] = [
-                PluginActualtimeTask::class, 'postShowTab'
+                PluginActualtimeTask::class, 'postShowTab',
             ];
         }
 
@@ -149,7 +149,7 @@ function plugin_init_actualtime(): void
 
         if (Session::haveRight('plugin_actualtime_running', READ)) {
             $PLUGIN_HOOKS['menu_toadd']['actualtime'] = [
-                'admin' => 'PluginActualtimeRunning'
+                'admin' => 'PluginActualtimeRunning',
             ];
         }
 
