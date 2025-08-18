@@ -293,7 +293,12 @@ JAVASCRIPT;
             $max_hour = 24;
         }
 
-        $actualtimes = self::getActualtimes($itemtype, $items_id);
+        $actualtimes = [];
+        foreach (self::getActualtimes($itemtype, $items_id) as $rows_id => $data) {
+            $actualtimes[$rows_id] = $data;
+        }
+
+        $previous_row = 0;
         foreach ($actualtimes as $rows_id => $data) {
             $max_seconds = $max_hour * 60 * 60 - $duration;
             $limit = strtotime($data['min_date'] . " + {$max_seconds} seconds");
