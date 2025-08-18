@@ -40,30 +40,34 @@ if (
 ) {
     if (isset($_POST["update"])) {
         $config = new PluginActualtimeConfig();
+        $itemtype = $_POST["itemtype"] ?? '';
+        $item_id = $_POST["items_id"] ?? 0;
+        $task_limit = PluginActualtimeSourcetimer::getTaskLimits($itemtype, $item_id);
         foreach ($_POST['actual_end'] as $key => $value) {
-            if (!empty($value)) {
-                $actualtime = new PluginActualtimeTask();
-                if ($actualtime->getFromDB($key)) {
-                    if ($value != $actualtime->fields['actual_end'] && $value > $actualtime->fields['actual_begin']) {
-                        $seconds = (strtotime($value) - strtotime($actualtime->fields['actual_begin']));
-                        $input = [
-                            'id'                => $key,
-                            'actual_end'        => $value,
-                            'actual_actiontime' => $seconds,
-                            'is_modified'       => 1,
+            if (empty($value)) {
+                continue;
+            }
+            $actualtime = new PluginActualtimeTask();
+            if ($actualtime->getFromDB($key)) {
+                if ($value != $actualtime->fields['actual_end'] && $value > $actualtime->fields['actual_begin']) {
+                    $seconds = (strtotime($value) - strtotime($actualtime->fields['actual_begin']));
+                    $input = [
+                        'id'                => $key,
+                        'actual_end'        => $value,
+                        'actual_actiontime' => $seconds,
+                        'is_modified'       => 1,
+                    ];
+                    if ($actualtime->fields['is_modified'] == 0) {
+                        $source = new PluginActualtimeSourcetimer();
+                        $input_source = [
+                            'plugin_actualtime_tasks_id' => $actualtime->fields['id'],
+                            'users_id'          => Session::getLoginUserID(),
+                            'source_end'        => $actualtime->fields['actual_end'],
+                            'source_actiontime' => $actualtime->fields['actual_actiontime'],
                         ];
-                        if ($actualtime->fields['is_modified'] == 0) {
-                            $source = new PluginActualtimeSourcetimer();
-                            $input_source = [
-                                'plugin_actualtime_tasks_id' => $actualtime->fields['id'],
-                                'users_id'          => Session::getLoginUserID(),
-                                'source_end'        => $actualtime->fields['actual_end'],
-                                'source_actiontime' => $actualtime->fields['actual_actiontime'],
-                            ];
-                            $source->add($input_source);
-                        }
-                        $actualtime->update($input);
+                        $source->add($input_source);
                     }
+                    $actualtime->update($input);
                 }
             }
         }

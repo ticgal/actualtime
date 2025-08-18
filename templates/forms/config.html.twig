@@ -63,9 +63,9 @@
         ) }}
 
         {{ fields.numberField(
-            'daily_limit',
-            item.fields['daily_limit'],
-            __('Daily limit in hours for actualtime', 'actualtime'),
+            'task_limit',
+            item.fields['task_limit'],
+            __('Task limit in hours for ActualTime', 'actualtime'),
             options|merge({
                 'input_addclass': 'w-auto',
                 'min': 0,

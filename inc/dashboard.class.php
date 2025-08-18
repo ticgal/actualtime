@@ -74,6 +74,7 @@ class PluginActualtimeDashboard extends CommonDBTM
             'filters'       => ['dates'],
             'provider'      => PluginActualtimeProvider::class . '::lessActualtimeUsageByDay',
         ];
+
         $cards['plugin_actualtime_moreapercentagectualtimetasksbyday'] = [
             'widgettype'    => ['bars', 'lines'],
             'label'         => Ticket::getTypeName() . ' - ' . __('Top 20 % Actualtime usage per day', 'actualtime'),

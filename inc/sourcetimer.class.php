@@ -199,6 +199,69 @@ JAVASCRIPT;
      */
     public function modalForm(string $itemtype, int $items_id): void
     {
+        $config = PluginActualtimeConfig::getInstance();
+        $actualtimes = [];
+        $userdata = [];
+        $duration = 0;
+
+        foreach (self::getActualtimes($itemtype, $items_id) as $rows_id => $data) {
+            if (empty($userdata)) {
+                $href = User::getFormURLWithID($data['users_id']);
+                $username = User::getFriendlyNameById($data['users_id']);
+                $userdata['user'] = "<a href=\"{$href}\" target=\"_blank\">{$username}</a>";
+            }
+            $actualtimes[$rows_id] = $data;
+        }
+
+        $max_hour = $config->fields['daily_limit'];
+        if ($max_hour == 0) {
+            $max_hour = 24;
+        }
+
+        $previous_row = 0;
+        foreach ($actualtimes as $rows_id => $data) {
+            $data['rand'] = mt_rand();
+            $data['min_date'] = $data['actual_begin'];
+            $max_seconds = $max_hour * 60 * 60 - $duration;
+            $limit = strtotime($data['min_date'] . " + {$max_seconds} seconds");
+            $a_limit = date('Y-m-d H:i:s', $limit);
+            if (isset($actualtimes[$previous_row])) {
+                $max_date = $data['actual_begin'];
+                if ($max_date > $a_limit) {
+                    $max_date = $a_limit;
+                }
+                $actualtimes[$previous_row]['max_date'] = $max_date;
+                $previous_max_seconds = strtotime($max_date) - strtotime($actualtimes[$previous_row]['actual_end']);
+                $actualtimes[$previous_row]['limit'] = Html::timestampToString($previous_max_seconds);
+            }
+            $data['max_date'] = $a_limit;
+            $data['limit'] = Html::timestampToString($max_seconds);
+            $data['stamp_actiontime'] = Html::timestampToString($data['actual_actiontime']);
+            $actualtimes[$rows_id] = $data;
+            $duration += (int) $data['actual_actiontime'];
+            $previous_row = $rows_id;
+        }
+        $userdata['duration'] = Html::timestampToString($duration);
+        $userdata['limit'] = Html::timestampToString($max_hour * 60 * 60);
+
+        $template = "@actualtime/forms/modify_timers.html.twig";
+        TemplateRenderer::getInstance()->display($template, [
+            'itemtype'      => $itemtype,
+            'items_id'      => $items_id,
+            'actualtimes'   => $actualtimes,
+            'userdata'      => $userdata,
+            'target'        => $this->getFormURL(),
+        ]);
+    }
+
+    /**
+     * @param string $itemtype
+     * @param int $items_id
+     *
+     * @return \DBmysqlIterator
+     */
+    private static function getActualtimes(string $itemtype, int $items_id): \DBmysqlIterator
+    {
         /** @var \DBmysql $DB */
         global $DB;
 
@@ -211,25 +274,27 @@ JAVASCRIPT;
             ],
         ];
 
-        $actualtimes = [];
-        $userdata = [];
-        foreach ($DB->request($query) as $rows_id => $data) {
-            if (empty($userdata)) {
-                $href = User::getFormURLWithID($data['users_id']);
-                $username = User::getFriendlyNameById($data['users_id']);
-                $userdata['user'] = "<a href=\"{$href}\" target=\"_blank\">{$username}</a>";
-            }
-            $actualtimes[$rows_id] = $data;
-        }
+        return $DB->request($query);
+    }
 
+    /**
+     * @param string $itemtype
+     * @param int $items_id
+     *
+     * @return array
+     */
+    public static function getTaskLimits(string $itemtype, int $items_id): array
+    {
         $config = PluginActualtimeConfig::getInstance();
+        $limits = [];
         $duration = 0;
         $max_hour = $config->fields['daily_limit'];
         if ($max_hour == 0) {
             $max_hour = 24;
         }
+
+        $actualtimes = self::getActualtimes($itemtype, $items_id);
         foreach ($actualtimes as $rows_id => $data) {
-            $data['rand'] = mt_rand();
             $data['min_date'] = $data['actual_begin'];
             $next_row = $rows_id + 1;
             $max_seconds = $max_hour * 60 * 60 - $duration;
@@ -249,17 +314,8 @@ JAVASCRIPT;
             $actualtimes[$rows_id] = $data;
             $duration += (int) $data['actual_actiontime'];
         }
-        $userdata['duration'] = Html::timestampToString($duration);
-        $userdata['limit'] = Html::timestampToString($max_hour * 60 * 60);
 
-        $template = "@actualtime/forms/modify_timers.html.twig";
-        TemplateRenderer::getInstance()->display($template, [
-            'itemtype'      => $itemtype,
-            'items_id'      => $items_id,
-            'actualtimes'   => $actualtimes,
-            'userdata'      => $userdata,
-            'target'        => $this->getFormURL(),
-        ]);
+        return $limits;
     }
 
     /**

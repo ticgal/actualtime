@@ -22,7 +22,7 @@
                     <tr>
                         <th scope="col" class="col-1">{{ __('User') }}</th>
                         <th scope="col" class="col-1">{{ __('Duration') }}</th>
-                        <th scope="col" class="col-1">{{ __('Daily limit', 'actualtime') }}</th>
+                        <th scope="col" class="col-1">{{ __('Task limit', 'actualtime') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,7 +44,7 @@
 
                 {% set start_tooltip = __('Start') ~ ': ' ~ actualtime['min_date'] %}
                 {% set end_tooltip = __('End') ~ ': ' ~ actualtime['max_date'] %}
-                {% set limit_tooltip = __('Max available time', 'actualtime') ~ ': ' ~ actualtime['limit'] %}
+                {% set limit_tooltip = __('Additional time available', 'actualtime') ~ ': ' ~ actualtime['limit'] %}
                 {% set actual_end_tooltip %}
                 {% do call(
                     'Html::showToolTip',
@@ -54,15 +54,19 @@
                 {{ fields.datetimeField(
                     'actual_end[' ~ actualtime['id'] ~ ']',
                     actualtime['actual_end'],
-                    __('End date') ~ ' ' ~ actual_end_tooltip,
+                    __('End date') ~ ' (' ~ actualtime['stamp_actiontime'] ~ ') ' ~ actual_end_tooltip,
                     options|merge({'rand': actualtime['rand']})
                 ) }}
+                {# To give it time to load the fullcalendar library #}
                 <script>
-                    $(document).ready(function () {
+                    const intervalname{{ actualtime['rand'] }} = setInterval(() => {
                         var date_end_input = $("[id='actual-end-{{ actualtime['id'] }}_{{ actualtime['rand'] }}']")[0];
-                        date_end_input._flatpickr.set('minDate', "{{ actualtime['min_date'] }}");
-                        date_end_input._flatpickr.set('maxDate', "{{ actualtime['max_date'] }}");
-                    });
+                        if (date_end_input._flatpickr) {
+                            date_end_input._flatpickr.set('minDate', "{{ actualtime['min_date'] }}");
+                            date_end_input._flatpickr.set('maxDate', "{{ actualtime['max_date'] }}");
+                            clearInterval(intervalname{{ actualtime['rand'] }});
+                        }
+                    }, 200);
                 </script>
             {% endfor %}
 

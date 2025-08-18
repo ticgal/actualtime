@@ -211,7 +211,7 @@ class PluginActualtimeConfig extends CommonDBTM
                 `autoupdate_duration` TINYINT NOT NULL DEFAULT '0',
                 `planned_task` TINYINT NOT NULL DEFAULT '0',
                 `multiple_day` TINYINT NOT NULL DEFAULT '0',
-                `daily_limit` INT NOT NULL DEFAULT '8',
+                `task_limit` INT NOT NULL DEFAULT '8',
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
@@ -229,8 +229,8 @@ class PluginActualtimeConfig extends CommonDBTM
             $migration->addField($table, 'planned_task', 'bool');
             $migration->addField($table, 'multiple_day', 'bool');
             // * 3.2.2
-            // daily limit in hours for actualtime
-            $migration->addField($table, 'daily_limit', 'int', ['value' => 8]);
+            // task limit in hours for actualtime
+            $migration->addField($table, 'task_limit', 'int', ['value' => 8]);
 
             $migration->migrationOneTable($table);
         }
