@@ -281,7 +281,7 @@ JAVASCRIPT;
      * @param string $itemtype
      * @param int $items_id
      *
-     * @return array
+     * @return array<int, array{min_date: string, max_date: string}>
      */
     public static function getTaskLimits(string $itemtype, int $items_id): array
     {
@@ -295,24 +295,21 @@ JAVASCRIPT;
 
         $actualtimes = self::getActualtimes($itemtype, $items_id);
         foreach ($actualtimes as $rows_id => $data) {
-            $data['min_date'] = $data['actual_begin'];
-            $next_row = $rows_id + 1;
             $max_seconds = $max_hour * 60 * 60 - $duration;
             $limit = strtotime($data['min_date'] . " + {$max_seconds} seconds");
             $a_limit = date('Y-m-d H:i:s', $limit);
-            if (isset($actualtimes[$next_row])) {
-                $max_date = $actualtimes[$next_row]['actual_begin'];
+            if (isset($actualtimes[$previous_row])) {
+                $max_date = $data['actual_begin'];
                 if ($max_date > $a_limit) {
                     $max_date = $a_limit;
                 }
-                $data['max_date'] = $max_date;
-                $max_seconds = strtotime($max_date) - strtotime($data['actual_end']);
-            } else {
-                $data['max_date'] = $a_limit;
+                $limits[$previous_row]['max_date'] = $max_date;
             }
-            $data['limit'] = Html::timestampToString($max_seconds);
-            $actualtimes[$rows_id] = $data;
             $duration += (int) $data['actual_actiontime'];
+            $previous_row = $rows_id;
+            // set min and max date, if the post date is between the limits it's ok
+            $limits[$rows_id]['min_date'] = $data['actual_begin'];
+            $limits[$rows_id]['max_date'] = $a_limit;
         }
 
         return $limits;

@@ -49,7 +49,12 @@ if (
             }
             $actualtime = new PluginActualtimeTask();
             if ($actualtime->getFromDB($key)) {
-                if ($value != $actualtime->fields['actual_end'] && $value > $actualtime->fields['actual_begin']) {
+                if (
+                    $value != $actualtime->fields['actual_end']
+                    && $value > $actualtime->fields['actual_begin']
+                    && $value >= $task_limit[$key]['min_date']
+                    && $value <= $task_limit[$key]['max_date']
+                ) {
                     $seconds = (strtotime($value) - strtotime($actualtime->fields['actual_begin']));
                     $input = [
                         'id'                => $key,

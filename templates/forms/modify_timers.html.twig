@@ -42,13 +42,12 @@
                     options|merge({'readonly': true})
                 ) }}
 
-                {% set start_tooltip = __('Start') ~ ': ' ~ actualtime['min_date'] %}
-                {% set end_tooltip = __('End') ~ ': ' ~ actualtime['max_date'] %}
+                {% set end_tooltip = __('Max end', 'actualtime') ~ ': ' ~ actualtime['max_date'] %}
                 {% set limit_tooltip = __('Additional time available', 'actualtime') ~ ': ' ~ actualtime['limit'] %}
                 {% set actual_end_tooltip %}
                 {% do call(
                     'Html::showToolTip',
-                    [start_tooltip ~ '<br>' ~ end_tooltip ~ '<br>' ~ limit_tooltip]
+                    [end_tooltip ~ '<br>' ~ limit_tooltip]
                 ) %}
                 {% endset %}
                 {{ fields.datetimeField(
