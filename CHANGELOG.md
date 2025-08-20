@@ -1,6 +1,6 @@
 # Actualtime
 
-## [3.2.2] - 2025/08/12
+## [3.2.2] - 2025/08/20
 ### Fixed
 - Limit and better control for timer modification
 
