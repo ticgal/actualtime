@@ -1,5 +1,9 @@
 # Actualtime
 
+## [3.2.2] - 2025/08/20
+### Fixed
+- Limit and better control for timer modification
+
 ## [3.2.1] - 2025/06/10
 ### Fixed
 - ProjectTask parent key to start the timer

@@ -1,0 +1,33 @@
+{
+	"require": {
+	},
+	"require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.75",
+        "friendsoftwig/twigcs": "^6.1",
+        "glpi-project/tools": "^0.7.5",
+        "php-parallel-lint/php-parallel-lint": "^1.4",
+        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/phpstan-deprecation-rules": "^2.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "8.1.0"
+        },
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "CustomPHPStanRules\\": "tools/phpstan/rules/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Glpi\\Tools\\": "../../tools/src/"
+        }
+    }
+}

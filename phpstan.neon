@@ -3,23 +3,32 @@ parameters:
         maximumNumberOfProcesses: 2
     level: 5
     bootstrapFiles:
-        - '../../../../inc/based_config.php'
-        - '../../../../inc/db.function.php'
+        - ../../inc/based_config.php
+    paths:
+        - ajax
+        - front
+        - inc
+        - hook.php
+        - setup.php
+        - tools/phpstan/rules
     excludePaths:
         - '**/vendor/*'
         - '**/tests/*'
         - '**/tools/*'
-    paths:
-        - ..
+    scanDirectories:
+        - ../../inc
+        - ../../src
         - tools/phpstan/rules
     stubFiles:
-        - './stubs/glpi_constants.php'
+        - ../../stubs/glpi_constants.php
     ignoreErrors:
-        - '/Property CommonDBTM::\$input \(array\<mixed\>\) does not accept false/'
-        - '/Access to property \$fields on an unknown class Plugin\w+/'
-        - '/Access to constant \w+ on an unknown class Plugin\w+/'
-        - '/Call to static method \w+\(\) on an unknown class Plugin\w+/'
+        - '/(Instantiated class|Class) (GlpiPlugin(\\\w+)+|Plugin\w+) not found/'
+        - '/Call to (static )?method \w+\(\) on an unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
+        - '/Access to (property \$\w+|constant \w+) on an unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
+        - '/PHPDoc tag \@var for variable \$\w+ contains unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
     reportUnmatchedIgnoredErrors: false
+rules:
+    - GlpiProject\Tools\PHPStan\Rules\GlobalVarTypeRule
 services:
     -
         class: CustomPHPStanRules\HardcodedPasswordRule

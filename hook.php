@@ -39,20 +39,20 @@ function plugin_actualtime_install(): bool
 {
     $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
-   // Parse inc directory
+    // Parse inc directory
     foreach (glob(__DIR__ . '/inc/*') as $filepath) {
-       // Load *.class.php files and get the class name
+        // Load *.class.php files and get the class name
         if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
             $classname = 'PluginActualtime' . ucfirst($matches[1]);
             include_once($filepath);
-           // If the install method exists, load it
+            // If the install method exists, load it
             if (method_exists($classname, 'install')) {
                 $classname::install($migration);
             }
         }
     }
 
-   // Execute the whole migration
+    // Execute the whole migration
     $migration->executeMigration();
 
     return true;
@@ -153,15 +153,15 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
                         $ttask => 'id', [
                             'AND' => [
                                 PluginActualtimeTask::getTable() . '.itemtype' => $taskitemtype,
-                            ]
-                        ]
-                    ]
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'WHERE' => [
                 $parent_key => $parent_id,
                 'actual_end' => null,
-            ]
+            ],
         ];
         foreach ($DB->request($query) as $id => $row) {
             $task_id = $row['items_id'];
@@ -187,7 +187,7 @@ function plugin_actualtime_item_purge(CommonDBTM $item): void
         [
             'items_id' => $item->fields['id'],
             'itemtype' => $item->getType(),
-        ]
+        ],
     );
 }
 
@@ -220,22 +220,22 @@ function plugin_actualtime_parent_delete(CommonITILObject $parent): void
                     $tactualtime => 'items_id', [
                         'AND' => [
                             $tactualtime . '.itemtype' => $taskitemtype,
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
             $tparent => [
                 'ON' => [
                     $tparent => 'id',
-                    $ttask =>  $parent->getForeignKeyField()
-                ]
-            ]
+                    $ttask =>  $parent->getForeignKeyField(),
+                ],
+            ],
         ],
         'WHERE' => [
             'NOT' => [$tactualtime . '.actual_begin' => null],
             $tactualtime . '.actual_end' => null,
-            $tparent . '.id' => $parent->fields['id']
-        ]
+            $tparent . '.id' => $parent->fields['id'],
+        ],
     ];
     foreach ($DB->request($query) as $result) {
         $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($result['actual_begin']));
@@ -247,8 +247,8 @@ function plugin_actualtime_parent_delete(CommonITILObject $parent): void
                 'origin_end'        => PluginActualtimeTask::AUTO,
             ],
             [
-                'id' => $result['id']
-            ]
+                'id' => $result['id'],
+            ],
         );
     }
 }
@@ -280,16 +280,16 @@ function plugin_actualtime_project_delete(Project $project): void
                     $tactualtime => 'items_id', [
                         'AND' => [
                             $tactualtime . '.itemtype' => 'ProjectTask',
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ],
         ],
         'WHERE' => [
             'NOT' => [$tactualtime . '.actual_begin' => null],
             $tactualtime . '.actual_end' => null,
-            $ttask . '.projects_id' => $project->fields['id']
-        ]
+            $ttask . '.projects_id' => $project->fields['id'],
+        ],
     ];
     foreach ($DB->request($query) as $result) {
         $seconds = (strtotime(date("Y-m-d H:i:s")) - strtotime($result['actual_begin']));
@@ -301,8 +301,8 @@ function plugin_actualtime_project_delete(Project $project): void
                 'origin_end'        => PluginActualtimeTask::AUTO,
             ],
             [
-                'id' => $result['id']
-            ]
+                'id' => $result['id'],
+            ],
         );
     }
 }
@@ -333,13 +333,13 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                         'beforejoin' => [
                             'table' => 'glpi_tickettasks',
                             'joinparams' => [
-                                'jointype' => 'child'
-                            ]
+                                'jointype' => 'child',
+                            ],
                         ],
                         'jointype'          => 'itemtype_item',
                         'specific_itemtype' => TicketTask::class,
                     ],
-                    'type' => 'total'
+                    'type' => 'total',
                 ];
 
                 $tab['7001'] = [
@@ -352,13 +352,13 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                         'beforejoin' => [
                             'table' => 'glpi_tickettasks',
                             'joinparams' => [
-                                'jointype' => 'child'
-                            ]
+                                'jointype' => 'child',
+                            ],
                         ],
                         'jointype'          => 'itemtype_item',
                         'specific_itemtype' => TicketTask::class,
                     ],
-                    'type' => 'diff'
+                    'type' => 'diff',
                 ];
 
                 $tab['7002'] = [
@@ -371,13 +371,13 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                         'beforejoin' => [
                             'table' => 'glpi_tickettasks',
                             'joinparams' => [
-                                'jointype' => 'child'
-                            ]
+                                'jointype' => 'child',
+                            ],
                         ],
                         'jointype'          => 'itemtype_item',
                         'specific_itemtype' => TicketTask::class,
                     ],
-                    'type' => 'diff%'
+                    'type' => 'diff%',
                 ];
             }
             break;
@@ -396,13 +396,13 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                         'beforejoin' => [
                             'table' => 'glpi_tickettasks',
                             'joinparams' => [
-                                'jointype' => 'child'
-                            ]
+                                'jointype' => 'child',
+                            ],
                         ],
                         'jointype'          => 'itemtype_item',
                         'specific_itemtype' => TicketTask::class,
                     ],
-                    'type' => 'task'
+                    'type' => 'task',
                 ];
             }
             break;
@@ -421,20 +421,20 @@ function plugin_actualtime_uninstall(): bool
 {
     $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
-   // Parse inc directory
+    // Parse inc directory
     foreach (glob(__DIR__ . '/inc/*') as $filepath) {
-       // Load *.class.php files and get the class name
+        // Load *.class.php files and get the class name
         if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
             $classname = 'PluginActualtime' . ucfirst($matches[1]);
             include_once($filepath);
-           // If the install method exists, load it
+            // If the install method exists, load it
             if (method_exists($classname, 'uninstall')) {
                 $classname::uninstall($migration);
             }
         }
     }
 
-   // Execute the whole migration
+    // Execute the whole migration
     $migration->executeMigration();
 
     return true;

@@ -1,4 +1,5 @@
 <?php
+
 // fix empty CFG_GLPI on boostrap; see https://github.com/sebastianbergmann/phpunit/issues/325
 global $CFG_GLPI;
 
@@ -22,14 +23,14 @@ $plugin->getFromDBbyDir('actualtime');
 
 //check from prerequisites as Plugin::install() does not!
 if (!plugin_actualtime_check_prerequisites()) {
-   echo "\nPrerequisites are not met!";
-   die(1);
+    echo "\nPrerequisites are not met!";
+    die(1);
 }
 
 if (!$plugin->isInstalled('actualtime')) {
-   call_user_func([$plugin, 'install'], $plugin->getID());
+    call_user_func([$plugin, 'install'], $plugin->getID());
 }
 
 if (!$plugin->isActivated('actualtime')) {
-   call_user_func([$plugin, 'activate'], $plugin->getID());
+    call_user_func([$plugin, 'activate'], $plugin->getID());
 }

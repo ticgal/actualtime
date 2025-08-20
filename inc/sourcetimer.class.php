@@ -29,10 +29,9 @@
  * -------------------------------------------------------------------------
  */
 
-if (!defined('GLPI_ROOT')) {
-    die("Sorry. You can't access directly to this file");
-}
+use Glpi\Application\View\TemplateRenderer;
 
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeSourcetimer extends CommonDBTM
 {
     public static $rightname = 'plugin_actualtime_sourcetimer';
@@ -116,9 +115,9 @@ class PluginActualtimeSourcetimer extends CommonDBTM
                             'SELECT' => ['id'],
                             'FROM'   => ProjectState::getTable(),
                             'WHERE'  => [
-                                'is_finished' => 1
+                                'is_finished' => 1,
                             ],
-                        ]
+                        ],
                     );
                     $finished_states_ids = [];
                     foreach ($finished_states_it as $finished_state) {
@@ -144,7 +143,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
     {
         $item = $params['item'];
         if (!is_object($item) || !method_exists($item, 'getType')) {
-           // Sometimes, params['item'] is just an array, like 'Solution'
+            // Sometimes, params['item'] is just an array, like 'Solution'
             return;
         }
         $itemtype = $item->getType();
@@ -156,8 +155,8 @@ class PluginActualtimeSourcetimer extends CommonDBTM
             [
                 'items_id'  => $item->getID(),
                 'itemtype'  => $itemtype,
-                'NOT'       => ['actual_end' => null]
-            ]
+                'NOT'       => ['actual_end' => null],
+            ],
         );
         if ($count == 0) {
             return;
@@ -176,7 +175,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
         $html .= "</a></div>";
         $script = <<<JAVASCRIPT
 $(document).ready(function() {
-	$("div[data-itemtype='{$itemtype}'][data-items-id='{$task_id}'] div.timeline-item-buttons").prepend("{$html}");
+    $("div[data-itemtype='{$itemtype}'][data-items-id='{$task_id}'] div.timeline-item-buttons").prepend("{$html}");
 });
 JAVASCRIPT;
         echo Html::scriptBlock($script);
@@ -185,28 +184,86 @@ JAVASCRIPT;
             Plugin::getWebDir('actualtime') . "/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
             [
                 'reloadonclose' => true,
-                'dialog_class'  => 'modal-xl',
-                'title'         => __('Modify timers', 'actualtime')
-            ]
+                'title'         => __('Modify timers', 'actualtime'),
+                'height'        => '700',
+            ],
         );
     }
 
     /**
      * modalForm
      *
-     * @param  mixed $itemtype
-     * @param  mixed $items_id
+     * @param  string $itemtype
+     * @param  int $items_id
      * @return void
      */
-    public function modalForm($itemtype, $items_id): void
+    public function modalForm(string $itemtype, int $items_id): void
+    {
+        $config = PluginActualtimeConfig::getInstance();
+        $actualtimes = [];
+        $userdata = [];
+        $duration = 0;
+
+        foreach (self::getActualtimes($itemtype, $items_id) as $rows_id => $data) {
+            if (empty($userdata)) {
+                $href = User::getFormURLWithID($data['users_id']);
+                $username = User::getFriendlyNameById($data['users_id']);
+                $userdata['user'] = "<a href=\"{$href}\" target=\"_blank\">{$username}</a>";
+            }
+            $actualtimes[$rows_id] = $data;
+        }
+
+        $max_hour = $config->fields['daily_limit'];
+        if ($max_hour == 0) {
+            $max_hour = 24;
+        }
+
+        $previous_row = 0;
+        foreach ($actualtimes as $rows_id => $data) {
+            $data['rand'] = mt_rand();
+            $data['min_date'] = $data['actual_begin'];
+            $max_seconds = $max_hour * 60 * 60 - $duration;
+            $limit = strtotime($data['min_date'] . " + {$max_seconds} seconds");
+            $a_limit = date('Y-m-d H:i:s', $limit);
+            if (isset($actualtimes[$previous_row])) {
+                $max_date = $data['actual_begin'];
+                if ($max_date > $a_limit) {
+                    $max_date = $a_limit;
+                }
+                $actualtimes[$previous_row]['max_date'] = $max_date;
+                $previous_max_seconds = strtotime($max_date) - strtotime($actualtimes[$previous_row]['actual_end']);
+                $actualtimes[$previous_row]['limit'] = Html::timestampToString($previous_max_seconds);
+            }
+            $data['max_date'] = $a_limit;
+            $data['limit'] = Html::timestampToString($max_seconds);
+            $data['stamp_actiontime'] = Html::timestampToString($data['actual_actiontime']);
+            $actualtimes[$rows_id] = $data;
+            $duration += (int) $data['actual_actiontime'];
+            $previous_row = $rows_id;
+        }
+        $userdata['duration'] = Html::timestampToString($duration);
+        $userdata['limit'] = Html::timestampToString($max_hour * 60 * 60);
+
+        $template = "@actualtime/forms/modify_timers.html.twig";
+        TemplateRenderer::getInstance()->display($template, [
+            'itemtype'      => $itemtype,
+            'items_id'      => $items_id,
+            'actualtimes'   => $actualtimes,
+            'userdata'      => $userdata,
+            'target'        => $this->getFormURL(),
+        ]);
+    }
+
+    /**
+     * @param string $itemtype
+     * @param int $items_id
+     *
+     * @return \DBmysqlIterator
+     */
+    private static function getActualtimes(string $itemtype, int $items_id): \DBmysqlIterator
     {
         /** @var \DBmysql $DB */
         global $DB;
-
-        echo "<form name='form' id='form' method='post' action='" . $this->getFormURL();
-        echo "' enctype='multipart/form-data'>";
-        echo Html::hidden('itemtype', ['value' => $itemtype]);
-        echo Html::hidden('items_id', ['value' => $items_id]);
 
         $query = [
             'FROM' => PluginActualtimeTask::getTable(),
@@ -217,34 +274,50 @@ JAVASCRIPT;
             ],
         ];
 
-        foreach ($DB->request($query) as $data) {
-            echo "<div id='mainformtable'>";
-            echo "<div class='card-body row'>";
+        return $DB->request($query);
+    }
 
-            echo "<div class='form-field row col-12 mb-2'>";
-            echo "<label class='col-form-label col-2 text-xxl-end'>" . __('Start date') . "</label>";
-            echo "<label class='col-form-label col-2'>" . $data['actual_begin'] . "</label>";
-            echo "<label class='col-form-label col-2 text-xxl-end'>" . __('End date') . "</label>";
-            echo "<div class='col-6  field-container'>";
-            Html::showDateTimeField('actual_end[' . $data['id'] . ']', ['value' => $data['actual_end']]);
-            echo "</div>";
-            echo "</div>";
-
-            echo "</div>";
-            echo "</div>";
+    /**
+     * @param string $itemtype
+     * @param int $items_id
+     *
+     * @return array<int, array{min_date: string, max_date: string}>
+     */
+    public static function getTaskLimits(string $itemtype, int $items_id): array
+    {
+        $config = PluginActualtimeConfig::getInstance();
+        $limits = [];
+        $duration = 0;
+        $max_hour = $config->fields['daily_limit'];
+        if ($max_hour == 0) {
+            $max_hour = 24;
         }
 
-        echo "<div class='card-body mx-n2 mb-4 border-top d-flex flex-row-reverse align-items-start flex-wrap'>";
-        echo "<button class='btn btn-primary me-2' type='submit' name='update' value='1'>";
-        echo "<i class='far fa-save'></i>";
-        echo "<span>" . _x('button', 'Save') . "</span>";
-        echo "</button>";
-        echo "</div>";
-        echo Html::hidden('_glpi_csrf_token', ['value' => Session::getNewCSRFToken()]);
-        echo "</div>";
-        echo "</form>";
+        $actualtimes = [];
+        foreach (self::getActualtimes($itemtype, $items_id) as $rows_id => $data) {
+            $actualtimes[$rows_id] = $data;
+        }
 
-        Html::closeForm();
+        $previous_row = 0;
+        foreach ($actualtimes as $rows_id => $data) {
+            $max_seconds = $max_hour * 60 * 60 - $duration;
+            $limit = strtotime($data['min_date'] . " + {$max_seconds} seconds");
+            $a_limit = date('Y-m-d H:i:s', $limit);
+            if (isset($actualtimes[$previous_row])) {
+                $max_date = $data['actual_begin'];
+                if ($max_date > $a_limit) {
+                    $max_date = $a_limit;
+                }
+                $limits[$previous_row]['max_date'] = $max_date;
+            }
+            $duration += (int) $data['actual_actiontime'];
+            $previous_row = $rows_id;
+            // set min and max date, if the post date is between the limits it's ok
+            $limits[$rows_id]['min_date'] = $data['actual_begin'];
+            $limits[$rows_id]['max_date'] = $a_limit;
+        }
+
+        return $limits;
     }
 
     /**
@@ -258,28 +331,26 @@ JAVASCRIPT;
         /** @var \DBmysql $DB */
         global $DB;
 
-        $default_charset = DBConnection::getDefaultCharset();
-        $default_collation = DBConnection::getDefaultCollation();
-        $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+        $default_charset    = DBConnection::getDefaultCharset();
+        $default_collation  = DBConnection::getDefaultCollation();
+        $default_key_sign   = DBConnection::getDefaultPrimaryKeySignOption();
 
         $table = self::getTable();
-
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
-
             $query = "CREATE TABLE IF NOT EXISTS $table (
-                `id` int {$default_key_sign} NOT NULL auto_increment,
-                `plugin_actualtime_tasks_id` int {$default_key_sign} NOT NULL DEFAULT '0',
-                `users_id` int {$default_key_sign} NOT NULL DEFAULT '0',
+                `id` INT {$default_key_sign} NOT NULL AUTO_INCREMENT,
+                `plugin_actualtime_tasks_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
+                `users_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
                 `source_end` TIMESTAMP NULL DEFAULT NULL,
-                `source_actiontime` int {$default_key_sign} NOT NULL DEFAULT 0,
+                `source_actiontime` INT {$default_key_sign} NOT NULL DEFAULT 0,
                 `date_creation` TIMESTAMP NULL DEFAULT NULL,
                 PRIMARY KEY (`id`),
                 UNIQUE KEY `plugin_actualtime_tasks_id` (`plugin_actualtime_tasks_id`),
                 KEY `users_id` (`users_id`)
             ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->doQueryOrDie($query, $DB->error());
+            $DB->doQuery($query);
         }
     }
 }

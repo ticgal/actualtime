@@ -39,14 +39,14 @@ $report = new PluginReportsAutoReport(__('ActualTimeTotal'));
 new PluginReportsDateIntervalCriteria(
     $report,
     'glpi_tickets.closedate',
-    __("Close date")
+    __("Close date"),
 );
 //Filtro usuario
 new PluginReportsDropdownCriteria(
     $report,
     "glpi_tickets_users.users_id",
     "glpi_users",
-    __("Requester")
+    __("Requester"),
 );
 
 $report->displayCriteriasForm();
@@ -56,25 +56,25 @@ $report->setColumns([
         __('Ticket'),
         'Ticket',
         [
-            'with_navigate' => true
-        ]
+            'with_navigate' => true,
+        ],
     ),
     new PluginReportsColumnTimestamp(
         'duration',
-        __("Total duration")
+        __("Total duration"),
     ),
     new PluginReportsColumnTimestamp(
         'totalduration',
-        "ActualTime - " . __("Total duration")
+        "ActualTime - " . __("Total duration"),
     ),
     new PluginReportsColumnTimestamp(
         'diff',
-        __("Duration Diff", "actiontime")
+        __("Duration Diff", "actiontime"),
     ),
     new PluginReportsColumn(
         'diffpercent',
-        __("Duration Diff", "actiontime") . " (%)"
-    )
+        __("Duration Diff", "actiontime") . " (%)",
+    ),
 ]);
 $query = "SELECT glpi_tickets.id AS tickets_id,
     sum(glpi_tickettasks.actiontime) AS duration,

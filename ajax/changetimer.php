@@ -41,13 +41,12 @@ if (isset($_REQUEST["itemtype"]) && isset($_REQUEST["task_id"])) {
         Html::popHeader(
             PluginActualtimeSourcetimer::getTypeName(1),
             $_SERVER['PHP_SELF'],
-            false,
-            '',
-            '',
-            PluginActualtimeSourcetimer::getType()
+            true,
+            'actualtime',
+            'sourcetimer',
         );
         $source = new PluginActualtimeSourcetimer();
-        $source->modalForm($_REQUEST["itemtype"], $_REQUEST["task_id"]);
+        $source->modalForm($_REQUEST["itemtype"], (int) $_REQUEST["task_id"]);
         Html::popFooter();
     }
 }
