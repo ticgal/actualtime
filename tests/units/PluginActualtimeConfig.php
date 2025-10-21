@@ -115,5 +115,4 @@ class PluginActualtimeConfig extends atoum
               ->boolean($this->testedInstance->canCreate())
                  ->isFalse();
     }
-
 }

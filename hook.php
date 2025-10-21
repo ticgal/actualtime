@@ -427,7 +427,7 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                     'type' => 'task',
                 ];
 
-               $tab['7005'] = [
+                $tab['7005'] = [
                     'table'         => PluginActualtimeSourcetimer::getTable(),
                     'field'         => 'source_actiontime',
                     'name'          => __('Source Actiontime'),
@@ -448,8 +448,6 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                     ],
                     'type' => 'task',
                 ];
-
-                
             }
             break;
     }
