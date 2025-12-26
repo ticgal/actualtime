@@ -1,5 +1,9 @@
 # Actualtime
 
+## [3.2.3] - 2025/08/20
+### Added
+- Search options for plugin integrations
+
 ## [3.2.2] - 2025/08/20
 ### Fixed
 - Limit and better control for timer modification

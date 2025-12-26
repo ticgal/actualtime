@@ -213,7 +213,7 @@ JAVASCRIPT;
             $actualtimes[$rows_id] = $data;
         }
 
-        $max_hour = $config->fields['daily_limit'];
+        $max_hour = $config->fields['task_limit'];
         if ($max_hour == 0) {
             $max_hour = 24;
         }

@@ -150,7 +150,8 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
                 PluginActualtimeTask::getTable() => [
                     'ON' => [
                         PluginActualtimeTask::getTable() => 'items_id',
-                        $ttask => 'id', [
+                        $ttask => 'id',
+                        [
                             'AND' => [
                                 PluginActualtimeTask::getTable() . '.itemtype' => $taskitemtype,
                             ],
@@ -217,7 +218,8 @@ function plugin_actualtime_parent_delete(CommonITILObject $parent): void
             $ttask => [
                 'ON' => [
                     $ttask => 'id',
-                    $tactualtime => 'items_id', [
+                    $tactualtime => 'items_id',
+                    [
                         'AND' => [
                             $tactualtime . '.itemtype' => $taskitemtype,
                         ],
@@ -277,7 +279,8 @@ function plugin_actualtime_project_delete(Project $project): void
             $ttask => [
                 'ON' => [
                     $ttask => 'id',
-                    $tactualtime => 'items_id', [
+                    $tactualtime => 'items_id',
+                    [
                         'AND' => [
                             $tactualtime . '.itemtype' => 'ProjectTask',
                         ],
@@ -400,6 +403,47 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                             ],
                         ],
                         'jointype'          => 'itemtype_item',
+                        'specific_itemtype' => TicketTask::class,
+                    ],
+                    'type' => 'task',
+                ];
+
+                $tab['7004'] = [
+                    'table'         => PluginActualtimeTask::getTable(),
+                    'field'         => 'is_modified',
+                    'name'          => __('Is modified'),
+                    'datatype'      => 'bool',
+                    'parent'        => Ticket::class,
+                    'joinparams'    => [
+                        'beforejoin' => [
+                            'table' => 'glpi_tickettasks',
+                            'joinparams' => [
+                                'jointype' => 'child',
+                            ],
+                        ],
+                        'jointype'          => 'itemtype_item',
+                        'specific_itemtype' => TicketTask::class,
+                    ],
+                    'type' => 'task',
+                ];
+
+                $tab['7005'] = [
+                    'table'         => PluginActualtimeSourcetimer::getTable(),
+                    'field'         => 'source_actiontime',
+                    'name'          => __('Source Actiontime'),
+                    'datatype'      => 'timestamp',
+                    'parent'        => Ticket::class,
+                    'joinparams'    => [
+                        'beforejoin' => [
+                            'table' => PluginActualtimeTask::getTable(),
+                            'linkfield' => 'plugin_actualtime_tasks_id',
+                            'joinparams' => [
+                                'beforejoin' => [
+                                    'table'     => TicketTask::getTable(),
+                                ],
+                            ],
+                        ],
+                        'jointype'          => 'child',
                         'specific_itemtype' => TicketTask::class,
                     ],
                     'type' => 'task',
