@@ -31,10 +31,10 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_ACTUALTIME_VERSION', '3.2.3');
+define('PLUGIN_ACTUALTIME_VERSION', '4.0.0-beta.1');
 
 // Minimal GLPI version, inclusive
-define("PLUGIN_ACTUALTIME_MIN_GLPI", "10.0.10");
+define("PLUGIN_ACTUALTIME_MIN_GLPI", "11.0.0");
 // Maximum GLPI version, exclusive
 define("PLUGIN_ACTUALTIME_MAX_GLPI", "11.1.0");
 define("PLUGIN_ACTUALTIME_NAME", "ActualTime");
