@@ -244,9 +244,10 @@ JAVASCRIPT;
         }
         $userdata['duration'] = Html::timestampToString($duration);
         $userdata['limit'] = Html::timestampToString($max_hour * 60 * 60);
-
+        $twig = TemplateRenderer::getInstance();
+        $twig->getEnvironment()->enableAutoReload();
         $template = "@actualtime/forms/modify_timers.html.twig";
-        TemplateRenderer::getInstance()->display($template, [
+        echo $twig->render($template, [
             'itemtype'      => $itemtype,
             'items_id'      => $items_id,
             'actualtimes'   => $actualtimes,

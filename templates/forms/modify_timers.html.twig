@@ -4,79 +4,93 @@
 {% import 'components/form/fields_macros.html.twig' as fields %}
 
 {% if options is not defined %}
-{% set options = {} %}
+  {% set options = {} %}
 {% endif %}
 
 <form method="POST" action="{{ target }}" enctype="multipart/form-data">
 
-    <div class="row">
-        <div class="row ps-4">
+  <div class="row">
+    <div class="row ps-4">
 
-            <input type="hidden" name="itemtype" value="{{ itemtype }}">
-            <input type="hidden" name="items_id" value="{{ items_id }}">
-            <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
-            <input type="hidden" name="_is_modal" value="1" />
+      <input type="hidden" name="itemtype" value="{{ itemtype }}">
+      <input type="hidden" name="items_id" value="{{ items_id }}">
+      <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
+      <input type="hidden" name="_is_modal" value="1" />
 
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col" class="col-1">{{ __('User') }}</th>
-                        <th scope="col" class="col-1">{{ __('Duration') }}</th>
-                        <th scope="col" class="col-1">{{ __('Task limit', 'actualtime') }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="col-1">{{ userdata['user']|raw }}</td>
-                        <td class="col-1">{{ userdata['duration'] }}</td>
-                        <td class="col-1">{{ userdata['limit'] }}</td>
-                    </tr>
-                </tbody>
-            </table>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col" class="col-1">{{ __('User') }}</th>
+            <th scope="col" class="col-1">{{ __('Duration') }}</th>
+            <th scope="col" class="col-1">{{ __('Task limit', 'actualtime') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-1">{{ userdata['user']|raw }}</td>
+            <td class="col-1">{{ userdata['duration'] }}</td>
+            <td class="col-1">{{ userdata['limit'] }}</td>
+          </tr>
+        </tbody>
+      </table>
 
-            {% for actualtime in actualtimes %}
-                {{ fields.datetimeField(
-                    'actual_begin[' ~ actualtime['id'] ~ ']',
-                    actualtime['actual_begin'],
-                    __('Start date'),
-                    options|merge({'readonly': true})
-                ) }}
+    {% for actualtime in actualtimes %}
 
-                {% set end_tooltip = __('Max end', 'actualtime') ~ ': ' ~ actualtime['max_date'] %}
-                {% set limit_tooltip = __('Additional time available', 'actualtime') ~ ': ' ~ actualtime['limit'] %}
-                {% set actual_end_tooltip %}
-                {% do call(
-                    'Html::showToolTip',
-                    [end_tooltip ~ '<br>' ~ limit_tooltip]
-                ) %}
-                {% endset %}
-                {{ fields.datetimeField(
-                    'actual_end[' ~ actualtime['id'] ~ ']',
-                    actualtime['actual_end'],
-                    __('End date') ~ ' (' ~ actualtime['stamp_actiontime'] ~ ') ' ~ actual_end_tooltip,
-                    options|merge({'rand': actualtime['rand']})
-                ) }}
-                {# To give it time to load the fullcalendar library #}
-                <script>
-                    const intervalname{{ actualtime['rand'] }} = setInterval(() => {
-                        var date_end_input = $("[id='actual-end-{{ actualtime['id'] }}_{{ actualtime['rand'] }}']")[0];
-                        if (date_end_input._flatpickr) {
-                            date_end_input._flatpickr.set('minDate', "{{ actualtime['min_date'] }}");
-                            date_end_input._flatpickr.set('maxDate', "{{ actualtime['max_date'] }}");
-                            clearInterval(intervalname{{ actualtime['rand'] }});
-                        }
-                    }, 200);
-                </script>
-            {% endfor %}
+  <div class="row">
+    {# Columna START #}
+    <div class="col-12 col-lg-6">
+      {{ fields.datetimeField(
+        'actual_begin[' ~ actualtime['id'] ~ ']',
+        actualtime['actual_begin'],
+        __('Start date'),
+        options|merge({'readonly': true})
+      ) }}
+    </div>
 
+    {# Columna END #}
+    <div class="col-12 col-lg-6">
+      {% set end_tooltip   = __('Max end', 'actualtime') ~ ': ' ~ actualtime['max_date'] %}
+      {% set limit_tooltip = __('Additional time available', 'actualtime') ~ ': ' ~ actualtime['limit'] %}
+
+      {# Label + tooltip alineado y con margen #}
+      <div class="d-flex align-items-center gap-2 mb-1">
+        <div class="fw-bold">
+          {{ __('End date') ~ ' (' ~ actualtime['stamp_actiontime'] ~ ')' }}
         </div>
-    </div>
+        {{ call('Html::showToolTip', [end_tooltip ~ '<br>' ~ limit_tooltip])|raw }}
+      </div>
 
-    <div class='card-body mx-n2 mb-4 border-top d-flex flex-row-reverse align-items-start flex-wrap'>
-        <button class='btn btn-primary me-2' type='submit' name='update' value='1'>
-            <i class='far fa-save'></i>
-            <span>{{ _x('button', 'Save') }}</span>
-        </button>
+      {{ fields.datetimeField(
+        'actual_end[' ~ actualtime['id'] ~ ']',
+        actualtime['actual_end'],
+        '',
+        options|merge({'rand': actualtime['rand']})
+      ) }}
+
+      <script>
+        const intervalname{{ actualtime['rand'] }} = setInterval(() => {
+          var date_end_input = $("[id='actual-end-{{ actualtime['id'] }}_{{ actualtime['rand'] }}']")[0];
+          if (date_end_input && date_end_input._flatpickr) {
+            date_end_input._flatpickr.set('minDate', "{{ actualtime['min_date'] }}");
+            date_end_input._flatpickr.set('maxDate', "{{ actualtime['max_date'] }}");
+            clearInterval(intervalname{{ actualtime['rand'] }});
+          }
+        }, 200);
+      </script>
     </div>
+  </div>
+
+{% endfor %}
+
+
+    </div>
+  </div>
+
+  <div class='card-body mx-n2 mb-4 border-top d-flex flex-row-reverse align-items-start flex-wrap'>
+    <button class='btn btn-primary me-2' type='submit' name='update' value='1'>
+      <i class='far fa-save'></i>
+      <span>{{ _x('button', 'Save') }}</span>
+    </button>
+  </div>
 
 </form>
