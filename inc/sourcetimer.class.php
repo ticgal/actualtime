@@ -141,6 +141,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
      */
     public static function postShowItem($params): void
     {
+        global $CFG_GLPI;
         $item = $params['item'];
         if (!is_object($item) || !method_exists($item, 'getType')) {
             // Sometimes, params['item'] is just an array, like 'Solution'
@@ -181,7 +182,7 @@ JAVASCRIPT;
         echo Html::scriptBlock($script);
         echo Ajax::createIframeModalWindow(
             'add_time_' . $task_id,
-            Plugin::getWebDir('actualtime') . "/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
+           $CFG_GLPI['url_base'] . "/plugins/actualtime/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
             [
                 'reloadonclose' => true,
                 'title'         => __('Modify timers', 'actualtime'),

@@ -38,7 +38,6 @@ Session::checkLoginUser();
 
 /** @var array $CFG_GLPI */
 global $CFG_GLPI;
-
 if (isset($_POST["action"])) {
     $plugin = new Plugin();
     $task_id = $_POST["task_id"];
