@@ -97,7 +97,7 @@ class PluginActualtimeRunning extends CommonGLPI
             function loadRunning(){
                 $.ajax({
                     type:'POST',
-                    url:CFG_GLPI.root_doc+"/"+GLPI_PLUGINS_PATH.actualtime+"/ajax/running.php",
+                    url:CFG_GLPI.root_doc+"/plugin/actualtime/ajax/running.php",
                     data:{
                         action:'getlist'
                     },

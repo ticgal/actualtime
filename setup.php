@@ -36,7 +36,7 @@ define('PLUGIN_ACTUALTIME_VERSION', '3.2.3');
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "10.0.10");
 // Maximum GLPI version, exclusive
-define("PLUGIN_ACTUALTIME_MAX_GLPI", "10.1.0");
+define("PLUGIN_ACTUALTIME_MAX_GLPI", "11.1.0");
 define("PLUGIN_ACTUALTIME_NAME", "ActualTime");
 
 /**
@@ -71,7 +71,6 @@ function plugin_init_actualtime(): void
     /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
-    $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['actualtime'] = true;
 
     if (Plugin::isPluginActive('actualtime')) {
         // Classes
@@ -138,13 +137,13 @@ function plugin_init_actualtime(): void
         }
 
         if (Session::getLoginUserID()) {
-            $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = 'js/actualtime.js';
 
             /** @var array $CFG_GLPI */
             global $CFG_GLPI;
 
             // preload the fullcalendar library
             $CFG_GLPI['javascript']['actualtime']['sourcetimer'] = ['fullcalendar'];
+            $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = 'public/actualtime.js';
         }
 
         if (Session::haveRight('plugin_actualtime_running', READ)) {
