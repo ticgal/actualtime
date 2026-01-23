@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -38,7 +38,6 @@ Session::checkLoginUser();
 
 /** @var array $CFG_GLPI */
 global $CFG_GLPI;
-
 if (isset($_POST["action"])) {
     $plugin = new Plugin();
     $task_id = $_POST["task_id"];

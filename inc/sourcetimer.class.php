@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -141,6 +141,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
      */
     public static function postShowItem($params): void
     {
+        global $CFG_GLPI;
         $item = $params['item'];
         if (!is_object($item) || !method_exists($item, 'getType')) {
             // Sometimes, params['item'] is just an array, like 'Solution'
@@ -181,7 +182,7 @@ JAVASCRIPT;
         echo Html::scriptBlock($script);
         echo Ajax::createIframeModalWindow(
             'add_time_' . $task_id,
-            Plugin::getWebDir('actualtime') . "/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
+           $CFG_GLPI['url_base'] . "/plugins/actualtime/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
             [
                 'reloadonclose' => true,
                 'title'         => __('Modify timers', 'actualtime'),
@@ -243,9 +244,10 @@ JAVASCRIPT;
         }
         $userdata['duration'] = Html::timestampToString($duration);
         $userdata['limit'] = Html::timestampToString($max_hour * 60 * 60);
-
+        $twig = TemplateRenderer::getInstance();
+        $twig->getEnvironment()->enableAutoReload();
         $template = "@actualtime/forms/modify_timers.html.twig";
-        TemplateRenderer::getInstance()->display($template, [
+        echo $twig->render($template, [
             'itemtype'      => $itemtype,
             'items_id'      => $items_id,
             'actualtimes'   => $actualtimes,
@@ -288,7 +290,7 @@ JAVASCRIPT;
         $config = PluginActualtimeConfig::getInstance();
         $limits = [];
         $duration = 0;
-        $max_hour = $config->fields['daily_limit'];
+        $max_hour = $config->fields['task_limit'];
         if ($max_hour == 0) {
             $max_hour = 24;
         }
@@ -301,7 +303,7 @@ JAVASCRIPT;
         $previous_row = 0;
         foreach ($actualtimes as $rows_id => $data) {
             $max_seconds = $max_hour * 60 * 60 - $duration;
-            $limit = strtotime($data['min_date'] . " + {$max_seconds} seconds");
+            $limit = strtotime($data['actual_end'] . " + {$max_seconds} seconds");
             $a_limit = date('Y-m-d H:i:s', $limit);
             if (isset($actualtimes[$previous_row])) {
                 $max_date = $data['actual_begin'];

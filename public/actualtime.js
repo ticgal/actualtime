@@ -1,6 +1,7 @@
 /* global CFG_GLPI */
 window.actualTime = new function() {
-   this.ajax_url = CFG_GLPI.root_doc + '/plugins/actualtime/ajax/timer.php';
+   this.ajax_url = CFG_GLPI.url_base + '/plugins/actualtime/ajax/timer.php';
+
    var timer;
    var popup_div = '';
 // Translations
@@ -234,6 +235,6 @@ window.actualTime = new function() {
 }();
 
 $(document).ready(function(){
-   var url = CFG_GLPI.root_doc+"/"+GLPI_PLUGINS_PATH.actualtime+"/ajax/timer.php";
+   var url = CFG_GLPI.url_base+""+GLPI_PLUGINS_PATH.actualtime+"/ajax/timer.php";
    window.actualTime.init(url);
 });

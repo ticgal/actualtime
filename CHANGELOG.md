@@ -1,5 +1,9 @@
 # Actualtime
 
+## [4.0.0] - 2026/01/22
+### Added
+- GLPI 11 support
+
 ## [3.2.3] - 2025/08/20
 ### Added
 - Search options for plugin integrations

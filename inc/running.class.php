@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -97,7 +97,7 @@ class PluginActualtimeRunning extends CommonGLPI
             function loadRunning(){
                 $.ajax({
                     type:'POST',
-                    url:CFG_GLPI.root_doc+"/"+GLPI_PLUGINS_PATH.actualtime+"/ajax/running.php",
+                    url:CFG_GLPI.url_base+"/plugins/actualtime/ajax/running.php",
                     data:{
                         action:'getlist'
                     },
