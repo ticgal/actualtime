@@ -290,7 +290,7 @@ JAVASCRIPT;
         $config = PluginActualtimeConfig::getInstance();
         $limits = [];
         $duration = 0;
-        $max_hour = $config->fields['daily_limit'];
+        $max_hour = $config->fields['task_limit'];
         if ($max_hour == 0) {
             $max_hour = 24;
         }
@@ -303,7 +303,7 @@ JAVASCRIPT;
         $previous_row = 0;
         foreach ($actualtimes as $rows_id => $data) {
             $max_seconds = $max_hour * 60 * 60 - $duration;
-            $limit = strtotime($data['min_date'] . " + {$max_seconds} seconds");
+            $limit = strtotime($data['actual_end'] . " + {$max_seconds} seconds");
             $a_limit = date('Y-m-d H:i:s', $limit);
             if (isset($actualtimes[$previous_row])) {
                 $max_date = $data['actual_begin'];
