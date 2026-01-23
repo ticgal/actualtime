@@ -4,8 +4,22 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 PARENT_FOLDER_PATH=$(dirname "$SCRIPT_DIR")
 PLUGINNAME=$(basename "$PARENT_FOLDER_PATH")
 
+PUBLIC_RELEASE=0
+while getopts ":p" opt; do
+    case $opt in
+        p)
+            PUBLIC_RELEASE=1
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            exit 1
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
+
 if [ ! "$#" -eq 1 ]; then
-    echo "Usage $0 <release>"
+    echo "Usage $0 [-p] <release>"
     exit 1
 fi
 
@@ -60,7 +74,7 @@ if [ -f $PARENT_FOLDER_PATH"/composer.json" ]; then
             exit 1
         else
             echo "Downloading dependencies"
-            composer install --no-dev
+            composer install
             if [ "$MOVE_TO_PUBLIC" = 1 ]; then
                 mv "$PARENT_FOLDER_PATH/vendor" "$PARENT_FOLDER_PATH/public"
             fi
@@ -72,6 +86,7 @@ fi
 if [ -d "$PARENT_FOLDER_PATH/locales" ]; then
     if [ -f "$PARENT_FOLDER_PATH/locales/localazy.keys.json" ]; then
         read -p "Are translations up to date? [Y/n] " -n 1 -r
+        echo "\n";
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
             if [ -f "$PARENT_FOLDER_PATH/tools/extract_template.sh" ]; then
                 echo "Extract locales"
@@ -82,6 +97,13 @@ if [ -d "$PARENT_FOLDER_PATH/locales" ]; then
             fi
         fi
     fi
+fi
+
+# Clean code with PHP CS Fixer
+if [ -f "$PARENT_FOLDER_PATH/tools/php-cs-fixer.sh" ]; then
+    echo "Initiating PHP CS Fixer"
+    chmod +x $PARENT_FOLDER_PATH/tools/php-cs-fixer.sh
+    bash $PARENT_FOLDER_PATH/tools/php-cs-fixer.sh
 fi
 
 # Perform PHPStan analysis
@@ -108,30 +130,62 @@ echo "Move to this directory"
 cd /tmp/$PLUGINNAME
 
 echo "Delete various scripts and directories"
-rm -rf RoboFile.php
-rm -rf tools
-rm -rf phpunit
-rm -rf tests
-rm -rf .gitignore
-rm -rf .travis.yml
-rm -rf .coveralls.yml
-rm -rf phpunit.xml.dist
-rm -rf composer.lock
-rm -rf .composer.hash
-rm -rf ISSUE_TEMPLATE.md
-rm -rf PULL_REQUEST_TEMPLATE.md
-rm -rf .tx
-rm -rf $PLUGINNAME.xml
-rm -rf screenshots
-rm -rf locales/localazy*
+# array of files and folders to delete
+FILES_TO_DELETE=(
+    # github files
+    ".github"
+    ".gitignore"
+    ".keep"
+    "ISSUE_TEMPLATE.md"
+    "PULL_REQUEST_TEMPLATE.md"
+    # development folders
+    "tools"
+    "tests"
+    "phpunit"
+    # CI/CD config files
+    ".php-cs-fixer.php"
+    ".phpcs.xml"
+    ".twig_cs.dist.php"
+    "phpstan.neon"
+    "composer.lock"
+    ".composer.hash"
+    "phpunit.xml.dist"
+    "locales/localazy*"
+    "RoboFile.php"
+    ".travis.yml"
+    ".coveralls.yml"
+    ".tx"
+    # Marketplace files
+    "$PLUGINNAME.xml"
+    "screenshots"
+    )
 
-echo "Creating tarball"
+# loop through the array and delete each file
+for file in "${FILES_TO_DELETE[@]}"; do
+    if [ -e "$file" ]; then
+        rm -rf "$file"
+    fi
+done
+
+# if exist composer.json, use composer install --no-dev
+if [ -f composer.json ]; then
+    echo "Removing development dependencies"
+    composer install --no-dev --quiet
+fi
+
 cd ..
-tar cjf "$PLUGINNAME-$RELEASE.tar.bz2" $PLUGINNAME
+
+if [ "$PUBLIC_RELEASE" = 1 ]; then
+    echo "Creating public release"
+    PACKAGE_NAME="glpi-$PLUGINNAME-$RELEASE"
+else
+    echo "Creating private release"
+    PACKAGE_NAME="$PLUGINNAME-$RELEASE"
+fi
+tar cjf "$PACKAGE_NAME.tar.bz2" $PLUGINNAME
 
 cd $INIT_PWD
 
-echo "Deleting temp directory"
 rm -rf /tmp/$PLUGINNAME
 
 echo "The Tarball is in the /tmp directory"

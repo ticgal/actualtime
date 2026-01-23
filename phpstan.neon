@@ -1,0 +1,50 @@
+parameters:
+    parallel:
+        maximumNumberOfProcesses: 2
+    level: 5
+    bootstrapFiles:
+        - ../../inc/based_config.php
+    paths:
+        - ajax
+        - front
+        - inc
+        - hook.php
+        - setup.php
+        - tools/phpstan/rules
+    excludePaths:
+        - '**/vendor/*'
+        - '**/tests/*'
+        - '**/tools/*'
+    scanDirectories:
+        - ../../inc
+        - ../../src
+        - tools/phpstan/rules
+    stubFiles:
+        - ../../stubs/glpi_constants.php
+    ignoreErrors:
+        - '/(Instantiated class|Class) (GlpiPlugin(\\\w+)+|Plugin\w+) not found/'
+        - '/Call to (static )?method \w+\(\) on an unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
+        - '/Access to (property \$\w+|constant \w+) on an unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
+        - '/PHPDoc tag \@var for variable \$\w+ contains unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
+    reportUnmatchedIgnoredErrors: false
+rules:
+    - GlpiProject\Tools\PHPStan\Rules\GlobalVarTypeRule
+services:
+    -
+        class: CustomPHPStanRules\HardcodedPasswordRule
+        tags: [phpstan.rules.rule]
+    -
+        class: CustomPHPStanRules\UnsafeFunctionsRule
+        tags: [phpstan.rules.rule]
+    -
+        class: CustomPHPStanRules\InputValidationRule
+        tags: [phpstan.rules.rule]
+    -
+        class: CustomPHPStanRules\SensitiveInfoExposureRule
+        tags: [phpstan.rules.rule]
+    -
+        class: CustomPHPStanRules\SqlInjectionRule
+        tags: [phpstan.rules.rule]
+    -
+        class: CustomPHPStanRules\PermissionControlRule
+        tags: [phpstan.rules.rule]

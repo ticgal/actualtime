@@ -1,7 +1,7 @@
 # Actualtime Glpi Plugin.
-# Copyright (C) 2024 TICgal
+# Copyright (C) 2024 TICGAL
 # This file is distributed under the same license as the PACKAGE package.
-# TICgal, 2024
+# TICGAL, 2024
 #
 #, fuzzy
 msgid ""

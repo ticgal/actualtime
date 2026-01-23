@@ -1,8 +1,9 @@
 <?php
+
 /*
  -------------------------------------------------------------------------
  ActualTime plugin for GLPI
- Copyright (C) 2018-2022 by the TICgal Team.
+ Copyright (C) 2018-2022 by the TICGAL Team.
  https://www.tic.gal/
  -------------------------------------------------------------------------
  LICENSE
@@ -19,8 +20,8 @@
  along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  @package   ActualTime
- @author    the TICgal team
- @copyright Copyright (c) 2018-2022 TICgal team
+ @author    the TICGAL team
+ @copyright Copyright (c) 2018-2022 TICGAL team
  @license   AGPL License 3.0 or (at your option) any later version
             http://www.gnu.org/licenses/agpl-3.0-standalone.html
  @link      https://www.tic.gal/
@@ -32,51 +33,56 @@ namespace tests\units;
 
 use atoum;
 
-class PluginActualtimeTask extends atoum {
+class PluginActualtimeTask extends atoum
+{
+    public function testRightname()
+    {
+        $this
+           ->given($conf = $this->getTestedClassName())
+              ->string($conf::$rightname)
+                 ->isEqualTo('task');
+    }
 
-   public function testRightname() {
-      $this
-         ->given($conf = $this->getTestedClassName())
-            ->string($conf::$rightname)
-               ->isEqualTo('task');
-   }
+    public function testGetTypeName()
+    {
+        $this
+           ->if($class = $this->testedClass->getClass())
+           ->then
+              ->string($class::getTypeName())
+                 ->isNotEmpty();
+    }
 
-   public function testGetTypeName() {
-      $this
-         ->if($class = $this->testedClass->getClass())
-         ->then
-            ->string($class::getTypeName())
-               ->isNotEmpty();
-   }
+    /*
+     * Actually is not easy to test the class, as it depends on already created
+     * ticket with already created task to start timer. In future we should
+     * probably emulate those tests. Now, just testing some results methods
+     * should return if there is no tasks at all.
+    */
 
-   /*
-    * Actually is not easy to test the class, as it depends on already created
-    * ticket with already created task to start timer. In future we should
-    * probably emulate those tests. Now, just testing some results methods
-    * should return if there is no tasks at all.
-   */
+    public function testCheckTech()
+    {
+        $this
+           ->if($class = $this->testedClass->getClass())
+           ->then
+              ->boolean($class::checkTech(1))
+                 ->isFalse();
+    }
 
-   public function testCheckTech() {
-      $this
-         ->if($class = $this->testedClass->getClass())
-         ->then
-            ->boolean($class::checkTech(1))
-               ->isFalse();
-   }
+    public function testCheckTimerActive()
+    {
+        $this
+           ->if($class = $this->testedClass->getClass())
+           ->then
+              ->boolean($class::checkTimerActive(1))
+                 ->isFalse();
+    }
 
-   public function testCheckTimerActive() {
-      $this
-         ->if($class = $this->testedClass->getClass())
-         ->then
-            ->boolean($class::checkTimerActive(1))
-               ->isFalse();
-   }
-
-   public function testTotalEndTime() {
-      $this
-         ->if($class = $this->testedClass->getClass())
-         ->then
-            ->integer($class::totalEndTime(1))
-               ->isIdenticalTo(0);
-   }
+    public function testTotalEndTime()
+    {
+        $this
+           ->if($class = $this->testedClass->getClass())
+           ->then
+              ->integer($class::totalEndTime(1))
+                 ->isIdenticalTo(0);
+    }
 }

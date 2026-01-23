@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -29,12 +29,9 @@
  * -------------------------------------------------------------------------
  */
 
-if (!defined('GLPI_ROOT')) {
-    die("Sorry. You can't access directly to this file");
-}
-
 include_once('config.class.php');
 
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeTask extends CommonDBTM
 {
     public static $rightname = 'task';
@@ -69,11 +66,11 @@ class PluginActualtimeTask extends CommonDBTM
                     'table' => 'glpi_tickettasks',
                     'additionalfields' => ['itemtype'],
                     'joinparams' => [
-                        'jointype' => 'child'
-                    ]
+                        'jointype' => 'child',
+                    ],
                 ],
                 'jointype' => 'child',
-            ]
+            ],
         ];
 
         $tab['7001'] = [
@@ -87,11 +84,11 @@ class PluginActualtimeTask extends CommonDBTM
                     'table' => 'glpi_tickettasks',
                     'additionalfields' => ['itemtype'],
                     'joinparams' => [
-                        'jointype' => 'child'
-                    ]
+                        'jointype' => 'child',
+                    ],
                 ],
                 'jointype' => 'child',
-            ]
+            ],
         ];
 
         $tab['7002'] = [
@@ -105,11 +102,11 @@ class PluginActualtimeTask extends CommonDBTM
                     'table' => 'glpi_tickettasks',
                     'additionalfields' => ['itemtype'],
                     'joinparams' => [
-                        'jointype' => 'child'
-                    ]
+                        'jointype' => 'child',
+                    ],
                 ],
                 'jointype' => 'child',
-            ]
+            ],
         ];
 
         return $tab;
@@ -141,7 +138,7 @@ class PluginActualtimeTask extends CommonDBTM
                     'FROM' => $ttask,
                     'WHERE' => [
                         $parent->getForeignKeyField() => $options['raw_data']['id'],
-                    ]
+                    ],
                 ];
                 foreach ($DB->request($query) as $id => $row) {
                     $actual_totaltime += self::totalEndTime($row['id'], $itemtype);
@@ -161,14 +158,14 @@ class PluginActualtimeTask extends CommonDBTM
 
                     case 'task':
                         $query = [
-                        'SELECT' => [
-                            'actual_actiontime'
-                        ],
-                        'FROM' => self::getTable(),
-                        'WHERE' => [
-                            'items_id' => $options['raw_data']['id'],
-                            'itemtype' => $itemtype,
-                        ]
+                            'SELECT' => [
+                                'actual_actiontime',
+                            ],
+                            'FROM' => self::getTable(),
+                            'WHERE' => [
+                                'items_id' => $options['raw_data']['id'],
+                                'itemtype' => $itemtype,
+                            ],
                         ];
                         $task_time = 0;
                         foreach ($DB->request($query) as $actiontime) {
@@ -352,7 +349,7 @@ $(document).ready(function() {
 JAVASCRIPT;
                     echo Html::scriptBlock($script);
                 } else {
-                   //echo Html::scriptBlock('');
+                    //echo Html::scriptBlock('');
                     $div = "<div id='actualtime_autostart' class='form-field row col-12 mb-2'><label class='col-form-label col-2 text-xxl-end' for='autostart'><i class='fas fa-stopwatch fa-fw me-1' title='" . __('Autostart') . "'></i></label><div class='col-10 field-container'><label class='form-check form-switch mt-2'><input type='hidden' name='autostart' value='0'><input type='checkbox' id='autostart' name='autostart' value='1' class='form-check-input'></label></div></div>";
                     $script = <<<JAVASCRIPT
 $(document).ready(function() {
@@ -368,12 +365,12 @@ JAVASCRIPT;
                 if ($item->getID()) {
                     $finished_states_it = $DB->request(
                         [
-                        'SELECT' => ['id'],
-                        'FROM'   => ProjectState::getTable(),
-                        'WHERE'  => [
-                        'is_finished' => 1
+                            'SELECT' => ['id'],
+                            'FROM'   => ProjectState::getTable(),
+                            'WHERE'  => [
+                                'is_finished' => 1,
+                            ],
                         ],
-                        ]
                     );
                     $finished_states_ids = [];
                     foreach ($finished_states_it as $finished_state) {
@@ -434,7 +431,7 @@ JAVASCRIPT;
                         $html_buttons .= "<button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_1_{$rand}' action='$action1' style='background-color:$color1;color:white' $disabled1><span class='d-none d-md-block'>$value1</span></button>";
                         $html_buttons .= "<button type='button' class='btn btn-primary m-2' id='actualtime_button_{$task_id}_2_{$rand}' action='$action2' style='background-color:$color2;color:white' $disabled2><span class='d-none d-md-block'><i class='fa-solid fa-stop'></i></span></button>";
 
-                       // Only task user have buttons
+                        // Only task user have buttons
                         $script .= <<<JAVASCRIPT
 $(document).ready(function() {
     $("#actualtime_button_{$task_id}_1_{$rand}").click(function(event) {
@@ -484,7 +481,7 @@ JAVASCRIPT;
 
                         echo $html;
 
-                       // Finally, fill the actual total time in all timers
+                        // Finally, fill the actual total time in all timers
                         $script .= <<<JAVASCRIPT
 $(document).ready(function() {
     window.actualTime.fillCurrentTime($task_id, $time);
@@ -514,7 +511,7 @@ JAVASCRIPT;
             'WHERE' => [
                 'id' => $task_id,
                 'users_id_tech' => Session::getLoginUserID(),
-            ]
+            ],
         ];
         $req = $DB->request($query);
         if ($row = $req->current()) {
@@ -545,7 +542,7 @@ JAVASCRIPT;
                     'NOT' => ['actual_begin' => null],
                 ],
                 'actual_end' => null,
-            ]
+            ],
         ];
         $req = $DB->request($query);
         if ($row = $req->current()) {
@@ -578,7 +575,7 @@ JAVASCRIPT;
                 [
                     'NOT' => ['actual_end' => null],
                 ],
-            ]
+            ],
         ];
 
         $seconds = 0;
@@ -595,7 +592,7 @@ JAVASCRIPT;
                     'NOT' => ['actual_begin' => null],
                 ],
                 'actual_end' => null,
-            ]
+            ],
         ];
 
         $req = $DB->request($querytime);
@@ -629,7 +626,7 @@ JAVASCRIPT;
                 ],
                 'actual_end' => null,
                 'users_id' => $user_id,
-            ]
+            ],
         ];
         $req = $DB->request($query);
         if ($row = $req->current()) {
@@ -660,7 +657,7 @@ JAVASCRIPT;
                 ],
                 'actual_end' => null,
                 'users_id' => $user_id,
-            ]
+            ],
         ];
         $req = $DB->request($query);
         if ($row = $req->current()) {
@@ -715,7 +712,7 @@ JAVASCRIPT;
                 ],
                 'actual_end' => null,
                 'users_id' => $user_id,
-            ]
+            ],
         ];
         $req = $DB->request($query);
         if ($row = $req->current()) {
@@ -738,7 +735,7 @@ JAVASCRIPT;
 
         $query = [
             'SELECT' => [
-                'itemtype'
+                'itemtype',
             ],
             'FROM' => self::getTable(),
             'WHERE' => [
@@ -747,7 +744,7 @@ JAVASCRIPT;
                 ],
                 'actual_end' => null,
                 'users_id' => $user_id,
-            ]
+            ],
         ];
         $req = $DB->request($query);
         if ($row = $req->current()) {
@@ -775,7 +772,7 @@ JAVASCRIPT;
                 'items_id' => $task_id,
                 'itemtype' => $itemtype,
                 'actual_end' => null,
-            ]
+            ],
         ];
         $req = $DB->request($query);
         $row = $req->current();
@@ -804,13 +801,13 @@ JAVASCRIPT;
             $parent_id = $parent->getID();
             $actual_totaltime = 0;
             $query = [
-            'SELECT' => [
-                $tasktable . '.id',
-            ],
-            'FROM' => $tasktable,
-            'WHERE' => [
-                $parent->getForeignKeyField() => $parent_id,
-            ]
+                'SELECT' => [
+                    $tasktable . '.id',
+                ],
+                'FROM' => $tasktable,
+                'WHERE' => [
+                    $parent->getForeignKeyField() => $parent_id,
+                ],
             ];
             foreach ($DB->request($query) as $id => $row) {
                 $actual_totaltime += self::totalEndTime($row['id'], $itemtype);
@@ -842,16 +839,16 @@ JAVASCRIPT;
             $html .= "<tr><th>" . __("Technician") . "</th><th>" . __("Total duration") . "</th><th>ActualTime - " . __("Total duration") . "</th><th>" . __("Duration Diff", "actiontime") . "</th><th>" . __("Duration Diff", "actiontime") . " (%)</th></tr>";
 
             $query = [
-            'SELECT' => [
-                'actiontime',
-                'id',
-                'users_id_tech',
-            ],
-            'FROM' => $tasktable,
-            'WHERE' => [
-                $parent->getForeignKeyField() => $parent_id,
-            ],
-            'ORDER' => 'users_id_tech',
+                'SELECT' => [
+                    'actiontime',
+                    'id',
+                    'users_id_tech',
+                ],
+                'FROM' => $tasktable,
+                'WHERE' => [
+                    $parent->getForeignKeyField() => $parent_id,
+                ],
+                'ORDER' => 'users_id_tech',
             ];
             $list = [];
             foreach ($DB->request($query) as $id => $row) {
@@ -863,7 +860,7 @@ JAVASCRIPT;
                 }
                 $qtime = [
                     'SELECT' => [
-                        'SUM' => 'actual_actiontime AS actual_total'
+                        'SUM' => 'actual_actiontime AS actual_total',
                     ],
                     'FROM' => self::getTable(),
                     'WHERE' => [
@@ -937,7 +934,7 @@ JAVASCRIPT;
                 [
                     'NOT' => ['actual_end' => null],
                 ],
-            ]
+            ],
         ];
         $html = "";
         foreach ($DB->request($query) as $id => $row) {
@@ -950,7 +947,7 @@ JAVASCRIPT;
             if ($row['is_modified']) {
                 $source = new PluginActualtimeSourcetimer();
                 $source->getFromDBByCrit([
-                'plugin_actualtime_tasks_id' => $row['id']
+                    'plugin_actualtime_tasks_id' => $row['id'],
                 ]);
                 $comment = __("Original end date", "actualtime") . ": " . $source->fields['source_end'] . "<br>";
                 $comment .= __("Original duration", "actualtime") . ": " . Html::timestampToString($source->fields['source_actiontime']) . "<br>";
@@ -979,14 +976,14 @@ JAVASCRIPT;
                     Session::addMessageAfterRedirect(
                         $result['message'],
                         true,
-                        WARNING
+                        WARNING,
                     );
                     return;
                 } else {
                     Session::addMessageAfterRedirect(
                         $result['message'],
                         true,
-                        INFO
+                        INFO,
                     );
                 }
             }
@@ -1031,9 +1028,9 @@ JAVASCRIPT;
                         'SELECT' => ['id'],
                         'FROM'   => ProjectState::getTable(),
                         'WHERE'  => [
-                            'is_finished' => 1
+                            'is_finished' => 1,
                         ],
-                    ]
+                    ],
                 );
                 $finished_states_ids = [];
                 foreach ($finished_states_it as $finished_state) {
@@ -1089,7 +1086,7 @@ JAVASCRIPT;
     {
         $item = $params['item'];
         if (!is_object($item) || !method_exists($item, 'getType')) {
-           // Sometimes, params['item'] is just an array, like 'Solution'
+            // Sometimes, params['item'] is just an array, like 'Solution'
             return;
         }
         $itemtype = $item->getType();
@@ -1099,12 +1096,12 @@ JAVASCRIPT;
             case ChangeTask::class:
             case ProblemTask::class:
                 $task_id = $item->getID();
-               // Auto open needs to use correct item randomic number
+                // Auto open needs to use correct item randomic number
                 $rand = $params['options']['rand'];
 
-               // Show timer in closed task box in:
-               // Standard interface (always)
-               // or Helpdesk inteface (only if config allows)
+                // Show timer in closed task box in:
+                // Standard interface (always)
+                // or Helpdesk inteface (only if config allows)
                 if (
                     $config->showTimerInBox() &&
                     ((Session::getCurrentInterface() == "central") ||
@@ -1136,8 +1133,8 @@ JAVASCRIPT;
                 }
 
                 if ($config->autoOpenRunning() && self::checkUser($task_id, $itemtype, Session::getLoginUserID())) {
-                   // New created task or user has running timer on this task
-                   // Open edit window automatically
+                    // New created task or user has running timer on this task
+                    // Open edit window automatically
                     $parent_item = getItemForItemtype($item->getItilObjectItemType());
                     $ticket_id = $item->fields[$parent_item::getForeignKeyField()];
                     $div = "<div id='actualtime_autoEdit_{$task_id}_{$rand}' onclick='javascript:viewEditSubitem$ticket_id$rand(event, \"{$itemtype}\", $task_id, this, \"viewitem{$itemtype}$task_id$rand\")'></div>";
@@ -1148,7 +1145,7 @@ $(document).ready(function() {
 });
 JAVASCRIPT;
 
-                    print_r(Html::scriptBlock($script));
+                    echo Html::scriptBlock($script);
                 }
 
                 if ($item->fields['users_id_tech'] == Session::getLoginUserID() && $item->can($task_id, UPDATE) && $item->fields['state'] > 0) {
@@ -1241,11 +1238,11 @@ JAVASCRIPT;
             'FROM' => self::getTable(),
             'WHERE' => [
                 'actual_begin' => ['<=', $end],
-                'actual_end' => ['>=', $begin]
+                'actual_end' => ['>=', $begin],
             ],
             'ORDER' => [
-                'actual_begin ASC'
-            ]
+                'actual_begin ASC',
+            ],
         ];
 
         if ($whogroup === "mine") {
@@ -1362,7 +1359,7 @@ JAVASCRIPT;
             $query = [
                 'SELECT' => [
                     new QueryExpression(
-                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("actual_end") . "),'%Y-%m-%d') AS date"
+                        "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("actual_end") . "),'%Y-%m-%d') AS date",
                     ),
                 ],
                 'FROM' => self::getTable(),
@@ -1370,7 +1367,7 @@ JAVASCRIPT;
                     'items_id'  => $task->getID(),
                     'itemtype'  => $task->getType(),
                     'NOT'       => ['actual_end' => null],
-                ]
+                ],
             ];
             $req = $DB->request($query);
             if ($row = $req->current()) {
@@ -1413,7 +1410,7 @@ JAVASCRIPT;
                 'actual_begin' => null,
                 'actual_end'   => null,
                 'users_id'     => Session::getLoginUserID(),
-            ]
+            ],
         );
 
         $plugin = new Plugin();
@@ -1438,8 +1435,8 @@ JAVASCRIPT;
                 $waypoint->getTable(),
                 [
                     'users_id' => Session::getLoginUserID(),
-                    'date_end' => null
-                ]
+                    'date_end' => null,
+                ],
             );
             if ($count > 0) {
                 $result['message'] = __("You are already doing a waypoint", 'waypoint');
@@ -1463,9 +1460,9 @@ JAVASCRIPT;
                     'SELECT' => ['id'],
                     'FROM'   => ProjectState::getTable(),
                     'WHERE'  => [
-                        'is_finished' => 1
+                        'is_finished' => 1,
                     ],
-                ]
+                ],
             );
             $finished_states_ids = [];
             foreach ($finished_states_it as $finished_state) {
@@ -1520,7 +1517,7 @@ JAVASCRIPT;
                     'users_id'      => Session::getLoginUserID(),
                     'actual_end'    => null,
                 ],
-                'LIMIT' => 1
+                'LIMIT' => 1,
             ]);
             if ($row = $iterator->current()) {
                 // Active task found, get its id and itemtype
@@ -1528,12 +1525,19 @@ JAVASCRIPT;
                 $active_task_itemtype = $row['itemtype'];
                 $tmp_task = new $active_task_itemtype();
                 if ($tmp_task->getFromDB($active_task_id)) {
-                    // get parent id and itemtype, allowing TicketTask, ProjectTask, ChangeTask..
                     $dbu = new DbUtils();
-                    $active_task_parent_itemtype = $tmp_task->getItilObjectItemType();
-                    $tmp_parent_table = $dbu->getTableForItemType($active_task_parent_itemtype);
-                    $tmp_key = $dbu->getForeignKeyFieldForTable($tmp_parent_table);
-                    $active_task_parent_id = $tmp_task->fields[$tmp_key] ?? 0;
+                    // get parent id and itemtype, allowing TicketTask, ProblemTask, ChangeTask..
+                    if ($tmp_task instanceof CommonITILTask) {
+                        $active_task_parent_itemtype = $tmp_task->getItilObjectItemType();
+                    } else {
+                        //ProjectTask
+                        $active_task_parent_itemtype = $tmp_task::$itemtype ?? '';
+                    }
+                    if ($active_task_parent_itemtype) {
+                        $tmp_parent_table = $dbu->getTableForItemType($active_task_parent_itemtype);
+                        $tmp_key = $dbu->getForeignKeyFieldForTable($tmp_parent_table);
+                        $active_task_parent_id = $tmp_task->fields[$tmp_key] ?? 0;
+                    }
                 }
             }
 
@@ -1551,7 +1555,7 @@ JAVASCRIPT;
             $result['message'] = $message;
             return $result;
         } else {
-           // action=start, timer=off, current user is free
+            // action=start, timer=off, current user is free
             $DB->insert(
                 'glpi_plugin_actualtime_tasks',
                 [
@@ -1560,7 +1564,7 @@ JAVASCRIPT;
                     'actual_begin'   => date("Y-m-d H:i:s"),
                     'users_id'       => Session::getLoginUserID(),
                     'origin_start'   => $origin,
-                ]
+                ],
             );
 
             $timer_id = $DB->insertId();
@@ -1587,7 +1591,7 @@ JAVASCRIPT;
                     $result,
                     Session::getLoginUserID(),
                     true,
-                    $parent::getType()
+                    $parent::getType(),
                 );
             }
         }
@@ -1641,7 +1645,7 @@ JAVASCRIPT;
                             'NOT' => ['actual_begin' => null],
                         ],
                         'actual_end' => null,
-                    ]
+                    ],
                 );
 
                 $result = [
@@ -1666,15 +1670,15 @@ JAVASCRIPT;
                         $result,
                         Session::getLoginUserID(),
                         false,
-                        $parent
+                        $parent,
                     );
 
                     $timerquery = [
                         'FROM' => PluginGappextendedTimer::getTable(),
                         'WHERE' => [
                             'items_id' => $timer_id,
-                            'itemtype' => PluginActualtimeTask::getType()
-                        ]
+                            'itemtype' => PluginActualtimeTask::getType(),
+                        ],
                     ];
 
                     foreach ($DB->request($timerquery) as $timerrow) {
@@ -1738,7 +1742,7 @@ JAVASCRIPT;
                             'NOT' => ['actual_begin' => null],
                         ],
                         'actual_end' => null,
-                    ]
+                    ],
                 );
 
                 $input = [];
@@ -1780,15 +1784,15 @@ JAVASCRIPT;
                         $result,
                         $actualtime->fields['users_id'],
                         false,
-                        $parent
+                        $parent,
                     );
 
                     $timerquery = [
                         'FROM' => PluginGappextendedTimer::getTable(),
                         'WHERE' => [
                             'items_id' => $timer_id,
-                            'itemtype' => PluginActualtimeTask::getType()
-                        ]
+                            'itemtype' => PluginActualtimeTask::getType(),
+                        ],
                     ];
 
                     foreach ($DB->request($timerquery) as $timerrow) {
@@ -1870,23 +1874,21 @@ JAVASCRIPT;
         /** @var \DBmysql $DB */
         global $DB;
 
-        $default_charset = DBConnection::getDefaultCharset();
-        $default_collation = DBConnection::getDefaultCollation();
-        $default_key_sign = DBConnection::getDefaultPrimaryKeySignOption();
+        $default_charset    = DBConnection::getDefaultCharset();
+        $default_collation  = DBConnection::getDefaultCollation();
+        $default_key_sign   = DBConnection::getDefaultPrimaryKeySignOption();
 
         $table = self::getTable();
-
         if (!$DB->tableExists($table)) {
             $migration->displayMessage("Installing $table");
-
             $query = "CREATE TABLE IF NOT EXISTS $table (
-                `id` int {$default_key_sign} NOT NULL auto_increment,
-                `itemtype` varchar(255) NOT NULL,
-                `items_id` int {$default_key_sign} NOT NULL DEFAULT '0',
+                `id` INT {$default_key_sign} NOT NULL AUTO_INCREMENT,
+                `itemtype` VARCHAR(255) NOT NULL,
+                `items_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
                 `actual_begin` TIMESTAMP NULL DEFAULT NULL,
                 `actual_end` TIMESTAMP NULL DEFAULT NULL,
-                `users_id` int {$default_key_sign} NOT NULL,
-                `actual_actiontime` int {$default_key_sign} NOT NULL DEFAULT 0,
+                `users_id` INT {$default_key_sign} NOT NULL,
+                `actual_actiontime` INT {$default_key_sign} NOT NULL DEFAULT 0,
                 `origin_start` INT {$default_key_sign} NOT NULL,
                 `origin_end` INT {$default_key_sign} NOT NULL DEFAULT 0,
                 `override_begin` TIMESTAMP NULL DEFAULT NULL,
@@ -1897,7 +1899,7 @@ JAVASCRIPT;
                 KEY `users_id` (`users_id`)
             ) ENGINE=InnoDB  DEFAULT CHARSET={$default_charset}
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
-            $DB->doQueryOrDie($query, $DB->error());
+            $DB->doQuery($query);
         } else {
             $migration->changeField($table, 'tasks_id', 'tickettasks_id', 'int');
             $migration->dropField($table, 'latitude_start');
@@ -1909,8 +1911,18 @@ JAVASCRIPT;
             $migration->addField($table, 'override_begin', 'timestamp', ['nodefault' => true, 'null' => true]);
             $migration->addField($table, 'override_end', 'timestamp', ['nodefault' => true, 'null' => true]);
 
-            $migration->addField($table, 'itemtype', 'varchar(255) NOT NULL', ['after' => 'id', 'update' => "'TicketTask'"]);
-            $migration->addField($table, 'items_id', "int {$default_key_sign} NOT NULL DEFAULT '0'", ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')]);
+            $migration->addField(
+                $table,
+                'itemtype',
+                'varchar(255) NOT NULL',
+                ['after' => 'id', 'update' => "'TicketTask'"],
+            );
+            $migration->addField(
+                $table,
+                'items_id',
+                "int {$default_key_sign} NOT NULL DEFAULT '0'",
+                ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')],
+            );
             $migration->addKey($table, ['itemtype', 'items_id'], 'item');
             $migration->dropField($table, 'tickettasks_id');
 

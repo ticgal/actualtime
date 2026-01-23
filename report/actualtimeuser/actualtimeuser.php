@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -39,18 +39,18 @@ $report = new PluginReportsAutoReport(__('ActualTimeUser'));
 new PluginReportsDateIntervalCriteria(
     $report,
     'glpi_tickets.closedate',
-    __("Close date")
+    __("Close date"),
 );
 //Filtro user
 $choices = [
     0 => __('Technician'),
-    1 => __('Requester')
+    1 => __('Requester'),
 ];
 $filter_active = new PluginReportsArrayCriteria(
     $report,
     'glpi_tickets_users.type',
     _('Group by'),
-    $choices
+    $choices,
 );
 
 $report->displayCriteriasForm();
@@ -60,28 +60,28 @@ $report->setColumns([
         __('User'),
         'User',
         [
-            'with_navigate' => true
-        ]
+            'with_navigate' => true,
+        ],
     ),
     new PluginReportsColumnTimestamp(
         'duration',
-        __("Total duration")
+        __("Total duration"),
     ),
     new PluginReportsColumnTimestamp(
         'totalduration',
-        "ActualTime - " . __("Total duration")
+        "ActualTime - " . __("Total duration"),
     ),
     new PluginReportsColumnTimestamp(
         'diff',
         __(
             "Duration Diff",
-            "actiontime"
-        )
+            "actiontime",
+        ),
     ),
     new PluginReportsColumn(
         'diffpercent',
-        __("Duration Diff", "actiontime") . " (%)"
-    )
+        __("Duration Diff", "actiontime") . " (%)",
+    ),
 ]);
 if ($filter_active->getParameterValue() == 1) {
     $query = "SELECT glpi_tickets_users.users_id as user_id,";

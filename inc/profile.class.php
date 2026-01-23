@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -29,10 +29,7 @@
  * -------------------------------------------------------------------------
  */
 
-if (!defined('GLPI_ROOT')) {
-    die("Sorry. You can't access directly to this file");
-}
-
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeProfile extends Profile
 {
     public static $rightname = 'profile';
@@ -40,13 +37,19 @@ class PluginActualtimeProfile extends Profile
     /**
      * {@inheritDoc}
      */
-    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string
+    public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string|array
     {
         switch ($item->getType()) {
             case 'Profile':
                 return self::createTabEntry(PLUGIN_ACTUALTIME_NAME);
         }
+
         return '';
+    }
+
+    public static function getIcon(): string
+    {
+        return "fas fa-stopwatch";
     }
 
     /**
@@ -58,58 +61,48 @@ class PluginActualtimeProfile extends Profile
             case Profile::class:
                 /** @var Profile $item */
                 $profile = new self();
-                $profile->showForm($item->getID());
-                break;
+                return $profile->displayProfileForm($item);
         }
-        return true;
+
+        return false;
     }
 
     /**
-     * {@inheritDoc}
+     * @param  Profile $profile
+     *
+     * @return bool
      */
-    public function showForm($profiles_id, array $options = []): bool
+    public function displayProfileForm(Profile $profile): bool
     {
-        if (!Session::haveRight("profile", READ)) {
+        if (!Session::haveRight(self::$rightname, READ)) {
             return false;
         }
-        $canedit = Session::haveRight("profile", UPDATE);
 
-        $profile = new Profile();
-        $profile->getFromDB($profiles_id);
+        $can_edit = Session::haveRight(self::$rightname, UPDATE);
 
-        echo "<form action='" . Profile::getFormUrl() . "' method='post'>";
-        echo "<table class='tab_cadre_fixe'>";
-
-        $general_rights = self::getGeneralRights();
-
-        $profile->displayRightsChoiceMatrix(
-            $general_rights,
-            [
-                'canedit'       => $canedit,
-                'default_class' => 'tab_bg_2',
-                'title'         => __('General', 'actualtime')
-            ]
-        );
-
-        if ($profile->fields['interface'] == 'central') {
-            $profile->displayRightsChoiceMatrix(
-                self::getCentralRights(),
-                [
-                    'canedit'       => $canedit,
-                    'default_class' => 'tab_bg_2',
-                ]
-            );
+        echo "<div class='spaced'>";
+        if ($can_edit) {
+            echo "<form method='post' action='" . htmlspecialchars($profile::getFormURL()) . "'>";
         }
 
-        $profile->showLegend();
-        if ($canedit) {
-            echo "<div class='center'>";
-            echo Html::hidden('id', ['value' => $profiles_id]);
-            echo Html::submit(_sx('button', 'Save'), ['name' => 'update', 'class' => 'btn btn-primary']);
+        $rights = array_merge(
+            self::getGeneralRights(),
+            self::getCentralRights(),
+        );
+        $matrix_options = [
+            'canedit' => $can_edit,
+            'title'   => 'ActualTime',
+        ];
+        $profile->displayRightsChoiceMatrix($rights, $matrix_options);
+
+        if ($can_edit) {
+            echo "<div class='text-center'>";
+            echo Html::hidden('id', ['value' => $profile->getID()]);
+            echo Html::submit(_sx('button', 'Save'), ['name' => 'update']);
             echo "</div>\n";
             Html::closeForm();
         }
-        echo "</div>";
+        echo '</div>';
 
         return true;
     }
@@ -123,10 +116,10 @@ class PluginActualtimeProfile extends Profile
     {
         return [
             [
-                'rights' => [READ => __('Read')],
-                'label' => __("Running timers", "actualtime"),
-                'field' => 'plugin_actualtime_running'
-            ]
+                'rights'    => [READ => __('Read')],
+                'label'     => __("Running timers", "actualtime"),
+                'field'     => 'plugin_actualtime_running',
+            ],
         ];
     }
 
@@ -139,10 +132,10 @@ class PluginActualtimeProfile extends Profile
     {
         return [
             [
-                'itemtype' => PluginActualtimeSourcetimer::getType(),
-                'label' => __("Modify timers", "actualtime"),
-                'field' => PluginActualtimeSourcetimer::$rightname
-            ]
+                'itemtype'  => PluginActualtimeSourcetimer::getType(),
+                'label'     => __("Modify timers", "actualtime"),
+                'field'     => PluginActualtimeSourcetimer::$rightname,
+            ],
         ];
     }
 
@@ -154,12 +147,10 @@ class PluginActualtimeProfile extends Profile
      */
     public static function uninstall(Migration $migration): void
     {
-        /** @var \DBmysql $DB */
-        global $DB;
-
         $migration->displayMessage("Deleting actualtime profile rights");
-        $table = ProfileRight::getTable();
-        $query = "DELETE FROM $table WHERE `name` LIKE '%plugin_actualtime%'";
-        $DB->doQueryOrDie($query, $DB->error());
+        $rights = array_merge(self::getGeneralRights(), self::getCentralRights());
+        foreach ($rights as $data) {
+            ProfileRight::deleteProfileRights([$data['field']]);
+        }
     }
 }

@@ -1,8 +1,9 @@
 <?php
+
 /*
  -------------------------------------------------------------------------
  ActualTime plugin for GLPI
- Copyright (C) 2018-2022 by the TICgal Team.
+ Copyright (C) 2018-2022 by the TICGAL Team.
  https://www.tic.gal/
  -------------------------------------------------------------------------
  LICENSE
@@ -19,8 +20,8 @@
  along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
  --------------------------------------------------------------------------
  @package   ActualTime
- @author    the TICgal team
- @copyright Copyright (c) 2018-2022 TICgal team
+ @author    the TICGAL team
+ @copyright Copyright (c) 2018-2022 TICGAL team
  @license   AGPL License 3.0 or (at your option) any later version
             http://www.gnu.org/licenses/agpl-3.0-standalone.html
  @link      https://www.tic.gal/
@@ -32,77 +33,86 @@ namespace tests\units;
 
 use atoum;
 
-class PluginActualtimeConfig extends atoum {
+class PluginActualtimeConfig extends atoum
+{
+    public function testRightname()
+    {
+        $this
+           ->given($conf = $this->getTestedClassName())
+              ->string($conf::$rightname)
+                 ->isEqualTo('config');
+    }
 
-   public function testRightname() {
-      $this
-         ->given($conf = $this->getTestedClassName())
-            ->string($conf::$rightname)
-               ->isEqualTo('config');
-   }
+    public function testGetTypeName()
+    {
+        $this
+           ->if($class = $this->testedClass->getClass())
+           ->then
+              ->string($class::getTypeName())
+                 ->isNotEmpty();
+    }
 
-   public function testGetTypeName() {
-      $this
-         ->if($class = $this->testedClass->getClass())
-         ->then
-            ->string($class::getTypeName())
-               ->isNotEmpty();
-   }
+    public function testGetConfig()
+    {
+        $this
+           ->given($this->newTestedInstance)
+              ->object($this->testedInstance->getConfig())
+                 ->isInstanceOfTestedClass();
+    }
 
-   public function testGetConfig() {
-      $this
-         ->given($this->newTestedInstance)
-            ->object($this->testedInstance->getConfig())
-               ->isInstanceOfTestedClass();
-   }
+    public function testShowTimerPopup()
+    {
+        $this
+           ->given($this->newTestedInstance)
+              ->boolean($this->testedInstance->showTimerPopup())
+                 ->isTrue();
+    }
 
-   public function testShowTimerPopup() {
-      $this
-         ->given($this->newTestedInstance)
-            ->boolean($this->testedInstance->showTimerPopup())
-               ->isTrue();
-   }
+    public function testShowInHelpdesk()
+    {
+        $this
+           ->given($this->newTestedInstance)
+              ->boolean($this->testedInstance->showInHelpdesk())
+                 ->isFalse();
+    }
 
-   public function testShowInHelpdesk() {
-      $this
-         ->given($this->newTestedInstance)
-            ->boolean($this->testedInstance->showInHelpdesk())
-               ->isFalse();
-   }
+    public function testShowTimerInBox()
+    {
+        $this
+           ->given($this->newTestedInstance)
+              ->boolean($this->testedInstance->showTimerInBox())
+                 ->isTrue();
+    }
 
-   public function testShowTimerInBox() {
-      $this
-         ->given($this->newTestedInstance)
-            ->boolean($this->testedInstance->showTimerInBox())
-               ->isTrue();
-   }
+    public function testAutoOpenNew()
+    {
+        $this
+           ->given($this->newTestedInstance)
+              ->boolean($this->testedInstance->autoOpenNew())
+                 ->isFalse();
+    }
 
-   public function testAutoOpenNew() {
-      $this
-         ->given($this->newTestedInstance)
-            ->boolean($this->testedInstance->autoOpenNew())
-               ->isFalse();
-   }
+    public function testAutoOpenRunning()
+    {
+        $this
+           ->given($this->newTestedInstance)
+              ->boolean($this->testedInstance->autoOpenRunning())
+                 ->isFalse();
+    }
 
-   public function testAutoOpenRunning() {
-      $this
-         ->given($this->newTestedInstance)
-            ->boolean($this->testedInstance->autoOpenRunning())
-               ->isFalse();
-   }
+    public function testCanView()
+    {
+        $this
+           ->given($this->newTestedInstance)
+              ->boolean($this->testedInstance->canView())
+                 ->isFalse();
+    }
 
-   public function testCanView() {
-      $this
-         ->given($this->newTestedInstance)
-            ->boolean($this->testedInstance->canView())
-               ->isFalse();
-   }
-
-   public function testCanCreate() {
-      $this
-         ->given($this->newTestedInstance)
-            ->boolean($this->testedInstance->canCreate())
-               ->isFalse();
-   }
-
+    public function testCanCreate()
+    {
+        $this
+           ->given($this->newTestedInstance)
+              ->boolean($this->testedInstance->canCreate())
+                 ->isFalse();
+    }
 }

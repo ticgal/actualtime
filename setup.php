@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -31,12 +31,12 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_ACTUALTIME_VERSION', '3.2.0');
+define('PLUGIN_ACTUALTIME_VERSION', '4.0.0');
 
 // Minimal GLPI version, inclusive
-define("PLUGIN_ACTUALTIME_MIN_GLPI", "10.0.10");
+define("PLUGIN_ACTUALTIME_MIN_GLPI", "11.0.0");
 // Maximum GLPI version, exclusive
-define("PLUGIN_ACTUALTIME_MAX_GLPI", "10.1.0");
+define("PLUGIN_ACTUALTIME_MAX_GLPI", "11.1.0");
 define("PLUGIN_ACTUALTIME_NAME", "ActualTime");
 
 /**
@@ -49,15 +49,15 @@ function plugin_version_actualtime(): array
     return [
         'name'          => PLUGIN_ACTUALTIME_NAME,
         'version'       => PLUGIN_ACTUALTIME_VERSION,
-        'author'        => '<a href="https://tic.gal">TICgal</a>',
+        'author'        => '<a href="https://tic.gal">TICGAL</a>',
         'homepage'      => 'https://tic.gal/en/project/actualtime-plugin-glpi/',
         'license'       => 'AGPLv3+',
         'requirements'  => [
             'glpi'   => [
                 'min' => PLUGIN_ACTUALTIME_MIN_GLPI,
                 'max' => PLUGIN_ACTUALTIME_MAX_GLPI,
-            ]
-        ]
+            ],
+        ],
     ];
 }
 
@@ -71,20 +71,19 @@ function plugin_init_actualtime(): void
     /** @var array $PLUGIN_HOOKS */
     global $PLUGIN_HOOKS;
 
-    $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['actualtime'] = true;
 
-    $plugin = new Plugin();
-
-    if ($plugin->isActivated('actualtime')) { //is plugin active?
+    if (Plugin::isPluginActive('actualtime')) {
         // Classes
-        Plugin::registerClass(PluginActualtimeProfile::class, ['addtabon' => 'Profile']);
+        Plugin::registerClass(PluginActualtimeProfile::class, ['addtabon' => Profile::class]);
         // Add settings form as a tab on Setup - General page
-        Plugin::registerClass(PluginActualtimeConfig::class, ['addtabon' => 'Config']);
+        Plugin::registerClass(PluginActualtimeConfig::class, ['addtabon' => Config::class]);
 
         Plugin::registerClass(PluginActualtimeTask::class, ['planning_types' => true]);
 
         // Hooks
-        $PLUGIN_HOOKS[Hooks::POST_ITEM_FORM]['actualtime'] = [PluginActualtimeTask::class, 'postForm'];
+        $PLUGIN_HOOKS[Hooks::POST_ITEM_FORM]['actualtime'] = [
+            PluginActualtimeTask::class, 'postForm',
+        ];
 
         $PLUGIN_HOOKS[Hooks::SHOW_ITEM_STATS]['actualtime'] = [
             Ticket::class       => 'plugin_actualtime_item_stats',
@@ -125,23 +124,35 @@ function plugin_init_actualtime(): void
 
         $PLUGIN_HOOKS[Hooks::POST_SHOW_ITEM]['actualtime'] = 'plugin_actualtime_postshowitem';
 
-        $PLUGIN_HOOKS[Hooks::DASHBOARD_CARDS]['actualtime'] = [PluginActualtimeDashboard::class, 'dashboardCards'];
+        $PLUGIN_HOOKS[Hooks::DASHBOARD_CARDS]['actualtime'] = [
+            PluginActualtimeDashboard::class, 'dashboardCards',
+        ];
 
         $config = new PluginActualtimeConfig();
         if ($config->showTimerPopup()) {
-           // This hook is not needed if not showing popup
-            $PLUGIN_HOOKS[Hooks::POST_SHOW_TAB]['actualtime'] = [PluginActualtimeTask::class, 'postShowTab'];
+            // This hook is not needed if not showing popup
+            $PLUGIN_HOOKS[Hooks::POST_SHOW_TAB]['actualtime'] = [
+                PluginActualtimeTask::class, 'postShowTab',
+            ];
         }
 
         if (Session::getLoginUserID()) {
-            $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = 'js/actualtime.js';
+
+            /** @var array $CFG_GLPI */
+            global $CFG_GLPI;
+
+            // preload the fullcalendar library
+            $CFG_GLPI['javascript']['actualtime']['sourcetimer'] = ['fullcalendar'];
+            $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = 'public/actualtime.js';
         }
 
         if (Session::haveRight('plugin_actualtime_running', READ)) {
-            $PLUGIN_HOOKS['menu_toadd']['actualtime'] = ['admin' => 'PluginActualtimeRunning'];
+            $PLUGIN_HOOKS['menu_toadd']['actualtime'] = [
+                'admin' => 'PluginActualtimeRunning',
+            ];
         }
 
         // Standard settings link, on Setup - Plugins page
-        $PLUGIN_HOOKS['config_page']['actualtime'] = 'front/config.form.php';
+        $PLUGIN_HOOKS[Hooks::CONFIG_PAGE]['actualtime'] = 'front/config.form.php';
     }
 }

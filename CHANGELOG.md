@@ -1,5 +1,21 @@
 # Actualtime
 
+## [4.0.0] - 2026/01/22
+### Added
+- GLPI 11 support
+
+## [3.2.3] - 2025/08/20
+### Added
+- Search options for plugin integrations
+
+## [3.2.2] - 2025/08/20
+### Fixed
+- Limit and better control for timer modification
+
+## [3.2.1] - 2025/06/10
+### Fixed
+- ProjectTask parent key to start the timer
+
 ## [3.2.0] - 2025/02/27
 ### Added
 - Actualtimes for Problem tasks, contributed by Gambware

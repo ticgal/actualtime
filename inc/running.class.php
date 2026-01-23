@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -29,6 +29,7 @@
  * -------------------------------------------------------------------------
  */
 
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeRunning extends CommonGLPI
 {
     public static $rightname = 'plugin_actualtime_running';
@@ -48,8 +49,8 @@ class PluginActualtimeRunning extends CommonGLPI
     {
         $menu = [
             'title' => self::getMenuName(),
-            'page' => self::getSearchURL(false),
-            'icon' => 'fas fa-stopwatch'
+            'page'  => self::getSearchURL(false),
+            'icon'  => 'fas fa-stopwatch',
         ];
 
         return $menu;
@@ -70,7 +71,16 @@ class PluginActualtimeRunning extends CommonGLPI
         echo "<div class='right' style='padding:10px;max-width: 950px;margin: 0px auto 5px auto;'>";
 
         echo "<label style='padding:2px'>" . __("Update every (s)", "actualtime") . " </label>";
-        Dropdown::showNumber('interval', ['value' => 5, 'min' => 5, 'max' => MINUTE_TIMESTAMP, 'step' => 10, 'rand' => $rand]);
+        Dropdown::showNumber(
+            'interval',
+            [
+                'value' => 5,
+                'min'   => 5,
+                'max'   => MINUTE_TIMESTAMP,
+                'step'  => 10,
+                'rand'  => $rand,
+            ],
+        );
         echo "<label style='padding:2px'>" . __("Disable") . " </label>";
         Dropdown::showYesNo('disable', 0, -1, ['use_checkbox' => true, 'rand' => $rand]);
         echo "<i id='refresh' class='fa fa-sync pointer' style='margin-left: 10px;font-size: 15px'></i>";
@@ -87,7 +97,7 @@ class PluginActualtimeRunning extends CommonGLPI
             function loadRunning(){
                 $.ajax({
                     type:'POST',
-                    url:CFG_GLPI.root_doc+"/"+GLPI_PLUGINS_PATH.actualtime+"/ajax/running.php",
+                    url:CFG_GLPI.url_base+"/plugins/actualtime/ajax/running.php",
                     data:{
                         action:'getlist'
                     },
@@ -148,16 +158,16 @@ JAVASCRIPT;
                         $tasktable => 'id',
                         $atable => 'items_id',[
                             'AND' => [
-                                $atable . '.itemtype' => TicketTask::getType()
-                            ]
-                        ]
-                    ]
+                                $atable . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $tickettable => [
                     'ON' => [
                         $tickettable => 'id',
-                        $tasktable => 'tickets_id'
-                    ]
+                        $tasktable => 'tickets_id',
+                    ],
                 ],
             ],
             'WHERE' => [
@@ -184,16 +194,16 @@ JAVASCRIPT;
                         $tasktable => 'id',
                         $atable => 'items_id',[
                             'AND' => [
-                                $atable . '.itemtype' => ChangeTask::getType()
-                            ]
-                        ]
-                    ]
+                                $atable . '.itemtype' => ChangeTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $changetable => [
                     'ON' => [
                         $changetable => 'id',
-                        $tasktable => 'changes_id'
-                    ]
+                        $tasktable => 'changes_id',
+                    ],
                 ],
             ],
             'WHERE' => [
@@ -220,16 +230,16 @@ JAVASCRIPT;
                         $tasktable => 'id',
                         $atable => 'items_id',[
                             'AND' => [
-                                $atable . '.itemtype' => ProblemTask::getType()
-                            ]
-                        ]
-                    ]
+                                $atable . '.itemtype' => ProblemTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $problemtable => [
                     'ON' => [
                         $problemtable => 'id',
-                        $tasktable => 'problems_id'
-                    ]
+                        $tasktable => 'problems_id',
+                    ],
                 ],
             ],
             'WHERE' => [
@@ -256,16 +266,16 @@ JAVASCRIPT;
                         $tasktable => 'id',
                         $atable => 'items_id',[
                             'AND' => [
-                                $atable . '.itemtype' => ProjectTask::getType()
-                            ]
-                        ]
-                    ]
+                                $atable . '.itemtype' => ProjectTask::getType(),
+                            ],
+                        ],
+                    ],
                 ],
                 $projecttable => [
                     'ON' => [
                         $projecttable => 'id',
-                        $tasktable => 'projects_id'
-                    ]
+                        $tasktable => 'projects_id',
+                    ],
                 ],
             ],
             'WHERE' => [
@@ -286,7 +296,9 @@ JAVASCRIPT;
             $html .= "<th class='center'>" . Entity::getTypeName() . "</th>";
             $html .= "<th class='center'>" . Location::getTypeName() . "</th>";
             $html .= "<th class='center'>" . _n('Associated element', 'Associated elements', 1) . "</th>";
-            $html .= "<th class='center'>" . CommonITILObject::getTypeName() . " - " . CommonITILTask::getTypeName() . "</th>";
+            $html .= "<th class='center'>";
+            $html .= CommonITILObject::getTypeName() . " - " . CommonITILTask::getTypeName();
+            $html .= "</th>";
             $html .= "<th class='center'>" . __("Time") . "</th>";
             $html .= "</tr>";
 
@@ -302,13 +314,17 @@ JAVASCRIPT;
                 $html .= "<tr class='tab_bg_2'>";
                 $user = new User();
                 $user->getFromDB($row['users_id']);
-                $html .= "<td class='center'><a href='" . $user->getLinkURL() . "'>" . $user->getFriendlyName() . "</a></td>";
-                $html .= "<td class='center'>" . Entity::getFriendlyNameById($parent->fields['entities_id']) . "</td>";
+                $html .= "<td class='center'>";
+                $html .= "<a href='" . $user->getLinkURL() . "'>" . $user->getFriendlyName() . "</a>";
+                $html .= "</td>";
+                $html .= "<td class='center'>";
+                $html .= Entity::getFriendlyNameById($parent->fields['entities_id']);
+                $html .= "</td>";
+                $html .= "<td class='center'>";
                 if (isset($parent->fields['locations_id'])) {
-                    $html .= "<td class='center'>" . Location::getFriendlyNameById($parent->fields['locations_id']) . "</td>";
-                } else {
-                    $html .= "<td class='center'></td>";
+                    $html .= Location::getFriendlyNameById($parent->fields['locations_id']);
                 }
+                $html .= "</td>";
                 $html .= "<td class='center'>";
                 $html .= "<ul class='list left'>";
                 if (is_a($parent, CommonITILObject::class, true)) {
@@ -335,7 +351,8 @@ JAVASCRIPT;
                 $html .= "<td class='center'><a href='" . $parent->getLinkURL() . "'>";
                 $html .= $parent->getTypeName(1) . " - " . $parent->getID() . " - " . $row['items_id'] . "</a></td>";
                 $html .= "<td class='center'>";
-                $html .= Html::timestampToString(PluginActualtimeTask::totalEndTime($row['items_id'], $row['itemtype']));
+                $timestamp = PluginActualtimeTask::totalEndTime($row['items_id'], $row['itemtype']);
+                $html .= Html::timestampToString($timestamp);
                 $html .= "</td>";
                 $html .= "</tr>";
             }

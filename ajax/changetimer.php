@@ -3,7 +3,7 @@
 /**
  * -------------------------------------------------------------------------
  * ActualTime plugin for GLPI
- * Copyright (C) 2018-2025 by the TICGAL Team.
+ * Copyright (C) 2018-2026 by the TICGAL Team.
  * https://www.tic.gal/
  * -------------------------------------------------------------------------
  * LICENSE
@@ -21,7 +21,7 @@
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
- * @copyright Copyright (c) 2018-2025 TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
  * @license   AGPL License 3.0 or (at your option) any later version
  *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
  * @link      https://www.tic.gal/
@@ -41,13 +41,12 @@ if (isset($_REQUEST["itemtype"]) && isset($_REQUEST["task_id"])) {
         Html::popHeader(
             PluginActualtimeSourcetimer::getTypeName(1),
             $_SERVER['PHP_SELF'],
-            false,
-            '',
-            '',
-            PluginActualtimeSourcetimer::getType()
+            true,
+            'actualtime',
+            'sourcetimer',
         );
         $source = new PluginActualtimeSourcetimer();
-        $source->modalForm($_REQUEST["itemtype"], $_REQUEST["task_id"]);
+        $source->modalForm($_REQUEST["itemtype"], (int) $_REQUEST["task_id"]);
         Html::popFooter();
     }
 }
