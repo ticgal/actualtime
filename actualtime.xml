@@ -22,6 +22,12 @@
    </authors>
    <versions>
       <version>
+	<num>4.0.0</num>
+	<compatibility>~11.0.0</compatibility>
+	<download_url>https://github.com/ticgal/actualtime/releases/download/4.0.0/glpi-actualtime-4.0.0.tar.bz2</download_url>
+      </version>
+	   
+      <version>
 	<num>3.2.0</num>
 	<compatibility>~10.0.10</compatibility>
 	<download_url>https://github.com/ticgal/actualtime/releases/download/3.2.0/glpi-actualtime-3.2.0.tar.bz2</download_url>
