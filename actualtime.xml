@@ -1,16 +1,16 @@
 <root>
    <name>ActualTime</name>
    <key>actualtime</key>
-   <state>stable</state> <!-- stable | unstable | beta | alpha -->
-   <logo>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/actualtime.png</logo>
+   <state>stable</state>
+	<logo>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/actualtime.png</logo>
    <description>
       <short>
-		<en>Adds actual time tracking for GLPI tasks</en>
-		<es>Registrar el tiempo real de ejecución de cada tarea para GLPI</es>
+         <en>Adds actual time tracking for GLPI tasks</en>
+         <es>Registrar el tiempo real de ejecución de cada tarea para GLPI</es>
       </short>
       <long>
-		<en>ActualTime tracks actual task time tracking for GLPI ticket tasks and compares it to planned time.</en>
-		<es>El módulo ActualTime se alinea con tu organización añadiendo la posibilidad de registrar el tiempo real de ejecución de cada tarea en GLPI</es>
+         <en>ActualTime tracks actual task time tracking for GLPI ticket tasks and compares it to planned time.</en>
+         <es>El módulo ActualTime se alinea con tu organización añadiendo la posibilidad de registrar el tiempo real de ejecución de cada tarea en GLPI</es>
       </long>
    </description>
    <homepage>https://tic.gal/glpi/glpi-plugins/actualtime-the-time-tracking-plugin-for-glpi/</homepage>
@@ -22,72 +22,71 @@
    </authors>
    <versions>
       <version>
-	<num>4.0.0</num>
-	<compatibility>~11.0.0</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/4.0.0/glpi-actualtime-4.0.0.tar.bz2</download_url>
-      </version>
-	   
-      <version>
-	<num>3.2.0</num>
-	<compatibility>~10.0.10</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/3.2.0/glpi-actualtime-3.2.0.tar.bz2</download_url>
+         <num>4.0.0</num>
+         <compatibility>~11.0.0</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/4.0.0/glpi-actualtime-4.0.0.tar.bz2</download_url>
       </version>
       <version>
-	<num>3.0.0</num>
-	<compatibility>~10.0.10</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/3.0.0/glpi-actualtime-3.0.0.tar.tgz</download_url>
+         <num>3.2.0</num>
+         <compatibility>~10.0.10</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/3.2.0/glpi-actualtime-3.2.0.tar.bz2</download_url>
       </version>
       <version>
-	<num>2.2.0</num>
-	<compatibility>~10.0.10</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/2.2.0/glpi-actualtime-2.2.0.tar.tgz</download_url>
-      </version>	   
-       <version>
-	<num>2.1.0</num>
-	<compatibility>~10.0.0</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/2.1.0/glpi-actualtime-2.1.0.tar.tgz</download_url>
+         <num>3.0.0</num>
+         <compatibility>~10.0.10</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/3.0.0/glpi-actualtime-3.0.0.tar.tgz</download_url>
       </version>
       <version>
-	<num>2.0.0</num>
-	<compatibility>~10.0.0</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/2.0.0/glpi-actualtime-2.0.0.tar.tgz</download_url>
+         <num>2.2.0</num>
+         <compatibility>~10.0.10</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/2.2.0/glpi-actualtime-2.2.0.tar.tgz</download_url>
       </version>
       <version>
-	<num>1.5.2</num>
-	<compatibility>~9.5.0</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/1.5.2/glpi-actualtime-1.5.2.tar.tgz</download_url>
+         <num>2.1.0</num>
+         <compatibility>~10.0.0</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/2.1.0/glpi-actualtime-2.1.0.tar.tgz</download_url>
       </version>
       <version>
-	<num>1.5.1</num>
-	<compatibility>~9.5.0</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/1.5.1/glpi-actualtime-1.5.1.tar.tgz</download_url>
+         <num>2.0.0</num>
+         <compatibility>~10.0.0</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/2.0.0/glpi-actualtime-2.0.0.tar.tgz</download_url>
       </version>
       <version>
-	<num>1.5.0</num>
-	<compatibility>~9.5.0</compatibility>
-	<download_url>https://github.com/ticgal/actualtime/releases/download/1.5.0/glpi-actualtime-1.5.0.tar.tgz</download_url>
+         <num>1.5.2</num>
+         <compatibility>~9.5.0</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/1.5.2/glpi-actualtime-1.5.2.tar.tgz</download_url>
       </version>
       <version>
-	<num>1.3.1</num>
-	<compatibility>9.4</compatibility>
+         <num>1.5.1</num>
+         <compatibility>~9.5.0</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/1.5.1/glpi-actualtime-1.5.1.tar.tgz</download_url>
       </version>
       <version>
-	<num>1.3.0</num>
-	<compatibility>9.4</compatibility>
+         <num>1.5.0</num>
+         <compatibility>~9.5.0</compatibility>
+         <download_url>https://github.com/ticgal/actualtime/releases/download/1.5.0/glpi-actualtime-1.5.0.tar.tgz</download_url>
       </version>
       <version>
-	<num>1.2.0</num>
-	<compatibility>9.3</compatibility>
-	<compatibility>9.4</compatibility>
+         <num>1.3.1</num>
+         <compatibility>9.4</compatibility>
       </version>
       <version>
-	<num>1.1.0</num>
-	<compatibility>9.3</compatibility>
-	<compatibility>9.4</compatibility>
+         <num>1.3.0</num>
+         <compatibility>9.4</compatibility>
       </version>
       <version>
-	<num>1.0.0</num>
-	<compatibility>9.3</compatibility>
+         <num>1.2.0</num>
+         <compatibility>9.3</compatibility>
+         <compatibility>9.4</compatibility>
+      </version>
+      <version>
+         <num>1.1.0</num>
+         <compatibility>9.3</compatibility>
+         <compatibility>9.4</compatibility>
+      </version>
+      <version>
+         <num>1.0.0</num>
+         <compatibility>9.3</compatibility>
       </version>
    </versions>
    <langs>
@@ -103,19 +102,27 @@
    </langs>
    <license>AGPL v3+</license>
    <tags>
-      	<en>
-		<tag>ticket</tag>
-    		<tag>task</tag>
-		<tag>change</tag>
-		<tag>project</tag>
-		<tag>calendar</tag>
-		<tag>statistics</tag>
-	</en>
+      <en>
+         <tag>ticket</tag>
+         <tag>task</tag>
+         <tag>change</tag>
+         <tag>project</tag>
+         <tag>calendar</tag>
+         <tag>statistics</tag>
+      </en>
    </tags>
    <screenshots>
-      <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-1.png</screenshot>
-      <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-2.png</screenshot>
-      <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-3.png</screenshot>
-      <screenshot>https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-4.png</screenshot>
+      <screenshot>
+         https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-1.png
+      </screenshot>
+      <screenshot>
+         https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-2.png
+      </screenshot>
+      <screenshot>
+         https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-3.png
+      </screenshot>
+      <screenshot>
+         https://raw.githubusercontent.com/ticgal/actualtime/multimedia/ActualTime-GLPI-Plugin-4.png
+      </screenshot>
    </screenshots>
 </root>
