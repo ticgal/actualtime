@@ -1,5 +1,9 @@
 # Actualtime
 
+## [3.2.4] - 2026/03/31
+### Fixed
+- Project Task don't get affected for timers limitations
+
 ## [3.2.3] - 2025/08/20
 ### Added
 - Search options for plugin integrations
