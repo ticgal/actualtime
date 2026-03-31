@@ -1355,7 +1355,7 @@ JAVASCRIPT;
             }
         }
 
-        if ($config->fields['multiple_day']) {
+        if ($config->fields['multiple_day'] && $task->getType() === TicketTask::class) {
             $query = [
                 'SELECT' => [
                     new QueryExpression(
