@@ -1809,6 +1809,12 @@ JAVASCRIPT;
             $input['id'] = $task_id;
             $input['state'] = 2;
             $input['pending'] = 0;
+            if ($task instanceof CommonITILTask) {
+                $fk = getForeignKeyFieldForItemType($task->getItilObjectItemType());
+                if (isset($task->fields[$fk])) {
+                    $input[$fk] = $task->fields[$fk];
+                }
+            }
             $input['plugin_actualtime'] = true;
             if ($config->autoUpdateDuration()) {
                 $totalendtime = PluginActualtimeTask::totalEndTime($task_id, $itemtype);
