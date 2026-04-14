@@ -1,5 +1,11 @@
 # Actualtime
 
+## [4.0.1] - 2026/04/14
+### Fixed
+- Automatic timer
+### Changed
+- Add history logs to profile rights
+
 ## [4.0.0] - 2026/01/22
 ### Added
 - GLPI 11 support

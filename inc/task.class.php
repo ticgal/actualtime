@@ -637,13 +637,13 @@ JAVASCRIPT;
     }
 
     /**
-    * Check if the technician is free (= not active in any task)
-    *
-    * @param $user_id  Long  ID of technitian logged in
-    *
-    * @return Boolean (true if technitian IS NOT ACTIVE in any task)
-    * (opposite behaviour from original version until 1.1.0)
-    * */
+     * Check if the technician is free (= not active in any task)
+     *
+     * @param $user_id  Long  ID of technitian logged in
+     *
+     * @return Boolean (true if technitian IS NOT ACTIVE in any task)
+     * (opposite behaviour from original version until 1.1.0)
+     * */
     public static function checkUserFree($user_id): bool
     {
         /** @var \DBmysql $DB */
@@ -968,23 +968,24 @@ JAVASCRIPT;
      */
     public static function afterAdd(CommonITILTask $item): void
     {
-        if (isset($item->input['autostart']) && $item->input['autostart']) {
-            if ($item->getField('state') == 1 && $item->getField('users_id_tech') == Session::getLoginUserID() && $item->fields['id']) {
+        $config = new PluginActualtimeConfig();
+
+        $autostart_checked = isset($item->input['autostart']) && $item->input['autostart'];
+        $autostart_config  = (int)$config->fields['autoopenrunning'] === 1;
+
+        if ($autostart_checked || $autostart_config) {
+            if (
+                $item->getField('state') == 1
+                && $item->getField('users_id_tech') == Session::getLoginUserID()
+                && $item->fields['id']
+            ) {
                 $task_id = $item->fields['id'];
                 $result = self::startTimer($task_id, $item->getType(), self::WEB);
                 if ($result['type'] != 'info') {
-                    Session::addMessageAfterRedirect(
-                        $result['message'],
-                        true,
-                        WARNING,
-                    );
+                    Session::addMessageAfterRedirect($result['message'], true, WARNING);
                     return;
                 } else {
-                    Session::addMessageAfterRedirect(
-                        $result['message'],
-                        true,
-                        INFO,
-                    );
+                    Session::addMessageAfterRedirect($result['message'], true, INFO);
                 }
             }
         }
@@ -1105,7 +1106,7 @@ JAVASCRIPT;
                 if (
                     $config->showTimerInBox() &&
                     ((Session::getCurrentInterface() == "central") ||
-                    $config->showInHelpdesk())
+                        $config->showInHelpdesk())
                 ) {
                     $time = self::totalEndTime($task_id, $item->getType());
                     $fa_icon = ($time > 0 ? ' fa-clock' : '');
@@ -1286,12 +1287,12 @@ JAVASCRIPT;
             }
             $interv[$key]["name"] .= " - " . $parent::getTypeName(1) . " #" . $url_id . " - " . $row['items_id'];
             $interv[$key]["ajaxurl"] = $CFG_GLPI["root_doc"] . "/ajax/planning.php" .
-            "?action=edit_event_form" .
-            "&itemtype=" . $task->getType() .
-            "&parentitemtype=" . $parent::getType() .
-            "&parentid=" . $task->fields[$parent->getForeignKeyField()] .
-            "&id=" . $row['items_id'] .
-            "&url=" . $interv[$key]["url"];
+                "?action=edit_event_form" .
+                "&itemtype=" . $task->getType() .
+                "&parentitemtype=" . $parent::getType() .
+                "&parentid=" . $task->fields[$parent->getForeignKeyField()] .
+                "&id=" . $row['items_id'] .
+                "&url=" . $interv[$key]["url"];
 
             $interv[$key]["begin"] = $row['actual_begin'];
             $interv[$key]["end"] = $row['actual_end'];
