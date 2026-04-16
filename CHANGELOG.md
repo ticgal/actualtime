@@ -1,5 +1,9 @@
 # Actualtime
 
+## [3.2.5] - 2026/04/16
+### Fixed
+- Project Task don't update time
+
 ## [3.2.4] - 2026/03/31
 ### Fixed
 - Project Task don't get affected for timers limitations

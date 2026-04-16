@@ -31,7 +31,7 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_ACTUALTIME_VERSION', '3.2.4');
+define('PLUGIN_ACTUALTIME_VERSION', '3.2.5-beta');
 
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "10.0.10");
