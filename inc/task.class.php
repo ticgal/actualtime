@@ -1022,7 +1022,7 @@ JAVASCRIPT;
                     }
                 }
             }
-            if (array_key_exists('projectstates_id', $item->input)) {
+            if (array_key_exists('projectstates_id', $item->input) && $item->input['projectstates_id'] != $item->fields['projectstates_id']) {
                 $finished_states_it = $DB->request(
                     [
                         'SELECT' => ['id'],
