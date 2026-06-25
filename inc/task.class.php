@@ -1886,6 +1886,7 @@ JAVASCRIPT;
                 `id` INT {$default_key_sign} NOT NULL AUTO_INCREMENT,
                 `itemtype` VARCHAR(255) NOT NULL,
                 `items_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
+                `tickettasks_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
                 `actual_begin` TIMESTAMP NULL DEFAULT NULL,
                 `actual_end` TIMESTAMP NULL DEFAULT NULL,
                 `users_id` INT {$default_key_sign} NOT NULL,
@@ -1902,7 +1903,6 @@ JAVASCRIPT;
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
             $DB->doQuery($query);
         } else {
-            $migration->changeField($table, 'tasks_id', 'tickettasks_id', 'int');
             $migration->dropField($table, 'latitude_start');
             $migration->dropField($table, 'longitude_start');
             $migration->dropField($table, 'latitude_end');
@@ -1925,9 +1925,10 @@ JAVASCRIPT;
                 ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')],
             );
             $migration->addKey($table, ['itemtype', 'items_id'], 'item');
-            $migration->dropField($table, 'tickettasks_id');
 
             $migration->addField($table, 'is_modified', 'bool');
+
+            $migration->addField($table, 'tickettasks_id', 'int', ['value' => 0, 'unsigned' => true]);
 
             $migration->migrationOneTable($table);
         }

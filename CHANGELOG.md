@@ -1,5 +1,9 @@
 # Actualtime
 
+## [4.0.2] - 2026/06/25
+### Fixed
+- Update table field to match integration with plugin taskview
+
 ## [4.0.1] - 2026/04/14
 ### Fixed
 - Automatic timer
