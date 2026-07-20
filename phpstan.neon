@@ -1,6 +1,4 @@
 parameters:
-    parallel:
-        maximumNumberOfProcesses: 2
     level: 5
     bootstrapFiles:
         - ../../inc/based_config.php
