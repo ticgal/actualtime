@@ -1,5 +1,11 @@
 # Actualtime
 
+## [4.1.0] - 2026/07/21
+### Added
+- Deletes tables upon uninstall
+### Fixed
+- Fix pauseTimer to synchronize actiontime in glpi_tickettasks without closing the task
+
 ## [4.0.2] - 2026/06/25
 ### Fixed
 - Update table field to match integration with plugin taskview
