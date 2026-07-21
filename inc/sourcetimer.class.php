@@ -356,6 +356,12 @@ JAVASCRIPT;
         }
     }
 
+    /**
+     * uninstall
+     *
+     * @param  Migration $migration
+     * @return void
+     */
     public static function uninstall(Migration $migration): void
     {
         $table = self::getTable();
