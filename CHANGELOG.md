@@ -1,5 +1,10 @@
 # Actualtime
 
+## [4.1.1] - 2026/08/06
+### Fixed
+- Actualtime Usage Card don't show correct dates
+- Problem & Changes statistics view is centered
+
 ## [4.1.0] - 2026/07/21
 ### Added
 - Deletes tables upon uninstall
