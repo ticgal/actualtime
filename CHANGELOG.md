@@ -1,5 +1,9 @@
 # Actualtime
 
+## [3.2.6] - 2026/08/10
+### Fixed
+- ajax/running.php now requires the `plugin_actualtime_running` right, matching the check already enforced in front/running.php
+
 ## [3.2.5] - 2026/04/16
 ### Fixed
 - Project Task don't update time
