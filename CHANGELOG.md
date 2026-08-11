@@ -1,5 +1,10 @@
 # Actualtime
 
+## [3.2.7] - 2026/08/11
+### Fixed
+- Actualtime Usage Card don't show correct dates
+- Problem & Changes statistics view is centered
+
 ## [3.2.6] - 2026/08/10
 ### Fixed
 - ajax/running.php now requires the `plugin_actualtime_running` right, matching the check already enforced in front/running.php
