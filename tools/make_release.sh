@@ -182,7 +182,7 @@ else
     echo "Creating private release"
     PACKAGE_NAME="$PLUGINNAME-$RELEASE"
 fi
-tar cjf "$PACKAGE_NAME.tar.bz2" $PLUGINNAME
+tar cjf "glpi-$PACKAGE_NAME.tar.bz2" $PLUGINNAME
 
 cd $INIT_PWD
 
