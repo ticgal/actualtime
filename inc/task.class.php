@@ -1610,13 +1610,17 @@ JAVASCRIPT;
      */
     public static function pauseTimer($task_id, $itemtype, $origin = self::AUTO): array
     {
-        /** @var \DBmysql $DB */
-        global $DB;
+        /**
+         * @var \DBmysql $DB
+         * @var array $CFG_GLPI
+         */
+        global $DB, $CFG_GLPI;
 
         $result = [
             'type'   => 'warning',
         ];
 
+        $config = new PluginActualtimeConfig();
         $plugin = new Plugin();
         if (self::checkTimerActive($task_id, $itemtype)) {
             if (self::checkUser($task_id, $itemtype, Session::getLoginUserID())) {
@@ -1648,6 +1652,28 @@ JAVASCRIPT;
                         'actual_end' => null,
                     ],
                 );
+
+                if ($config->autoUpdateDuration()) {
+                    $task = new $itemtype();
+                    $task->getFromDB($task_id);
+
+                    $totalendtime = PluginActualtimeTask::totalEndTime($task_id, $itemtype);
+                    $time_step = $CFG_GLPI["time_step"] * MINUTE_TIMESTAMP;
+                    $ceil = $time_step > 0
+                        ? ceil($totalendtime / $time_step) * $time_step
+                        : $totalendtime;
+
+                    $sync_input = [
+                        'id'                => $task_id,
+                        'plugin_actualtime' => true,
+                    ];
+                    if (isset($task->fields['actiontime'])) {
+                        $sync_input['actiontime'] = $ceil;
+                    } else {
+                        $sync_input['effective_duration'] = $ceil;
+                    }
+                    $task->update($sync_input);
+                }
 
                 $result = [
                     'message'  => __("Timer completed", 'actualtime'),
@@ -1886,6 +1912,7 @@ JAVASCRIPT;
                 `id` INT {$default_key_sign} NOT NULL AUTO_INCREMENT,
                 `itemtype` VARCHAR(255) NOT NULL,
                 `items_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
+                `tickettasks_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
                 `actual_begin` TIMESTAMP NULL DEFAULT NULL,
                 `actual_end` TIMESTAMP NULL DEFAULT NULL,
                 `users_id` INT {$default_key_sign} NOT NULL,
@@ -1902,7 +1929,6 @@ JAVASCRIPT;
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
             $DB->doQuery($query);
         } else {
-            $migration->changeField($table, 'tasks_id', 'tickettasks_id', 'int');
             $migration->dropField($table, 'latitude_start');
             $migration->dropField($table, 'longitude_start');
             $migration->dropField($table, 'latitude_end');
@@ -1925,9 +1951,10 @@ JAVASCRIPT;
                 ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')],
             );
             $migration->addKey($table, ['itemtype', 'items_id'], 'item');
-            $migration->dropField($table, 'tickettasks_id');
 
             $migration->addField($table, 'is_modified', 'bool');
+
+            $migration->addField($table, 'tickettasks_id', 'int', ['value' => 0, 'unsigned' => true]);
 
             $migration->migrationOneTable($table);
         }
