@@ -31,7 +31,7 @@
 
 use Glpi\Plugin\Hooks;
 
-define('PLUGIN_ACTUALTIME_VERSION', '4.1.0');
+define('PLUGIN_ACTUALTIME_VERSION', '4.1.1');
 
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "11.0.0");
@@ -139,14 +139,15 @@ function plugin_init_actualtime(): void
             ];
         }
 
-        if (Session::getLoginUserID()) {
+        $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = ['public/table.js'];
 
+        if (Session::getLoginUserID()) {
             /** @var array $CFG_GLPI */
             global $CFG_GLPI;
 
             // preload the fullcalendar library
             $CFG_GLPI['javascript']['actualtime']['sourcetimer'] = ['fullcalendar'];
-            $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = 'public/actualtime.js';
+            $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'][] = 'public/actualtime.js';
         }
 
         if (Session::haveRight('plugin_actualtime_running', READ)) {
