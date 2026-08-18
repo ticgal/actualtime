@@ -1,0 +1,11 @@
+name: "Publish marketplace XML"
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  call:
+    permissions:
+      contents: "write"
+    uses: "ticgal/.github/.github/workflows/publish-marketplace-xml.yml@main"
