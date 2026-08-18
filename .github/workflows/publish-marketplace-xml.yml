@@ -8,4 +8,4 @@ jobs:
   call:
     permissions:
       contents: "write"
-    uses: "ticgal/.github/.github/workflows/publish-marketplace-xml.yml@main"
+    uses: "ticgal/.github/.github/workflows/publish-marketplace-xml.yml@master"
