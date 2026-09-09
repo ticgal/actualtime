@@ -32,7 +32,10 @@
 header("Content-Type: text/html; charset=UTF-8");
 Html::header_nocache();
 
-Session::checkLoginUser();
+if (Session::getLoginUserID() === false || !isset($_SESSION['glpiactiveprofile'])) {
+    http_response_code(204);
+    exit;
+}
 
 /** @var array $CFG_GLPI */
 global $CFG_GLPI;
