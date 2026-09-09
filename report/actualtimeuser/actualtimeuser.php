@@ -32,8 +32,6 @@
 $USEDBREPLICATE = 1;
 $DBCONNECTION_REQUIRED = 0;
 
-include("../../../../inc/includes.php");
-
 $report = new PluginReportsAutoReport(__('ActualTimeUser'));
 //Filtro fecha
 new PluginReportsDateIntervalCriteria(

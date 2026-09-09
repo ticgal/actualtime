@@ -1,5 +1,9 @@
 # Actualtime
 
+## [4.1.3] - 2026/09/09
+### Fixed
+- Fixed partial session destruction when the password expired.
+
 ## [4.1.2] - 2026/09/09
 ### Fixed
 - Require the plugin_actualtime_running right in ajax/running.php, matching the check already enforced in front/running.php
