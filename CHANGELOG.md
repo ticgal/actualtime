@@ -1,5 +1,9 @@
 # Actualtime
 
+## [4.1.2] - 2026/09/09
+### Fixed
+- Require the plugin_actualtime_running right in ajax/running.php, matching the check already enforced in front/running.php
+
 ## [4.1.1] - 2026/08/06
 ### Fixed
 - Actualtime Usage Card don't show correct dates
