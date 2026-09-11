@@ -92,6 +92,61 @@ function plugin_actualtime_item_add($item)
 }
 
 /**
+ * plugin_actualtime_getAddSearchOptionsNew
+ *
+ * @param  string $itemtype
+ * @return array
+ */
+function plugin_actualtime_getAddSearchOptionsNew(string $itemtype): array
+{
+    if ($itemtype !== Profile::class && $itemtype !== 'Profile') {
+        return [];
+    }
+
+    return [
+        [
+            'id'         => 3979,
+            'table'      => 'glpi_profilerights',
+            'field'      => 'rights',
+            'name'       => __('ActualTime', 'actualtime'),
+            'datatype'   => 'right',
+            'rightclass' => PluginActualtimeTask::class,
+            'rightname'  => PluginActualtimeTask::$rightname,
+            'joinparams' => [
+                'jointype'  => 'child',
+                'condition' => ['NEWTABLE.name' => PluginActualtimeTask::$rightname],
+            ],
+        ],
+        [
+            'id'         => 3980,
+            'table'      => 'glpi_profilerights',
+            'field'      => 'rights',
+            'name'       => __('Running timers', 'actualtime'),
+            'datatype'   => 'right',
+            'rightclass' => PluginActualtimeRunning::class,
+            'rightname'  => PluginActualtimeRunning::$rightname,
+            'joinparams' => [
+                'jointype'  => 'child',
+                'condition' => ['NEWTABLE.name' => PluginActualtimeRunning::$rightname],
+            ],
+        ],
+        [
+            'id'         => 3981,
+            'table'      => 'glpi_profilerights',
+            'field'      => 'rights',
+            'name'       => __('Modify timers', 'actualtime'),
+            'datatype'   => 'right',
+            'rightclass' => PluginActualtimeSourcetimer::class,
+            'rightname'  => PluginActualtimeSourcetimer::$rightname,
+            'joinparams' => [
+                'jointype'  => 'child',
+                'condition' => ['NEWTABLE.name' => PluginActualtimeSourcetimer::$rightname],
+            ],
+        ],
+    ];
+}
+
+/**
  * plugin_actualtime_postshowitem
  *
  * @param  array $params

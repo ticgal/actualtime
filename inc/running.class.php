@@ -34,6 +34,16 @@ class PluginActualtimeRunning extends CommonGLPI
 {
     public static $rightname = 'plugin_actualtime_running';
 
+    public function getRights($interface = 'central'): array
+    {
+        if ($interface == 'central') {
+            return [
+                READ    => __('Read'),
+            ];
+        }
+        return [];
+    }
+    
     /**
      * {@inheritDoc}
      */

@@ -637,13 +637,13 @@ JAVASCRIPT;
     }
 
     /**
-    * Check if the technician is free (= not active in any task)
-    *
-    * @param $user_id  Long  ID of technitian logged in
-    *
-    * @return Boolean (true if technitian IS NOT ACTIVE in any task)
-    * (opposite behaviour from original version until 1.1.0)
-    * */
+     * Check if the technician is free (= not active in any task)
+     *
+     * @param $user_id  Long  ID of technitian logged in
+     *
+     * @return Boolean (true if technitian IS NOT ACTIVE in any task)
+     * (opposite behaviour from original version until 1.1.0)
+     * */
     public static function checkUserFree($user_id): bool
     {
         /** @var \DBmysql $DB */
@@ -968,23 +968,24 @@ JAVASCRIPT;
      */
     public static function afterAdd(CommonITILTask $item): void
     {
-        if (isset($item->input['autostart']) && $item->input['autostart']) {
-            if ($item->getField('state') == 1 && $item->getField('users_id_tech') == Session::getLoginUserID() && $item->fields['id']) {
+        $config = new PluginActualtimeConfig();
+
+        $autostart_checked = isset($item->input['autostart']) && $item->input['autostart'];
+        $autostart_config  = (int)$config->fields['autoopenrunning'] === 1;
+
+        if ($autostart_checked || $autostart_config) {
+            if (
+                $item->getField('state') == 1
+                && $item->getField('users_id_tech') == Session::getLoginUserID()
+                && $item->fields['id']
+            ) {
                 $task_id = $item->fields['id'];
                 $result = self::startTimer($task_id, $item->getType(), self::WEB);
                 if ($result['type'] != 'info') {
-                    Session::addMessageAfterRedirect(
-                        $result['message'],
-                        true,
-                        WARNING,
-                    );
+                    Session::addMessageAfterRedirect($result['message'], true, WARNING);
                     return;
                 } else {
-                    Session::addMessageAfterRedirect(
-                        $result['message'],
-                        true,
-                        INFO,
-                    );
+                    Session::addMessageAfterRedirect($result['message'], true, INFO);
                 }
             }
         }
@@ -1105,7 +1106,7 @@ JAVASCRIPT;
                 if (
                     $config->showTimerInBox() &&
                     ((Session::getCurrentInterface() == "central") ||
-                    $config->showInHelpdesk())
+                        $config->showInHelpdesk())
                 ) {
                     $time = self::totalEndTime($task_id, $item->getType());
                     $fa_icon = ($time > 0 ? ' fa-clock' : '');
@@ -1286,12 +1287,12 @@ JAVASCRIPT;
             }
             $interv[$key]["name"] .= " - " . $parent::getTypeName(1) . " #" . $url_id . " - " . $row['items_id'];
             $interv[$key]["ajaxurl"] = $CFG_GLPI["root_doc"] . "/ajax/planning.php" .
-            "?action=edit_event_form" .
-            "&itemtype=" . $task->getType() .
-            "&parentitemtype=" . $parent::getType() .
-            "&parentid=" . $task->fields[$parent->getForeignKeyField()] .
-            "&id=" . $row['items_id'] .
-            "&url=" . $interv[$key]["url"];
+                "?action=edit_event_form" .
+                "&itemtype=" . $task->getType() .
+                "&parentitemtype=" . $parent::getType() .
+                "&parentid=" . $task->fields[$parent->getForeignKeyField()] .
+                "&id=" . $row['items_id'] .
+                "&url=" . $interv[$key]["url"];
 
             $interv[$key]["begin"] = $row['actual_begin'];
             $interv[$key]["end"] = $row['actual_end'];
@@ -1609,13 +1610,17 @@ JAVASCRIPT;
      */
     public static function pauseTimer($task_id, $itemtype, $origin = self::AUTO): array
     {
-        /** @var \DBmysql $DB */
-        global $DB;
+        /**
+         * @var \DBmysql $DB
+         * @var array $CFG_GLPI
+         */
+        global $DB, $CFG_GLPI;
 
         $result = [
             'type'   => 'warning',
         ];
 
+        $config = new PluginActualtimeConfig();
         $plugin = new Plugin();
         if (self::checkTimerActive($task_id, $itemtype)) {
             if (self::checkUser($task_id, $itemtype, Session::getLoginUserID())) {
@@ -1647,6 +1652,28 @@ JAVASCRIPT;
                         'actual_end' => null,
                     ],
                 );
+
+                if ($config->autoUpdateDuration()) {
+                    $task = new $itemtype();
+                    $task->getFromDB($task_id);
+
+                    $totalendtime = PluginActualtimeTask::totalEndTime($task_id, $itemtype);
+                    $time_step = $CFG_GLPI["time_step"] * MINUTE_TIMESTAMP;
+                    $ceil = $time_step > 0
+                        ? ceil($totalendtime / $time_step) * $time_step
+                        : $totalendtime;
+
+                    $sync_input = [
+                        'id'                => $task_id,
+                        'plugin_actualtime' => true,
+                    ];
+                    if (isset($task->fields['actiontime'])) {
+                        $sync_input['actiontime'] = $ceil;
+                    } else {
+                        $sync_input['effective_duration'] = $ceil;
+                    }
+                    $task->update($sync_input);
+                }
 
                 $result = [
                     'message'  => __("Timer completed", 'actualtime'),
@@ -1885,6 +1912,7 @@ JAVASCRIPT;
                 `id` INT {$default_key_sign} NOT NULL AUTO_INCREMENT,
                 `itemtype` VARCHAR(255) NOT NULL,
                 `items_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
+                `tickettasks_id` INT {$default_key_sign} NOT NULL DEFAULT '0',
                 `actual_begin` TIMESTAMP NULL DEFAULT NULL,
                 `actual_end` TIMESTAMP NULL DEFAULT NULL,
                 `users_id` INT {$default_key_sign} NOT NULL,
@@ -1901,7 +1929,6 @@ JAVASCRIPT;
             COLLATE={$default_collation} ROW_FORMAT=DYNAMIC;";
             $DB->doQuery($query);
         } else {
-            $migration->changeField($table, 'tasks_id', 'tickettasks_id', 'int');
             $migration->dropField($table, 'latitude_start');
             $migration->dropField($table, 'longitude_start');
             $migration->dropField($table, 'latitude_end');
@@ -1924,9 +1951,10 @@ JAVASCRIPT;
                 ['after' => 'itemtype', 'update' => $DB->quoteName($table . '.tickettasks_id')],
             );
             $migration->addKey($table, ['itemtype', 'items_id'], 'item');
-            $migration->dropField($table, 'tickettasks_id');
 
             $migration->addField($table, 'is_modified', 'bool');
+
+            $migration->addField($table, 'tickettasks_id', 'int', ['value' => 0, 'unsigned' => true]);
 
             $migration->migrationOneTable($table);
         }

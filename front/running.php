@@ -29,8 +29,6 @@
  * -------------------------------------------------------------------------
  */
 
-include('../../../inc/includes.php');
-
 $plugin = new Plugin();
 if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) {
     Html::displayNotFoundError();

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ActualTime\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-26 12:00+0100\n"
-"Language: es_ES\n"
+"Language: fi_FI\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -13,13 +13,13 @@ msgstr ""
 #: hook.php:351 hook.php:370 inc/task.class.php:79 inc/task.class.php:97
 #: inc/task.class.php:827 inc/task.class.php:833 inc/task.class.php:839
 msgid "Duration Diff"
-msgstr "Desviación"
+msgstr "Kesto ero"
 
 #. TRANS: d is a symbol for days in a time (displays: 3d)
 #: ajax/timer.php:69
 #, php-format
 msgid "%dd"
-msgstr "%dd"
+msgstr "%dpvä"
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
 #: ajax/timer.php:73
@@ -41,7 +41,7 @@ msgstr "%ds"
 
 #: ajax/timer.php:92
 msgid "Timer started on"
-msgstr "Temporizador iniciado en"
+msgstr "Ajastin käynnistetty"
 
 #: inc/config.class.php:62
 msgid "ActualTime"
@@ -49,134 +49,132 @@ msgstr "ActualTime"
 
 #: inc/config.class.php:95
 msgid "In Standard interface only (default)"
-msgstr "Sólo en la interfaz estándar (por defecto)"
+msgstr "Vain standardiliitännässä (oletus)"
 
 #: inc/config.class.php:96
 msgid "Both in Standard and Helpdesk interfaces"
-msgstr "Tanto en interfaces estándar como en interfaces de Helpdesk"
+msgstr "Sekä Standard- että Helpdesk-liitännöissä"
 
 #: inc/dashboard.class.php:48
 msgid "Top 20 Actualtime tasks per day"
-msgstr "20 usuarios con más tareas de Actualtime por día"
+msgstr "20 parasta todellisen ajan tehtävää päivässä"
 
 #: inc/dashboard.class.php:56
 msgid "Bottom 20 Actualtime tasks per day"
-msgstr "20 usuarios con menos tareas de Actualtime por día"
+msgstr "20 alinta reaaliaikaista tehtävää päivässä"
 
 #: inc/dashboard.class.php:64
 msgid "Top 20 Actualtime usage (hours)"
-msgstr "20 usuarios con mayor uso de Actualtime (horas)"
+msgstr "20 parasta todellista käyttöaikaa (tunteja)"
 
 #: inc/dashboard.class.php:72
 msgid "Bottom 20 Actualtime usage (hours)"
-msgstr "20 usuarios con menor uso de Actualtime (horas)"
+msgstr "Pohja 20 todellista käyttöaikaa (tunteja)"
 
 #: inc/dashboard.class.php:80
 msgid "Top 20 % Actualtime usage per day"
-msgstr "20 usuarios con mejor rendimiento de Actualtime en %"
+msgstr "Paras 20% todellisen ajan käyttö päivässä"
 
 #: inc/dashboard.class.php:88
 msgid "Bottom 20 % Actualtime usage per day"
-msgstr "20 usuarios con menor rendimiento de Actualtime en %"
+msgstr "Alin 20% Todellinen käyttöaika päivässä"
 
 #: inc/profile.class.php:120 inc/running.class.php:68
 msgid "Running timers"
-msgstr "Temporizadores funcionando"
+msgstr "Käynnissä olevat ajastimet"
 
 #: inc/profile.class.php:136 inc/sourcetimer.class.php:174
 #: inc/sourcetimer.class.php:188 inc/task.class.php:458
 msgid "Modify timers"
-msgstr "Modificar temporizadores"
+msgstr "Muokkaa ajastimia"
 
 #: inc/running.class.php:73
 msgid "Update every (s)"
-msgstr "Actualizar cada (s)"
+msgstr "Päivitä joka (s)"
 
 #: inc/sourcetimer.class.php:53
 msgid "Modify tickets"
-msgstr "Modificar tickets"
+msgstr "Muokkaa tickets"
 
 #: inc/sourcetimer.class.php:54
 msgid "Modify changes"
-msgstr "Modificar cambios"
+msgstr "Muokkaa muutoksia"
 
 #: inc/sourcetimer.class.php:55
 msgid "Modify projects"
-msgstr "Modificar proyectos"
+msgstr "Muokkaa projekteja"
 
 #: inc/sourcetimer.class.php:56
 msgid "Modify problems"
-msgstr "Modificar problemas"
+msgstr "Modify problems"
 
 #: inc/task.class.php:303 inc/task.class.php:464
 msgid "Actual Duration"
-msgstr "Duración real"
+msgstr "Todellinen kesto"
 
 #: inc/task.class.php:314 inc/task.class.php:475
 msgid "Partial actual duration"
-msgstr "Duración real parcial"
+msgstr "Osittainen todellinen kesto"
 
 #: inc/task.class.php:952
 msgid "Original end date"
-msgstr "Fecha de finalización original"
+msgstr "Alkuperäinen päättymispäivä"
 
 #: inc/task.class.php:953
 msgid "Original duration"
-msgstr "Duración original"
+msgstr "Alkuperäinen kesto"
 
 #: inc/task.class.php:954
 #, php-format
 msgid "First modification by %s"
-msgstr "Primera modificación realizada por %s"
+msgstr "Ensimmäinen muokkaus%s"
 
 #: inc/task.class.php:1346 inc/task.class.php:1352
 #, php-format
 msgid "You cannot start a timer because the task was scheduled for %d."
-msgstr ""
-"No puedes iniciar un temporizador porque la tarea estaba programada para el "
-"%d."
+msgstr "Et voi käynnistää ajastinta, koska tehtävä oli ajoitettu %d ."
 
 #: inc/task.class.php:1376
 msgid "You cannot add a timer on a different day."
-msgstr "No puedes añadir un temporizador en un día diferente del inicial."
+msgstr "Et voi lisätä ajastinta eri päivänä."
 
 #: inc/task.class.php:1419
 msgid "Today is marked as absence you can not initialize the timer"
-msgstr "Hoy esta marcado como ausencia no se puede inicializar el temporizador"
+msgstr "Tänään on merkitty poissaolo et voi käyttää ajastinta"
 
 #: inc/task.class.php:1425
 msgid "Timer has not been initialized"
-msgstr "El temporizador no se había inicializado"
+msgstr "Ajastinta ei ole laitettu päälle"
 
 #: inc/task.class.php:1442
 msgid "You are already doing a waypoint"
-msgstr "Ya estás haciendo un waypoint"
+msgstr "Olet jo tekemässä reittipistettä"
 
 #: inc/task.class.php:1479 inc/task.class.php:1484
 msgid "Technician not in charge of the task"
-msgstr "Técnico no encargado de la tarea"
+msgstr "Teknikko ei ole vastuussa tehtävästä"
 
 #: inc/task.class.php:1490
 msgid "A user is already performing the task"
-msgstr "Otro usuario ya está realizando la tarea"
+msgstr "Yksi käyttäjä suorittaa jo tehtävää"
 
 #: inc/task.class.php:1547
 #, php-format
 msgid "You are already working on %s"
-msgstr "Ya estás trabajando en %s"
+msgstr "Työskentelet jo %s"
 
 #: inc/task.class.php:1578
 msgid "Timer started"
-msgstr "Temporizador iniciado"
+msgstr "Ajastin käynnistetty"
 
 #: inc/task.class.php:1652 inc/task.class.php:1767 inc/task.class.php:1826
 msgid "Timer completed"
-msgstr "Temporizador finalizado"
+msgstr "Ajastin valmis"
 
 #: inc/task.class.php:1690 inc/task.class.php:1804
 msgid "Only the user who initiated the task can close it"
-msgstr "Sólo el usuario que inició la tarea puede cerrarla"
+msgstr "Vain käyttäjä, joka aloitti tehtävän, voi sulkea sen"
 
 #: inc/task.class.php:1693
 msgid "The task had not been initialized"
-msgstr "La tarea no se había inicializado"
+msgstr "Tehtävää ei ole tehty"

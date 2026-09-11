@@ -73,7 +73,8 @@ class PluginActualtimeProvider extends Provider
                 $actualtime_table => [
                     'FKEY' => [
                         $task_table => 'id',
-                        $actualtime_table => 'items_id', [
+                        $actualtime_table => 'items_id',
+                        [
                             'AND' => [
                                 $actualtime_table . '.itemtype' => TicketTask::getType(),
                             ],
@@ -122,7 +123,8 @@ class PluginActualtimeProvider extends Provider
                     $actualtime_table => [
                         'FKEY' => [
                             $task_table => 'id',
-                            $actualtime_table => 'items_id', [
+                            $actualtime_table => 'items_id',
+                            [
                                 'AND' => [
                                     $actualtime_table . '.itemtype' => TicketTask::getType(),
                                 ],
@@ -220,7 +222,8 @@ class PluginActualtimeProvider extends Provider
                 $actualtime_table => [
                     'FKEY' => [
                         $task_table => 'id',
-                        $actualtime_table => 'items_id', [
+                        $actualtime_table => 'items_id',
+                        [
                             'AND' => [
                                 $actualtime_table . '.itemtype' => TicketTask::getType(),
                             ],
@@ -272,7 +275,8 @@ class PluginActualtimeProvider extends Provider
                     $actualtime_table => [
                         'FKEY' => [
                             $task_table => 'id',
-                            $actualtime_table => 'items_id', [
+                            $actualtime_table => 'items_id',
+                            [
                                 'AND' => [
                                     $actualtime_table . '.itemtype' => TicketTask::getType(),
                                 ],
@@ -355,10 +359,11 @@ class PluginActualtimeProvider extends Provider
             unset($params['apply_filters']['dates']);
         }
 
-        $task_table = TicketTask::getTable();
+        $task_table       = TicketTask::getTable();
         $actualtime_table = PluginActualtimeTask::getTable();
-        $table = Ticket::getTable();
-        $user_table = User::getTable();
+        $table            = Ticket::getTable();
+        $user_table       = User::getTable();
+        $real_date_col = "IFNULL(NULLIF($actualtime_table.override_begin, '0000-00-00 00:00:00'), $actualtime_table.actual_begin)";
 
         $query = [
             'SELECT' => [
@@ -370,7 +375,8 @@ class PluginActualtimeProvider extends Provider
                 $task_table => [
                     'ON' => [
                         $task_table => 'id',
-                        $actualtime_table => 'items_id', [
+                        $actualtime_table => 'items_id',
+                        [
                             'AND' => [
                                 $actualtime_table . '.itemtype' => TicketTask::getType(),
                             ],
@@ -392,11 +398,9 @@ class PluginActualtimeProvider extends Provider
             ],
             'WHERE' => [
                 $task_table . '.state' => 2,
-                $task_table . '.date' => ['>=', $begin],
-                'AND' => [
-                    $task_table . '.date' => ['<=', $end],
-                ],
                 $user_table . '.is_active' => 1,
+                new \QueryExpression("DATE($real_date_col) >= '$begin'"),
+                new \QueryExpression("DATE($real_date_col) <= '$end'"),
             ] + getEntitiesRestrictCriteria($table),
             'ORDER' => ["total DESC"],
             'GROUP' => ['users_id_tech'],
@@ -409,11 +413,11 @@ class PluginActualtimeProvider extends Provider
         }
 
         if (count($techs_id) > 0) {
-            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
+            $period_expr = "DATE($real_date_col) AS period";
             $sql = [
                 'SELECT' => [
-                    new QueryExpression($period),
-                    'SUM' => 'actual_actiontime AS total',
+                    new \QueryExpression($period_expr),
+                    'SUM' => $actualtime_table . '.actual_actiontime AS total',
                     'users_id_tech',
                 ],
                 'FROM' => $actualtime_table,
@@ -421,7 +425,8 @@ class PluginActualtimeProvider extends Provider
                     $task_table => [
                         'ON' => [
                             $task_table => 'id',
-                            $actualtime_table => 'items_id', [
+                            $actualtime_table => 'items_id',
+                            [
                                 'AND' => [
                                     $actualtime_table . '.itemtype' => TicketTask::getType(),
                                 ],
@@ -438,10 +443,8 @@ class PluginActualtimeProvider extends Provider
                 'WHERE' => [
                     $task_table . '.state' => 2,
                     'users_id_tech' => $techs_id,
-                    $task_table . '.date' => ['>=', $begin],
-                    'AND' => [
-                        $task_table . '.date' => ['<=', $end],
-                    ],
+                    new \QueryExpression("DATE($real_date_col) >= '$begin'"),
+                    new \QueryExpression("DATE($real_date_col) <= '$end'"),
                 ] + getEntitiesRestrictCriteria($table),
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -506,10 +509,13 @@ class PluginActualtimeProvider extends Provider
             unset($params['apply_filters']['dates']);
         }
 
-        $task_table = TicketTask::getTable();
+        $task_table       = TicketTask::getTable();
         $actualtime_table = PluginActualtimeTask::getTable();
-        $table = Ticket::getTable();
-        $user_table = User::getTable();
+        $table            = Ticket::getTable();
+        $user_table       = User::getTable();
+
+        // Toma override_begin si existe (fecha modificada/retroactiva), sino actual_begin
+        $real_date_col = "IFNULL(NULLIF($actualtime_table.override_begin, '0000-00-00 00:00:00'), $actualtime_table.actual_begin)";
 
         $query = [
             'SELECT' => [
@@ -521,7 +527,8 @@ class PluginActualtimeProvider extends Provider
                 $task_table => [
                     'ON' => [
                         $task_table => 'id',
-                        $actualtime_table => 'items_id', [
+                        $actualtime_table => 'items_id',
+                        [
                             'AND' => [
                                 $actualtime_table . '.itemtype' => TicketTask::getType(),
                             ],
@@ -537,11 +544,9 @@ class PluginActualtimeProvider extends Provider
             ],
             'WHERE' => [
                 $task_table . '.state' => 2,
-                'date' => ['>=', $begin],
-                'AND' => [
-                    'date' => ['<=', $end],
-                ],
                 $user_table . '.is_active' => 1,
+                new \QueryExpression("DATE($real_date_col) >= '$begin'"),
+                new \QueryExpression("DATE($real_date_col) <= '$end'"),
             ],
             'ORDER' => ["total ASC"],
             'GROUP' => ['users_id_tech'],
@@ -554,11 +559,11 @@ class PluginActualtimeProvider extends Provider
         }
 
         if (count($techs_id) > 0) {
-            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
+            $period_expr = "DATE($real_date_col) AS period";
             $sql = [
                 'SELECT' => [
-                    new QueryExpression($period),
-                    'SUM' => 'actual_actiontime AS total',
+                    new \QueryExpression($period_expr),
+                    'SUM' => $actualtime_table . '.actual_actiontime AS total',
                     'users_id_tech',
                 ],
                 'FROM' => $actualtime_table,
@@ -566,7 +571,8 @@ class PluginActualtimeProvider extends Provider
                     $task_table => [
                         'ON' => [
                             $task_table => 'id',
-                            $actualtime_table => 'items_id', [
+                            $actualtime_table => 'items_id',
+                            [
                                 'AND' => [
                                     $actualtime_table . '.itemtype' => TicketTask::getType(),
                                 ],
@@ -577,10 +583,8 @@ class PluginActualtimeProvider extends Provider
                 'WHERE' => [
                     $task_table . '.state' => 2,
                     'users_id_tech' => $techs_id,
-                    'date' => ['>=', $begin],
-                    'AND' => [
-                        'date' => ['<=', $end],
-                    ],
+                    new \QueryExpression("DATE($real_date_col) >= '$begin'"),
+                    new \QueryExpression("DATE($real_date_col) <= '$end'"),
                 ],
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -660,7 +664,8 @@ class PluginActualtimeProvider extends Provider
                 $task_table => [
                     'ON' => [
                         $task_table => 'id',
-                        $actualtime_table => 'items_id', [
+                        $actualtime_table => 'items_id',
+                        [
                             'AND' => [
                                 $actualtime_table . '.itemtype' => TicketTask::getType(),
                             ],
@@ -711,7 +716,8 @@ class PluginActualtimeProvider extends Provider
                     $task_table => [
                         'ON' => [
                             $task_table => 'id',
-                            $actualtime_table => 'items_id', [
+                            $actualtime_table => 'items_id',
+                            [
                                 'AND' => [
                                     $actualtime_table . '.itemtype' => TicketTask::getType(),
                                 ],
@@ -835,7 +841,8 @@ class PluginActualtimeProvider extends Provider
                 $task_table => [
                     'ON' => [
                         $task_table => 'id',
-                        $actualtime_table => 'items_id', [
+                        $actualtime_table => 'items_id',
+                        [
                             'AND' => [
                                 $actualtime_table . '.itemtype' => TicketTask::getType(),
                             ],
@@ -886,7 +893,8 @@ class PluginActualtimeProvider extends Provider
                     $task_table => [
                         'ON' => [
                             $task_table => 'id',
-                            $actualtime_table => 'items_id', [
+                            $actualtime_table => 'items_id',
+                            [
                                 'AND' => [
                                     $actualtime_table . '.itemtype' => TicketTask::getType(),
                                 ],

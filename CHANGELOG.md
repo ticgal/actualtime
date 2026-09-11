@@ -1,5 +1,34 @@
 # Actualtime
 
+## [4.1.3] - 2026/09/09
+### Fixed
+- Fixed partial session destruction when the password expired.
+
+## [4.1.2] - 2026/09/09
+### Fixed
+- Require the plugin_actualtime_running right in ajax/running.php, matching the check already enforced in front/running.php
+
+## [4.1.1] - 2026/08/06
+### Fixed
+- Actualtime Usage Card don't show correct dates
+- Problem & Changes statistics view is centered
+
+## [4.1.0] - 2026/07/21
+### Added
+- Deletes tables upon uninstall
+### Fixed
+- Fix pauseTimer to synchronize actiontime in glpi_tickettasks without closing the task
+
+## [4.0.2] - 2026/06/25
+### Fixed
+- Update table field to match integration with plugin taskview
+
+## [4.0.1] - 2026/04/14
+### Fixed
+- Automatic timer
+### Changed
+- Add history logs to profile rights
+
 ## [4.0.0] - 2026/01/22
 ### Added
 - GLPI 11 support

@@ -3,45 +3,45 @@ msgstr ""
 "Project-Id-Version: ActualTime\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-26 12:00+0100\n"
-"Language: es_ES\n"
+"Language: ko_KR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Localazy (https://localazy.com)\n"
-"Plural-Forms: nplurals=2; plural=(n==1) ? 0 : 1;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: hook.php:351 hook.php:370 inc/task.class.php:79 inc/task.class.php:97
 #: inc/task.class.php:827 inc/task.class.php:833 inc/task.class.php:839
 msgid "Duration Diff"
-msgstr "Desviación"
+msgstr "기간 차이"
 
 #. TRANS: d is a symbol for days in a time (displays: 3d)
 #: ajax/timer.php:69
 #, php-format
 msgid "%dd"
-msgstr "%dd"
+msgstr "%d 일"
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
 #: ajax/timer.php:73
 #, php-format
 msgid "%dh"
-msgstr "%dh"
+msgstr "%d시"
 
 #. TRANS: min is a symbol for minutes in a time (displays: 3min)
 #: ajax/timer.php:77
 #, php-format
 msgid "%dmin"
-msgstr "%dmin"
+msgstr "%d분"
 
 #. TRANS: s is a symbol for seconds in a time (displays: 3s)
 #: ajax/timer.php:81
 #, php-format
 msgid "%ds"
-msgstr "%ds"
+msgstr "%d초"
 
 #: ajax/timer.php:92
 msgid "Timer started on"
-msgstr "Temporizador iniciado en"
+msgstr "타이머가 시작된 시간:"
 
 #: inc/config.class.php:62
 msgid "ActualTime"
@@ -49,134 +49,132 @@ msgstr "ActualTime"
 
 #: inc/config.class.php:95
 msgid "In Standard interface only (default)"
-msgstr "Sólo en la interfaz estándar (por defecto)"
+msgstr "표준 인터페이스에서만 (기본값)"
 
 #: inc/config.class.php:96
 msgid "Both in Standard and Helpdesk interfaces"
-msgstr "Tanto en interfaces estándar como en interfaces de Helpdesk"
+msgstr "표준 인터페이스와 헬프데스크 인터페이스 모두"
 
 #: inc/dashboard.class.php:48
 msgid "Top 20 Actualtime tasks per day"
-msgstr "20 usuarios con más tareas de Actualtime por día"
+msgstr "일일 실제 작업 상위 20개"
 
 #: inc/dashboard.class.php:56
 msgid "Bottom 20 Actualtime tasks per day"
-msgstr "20 usuarios con menos tareas de Actualtime por día"
+msgstr "일일 실제 작업 시간 하위 20개"
 
 #: inc/dashboard.class.php:64
 msgid "Top 20 Actualtime usage (hours)"
-msgstr "20 usuarios con mayor uso de Actualtime (horas)"
+msgstr "상위 20개 실제 사용 시간 (시간)"
 
 #: inc/dashboard.class.php:72
 msgid "Bottom 20 Actualtime usage (hours)"
-msgstr "20 usuarios con menor uso de Actualtime (horas)"
+msgstr "하위 20 실제 사용 시간 (시간)"
 
 #: inc/dashboard.class.php:80
 msgid "Top 20 % Actualtime usage per day"
-msgstr "20 usuarios con mejor rendimiento de Actualtime en %"
+msgstr "상위 20% 의 일일 실제 시간 사용량"
 
 #: inc/dashboard.class.php:88
 msgid "Bottom 20 % Actualtime usage per day"
-msgstr "20 usuarios con menor rendimiento de Actualtime en %"
+msgstr "하위 20% 일일 실제 시간 사용량"
 
 #: inc/profile.class.php:120 inc/running.class.php:68
 msgid "Running timers"
-msgstr "Temporizadores funcionando"
+msgstr "타이머 실행중"
 
 #: inc/profile.class.php:136 inc/sourcetimer.class.php:174
 #: inc/sourcetimer.class.php:188 inc/task.class.php:458
 msgid "Modify timers"
-msgstr "Modificar temporizadores"
+msgstr "Modify timers"
 
 #: inc/running.class.php:73
 msgid "Update every (s)"
-msgstr "Actualizar cada (s)"
+msgstr "매 초마다 업데이트"
 
 #: inc/sourcetimer.class.php:53
 msgid "Modify tickets"
-msgstr "Modificar tickets"
+msgstr "Modify tickets"
 
 #: inc/sourcetimer.class.php:54
 msgid "Modify changes"
-msgstr "Modificar cambios"
+msgstr "Modify changes"
 
 #: inc/sourcetimer.class.php:55
 msgid "Modify projects"
-msgstr "Modificar proyectos"
+msgstr "Modify projects"
 
 #: inc/sourcetimer.class.php:56
 msgid "Modify problems"
-msgstr "Modificar problemas"
+msgstr "Modify problems"
 
 #: inc/task.class.php:303 inc/task.class.php:464
 msgid "Actual Duration"
-msgstr "Duración real"
+msgstr "실제 기간"
 
 #: inc/task.class.php:314 inc/task.class.php:475
 msgid "Partial actual duration"
-msgstr "Duración real parcial"
+msgstr "부분 실제 기간"
 
 #: inc/task.class.php:952
 msgid "Original end date"
-msgstr "Fecha de finalización original"
+msgstr "Original end date"
 
 #: inc/task.class.php:953
 msgid "Original duration"
-msgstr "Duración original"
+msgstr "Original duration"
 
 #: inc/task.class.php:954
 #, php-format
 msgid "First modification by %s"
-msgstr "Primera modificación realizada por %s"
+msgstr "First modification by %s"
 
 #: inc/task.class.php:1346 inc/task.class.php:1352
 #, php-format
 msgid "You cannot start a timer because the task was scheduled for %d."
-msgstr ""
-"No puedes iniciar un temporizador porque la tarea estaba programada para el "
-"%d."
+msgstr "You cannot start a timer because the task was scheduled for %d."
 
 #: inc/task.class.php:1376
 msgid "You cannot add a timer on a different day."
-msgstr "No puedes añadir un temporizador en un día diferente del inicial."
+msgstr "You cannot add a timer on a different day."
 
 #: inc/task.class.php:1419
 msgid "Today is marked as absence you can not initialize the timer"
-msgstr "Hoy esta marcado como ausencia no se puede inicializar el temporizador"
+msgstr "오늘은 부재로 표시되어 타이머를 초기화할 수 없습니다."
 
 #: inc/task.class.php:1425
 msgid "Timer has not been initialized"
-msgstr "El temporizador no se había inicializado"
+msgstr "타이머가 초기화되지 않았습니다."
 
 #: inc/task.class.php:1442
 msgid "You are already doing a waypoint"
-msgstr "Ya estás haciendo un waypoint"
+msgstr "이미 웨이포인트를 만들고 있습니다."
 
 #: inc/task.class.php:1479 inc/task.class.php:1484
 msgid "Technician not in charge of the task"
-msgstr "Técnico no encargado de la tarea"
+msgstr "작업을 담당하지 않는 기술자"
 
 #: inc/task.class.php:1490
 msgid "A user is already performing the task"
-msgstr "Otro usuario ya está realizando la tarea"
+msgstr "사용자가 이미 작업을 수행 중입니다."
 
 #: inc/task.class.php:1547
 #, php-format
 msgid "You are already working on %s"
-msgstr "Ya estás trabajando en %s"
+msgstr "You are already working on %s"
 
 #: inc/task.class.php:1578
 msgid "Timer started"
-msgstr "Temporizador iniciado"
+msgstr "타이머 시작됨"
 
 #: inc/task.class.php:1652 inc/task.class.php:1767 inc/task.class.php:1826
 msgid "Timer completed"
-msgstr "Temporizador finalizado"
+msgstr "타이머 완료"
 
 #: inc/task.class.php:1690 inc/task.class.php:1804
 msgid "Only the user who initiated the task can close it"
-msgstr "Sólo el usuario que inició la tarea puede cerrarla"
+msgstr "작업을 시작한 사용자만 작업을 종료할 수 있습니다."
 
 #: inc/task.class.php:1693
 msgid "The task had not been initialized"
-msgstr "La tarea no se había inicializado"
+msgstr "작업이 초기화되지 않았습니다."
