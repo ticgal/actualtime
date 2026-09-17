@@ -46,7 +46,11 @@ if (
                 continue;
             }
             $actualtime = new PluginActualtimeTask();
-            if ($actualtime->getFromDB($key)) {
+            if (
+                $actualtime->getFromDB($key)
+                && $actualtime->fields['itemtype'] === $itemtype
+                && (int) $actualtime->fields['items_id'] === (int) $item_id
+            ) {
                 if (
                     $value != $actualtime->fields['actual_end']
                     && $value > $actualtime->fields['actual_begin']

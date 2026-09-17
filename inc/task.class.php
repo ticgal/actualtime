@@ -559,10 +559,24 @@ JAVASCRIPT;
      * @param  mixed $itemtype
      * @return int
      */
+    public static function isAllowedItemtype($itemtype): bool
+    {
+        return in_array($itemtype, [
+            TicketTask::class,
+            ChangeTask::class,
+            ProblemTask::class,
+            ProjectTask::class,
+        ], true);
+    }
+
     public static function totalEndTime($task_id, $itemtype): int
     {
         /** @var \DBmysql $DB */
         global $DB;
+
+        if (!self::isAllowedItemtype($itemtype)) {
+            return 0;
+        }
 
         $query = [
             'FROM' => self::getTable(),
@@ -951,7 +965,7 @@ JAVASCRIPT;
                 ]);
                 $comment = __("Original end date", "actualtime") . ": " . $source->fields['source_end'] . "<br>";
                 $comment .= __("Original duration", "actualtime") . ": " . Html::timestampToString($source->fields['source_actiontime']) . "<br>";
-                $comment .= sprintf(__("First modification by %s", "actualtime"), getUserName($source->fields['users_id']));
+                $comment .= sprintf(__("First modification by %s", "actualtime"), htmlescape(getUserName($source->fields['users_id'])));
                 $html .= Html::showToolTip($comment, ['display' => false]);
             }
             $html .= "</div>";
@@ -1314,8 +1328,8 @@ JAVASCRIPT;
      */
     public static function displayPlanningItem(array $val, $who, $type = "", $complete = 0): string
     {
-        $html = "<strong>" . $val["name"] . "</strong>";
-        $html .= "<br><strong>" . sprintf(__('By %s'), getUserName($val["users_id"])) . "</strong>";
+        $html = "<strong>" . htmlescape($val["name"]) . "</strong>";
+        $html .= "<br><strong>" . sprintf(__('By %s'), htmlescape(getUserName($val["users_id"]))) . "</strong>";
         $html .= "<br><strong>" . __('Start date') . "</strong> : " . Html::convdatetime($val["begin"]);
         $html .= "<br><strong>" . __('End date') . "</strong> : " . Html::convdatetime($val["end"]);
         $html .= "<br><strong>" . __('Total duration') . "</strong> : " . $val["content"];
@@ -1402,6 +1416,11 @@ JAVASCRIPT;
         $result = [
             'type'   => 'warning',
         ];
+
+        if (!self::isAllowedItemtype($itemtype)) {
+            $result['message'] = __("Item not found");
+            return $result;
+        }
 
         $DB->delete(
             'glpi_plugin_actualtime_tasks',
@@ -1620,6 +1639,11 @@ JAVASCRIPT;
             'type'   => 'warning',
         ];
 
+        if (!self::isAllowedItemtype($itemtype)) {
+            $result['message'] = __("Item not found");
+            return $result;
+        }
+
         $config = new PluginActualtimeConfig();
         $plugin = new Plugin();
         if (self::checkTimerActive($task_id, $itemtype)) {
@@ -1737,6 +1761,10 @@ JAVASCRIPT;
          * @var array $CFG_GLPI
          */
         global $DB, $CFG_GLPI;
+
+        if (!self::isAllowedItemtype($itemtype)) {
+            return ['type' => 'warning', 'message' => __("Item not found")];
+        }
 
         $config = new PluginActualtimeConfig();
         $plugin = new Plugin();

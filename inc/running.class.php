@@ -43,7 +43,7 @@ class PluginActualtimeRunning extends CommonGLPI
         }
         return [];
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -325,14 +325,14 @@ JAVASCRIPT;
                 $user = new User();
                 $user->getFromDB($row['users_id']);
                 $html .= "<td class='center'>";
-                $html .= "<a href='" . $user->getLinkURL() . "'>" . $user->getFriendlyName() . "</a>";
+                $html .= "<a href='" . $user->getLinkURL() . "'>" . htmlescape($user->getFriendlyName()) . "</a>";
                 $html .= "</td>";
                 $html .= "<td class='center'>";
-                $html .= Entity::getFriendlyNameById($parent->fields['entities_id']);
+                $html .= htmlescape(Entity::getFriendlyNameById($parent->fields['entities_id']));
                 $html .= "</td>";
                 $html .= "<td class='center'>";
                 if (isset($parent->fields['locations_id'])) {
-                    $html .= Location::getFriendlyNameById($parent->fields['locations_id']);
+                    $html .= htmlescape(Location::getFriendlyNameById($parent->fields['locations_id']));
                 }
                 $html .= "</td>";
                 $html .= "<td class='center'>";
@@ -352,7 +352,7 @@ JAVASCRIPT;
                     $iterator = $item_link::getTypeItems($task->fields[$parent->getForeignKeyField()], $itemtype);
                     $html .= "<ul>";
                     foreach ($iterator as $data) {
-                        $html .= "<li>" . $data['name'] . "</li>";
+                        $html .= "<li>" . htmlescape($data['name']) . "</li>";
                     }
                     $html .= "</ul>";
                 }

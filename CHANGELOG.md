@@ -1,5 +1,11 @@
 # Actualtime
 
+## [Unreleased]
+### Bugs
+- Restrict timer actions to supported task types.
+- Check entity and item access before viewing or editing past timers.
+- Escape names in the running timers list, modify timers modal and tooltips.
+
 ## [4.1.3] - 2026/09/09
 ### Fixed
 - Fixed partial session destruction when the password expired.

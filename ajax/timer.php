@@ -39,10 +39,14 @@ if (Session::getLoginUserID() === false || !isset($_SESSION['glpiactiveprofile']
 
 /** @var array $CFG_GLPI */
 global $CFG_GLPI;
-if (isset($_POST["action"])) {
+if (isset($_POST["action"], $_POST["task_id"], $_POST["itemtype"])) {
     $plugin = new Plugin();
-    $task_id = $_POST["task_id"];
+    $task_id = (int) $_POST["task_id"];
     $itemtype = $_POST["itemtype"];
+    if (!PluginActualtimeTask::isAllowedItemtype($itemtype)) {
+        http_response_code(400);
+        exit;
+    }
     $config = new PluginActualtimeConfig();
     switch ($_POST["action"]) {
         case 'start':

@@ -100,7 +100,11 @@ class PluginActualtimeSourcetimer extends CommonDBTM
                 $task = new $itemtype();
                 if ($task->getFromDB($items_id)) {
                     $parent = getItemForItemtype($task->getItilObjectItemType());
-                    if ($parent->getFromDB($task->fields[$parent->getForeignKeyField()])) {
+                    if (
+                        $parent->getFromDB($task->fields[$parent->getForeignKeyField()])
+                        && Session::haveAccessToEntity($parent->fields['entities_id'])
+                        && $parent->can($parent->getID(), READ)
+                    ) {
                         if ($parent->fields['status'] < CommonITILObject::SOLVED) {
                             return true;
                         }
@@ -109,7 +113,11 @@ class PluginActualtimeSourcetimer extends CommonDBTM
                 break;
             case 'ProjectTask':
                 $task = new $itemtype();
-                if ($task->getFromDB($items_id)) {
+                if (
+                    $task->getFromDB($items_id)
+                    && Session::haveAccessToEntity($task->fields['entities_id'])
+                    && $task->can($items_id, READ)
+                ) {
                     $finished_states_it = $DB->request(
                         [
                             'SELECT' => ['id'],
@@ -182,7 +190,7 @@ JAVASCRIPT;
         echo Html::scriptBlock($script);
         echo Ajax::createIframeModalWindow(
             'add_time_' . $task_id,
-           $CFG_GLPI['url_base'] . "/plugins/actualtime/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
+            $CFG_GLPI['url_base'] . "/plugins/actualtime/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
             [
                 'reloadonclose' => true,
                 'title'         => __('Modify timers', 'actualtime'),
@@ -208,7 +216,7 @@ JAVASCRIPT;
         foreach (self::getActualtimes($itemtype, $items_id) as $rows_id => $data) {
             if (empty($userdata)) {
                 $href = User::getFormURLWithID($data['users_id']);
-                $username = User::getFriendlyNameById($data['users_id']);
+                $username = htmlescape(User::getFriendlyNameById($data['users_id']));
                 $userdata['user'] = "<a href=\"{$href}\" target=\"_blank\">{$username}</a>";
             }
             $actualtimes[$rows_id] = $data;
