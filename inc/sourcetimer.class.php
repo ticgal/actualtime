@@ -34,7 +34,7 @@ use Glpi\Application\View\TemplateRenderer;
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeSourcetimer extends CommonDBTM
 {
-    public static $rightname = 'plugin_actualtime_sourcetimer';
+    public static string $rightname = 'plugin_actualtime_sourcetimer';
     public const TICKET     = 1024;
     public const CHANGE     = 2048;
     public const PROJECT    = 4096;

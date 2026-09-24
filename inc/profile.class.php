@@ -32,7 +32,7 @@
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeProfile extends Profile
 {
-    public static $rightname = 'profile';
+    public static string $rightname = 'profile';
 
     /**
      * {@inheritDoc}

@@ -29,9 +29,11 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\Exception\Http\NotFoundHttpException;
+
 $plugin = new Plugin();
 if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) {
-    Html::displayNotFoundError();
+    throw new NotFoundHttpException();
 }
 Session::checkRight('plugin_actualtime_running', READ);
 

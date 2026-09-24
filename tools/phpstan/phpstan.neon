@@ -3,8 +3,7 @@ parameters:
         maximumNumberOfProcesses: 2
     level: 5
     bootstrapFiles:
-        - '../../../../inc/based_config.php'
-        - '../../../../inc/db.function.php'
+        - '../../../../vendor/autoload.php'
     excludePaths:
         - '**/vendor/*'
         - '**/tests/*'

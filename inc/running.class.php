@@ -29,10 +29,13 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\DBAL\QuerySubQuery;
+use Glpi\DBAL\QueryUnion;
+
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeRunning extends CommonGLPI
 {
-    public static $rightname = 'plugin_actualtime_running';
+    public static string $rightname = 'plugin_actualtime_running';
 
     public function getRights($interface = 'central'): array
     {
@@ -156,7 +159,7 @@ JAVASCRIPT;
         $tasktable = TicketTask::getTable();
         $tickettable = Ticket::getTable();
 
-        $queryticket = new \QuerySubQuery([
+        $queryticket = new QuerySubQuery([
             'SELECT' => [
                 $atable . '.*',
                 $tasktable . '.tickets_id',
@@ -192,7 +195,7 @@ JAVASCRIPT;
         $changetable = Change::getTable();
         $tasktable = ChangeTask::getTable();
 
-        $querychange = new \QuerySubQuery([
+        $querychange = new QuerySubQuery([
             'SELECT' => [
                 $atable . '.*',
                 $tasktable . '.changes_id',
@@ -228,7 +231,7 @@ JAVASCRIPT;
         $problemtable = Problem::getTable();
         $tasktable = ProblemTask::getTable();
 
-        $queryproblem = new \QuerySubQuery([
+        $queryproblem = new QuerySubQuery([
             'SELECT' => [
                 $atable . '.*',
                 $tasktable . '.problems_id',
@@ -264,7 +267,7 @@ JAVASCRIPT;
         $projecttable = Project::getTable();
         $tasktable = ProjectTask::getTable();
 
-        $queryproject = new \QuerySubQuery([
+        $queryproject = new QuerySubQuery([
             'SELECT' => [
                 $atable . '.*',
                 $tasktable . '.projects_id',
@@ -296,7 +299,7 @@ JAVASCRIPT;
             ] + getEntitiesRestrictCriteria($projecttable),
         ]);
 
-        $union = new \QueryUnion([$queryticket, $querychange, $queryproblem, $queryproject]);
+        $union = new QueryUnion([$queryticket, $querychange, $queryproblem, $queryproject]);
 
         $iteratortime = $DB->request(['FROM' => $union]);
         if ($iteratortime->count() > 0) {

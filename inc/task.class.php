@@ -31,10 +31,12 @@
 
 include_once('config.class.php');
 
+use Glpi\DBAL\QueryExpression;
+
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeTask extends CommonDBTM
 {
-    public static $rightname = 'task';
+    public static string $rightname = 'task';
     public const AUTO       = 1;
     public const WEB        = 2;
     public const ANDROID    = 3;
@@ -761,22 +763,28 @@ JAVASCRIPT;
      * @param  mixed $itemtype
      * @return string
      */
-    public static function getActualBegin($task_id, $itemtype): string
+    public static function getActualBegin($task_id, $itemtype): ?string
     {
         /** @var \DBmysql $DB */
         global $DB;
 
+        // Same criteria as checkTimerActive(): a row with no begin is not a running timer.
         $query = [
             'FROM' => self::getTable(),
             'WHERE' => [
                 'items_id' => $task_id,
                 'itemtype' => $itemtype,
+                [
+                    'NOT' => ['actual_begin' => null],
+                ],
                 'actual_end' => null,
             ],
         ];
-        $req = $DB->request($query);
-        $row = $req->current();
-        return $row['actual_begin'];
+        $row = $DB->request($query)->current();
+
+        // No running timer: null instead of reading a key on a null row, which was a
+        // TypeError against the declared `string`.
+        return $row['actual_begin'] ?? null;
     }
 
     /**
@@ -944,11 +952,13 @@ JAVASCRIPT;
                 $style = "color: red;font-weight: bold;font-style: italic;";
             }
             $html .= "<div class='col-12 col-md-5' style='$style'>" . Html::timestampToString($row['actual_actiontime']);
-            if ($row['is_modified']) {
-                $source = new PluginActualtimeSourcetimer();
-                $source->getFromDBByCrit([
+            $source = new PluginActualtimeSourcetimer();
+            if (
+                $row['is_modified']
+                && $source->getFromDBByCrit([
                     'plugin_actualtime_tasks_id' => $row['id'],
-                ]);
+                ])
+            ) {
                 $comment = __("Original end date", "actualtime") . ": " . $source->fields['source_end'] . "<br>";
                 $comment .= __("Original duration", "actualtime") . ": " . Html::timestampToString($source->fields['source_actiontime']) . "<br>";
                 $comment .= sprintf(__("First modification by %s", "actualtime"), getUserName($source->fields['users_id']));
@@ -1738,6 +1748,10 @@ JAVASCRIPT;
          */
         global $DB, $CFG_GLPI;
 
+        $result = [
+            'type'   => 'warning',
+        ];
+
         $config = new PluginActualtimeConfig();
         $plugin = new Plugin();
 
@@ -1781,7 +1795,9 @@ JAVASCRIPT;
                 if ($config->autoUpdateDuration()) {
                     $totalendtime = PluginActualtimeTask::totalEndTime($task_id, $itemtype);
                     $time_step = $CFG_GLPI["time_step"] * MINUTE_TIMESTAMP;
-                    $ceil = ceil($totalendtime / ($time_step)) * ($time_step);
+                    $ceil = $time_step > 0
+                        ? ceil($totalendtime / $time_step) * $time_step
+                        : $totalendtime;
                     if (isset($task->fields['actiontime'])) {
                         $input['actiontime'] = $ceil;
                     } else {
@@ -1840,7 +1856,9 @@ JAVASCRIPT;
             if ($config->autoUpdateDuration()) {
                 $totalendtime = PluginActualtimeTask::totalEndTime($task_id, $itemtype);
                 $time_step = $CFG_GLPI["time_step"] * MINUTE_TIMESTAMP;
-                $ceil = ceil($totalendtime / ($time_step)) * ($time_step);
+                $ceil = $time_step > 0
+                    ? ceil($totalendtime / $time_step) * $time_step
+                    : $totalendtime;
                 if (isset($task->fields['actiontime'])) {
                     $input['actiontime'] = $ceil;
                 } else {

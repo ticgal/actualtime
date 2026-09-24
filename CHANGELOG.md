@@ -1,5 +1,19 @@
 # Actualtime
 
+## [5.0.0-beta.1] - 2026/09/18
+### Added
+- GLPI 12 support
+### Changed
+- Requires GLPI 12.0
+- Typed $rightname properties and Glpi\DBAL query classes, required by GLPI 12
+- Replaced Html::displayNotFoundError(), removed in GLPI 12
+- PHPStan and CI run against GLPI 12
+### Fixed
+- getActualBegin() returned null against its string return type when no timer was running
+- stopTimer() returned no type when called by another user, and failed with a time step of 0
+- getSegment() on a modified segment without its source timer
+- Usage by day cards failed on MySQL with NO_ZERO_DATE
+
 ## [4.1.3] - 2026/09/09
 ### Fixed
 - Fixed partial session destruction when the password expired.

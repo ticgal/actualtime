@@ -30,9 +30,11 @@
  */
 
 // Check if plugin is activated...
+use Glpi\Exception\Http\NotFoundHttpException;
+
 $plugin = new Plugin();
 if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) {
-    Html::displayNotFoundError();
+    throw new NotFoundHttpException();
 }
 
 Session::checkRight('config', UPDATE);

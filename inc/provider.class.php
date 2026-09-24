@@ -30,6 +30,7 @@
  */
 
 use Glpi\Dashboard\Provider;
+use Glpi\DBAL\QueryExpression;
 
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeProvider extends Provider
@@ -363,7 +364,10 @@ class PluginActualtimeProvider extends Provider
         $actualtime_table = PluginActualtimeTask::getTable();
         $table            = Ticket::getTable();
         $user_table       = User::getTable();
-        $real_date_col = "IFNULL(NULLIF($actualtime_table.override_begin, '0000-00-00 00:00:00'), $actualtime_table.actual_begin)";
+        // override_begin (a modified or retroactive start) when set, actual_begin otherwise. A zero
+        // date also counts as unset, as with the former NULLIF(), but without the '0000-00-00'
+        // literal that MySQL rejects under NO_ZERO_DATE (error 1525).
+        $real_date_col = "CASE WHEN $actualtime_table.override_begin > '1970-01-02' THEN $actualtime_table.override_begin ELSE $actualtime_table.actual_begin END";
 
         $query = [
             'SELECT' => [
@@ -399,8 +403,8 @@ class PluginActualtimeProvider extends Provider
             'WHERE' => [
                 $task_table . '.state' => 2,
                 $user_table . '.is_active' => 1,
-                new \QueryExpression("DATE($real_date_col) >= '$begin'"),
-                new \QueryExpression("DATE($real_date_col) <= '$end'"),
+                new QueryExpression("DATE($real_date_col) >= '$begin'"),
+                new QueryExpression("DATE($real_date_col) <= '$end'"),
             ] + getEntitiesRestrictCriteria($table),
             'ORDER' => ["total DESC"],
             'GROUP' => ['users_id_tech'],
@@ -416,7 +420,7 @@ class PluginActualtimeProvider extends Provider
             $period_expr = "DATE($real_date_col) AS period";
             $sql = [
                 'SELECT' => [
-                    new \QueryExpression($period_expr),
+                    new QueryExpression($period_expr),
                     'SUM' => $actualtime_table . '.actual_actiontime AS total',
                     'users_id_tech',
                 ],
@@ -443,8 +447,8 @@ class PluginActualtimeProvider extends Provider
                 'WHERE' => [
                     $task_table . '.state' => 2,
                     'users_id_tech' => $techs_id,
-                    new \QueryExpression("DATE($real_date_col) >= '$begin'"),
-                    new \QueryExpression("DATE($real_date_col) <= '$end'"),
+                    new QueryExpression("DATE($real_date_col) >= '$begin'"),
+                    new QueryExpression("DATE($real_date_col) <= '$end'"),
                 ] + getEntitiesRestrictCriteria($table),
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -514,8 +518,10 @@ class PluginActualtimeProvider extends Provider
         $table            = Ticket::getTable();
         $user_table       = User::getTable();
 
-        // Toma override_begin si existe (fecha modificada/retroactiva), sino actual_begin
-        $real_date_col = "IFNULL(NULLIF($actualtime_table.override_begin, '0000-00-00 00:00:00'), $actualtime_table.actual_begin)";
+        // override_begin (a modified or retroactive start) when set, actual_begin otherwise. A zero
+        // date also counts as unset, as with the former NULLIF(), but without the '0000-00-00'
+        // literal that MySQL rejects under NO_ZERO_DATE (error 1525).
+        $real_date_col = "CASE WHEN $actualtime_table.override_begin > '1970-01-02' THEN $actualtime_table.override_begin ELSE $actualtime_table.actual_begin END";
 
         $query = [
             'SELECT' => [
@@ -545,8 +551,8 @@ class PluginActualtimeProvider extends Provider
             'WHERE' => [
                 $task_table . '.state' => 2,
                 $user_table . '.is_active' => 1,
-                new \QueryExpression("DATE($real_date_col) >= '$begin'"),
-                new \QueryExpression("DATE($real_date_col) <= '$end'"),
+                new QueryExpression("DATE($real_date_col) >= '$begin'"),
+                new QueryExpression("DATE($real_date_col) <= '$end'"),
             ],
             'ORDER' => ["total ASC"],
             'GROUP' => ['users_id_tech'],
@@ -562,7 +568,7 @@ class PluginActualtimeProvider extends Provider
             $period_expr = "DATE($real_date_col) AS period";
             $sql = [
                 'SELECT' => [
-                    new \QueryExpression($period_expr),
+                    new QueryExpression($period_expr),
                     'SUM' => $actualtime_table . '.actual_actiontime AS total',
                     'users_id_tech',
                 ],
@@ -583,8 +589,8 @@ class PluginActualtimeProvider extends Provider
                 'WHERE' => [
                     $task_table . '.state' => 2,
                     'users_id_tech' => $techs_id,
-                    new \QueryExpression("DATE($real_date_col) >= '$begin'"),
-                    new \QueryExpression("DATE($real_date_col) <= '$end'"),
+                    new QueryExpression("DATE($real_date_col) >= '$begin'"),
+                    new QueryExpression("DATE($real_date_col) <= '$end'"),
                 ],
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],

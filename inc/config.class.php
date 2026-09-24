@@ -37,7 +37,7 @@ use Glpi\Application\View\TemplateRenderer;
 // phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
 class PluginActualtimeConfig extends CommonDBTM
 {
-    public static $rightname = 'config';
+    public static string $rightname = 'config';
 
     private static $instance = null;
 
