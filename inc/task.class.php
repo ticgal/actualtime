@@ -1034,7 +1034,7 @@ JAVASCRIPT;
         $config = new PluginActualtimeConfig();
 
         $autostart_checked = isset($item->input['autostart']) && $item->input['autostart'];
-        $autostart_config  = (int)$config->fields['autoopenrunning'] === 1;
+        $autostart_config  = (int) $config->fields['autoopenrunning'] === 1;
 
         if ($autostart_checked || $autostart_config) {
             if (

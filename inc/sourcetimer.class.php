@@ -102,7 +102,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
             case 'TicketTask':
             case 'ChangeTask':
             case 'ProblemTask':
-                if ($task->getFromDB($items_id)) {
+                if ($task instanceof CommonITILTask && $task->getFromDB($items_id)) {
                     $parent = getItemForItemtype($task->getItilObjectItemType());
                     if ($parent->getFromDB($task->fields[$parent->getForeignKeyField()])) {
                         if ($parent->fields['status'] < CommonITILObject::SOLVED) {
@@ -185,7 +185,7 @@ JAVASCRIPT;
         echo Html::scriptBlock($script);
         echo Ajax::createIframeModalWindow(
             'add_time_' . $task_id,
-           $CFG_GLPI['url_base'] . "/plugins/actualtime/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
+            $CFG_GLPI['url_base'] . "/plugins/actualtime/ajax/changetimer.php?itemtype=" . $itemtype . "&task_id=" . $task_id,
             [
                 'reloadonclose' => true,
                 'title'         => __('Modify timers', 'actualtime'),

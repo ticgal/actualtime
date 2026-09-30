@@ -43,7 +43,7 @@ class PluginActualtimeRunning extends CommonGLPI
         }
         return [];
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -299,6 +299,8 @@ JAVASCRIPT;
         $union = new \QueryUnion([$queryticket, $querychange, $queryproblem, $queryproject]);
 
         $iteratortime = $DB->request(['FROM' => $union]);
+        $html = '';
+        $nb_rows = 0;
         if ($iteratortime->count() > 0) {
             $html = "<table class='tab_cadre_fixehov'>";
             $html .= "<tr>";
@@ -312,16 +314,17 @@ JAVASCRIPT;
             $html .= "<th class='center'>" . __("Time") . "</th>";
             $html .= "</tr>";
 
-            $nb_rows = 0;
             foreach ($iteratortime as $key => $row) {
                 $task = getItemForItemtype($row['itemtype']);
                 if (!$task || !$task->getFromDB($row['items_id'])) {
                     continue;
                 }
-                if (is_a($task, CommonDBChild::class, true)) {
+                if ($task instanceof CommonDBChild) {
                     $parent = getItemForItemtype($task::$itemtype);
-                } else {
+                } elseif ($task instanceof CommonITILTask) {
                     $parent = getItemForItemtype($task->getItilObjectItemType());
+                } else {
+                    continue;
                 }
                 // Entity is already restricted by the query: also hide items the user cannot see
                 if (
@@ -378,7 +381,7 @@ JAVASCRIPT;
             }
             $html .= "</table>";
         }
-        if (empty($nb_rows)) {
+        if ($nb_rows === 0) {
             $html = "<div><p class='center b'>" . __('No timer active') . "</p></div>";
         }
         return $html;

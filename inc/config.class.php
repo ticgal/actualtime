@@ -114,7 +114,7 @@ class PluginActualtimeConfig extends CommonDBTM
     public function getTabNameForItem(CommonGLPI $item, $withtemplate = 0): string|array
     {
         if ($item->getType() == 'Config') {
-             return self::createTabEntry(self::getTypeName(1));
+            return self::createTabEntry(self::getTypeName(1));
         }
 
         return '';
