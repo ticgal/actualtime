@@ -79,6 +79,29 @@ class PluginActualtimeTask extends CommonDBTM
     }
 
     /**
+     * Deny timer actions not triggered by GLPI itself (AUTO) when the current user cannot update the task
+     *
+     * @param  mixed $task_id
+     * @param  mixed $itemtype
+     * @param  mixed $origin
+     * @return array|null warning result to return, null if the action is allowed
+     */
+    private static function checkTimerAccess(mixed $task_id, mixed $itemtype, mixed $origin): ?array
+    {
+        if ($origin == self::AUTO && self::isAllowedItemtype($itemtype)) {
+            return null;
+        }
+        if (self::getAuthorizedTask($itemtype, $task_id, UPDATE) === null) {
+            return [
+                'type'    => 'warning',
+                'message' => __("You don't have permission to perform this action."),
+            ];
+        }
+
+        return null;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function getTypeName($nb = 0): string
@@ -891,7 +914,7 @@ JAVASCRIPT;
             ];
             $list = [];
             foreach ($DB->request($query) as $id => $row) {
-                $list[$row['users_id_tech']]['name'] = getUserName($row['users_id_tech']);
+                $list[$row['users_id_tech']]['name'] = htmlescape(getUserName($row['users_id_tech']));
                 if (isset($list[$row['users_id_tech']]['total'])) {
                     $list[$row['users_id_tech']]['total'] += $row['actiontime'];
                 } else {
@@ -940,10 +963,11 @@ JAVASCRIPT;
                 }
             }
             $html .= "</table>";
+            $html_js = json_encode($html, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
             $script = <<<JAVASCRIPT
 $(document).ready(function(){
-    $("div.dates_timelines:last").append("{$html}");
+    $("div.dates_timelines:last").append({$html_js});
 });
 JAVASCRIPT;
             echo Html::scriptBlock($script);
@@ -990,7 +1014,7 @@ JAVASCRIPT;
                 ]);
                 $comment = __("Original end date", "actualtime") . ": " . $source->fields['source_end'] . "<br>";
                 $comment .= __("Original duration", "actualtime") . ": " . Html::timestampToString($source->fields['source_actiontime']) . "<br>";
-                $comment .= sprintf(__("First modification by %s", "actualtime"), getUserName($source->fields['users_id']));
+                $comment .= sprintf(__("First modification by %s", "actualtime"), htmlescape(getUserName($source->fields['users_id'])));
                 $html .= Html::showToolTip($comment, ['display' => false]);
             }
             $html .= "</div>";
@@ -1353,8 +1377,8 @@ JAVASCRIPT;
      */
     public static function displayPlanningItem(array $val, $who, $type = "", $complete = 0): string
     {
-        $html = "<strong>" . $val["name"] . "</strong>";
-        $html .= "<br><strong>" . sprintf(__('By %s'), getUserName($val["users_id"])) . "</strong>";
+        $html = "<strong>" . htmlescape($val["name"]) . "</strong>";
+        $html .= "<br><strong>" . sprintf(__('By %s'), htmlescape(getUserName($val["users_id"]))) . "</strong>";
         $html .= "<br><strong>" . __('Start date') . "</strong> : " . Html::convdatetime($val["begin"]);
         $html .= "<br><strong>" . __('End date') . "</strong> : " . Html::convdatetime($val["end"]);
         $html .= "<br><strong>" . __('Total duration') . "</strong> : " . $val["content"];
@@ -1437,6 +1461,10 @@ JAVASCRIPT;
          * @var array $CFG_GLPI
          */
         global $DB, $CFG_GLPI;
+
+        if ($denied = self::checkTimerAccess($task_id, $itemtype, $origin)) {
+            return $denied;
+        }
 
         $result = [
             'type'   => 'warning',
@@ -1655,6 +1683,10 @@ JAVASCRIPT;
          */
         global $DB, $CFG_GLPI;
 
+        if ($denied = self::checkTimerAccess($task_id, $itemtype, $origin)) {
+            return $denied;
+        }
+
         $result = [
             'type'   => 'warning',
         ];
@@ -1776,6 +1808,10 @@ JAVASCRIPT;
          * @var array $CFG_GLPI
          */
         global $DB, $CFG_GLPI;
+
+        if ($denied = self::checkTimerAccess($task_id, $itemtype, $origin)) {
+            return $denied;
+        }
 
         $config = new PluginActualtimeConfig();
         $plugin = new Plugin();

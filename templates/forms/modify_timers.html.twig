@@ -27,7 +27,7 @@
         </thead>
         <tbody>
           <tr>
-            <td class="col-1">{{ userdata['user']|raw }}</td>
+            <td class="col-1"><a href="{{ userdata['user_href'] }}" target="_blank">{{ userdata['user_name'] }}</a></td>
             <td class="col-1">{{ userdata['duration'] }}</td>
             <td class="col-1">{{ userdata['limit'] }}</td>
           </tr>

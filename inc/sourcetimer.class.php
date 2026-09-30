@@ -93,11 +93,15 @@ class PluginActualtimeSourcetimer extends CommonDBTM
         /** @var \DBmysql $DB */
         global $DB;
 
+        $task = PluginActualtimeTask::getAuthorizedTask($itemtype, $items_id, UPDATE);
+        if ($task === null) {
+            return false;
+        }
+
         switch ($itemtype) {
             case 'TicketTask':
             case 'ChangeTask':
             case 'ProblemTask':
-                $task = new $itemtype();
                 if ($task->getFromDB($items_id)) {
                     $parent = getItemForItemtype($task->getItilObjectItemType());
                     if ($parent->getFromDB($task->fields[$parent->getForeignKeyField()])) {
@@ -108,7 +112,6 @@ class PluginActualtimeSourcetimer extends CommonDBTM
                 }
                 break;
             case 'ProjectTask':
-                $task = new $itemtype();
                 if ($task->getFromDB($items_id)) {
                     $finished_states_it = $DB->request(
                         [
@@ -207,9 +210,9 @@ JAVASCRIPT;
 
         foreach (self::getActualtimes($itemtype, $items_id) as $rows_id => $data) {
             if (empty($userdata)) {
-                $href = User::getFormURLWithID($data['users_id']);
-                $username = User::getFriendlyNameById($data['users_id']);
-                $userdata['user'] = "<a href=\"{$href}\" target=\"_blank\">{$username}</a>";
+                // Raw values: the template escapes them
+                $userdata['user_href'] = User::getFormURLWithID($data['users_id']);
+                $userdata['user_name'] = User::getFriendlyNameById($data['users_id']);
             }
             $actualtimes[$rows_id] = $data;
         }
