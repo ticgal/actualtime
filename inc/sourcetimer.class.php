@@ -65,7 +65,7 @@ class PluginActualtimeSourcetimer extends CommonDBTM
      * @param  mixed $itemtype
      * @return bool
      */
-    public static function checkItemtypeRight($itemtype): bool
+    public static function checkItemtypeRight(mixed $itemtype): bool
     {
         switch ($itemtype) {
             case 'TicketTask':

@@ -39,6 +39,45 @@ class PluginActualtimeTask extends CommonDBTM
     public const WEB        = 2;
     public const ANDROID    = 3;
 
+    public const ALLOWED_ITEMTYPES = [
+        'TicketTask',
+        'ChangeTask',
+        'ProblemTask',
+        'ProjectTask',
+    ];
+
+    /**
+     * isAllowedItemtype
+     *
+     * @param  mixed $itemtype
+     * @return bool
+     */
+    public static function isAllowedItemtype(mixed $itemtype): bool
+    {
+        return is_string($itemtype) && in_array($itemtype, self::ALLOWED_ITEMTYPES, true);
+    }
+
+    /**
+     * Load a task only if the current user holds $right on it (entity included)
+     *
+     * @param  mixed $itemtype
+     * @param  mixed $task_id
+     * @param  int   $right READ or UPDATE
+     * @return CommonDBTM|null null if itemtype not allowed, task not found or access denied
+     */
+    public static function getAuthorizedTask(mixed $itemtype, mixed $task_id, int $right): ?CommonDBTM
+    {
+        if (!self::isAllowedItemtype($itemtype) || !is_numeric($task_id) || (int) $task_id <= 0) {
+            return null;
+        }
+        $task = getItemForItemtype($itemtype);
+        if (!$task instanceof CommonDBTM || !$task->can((int) $task_id, $right)) {
+            return null;
+        }
+
+        return $task;
+    }
+
     /**
      * {@inheritdoc}
      */
