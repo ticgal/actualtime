@@ -40,24 +40,30 @@ if (Session::getLoginUserID() === false || !isset($_SESSION['glpiactiveprofile']
 /** @var array $CFG_GLPI */
 global $CFG_GLPI;
 if (isset($_POST["action"])) {
-    $plugin = new Plugin();
-    $task_id = $_POST["task_id"];
-    $itemtype = $_POST["itemtype"];
-    $config = new PluginActualtimeConfig();
+    $task_id = (int) ($_POST["task_id"] ?? 0);
+    $itemtype = $_POST["itemtype"] ?? '';
+    if ($task_id <= 0 || !PluginActualtimeTask::isAllowedItemtype($itemtype)) {
+        http_response_code(400);
+        exit;
+    }
     switch ($_POST["action"]) {
         case 'start':
-            $result = PluginActualtimeTask::startTimer($_POST["task_id"], $itemtype, PluginActualtimeTask::WEB);
+            $result = PluginActualtimeTask::startTimer($task_id, $itemtype, PluginActualtimeTask::WEB);
             echo json_encode($result);
             break;
         case 'end':
-            $result = PluginActualtimeTask::stopTimer($_POST["task_id"], $itemtype, PluginActualtimeTask::WEB);
+            $result = PluginActualtimeTask::stopTimer($task_id, $itemtype, PluginActualtimeTask::WEB);
             echo json_encode($result);
             break;
         case 'pause':
-            $result = PluginActualtimeTask::pauseTimer($_POST["task_id"], $itemtype, PluginActualtimeTask::WEB);
+            $result = PluginActualtimeTask::pauseTimer($task_id, $itemtype, PluginActualtimeTask::WEB);
             echo json_encode($result);
             break;
         case 'count':
+            if (PluginActualtimeTask::getAuthorizedTask($itemtype, $task_id, READ) === null) {
+                http_response_code(403);
+                exit;
+            }
             echo abs(PluginActualtimeTask::totalEndTime($task_id, $itemtype));
             break;
     }
