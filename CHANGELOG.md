@@ -21,6 +21,7 @@
 - Settings are loaded once per request
 - Removed table.js, GLPI 12 already shows the statistics dates block on changes and problems
 - PHPStan configuration works both locally and in CI. Removed the obsolete atoum tests and Travis configuration
+- Unique Composer autoloader suffix: GLPI 12 does not load a plugin whose autoloader class collides with another plugin's
 ### Fixed
 - Settings tab failed to render the form buttons
 - Task form in the running timer pop-up failed to render

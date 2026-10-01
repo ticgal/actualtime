@@ -6,6 +6,7 @@
     },
     "config": {
         "optimize-autoloader": true,
+        "autoloader-suffix": "Actualtime",
         "platform": {
             "php": "8.3.0"
         },
