@@ -29,20 +29,25 @@
  * -------------------------------------------------------------------------
  */
 
-if (!isset($_POST["itemtype"])) {
+if (!isset($_POST["itemtype"], $_POST["items_id"])) {
     Html::back();
 }
 if (
     PluginActualtimeSourcetimer::checkItemtypeRight($_POST["itemtype"])
     && PluginActualtimeSourcetimer::canModify($_POST["itemtype"], $_POST["items_id"])
 ) {
-    if (isset($_POST["update"])) {
+    if (isset($_POST["update"]) && is_array($_POST['actual_end'] ?? null)) {
         $config = new PluginActualtimeConfig();
-        $itemtype = $_POST["itemtype"] ?? '';
-        $item_id = $_POST["items_id"] ?? 0;
+        $itemtype = $_POST["itemtype"];
+        $item_id = (int) $_POST["items_id"];
+        // Only timers of the authorized task have limits: any other posted id is skipped
         $task_limit = PluginActualtimeSourcetimer::getTaskLimits($itemtype, $item_id);
         foreach ($_POST['actual_end'] as $key => $value) {
-            if (empty($value)) {
+            if (empty($value) || !isset($task_limit[$key])) {
+                continue;
+            }
+            $date = DateTime::createFromFormat('Y-m-d H:i:s', (string) $value);
+            if ($date === false || $date->format('Y-m-d H:i:s') !== $value) {
                 continue;
             }
             $actualtime = new PluginActualtimeTask();
@@ -76,9 +81,8 @@ if (
         }
 
         if ($config->autoUpdateDuration()) {
-            $task_id = $_POST["items_id"];
-            $itemtype = $_POST["itemtype"];
-            $task = new $itemtype();
+            $task_id = $item_id;
+            $task = getItemForItemtype($itemtype);
             $task->getFromDB($task_id);
             $input = [
                 'id' => $task_id,

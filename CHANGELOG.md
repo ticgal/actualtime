@@ -14,6 +14,18 @@
 - getSegment() on a modified segment without its source timer
 - Usage by day cards failed on MySQL with NO_ZERO_DATE
 
+## [4.1.4] - 2026/09/30
+### Security
+- Check task rights and entity access on timer start, pause, stop and duration queries
+- Check task rights and entity access when viewing or editing past timer segments
+- Hide running timers of items the user cannot view
+- Escape user, entity, location and item names in timer views, planning and statistics
+- Restrict the "less actualtime usage by day" dashboard card and the reports to the user's entities
+- Harden date filters in dashboard queries
+
+### Fixed
+- Reports failed with an SQL error on the current database schema
+
 ## [4.1.3] - 2026/09/09
 ### Fixed
 - Fixed partial session destruction when the password expired.

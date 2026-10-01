@@ -46,7 +46,7 @@ class PluginActualtimeRunning extends CommonGLPI
         }
         return [];
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -302,6 +302,8 @@ JAVASCRIPT;
         $union = new QueryUnion([$queryticket, $querychange, $queryproblem, $queryproject]);
 
         $iteratortime = $DB->request(['FROM' => $union]);
+        $html = '';
+        $nb_rows = 0;
         if ($iteratortime->count() > 0) {
             $html = "<table class='tab_cadre_fixehov'>";
             $html .= "<tr>";
@@ -316,26 +318,37 @@ JAVASCRIPT;
             $html .= "</tr>";
 
             foreach ($iteratortime as $key => $row) {
-                $task = new $row['itemtype']();
-                $task->getFromDB($row['items_id']);
-                if (is_a($task, CommonDBChild::class, true)) {
-                    $parent = getItemForItemtype($task::$itemtype);
-                } else {
-                    $parent = getItemForItemtype($task->getItilObjectItemType());
+                $task = getItemForItemtype($row['itemtype']);
+                if (!$task || !$task->getFromDB($row['items_id'])) {
+                    continue;
                 }
-                $parent->getFromDB($task->fields[$parent->getForeignKeyField()]);
+                if ($task instanceof CommonDBChild) {
+                    $parent = getItemForItemtype($task::$itemtype);
+                } elseif ($task instanceof CommonITILTask) {
+                    $parent = getItemForItemtype($task->getItilObjectItemType());
+                } else {
+                    continue;
+                }
+                // Entity is already restricted by the query: also hide items the user cannot see
+                if (
+                    !$parent->getFromDB($task->fields[$parent->getForeignKeyField()])
+                    || !$parent->canViewItem()
+                ) {
+                    continue;
+                }
+                $nb_rows++;
                 $html .= "<tr class='tab_bg_2'>";
                 $user = new User();
                 $user->getFromDB($row['users_id']);
                 $html .= "<td class='center'>";
-                $html .= "<a href='" . $user->getLinkURL() . "'>" . $user->getFriendlyName() . "</a>";
+                $html .= "<a href='" . htmlescape($user->getLinkURL()) . "'>" . htmlescape($user->getFriendlyName()) . "</a>";
                 $html .= "</td>";
                 $html .= "<td class='center'>";
-                $html .= Entity::getFriendlyNameById($parent->fields['entities_id']);
+                $html .= htmlescape(Entity::getFriendlyNameById($parent->fields['entities_id']));
                 $html .= "</td>";
                 $html .= "<td class='center'>";
                 if (isset($parent->fields['locations_id'])) {
-                    $html .= Location::getFriendlyNameById($parent->fields['locations_id']);
+                    $html .= htmlescape(Location::getFriendlyNameById($parent->fields['locations_id']));
                 }
                 $html .= "</td>";
                 $html .= "<td class='center'>";
@@ -351,18 +364,18 @@ JAVASCRIPT;
                     if (!($item = getItemForItemtype($itemtype))) {
                         continue;
                     }
-                    $html .= "<li>" . $item::getTypeName() . "</li>";
+                    $html .= "<li>" . htmlescape($item::getTypeName()) . "</li>";
                     $iterator = $item_link::getTypeItems($task->fields[$parent->getForeignKeyField()], $itemtype);
                     $html .= "<ul>";
                     foreach ($iterator as $data) {
-                        $html .= "<li>" . $data['name'] . "</li>";
+                        $html .= "<li>" . htmlescape($data['name']) . "</li>";
                     }
                     $html .= "</ul>";
                 }
                 $html .= "</ul>";
                 $html .= "</td>";
-                $html .= "<td class='center'><a href='" . $parent->getLinkURL() . "'>";
-                $html .= $parent->getTypeName(1) . " - " . $parent->getID() . " - " . $row['items_id'] . "</a></td>";
+                $html .= "<td class='center'><a href='" . htmlescape($parent->getLinkURL()) . "'>";
+                $html .= htmlescape($parent->getTypeName(1)) . " - " . $parent->getID() . " - " . $row['items_id'] . "</a></td>";
                 $html .= "<td class='center'>";
                 $timestamp = PluginActualtimeTask::totalEndTime($row['items_id'], $row['itemtype']);
                 $html .= Html::timestampToString($timestamp);
@@ -370,7 +383,8 @@ JAVASCRIPT;
                 $html .= "</tr>";
             }
             $html .= "</table>";
-        } else {
+        }
+        if ($nb_rows === 0) {
             $html = "<div><p class='center b'>" . __('No timer active') . "</p></div>";
         }
         return $html;

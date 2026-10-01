@@ -403,8 +403,8 @@ class PluginActualtimeProvider extends Provider
             'WHERE' => [
                 $task_table . '.state' => 2,
                 $user_table . '.is_active' => 1,
-                new QueryExpression("DATE($real_date_col) >= '$begin'"),
-                new QueryExpression("DATE($real_date_col) <= '$end'"),
+                new QueryExpression("DATE($real_date_col) >= " . DBmysql::quoteValue($begin)),
+                new QueryExpression("DATE($real_date_col) <= " . DBmysql::quoteValue($end)),
             ] + getEntitiesRestrictCriteria($table),
             'ORDER' => ["total DESC"],
             'GROUP' => ['users_id_tech'],
@@ -447,8 +447,8 @@ class PluginActualtimeProvider extends Provider
                 'WHERE' => [
                     $task_table . '.state' => 2,
                     'users_id_tech' => $techs_id,
-                    new QueryExpression("DATE($real_date_col) >= '$begin'"),
-                    new QueryExpression("DATE($real_date_col) <= '$end'"),
+                    new QueryExpression("DATE($real_date_col) >= " . DBmysql::quoteValue($begin)),
+                    new QueryExpression("DATE($real_date_col) <= " . DBmysql::quoteValue($end)),
                 ] + getEntitiesRestrictCriteria($table),
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -541,6 +541,12 @@ class PluginActualtimeProvider extends Provider
                         ],
                     ],
                 ],
+                $table => [
+                    'ON' => [
+                        $table => 'id',
+                        $task_table => 'tickets_id',
+                    ],
+                ],
                 $user_table => [
                     'ON' => [
                         $user_table => 'id',
@@ -551,9 +557,9 @@ class PluginActualtimeProvider extends Provider
             'WHERE' => [
                 $task_table . '.state' => 2,
                 $user_table . '.is_active' => 1,
-                new QueryExpression("DATE($real_date_col) >= '$begin'"),
-                new QueryExpression("DATE($real_date_col) <= '$end'"),
-            ],
+                new QueryExpression("DATE($real_date_col) >= " . DBmysql::quoteValue($begin)),
+                new QueryExpression("DATE($real_date_col) <= " . DBmysql::quoteValue($end)),
+            ] + getEntitiesRestrictCriteria($table),
             'ORDER' => ["total ASC"],
             'GROUP' => ['users_id_tech'],
             'LIMIT' => 20,
@@ -585,13 +591,19 @@ class PluginActualtimeProvider extends Provider
                             ],
                         ],
                     ],
+                    $table => [
+                        'ON' => [
+                            $table => 'id',
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
                 ],
                 'WHERE' => [
                     $task_table . '.state' => 2,
                     'users_id_tech' => $techs_id,
-                    new QueryExpression("DATE($real_date_col) >= '$begin'"),
-                    new QueryExpression("DATE($real_date_col) <= '$end'"),
-                ],
+                    new QueryExpression("DATE($real_date_col) >= " . DBmysql::quoteValue($begin)),
+                    new QueryExpression("DATE($real_date_col) <= " . DBmysql::quoteValue($end)),
+                ] + getEntitiesRestrictCriteria($table),
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
             ];

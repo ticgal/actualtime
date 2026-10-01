@@ -41,6 +41,68 @@ class PluginActualtimeTask extends CommonDBTM
     public const WEB        = 2;
     public const ANDROID    = 3;
 
+    public const ALLOWED_ITEMTYPES = [
+        'TicketTask',
+        'ChangeTask',
+        'ProblemTask',
+        'ProjectTask',
+    ];
+
+    /**
+     * isAllowedItemtype
+     *
+     * @param  mixed $itemtype
+     * @return bool
+     */
+    public static function isAllowedItemtype(mixed $itemtype): bool
+    {
+        return is_string($itemtype) && in_array($itemtype, self::ALLOWED_ITEMTYPES, true);
+    }
+
+    /**
+     * Load a task only if the current user holds $right on it (entity included)
+     *
+     * @param  mixed $itemtype
+     * @param  mixed $task_id
+     * @param  int   $right READ or UPDATE
+     * @return CommonDBTM|null null if itemtype not allowed, task not found or access denied
+     */
+    public static function getAuthorizedTask(mixed $itemtype, mixed $task_id, int $right): ?CommonDBTM
+    {
+        if (!self::isAllowedItemtype($itemtype) || !is_numeric($task_id) || (int) $task_id <= 0) {
+            return null;
+        }
+        $task = getItemForItemtype($itemtype);
+        if (!$task instanceof CommonDBTM || !$task->can((int) $task_id, $right)) {
+            return null;
+        }
+
+        return $task;
+    }
+
+    /**
+     * Deny timer actions not triggered by GLPI itself (AUTO) when the current user cannot update the task
+     *
+     * @param  mixed $task_id
+     * @param  mixed $itemtype
+     * @param  mixed $origin
+     * @return array|null warning result to return, null if the action is allowed
+     */
+    private static function checkTimerAccess(mixed $task_id, mixed $itemtype, mixed $origin): ?array
+    {
+        if ($origin == self::AUTO && self::isAllowedItemtype($itemtype)) {
+            return null;
+        }
+        if (self::getAuthorizedTask($itemtype, $task_id, UPDATE) === null) {
+            return [
+                'type'    => 'warning',
+                'message' => __("You don't have permission to perform this action."),
+            ];
+        }
+
+        return null;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -860,7 +922,7 @@ JAVASCRIPT;
             ];
             $list = [];
             foreach ($DB->request($query) as $id => $row) {
-                $list[$row['users_id_tech']]['name'] = getUserName($row['users_id_tech']);
+                $list[$row['users_id_tech']]['name'] = htmlescape(getUserName($row['users_id_tech']));
                 if (isset($list[$row['users_id_tech']]['total'])) {
                     $list[$row['users_id_tech']]['total'] += $row['actiontime'];
                 } else {
@@ -909,10 +971,11 @@ JAVASCRIPT;
                 }
             }
             $html .= "</table>";
+            $html_js = json_encode($html, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
             $script = <<<JAVASCRIPT
 $(document).ready(function(){
-    $("div.dates_timelines:last").append("{$html}");
+    $("div.dates_timelines:last").append({$html_js});
 });
 JAVASCRIPT;
             echo Html::scriptBlock($script);
@@ -961,7 +1024,7 @@ JAVASCRIPT;
             ) {
                 $comment = __("Original end date", "actualtime") . ": " . $source->fields['source_end'] . "<br>";
                 $comment .= __("Original duration", "actualtime") . ": " . Html::timestampToString($source->fields['source_actiontime']) . "<br>";
-                $comment .= sprintf(__("First modification by %s", "actualtime"), getUserName($source->fields['users_id']));
+                $comment .= sprintf(__("First modification by %s", "actualtime"), htmlescape(getUserName($source->fields['users_id'])));
                 $html .= Html::showToolTip($comment, ['display' => false]);
             }
             $html .= "</div>";
@@ -981,7 +1044,7 @@ JAVASCRIPT;
         $config = new PluginActualtimeConfig();
 
         $autostart_checked = isset($item->input['autostart']) && $item->input['autostart'];
-        $autostart_config  = (int)$config->fields['autoopenrunning'] === 1;
+        $autostart_config  = (int) $config->fields['autoopenrunning'] === 1;
 
         if ($autostart_checked || $autostart_config) {
             if (
@@ -1324,8 +1387,8 @@ JAVASCRIPT;
      */
     public static function displayPlanningItem(array $val, $who, $type = "", $complete = 0): string
     {
-        $html = "<strong>" . $val["name"] . "</strong>";
-        $html .= "<br><strong>" . sprintf(__('By %s'), getUserName($val["users_id"])) . "</strong>";
+        $html = "<strong>" . htmlescape($val["name"]) . "</strong>";
+        $html .= "<br><strong>" . sprintf(__('By %s'), htmlescape(getUserName($val["users_id"]))) . "</strong>";
         $html .= "<br><strong>" . __('Start date') . "</strong> : " . Html::convdatetime($val["begin"]);
         $html .= "<br><strong>" . __('End date') . "</strong> : " . Html::convdatetime($val["end"]);
         $html .= "<br><strong>" . __('Total duration') . "</strong> : " . $val["content"];
@@ -1408,6 +1471,10 @@ JAVASCRIPT;
          * @var array $CFG_GLPI
          */
         global $DB, $CFG_GLPI;
+
+        if ($denied = self::checkTimerAccess($task_id, $itemtype, $origin)) {
+            return $denied;
+        }
 
         $result = [
             'type'   => 'warning',
@@ -1626,6 +1693,10 @@ JAVASCRIPT;
          */
         global $DB, $CFG_GLPI;
 
+        if ($denied = self::checkTimerAccess($task_id, $itemtype, $origin)) {
+            return $denied;
+        }
+
         $result = [
             'type'   => 'warning',
         ];
@@ -1747,6 +1818,10 @@ JAVASCRIPT;
          * @var array $CFG_GLPI
          */
         global $DB, $CFG_GLPI;
+
+        if ($denied = self::checkTimerAccess($task_id, $itemtype, $origin)) {
+            return $denied;
+        }
 
         $result = [
             'type'   => 'warning',

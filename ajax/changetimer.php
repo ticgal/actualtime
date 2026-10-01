@@ -29,6 +29,8 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\Exception\Http\AccessDeniedHttpException;
+
 header("Content-Type: text/html; charset=UTF-8");
 Html::header_nocache();
 
@@ -36,6 +38,9 @@ Session::checkLoginUser();
 
 if (isset($_REQUEST["itemtype"]) && isset($_REQUEST["task_id"])) {
     if (PluginActualtimeSourcetimer::checkItemtypeRight($_REQUEST["itemtype"])) {
+        if (PluginActualtimeTask::getAuthorizedTask($_REQUEST["itemtype"], $_REQUEST["task_id"], READ) === null) {
+            throw new AccessDeniedHttpException();
+        }
         Html::popHeader(
             PluginActualtimeSourcetimer::getTypeName(1),
             $_SERVER['PHP_SELF'],
