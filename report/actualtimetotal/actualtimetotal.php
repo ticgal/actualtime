@@ -29,9 +29,6 @@
  * -------------------------------------------------------------------------
  */
 
-$USEDBREPLICATE = 1;
-$DBCONNECTION_REQUIRED = 0;
-
 $report = new PluginReportsAutoReport(__('ActualTimeTotal'));
 //Filtro fecha
 new PluginReportsDateIntervalCriteria(
@@ -80,11 +77,13 @@ $query = "SELECT glpi_tickets.id AS tickets_id,
     (sum(glpi_tickettasks.actiontime) - sum(actual_actiontime)) AS diff,
     concat(round(((sum(glpi_tickettasks.actiontime) - sum(actual_actiontime)) / sum(actual_actiontime) * 100 ),2),'%') AS diffpercent
 FROM glpi_plugin_actualtime_tasks
-    RIGHT JOIN glpi_tickettasks ON glpi_tickettasks.id = glpi_plugin_actualtime_tasks.tasks_id
+    RIGHT JOIN glpi_tickettasks ON glpi_tickettasks.id = glpi_plugin_actualtime_tasks.items_id
+        AND glpi_plugin_actualtime_tasks.itemtype = 'TicketTask'
     INNER JOIN glpi_tickets ON glpi_tickets.id = glpi_tickettasks.tickets_id
     INNER JOIN glpi_tickets_users ON glpi_tickets_users.tickets_id = glpi_tickets.id
 WHERE status = 6 AND glpi_tickets_users.type = 1
 ";
+$query .= getEntitiesRestrictRequest(' AND ', 'glpi_tickets');
 $query .= $report->addSqlCriteriasRestriction();
 $query .= "
 GROUP BY glpi_tickets.id";
