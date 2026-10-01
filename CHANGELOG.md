@@ -3,6 +3,37 @@
 ## [5.0.0-beta.2] - 2026/10/01
 ### Security
 - Includes the security fixes from 4.1.4
+- Planning only shows timers of tasks the user can view
+- Dashboard cards and running timers could lose the entity restriction when the user had no active entity
+- Saving the plugin settings requires re-authentication, like GLPI setup
+- Escape item link and name in the running timer pop-up
+### Changed
+- Removed CSRF token fields, GLPI 12 validates CSRF with request headers
+- JavaScript files registered without the deprecated /public prefix
+- Reports restrict entities without the deprecated getEntitiesRestrictRequest()
+- Dashboard date filters use bound query values
+- TAM, Waypoint and GappExtended integrations support their PSR-4 class names
+- Classes moved to src/ with the GlpiPlugin\Actualtime namespace. The PluginActualtime* class names remain as deprecated aliases for other plugins
+- Planning filters saved for the old class name keep their color and visibility
+- Fixed the key of the "Top 20 % Actualtime usage per day" dashboard card, saved dashboards are updated
+- Task timers, "Assign to me" button and autostart switch rendered with Twig templates
+- Tabler icons instead of Font Awesome
+- Settings are loaded once per request
+- Removed table.js, GLPI 12 already shows the statistics dates block on changes and problems
+- PHPStan configuration works both locally and in CI. Removed the obsolete atoum tests and Travis configuration
+### Fixed
+- Settings tab failed to render the form buttons
+- Task form in the running timer pop-up failed to render
+- Minimum and maximum end dates were never applied when modifying timer segments
+- Reports failed when the Reports plugin is not active
+- "Assign to me" task button form was malformed and ignored the GLPI base URL
+- Starting a timer replaced the main database connection with the read replica
+- Starting, pausing or stopping a timer failed when TAM, Waypoint or GappExtended classes were missing
+- Settings getters failed when the settings row was missing
+- Automatically opening the task with a running timer did not open its form
+- Stopping a timer did not mark the task as done in the timeline
+- Scheduled task message only showed the year of the date
+- "Duration Diff" and settings labels were never translated
 
 ## [5.0.0-beta.1] - 2026/09/18
 ### Added

@@ -1,0 +1,84 @@
+{#
+ # -------------------------------------------------------------------------
+ # ActualTime plugin for GLPI
+ # Copyright (C) 2018-2026 by the TICGAL Team.
+ # https://www.tic.gal/
+ # -------------------------------------------------------------------------
+ # LICENSE
+ # This file is part of the ActualTime plugin.
+ # ActualTime plugin is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 3 of the License, or
+ # (at your option) any later version.
+ # ActualTime plugin is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ # You should have received a copy of the GNU General Public License
+ # along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
+ # -------------------------------------------------------------------------
+ # @package   ActualTime
+ # @author    the TICGAL team
+ # @copyright Copyright (c) 2018-2026 TICGAL team
+ # @license   AGPL License 3.0 or (at your option) any later version
+ #            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ # @link      https://www.tic.gal/
+ # @since     2018
+ # -------------------------------------------------------------------------
+ #}
+
+{# Timer of a task in the ITIL timeline: total time in the header and start/pause button #}
+
+{% if show_box %}
+    {% set box %}
+        <span class="badge text-wrap ms-1 d-none d-md-block" style="color: {{ active ? 'red' : 'black' }};{{ is_modified ? ' font-style: italic;' : '' }}">
+            <i id="actualtime_faclock_{{ task_id }}_{{ rand }}" class="{{ time > 0 ? 'ti ti-clock' : '' }}"></i>
+            <span id="actualtime_timer_{{ task_id }}_box_{{ rand }}"></span>
+        </span>
+    {% endset %}
+    <div id="actualtime_anchor_{{ task_id }}_{{ rand }}"></div>
+{% endif %}
+
+{% if show_button %}
+    {% if not runnable %}
+        {% set start = {action: '', color: 'gray', icon: 'ti ti-player-play', disabled: true} %}
+    {% elseif active %}
+        {% set start = {action: 'pause', color: 'orange', icon: 'ti ti-player-pause', disabled: false} %}
+    {% else %}
+        {% set start = {action: 'start', color: 'green', icon: time > 0 ? 'ti ti-player-track-next' : 'ti ti-player-play', disabled: false} %}
+    {% endif %}
+    {% set button %}
+        <div class="ms-auto col-auto">
+            <button type="button" class="btn btn-icon btn-sm mt-1" id="actualtime_button_{{ task_id }}_1_{{ rand }}" action="{{ start.action }}"
+                    style="background-color: {{ start.color }}; color: white; width: 20px; height: 20px;" {{ start.disabled ? 'disabled' : '' }}>
+                <span class="d-none d-md-block"><i class="{{ start.icon }}"></i></span>
+            </button>
+        </div>
+    {% endset %}
+{% endif %}
+
+<script>
+    $(function() {
+        const task_item = $("div[data-itemtype='{{ itemtype|e('js') }}'][data-items-id='{{ task_id }}']");
+        {% if show_box %}
+            if ($("[id^='actualtime_faclock_{{ task_id }}_']").length == 0) {
+                task_item.find('div.card-body div.timeline-header div.creator').append({{ box|json_encode|raw }});
+                {% if time > 0 %}
+                    window.actualTime.fillCurrentTime({{ task_id }}, {{ time }});
+                {% endif %}
+            }
+        {% endif %}
+        {% if auto_open %}
+            // Running timer on this task: open its edit form, once the timeline scripts (edit handler included) have run
+            setTimeout(() => task_item.find('div.card-body a.edit-timeline-item').trigger('click'), 0);
+        {% endif %}
+        {% if show_button %}
+            if ($('#actualtime_button_{{ task_id }}_1_{{ rand }}').length == 0) {
+                task_item.find('div.todo-list-state').append({{ button|json_encode|raw }});
+            }
+            $('#actualtime_button_{{ task_id }}_1_{{ rand }}').on('click', function() {
+                window.actualTime.pressedButton({{ task_id }}, '{{ itemtype|e('js') }}', $(this).attr('action'));
+            });
+        {% endif %}
+    });
+</script>

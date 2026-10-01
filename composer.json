@@ -1,7 +1,6 @@
 {
-	"require": {
-	},
-	"require-dev": {
+    "require": {},
+    "require-dev": {
         "glpi-project/tools": "^0.7.5",
         "squizlabs/php_codesniffer": "^3.7"
     },
@@ -17,11 +16,12 @@
     },
     "autoload": {
         "psr-4": {
-            "CustomPHPStanRules\\": "tools/phpstan/rules/"
+            "GlpiPlugin\\Actualtime\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
+            "CustomPHPStanRules\\": "tools/phpstan/rules/",
             "Glpi\\Tools\\": "../../tools/src/"
         }
     }

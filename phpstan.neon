@@ -2,13 +2,15 @@ parameters:
     level: 5
     bootstrapFiles:
         - ../../vendor/autoload.php
+        - vendor/autoload.php
     paths:
         - ajax
         - front
         - inc
+        - report
+        - src
         - hook.php
         - setup.php
-        - tools/phpstan/rules
     excludePaths:
         - '**/vendor/*'
         - '**/tests/*'
@@ -16,13 +18,13 @@ parameters:
     scanDirectories:
         - ../../src
         - tools/phpstan/rules
-    stubFiles:
-        - ../../stubs/glpi_constants.php
     ignoreErrors:
-        - '/(Instantiated class|Class) (GlpiPlugin(\\\w+)+|Plugin\w+) not found/'
-        - '/Call to (static )?method \w+\(\) on an unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
-        - '/Access to (property \$\w+|constant \w+) on an unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
-        - '/PHPDoc tag \@var for variable \$\w+ contains unknown class (GlpiPlugin(\\\w+)+|Plugin\w+)/'
+        # Reports are built on top of the optional "reports" plugin (checked at runtime)
+        -
+            message: '#(Instantiated class|unknown class) PluginReports\w+#'
+            paths:
+                - report/actualtimetotal/actualtimetotal.php
+                - report/actualtimeuser/actualtimeuser.php
     reportUnmatchedIgnoredErrors: false
 rules:
     - GlpiProject\Tools\PHPStan\Rules\GlobalVarTypeRule

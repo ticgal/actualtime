@@ -1,0 +1,58 @@
+{#
+ # -------------------------------------------------------------------------
+ # ActualTime plugin for GLPI
+ # Copyright (C) 2018-2026 by the TICGAL Team.
+ # https://www.tic.gal/
+ # -------------------------------------------------------------------------
+ # LICENSE
+ # This file is part of the ActualTime plugin.
+ # ActualTime plugin is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 3 of the License, or
+ # (at your option) any later version.
+ # ActualTime plugin is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ # You should have received a copy of the GNU General Public License
+ # along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
+ # -------------------------------------------------------------------------
+ # @package   ActualTime
+ # @author    the TICGAL team
+ # @copyright Copyright (c) 2018-2026 TICGAL team
+ # @license   AGPL License 3.0 or (at your option) any later version
+ #            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ # @link      https://www.tic.gal/
+ # @since     2018
+ # -------------------------------------------------------------------------
+ #}
+
+{# "Assign to me" button of a task assigned to another technician #}
+
+{% set button %}
+    <button id="actualtime_addme_{{ rand }}" form="actualtime_form_addme_{{ rand }}" type="submit" name="update"
+            class="btn btn-icon btn-sm btn-ghost-secondary float-end mt-1 ms-1" title="{{ __('Associate myself') }}">
+        <i class="ti ti-user-plus"></i>
+    </button>
+{% endset %}
+
+{% set form %}
+    <form method="POST" action="{{ form_url }}" class="d-none" id="actualtime_form_addme_{{ rand }}" data-submit-once>
+        <input type="hidden" name="id" value="{{ task_id }}">
+        <input type="hidden" name="itemtype" value="{{ parent_itemtype }}">
+        <input type="hidden" name="users_id_tech" value="{{ users_id }}">
+        <input type="hidden" name="{{ parent_key }}" value="{{ parent_id }}">
+    </form>
+{% endset %}
+
+<script>
+    $(function() {
+        if ($('#actualtime_addme_{{ rand }}').length == 0) {
+            $("div[data-itemtype='{{ itemtype|e('js') }}'][data-items-id='{{ task_id }}'] div.itiltask form select[name='users_id_tech']")
+                .parent().append({{ button|json_encode|raw }});
+        }
+        if ($('#actualtime_form_addme_{{ rand }}').length == 0) {
+            $('#itil-object-container').parent().append({{ form|json_encode|raw }});
+        }
+    });
+</script>

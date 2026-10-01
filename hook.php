@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -29,6 +29,13 @@
  * -------------------------------------------------------------------------
  */
 
+use GlpiPlugin\Actualtime\Config;
+use GlpiPlugin\Actualtime\Dashboard;
+use GlpiPlugin\Actualtime\Profile as ActualtimeProfile;
+use GlpiPlugin\Actualtime\Running;
+use GlpiPlugin\Actualtime\Sourcetimer;
+use GlpiPlugin\Actualtime\Task;
+
 /**
  * plugin_actualtime_install
  * Install all necessary elements for the plugin
@@ -39,18 +46,10 @@ function plugin_actualtime_install(): bool
 {
     $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
-    // Parse inc directory
-    foreach (glob(__DIR__ . '/inc/*') as $filepath) {
-        // Load *.class.php files and get the class name
-        if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
-            $classname = 'PluginActualtime' . ucfirst($matches[1]);
-            include_once($filepath);
-            // If the install method exists, load it
-            if (method_exists($classname, 'install')) {
-                $classname::install($migration);
-            }
-        }
-    }
+    Config::install($migration);
+    Dashboard::install($migration);
+    Sourcetimer::install($migration);
+    Task::install($migration);
 
     // Execute the whole migration
     $migration->executeMigration();
@@ -66,7 +65,7 @@ function plugin_actualtime_install(): bool
  */
 function plugin_actualtime_item_stats($item): void
 {
-    PluginActualtimeTask::showStats($item);
+    Task::showStats($item);
 }
 
 /**
@@ -77,7 +76,7 @@ function plugin_actualtime_item_stats($item): void
  */
 function plugin_actualtime_item_update($item)
 {
-    return PluginActualtimeTask::preUpdate($item);
+    return Task::preUpdate($item);
 }
 
 /**
@@ -88,7 +87,7 @@ function plugin_actualtime_item_update($item)
  */
 function plugin_actualtime_item_add($item)
 {
-    PluginActualtimeTask::afterAdd($item);
+    Task::afterAdd($item);
 }
 
 /**
@@ -110,11 +109,11 @@ function plugin_actualtime_getAddSearchOptionsNew(string $itemtype): array
             'field'      => 'rights',
             'name'       => __('ActualTime', 'actualtime'),
             'datatype'   => 'right',
-            'rightclass' => PluginActualtimeTask::class,
-            'rightname'  => PluginActualtimeTask::$rightname,
+            'rightclass' => Task::class,
+            'rightname'  => Task::$rightname,
             'joinparams' => [
                 'jointype'  => 'child',
-                'condition' => ['NEWTABLE.name' => PluginActualtimeTask::$rightname],
+                'condition' => ['NEWTABLE.name' => Task::$rightname],
             ],
         ],
         [
@@ -123,11 +122,11 @@ function plugin_actualtime_getAddSearchOptionsNew(string $itemtype): array
             'field'      => 'rights',
             'name'       => __('Running timers', 'actualtime'),
             'datatype'   => 'right',
-            'rightclass' => PluginActualtimeRunning::class,
-            'rightname'  => PluginActualtimeRunning::$rightname,
+            'rightclass' => Running::class,
+            'rightname'  => Running::$rightname,
             'joinparams' => [
                 'jointype'  => 'child',
-                'condition' => ['NEWTABLE.name' => PluginActualtimeRunning::$rightname],
+                'condition' => ['NEWTABLE.name' => Running::$rightname],
             ],
         ],
         [
@@ -136,11 +135,11 @@ function plugin_actualtime_getAddSearchOptionsNew(string $itemtype): array
             'field'      => 'rights',
             'name'       => __('Modify timers', 'actualtime'),
             'datatype'   => 'right',
-            'rightclass' => PluginActualtimeSourcetimer::class,
-            'rightname'  => PluginActualtimeSourcetimer::$rightname,
+            'rightclass' => Sourcetimer::class,
+            'rightname'  => Sourcetimer::$rightname,
             'joinparams' => [
                 'jointype'  => 'child',
-                'condition' => ['NEWTABLE.name' => PluginActualtimeSourcetimer::$rightname],
+                'condition' => ['NEWTABLE.name' => Sourcetimer::$rightname],
             ],
         ],
     ];
@@ -158,13 +157,13 @@ function plugin_actualtime_postshowitem($params = []): void
     if (is_null($item)) {
         return;
     }
-    PluginActualtimeTask::postShowItem($params);
+    Task::postShowItem($params);
 
     if (
         isset($_SESSION['glpiactiveprofile']['interface'])
         && $_SESSION['glpiactiveprofile']['interface'] == 'central'
     ) {
-        PluginActualtimeSourcetimer::postShowItem($params);
+        Sourcetimer::postShowItem($params);
     }
 }
 
@@ -197,18 +196,18 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
 
         $query = [
             'SELECT' => [
-                PluginActualtimeTask::getTable() . '.id',
-                PluginActualtimeTask::getTable() . '.items_id',
+                Task::getTable() . '.id',
+                Task::getTable() . '.items_id',
             ],
             'FROM' => $ttask,
             'INNER JOIN' => [
-                PluginActualtimeTask::getTable() => [
+                Task::getTable() => [
                     'ON' => [
-                        PluginActualtimeTask::getTable() => 'items_id',
+                        Task::getTable() => 'items_id',
                         $ttask => 'id',
                         [
                             'AND' => [
-                                PluginActualtimeTask::getTable() . '.itemtype' => $taskitemtype,
+                                Task::getTable() . '.itemtype' => $taskitemtype,
                             ],
                         ],
                     ],
@@ -222,7 +221,7 @@ function plugin_actualtime_preSolutionAdd(ITILSolution $solution): void
         foreach ($DB->request($query) as $id => $row) {
             $task_id = $row['items_id'];
 
-            PluginActualtimeTask::stopTimer($task_id, $taskitemtype, PluginActualtimeTask::AUTO);
+            Task::stopTimer($task_id, $taskitemtype, Task::AUTO);
         }
     }
 }
@@ -239,7 +238,7 @@ function plugin_actualtime_item_purge(CommonDBTM $item): void
     global $DB;
 
     $DB->delete(
-        PluginActualtimeTask::getTable(),
+        Task::getTable(),
         [
             'items_id' => $item->fields['id'],
             'itemtype' => $item->getType(),
@@ -258,7 +257,7 @@ function plugin_actualtime_parent_delete(CommonITILObject $parent): void
     /** @var \DBmysql $DB */
     global $DB;
 
-    $tactualtime = PluginActualtimeTask::getTable();
+    $tactualtime = Task::getTable();
     $tparent = $parent::getTable();
     $taskitemtype = $parent->getTaskClass();
     $ttask = $taskitemtype::getTable();
@@ -301,7 +300,7 @@ function plugin_actualtime_parent_delete(CommonITILObject $parent): void
             [
                 'actual_end'        => date("Y-m-d H:i:s"),
                 'actual_actiontime' => $seconds,
-                'origin_end'        => PluginActualtimeTask::AUTO,
+                'origin_end'        => Task::AUTO,
             ],
             [
                 'id' => $result['id'],
@@ -321,7 +320,7 @@ function plugin_actualtime_project_delete(Project $project): void
     /** @var \DBmysql $DB */
     global $DB;
 
-    $tactualtime = PluginActualtimeTask::getTable();
+    $tactualtime = Task::getTable();
     $ttask = ProjectTask::getTable();
 
     $query = [
@@ -356,7 +355,7 @@ function plugin_actualtime_project_delete(Project $project): void
             [
                 'actual_end'        => date("Y-m-d H:i:s"),
                 'actual_actiontime' => $seconds,
-                'origin_end'        => PluginActualtimeTask::AUTO,
+                'origin_end'        => Task::AUTO,
             ],
             [
                 'id' => $result['id'],
@@ -377,12 +376,12 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
 
     switch ($itemtype) {
         case Ticket::getType():
-            $config = new PluginActualtimeConfig();
+            $config = Config::getInstance();
             if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
                 $tab['actualtime'] = PLUGIN_ACTUALTIME_NAME;
 
                 $tab['7000'] = [
-                    'table'         => PluginActualtimeTask::getTable(),
+                    'table'         => Task::getTable(),
                     'field'         => 'actual_actiontime',
                     'name'          => __('Total duration'),
                     'datatype'      => 'specific',
@@ -401,9 +400,9 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                 ];
 
                 $tab['7001'] = [
-                    'table'         => PluginActualtimeTask::getTable(),
+                    'table'         => Task::getTable(),
                     'field'         => 'actual_actiontime',
-                    'name'          => __("Duration Diff", "actiontime"),
+                    'name'          => __("Duration Diff", "actualtime"),
                     'datatype'      => 'specific',
                     'parent'        => Ticket::class,
                     'joinparams'    => [
@@ -420,9 +419,9 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                 ];
 
                 $tab['7002'] = [
-                    'table'         => PluginActualtimeTask::getTable(),
+                    'table'         => Task::getTable(),
                     'field'         => 'actual_actiontime',
-                    'name'          => __("Duration Diff", "actiontime") . " (%)",
+                    'name'          => __("Duration Diff", "actualtime") . " (%)",
                     'datatype'      => 'specific',
                     'parent'        => Ticket::class,
                     'joinparams'    => [
@@ -440,12 +439,12 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
             }
             break;
         case 'TicketTask':
-            $config = new PluginActualtimeConfig();
+            $config = Config::getInstance();
             if ((Session::getCurrentInterface() == "central") || $config->showInHelpdesk()) {
                 $tab['actualtime'] = 'ActualTime';
 
                 $tab['7003'] = [
-                    'table'         => PluginActualtimeTask::getTable(),
+                    'table'         => Task::getTable(),
                     'field'         => 'actual_actiontime',
                     'name'          => __('Task duration'),
                     'datatype'      => 'specific',
@@ -464,7 +463,7 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                 ];
 
                 $tab['7004'] = [
-                    'table'         => PluginActualtimeTask::getTable(),
+                    'table'         => Task::getTable(),
                     'field'         => 'is_modified',
                     'name'          => __('Is modified'),
                     'datatype'      => 'bool',
@@ -483,14 +482,14 @@ function plugin_actualtime_getAddSearchOptions($itemtype): array
                 ];
 
                 $tab['7005'] = [
-                    'table'         => PluginActualtimeSourcetimer::getTable(),
+                    'table'         => Sourcetimer::getTable(),
                     'field'         => 'source_actiontime',
                     'name'          => __('Source Actiontime'),
                     'datatype'      => 'timestamp',
                     'parent'        => Ticket::class,
                     'joinparams'    => [
                         'beforejoin' => [
-                            'table' => PluginActualtimeTask::getTable(),
+                            'table' => Task::getTable(),
                             'linkfield' => 'plugin_actualtime_tasks_id',
                             'joinparams' => [
                                 'beforejoin' => [
@@ -520,18 +519,10 @@ function plugin_actualtime_uninstall(): bool
 {
     $migration = new Migration(PLUGIN_ACTUALTIME_VERSION);
 
-    // Parse inc directory
-    foreach (glob(__DIR__ . '/inc/*') as $filepath) {
-        // Load *.class.php files and get the class name
-        if (preg_match("/inc.(.+)\.class.php/", $filepath, $matches)) {
-            $classname = 'PluginActualtime' . ucfirst($matches[1]);
-            include_once($filepath);
-            // If the install method exists, load it
-            if (method_exists($classname, 'uninstall')) {
-                $classname::uninstall($migration);
-            }
-        }
-    }
+    Config::uninstall($migration);
+    ActualtimeProfile::uninstall($migration);
+    Sourcetimer::uninstall($migration);
+    Task::uninstall($migration);
 
     // Execute the whole migration
     $migration->executeMigration();

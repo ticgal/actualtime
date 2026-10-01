@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -29,68 +29,11 @@
  * -------------------------------------------------------------------------
  */
 
-// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace
-class PluginActualtimeDashboard extends CommonDBTM
-{
-    /**
-     * dashboardCards
-     *
-     * @param  ?array $cards
-     * @return array
-     */
-    public static function dashboardCards(?array $cards = []): array
-    {
-        $cards = $cards ?? [];
-        $group = 'Actualtime';
+/**
+ * @deprecated 5.0.0 Legacy class name kept for other plugins (TAM, GappExtended...).
+ *             Use \GlpiPlugin\Actualtime\Dashboard instead.
+ */
 
-        $cards['plugin_actualtime_moreactualtimetasksbyday'] = [
-            'widgettype'    => ['stackedbars', 'lines'],
-            'label'         => Ticket::getTypeName() . ' - ' . __('Top 20 Actualtime tasks per day', 'actualtime'),
-            'group'         => $group,
-            'filters'       => ['dates'],
-            'provider'      => PluginActualtimeProvider::class . '::moreActualtimeTasksByDay',
-        ];
+require_once __DIR__ . '/../src/Dashboard.php';
 
-        $cards['plugin_actualtime_lessactualtimetasks'] = [
-            'widgettype'    => ['stackedbars', 'lines'],
-            'label'         => Ticket::getTypeName() . ' - ' . __('Bottom 20 Actualtime tasks per day', 'actualtime'),
-            'group'         => $group,
-            'filters'       => ['dates'],
-            'provider'      => PluginActualtimeProvider::class . '::lessActualtimeTasksByDay',
-        ];
-
-        $cards['plugin_actualtime_moreactualtimeusagebyday'] = [
-            'widgettype'    => ['stackedbars', 'lines'],
-            'label'         => Ticket::getTypeName() . ' - ' . __('Top 20 Actualtime usage (hours)', 'actualtime'),
-            'group'         => $group,
-            'filters'       => ['dates'],
-            'provider'      => PluginActualtimeProvider::class . '::moreActualtimeUsageByDay',
-        ];
-
-        $cards['plugin_actualtime_lessactualtimeusagebyday'] = [
-            'widgettype'    => ['stackedbars', 'lines'],
-            'label'         => Ticket::getTypeName() . ' - ' . __('Bottom 20 Actualtime usage (hours)', 'actualtime'),
-            'group'         => $group,
-            'filters'       => ['dates'],
-            'provider'      => PluginActualtimeProvider::class . '::lessActualtimeUsageByDay',
-        ];
-
-        $cards['plugin_actualtime_moreapercentagectualtimetasksbyday'] = [
-            'widgettype'    => ['bars', 'lines'],
-            'label'         => Ticket::getTypeName() . ' - ' . __('Top 20 % Actualtime usage per day', 'actualtime'),
-            'group'         => $group,
-            'filters'       => ['dates'],
-            'provider'      => PluginActualtimeProvider::class . '::morePercentageActualtimeTasksByDay',
-        ];
-
-        $cards['plugin_actualtime_lesspercentageactualtimetasks'] = [
-            'widgettype'    => ['bars', 'lines'],
-            'label'         => Ticket::getTypeName() . ' - ' . __('Bottom 20 % Actualtime usage per day', 'actualtime'),
-            'group'         => $group,
-            'filters'       => ['dates'],
-            'provider'      => PluginActualtimeProvider::class . '::lessPercentageActualtimeTasksByDay',
-        ];
-
-        return $cards;
-    }
-}
+class_alias(\GlpiPlugin\Actualtime\Dashboard::class, 'PluginActualtimeDashboard');

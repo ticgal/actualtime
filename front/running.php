@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -30,6 +30,7 @@
  */
 
 use Glpi\Exception\Http\NotFoundHttpException;
+use GlpiPlugin\Actualtime\Running;
 
 $plugin = new Plugin();
 if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) {
@@ -38,12 +39,12 @@ if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) 
 Session::checkRight('plugin_actualtime_running', READ);
 
 Html::header(
-    PluginActualtimeRunning::getTypeName(Session::getPluralNumber()),
+    Running::getTypeName(Session::getPluralNumber()),
     '',
     "admin",
     "pluginactualtimerunning",
 );
 
-PluginActualtimeRunning::show();
+Running::show();
 
 Html::footer();

@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -29,6 +29,8 @@
  * -------------------------------------------------------------------------
  */
 
+use GlpiPlugin\Actualtime\Running;
+
 header("Content-Type: text/html; charset=UTF-8");
 Html::header_nocache();
 
@@ -36,5 +38,5 @@ Session::checkLoginUser();
 Session::checkRight('plugin_actualtime_running', READ);
 
 if (isset($_POST["action"])) {
-    echo PluginActualtimeRunning::listRunning();
+    echo Running::listRunning();
 }

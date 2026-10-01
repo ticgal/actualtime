@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ActualTime\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-26 12:00+0100\n"
+"POT-Creation-Date: 2026-10-01 12:26+0200\n"
 "Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -10,171 +10,215 @@ msgstr ""
 "X-Generator: Localazy (https://localazy.com)\n"
 "Plural-Forms: nplurals=2; plural=(n==1) ? 0 : 1;\n"
 
-#: hook.php:351 hook.php:370 inc/task.class.php:79 inc/task.class.php:97
-#: inc/task.class.php:827 inc/task.class.php:833 inc/task.class.php:839
+#: report/actualtimetotal/actualtimetotal.php:74
+#: report/actualtimetotal/actualtimetotal.php:78
+#: report/actualtimeuser/actualtimeuser.php:78
+#: report/actualtimeuser/actualtimeuser.php:82 hook.php:405 hook.php:424
+#: src/Task.php:201 src/Task.php:219 src/Task.php:745 src/Task.php:751
+#: src/Task.php:757
 msgid "Duration Diff"
 msgstr "Süre farkı"
 
+#: hook.php:110 src/Config.php:68
+msgid "ActualTime"
+msgstr "ActualTime"
+
+#: hook.php:123 src/Running.php:101 src/Profile.php:127
+msgid "Running timers"
+msgstr "Çalışan zamanlayıcılar"
+
+#: hook.php:136 src/Profile.php:143 src/Sourcetimer.php:199
+#: templates/timer/task_timer.html.twig:49
+msgid "Modify timers"
+msgstr "Modify timers"
+
 #. TRANS: d is a symbol for days in a time (displays: 3d)
-#: ajax/timer.php:69
+#: ajax/timer.php:82
 #, php-format
 msgid "%dd"
 msgstr "%dd"
 
 #. TRANS: h is a symbol for hours in a time (displays: 3h)
-#: ajax/timer.php:73
+#: ajax/timer.php:86
 #, php-format
 msgid "%dh"
 msgstr "%dh"
 
 #. TRANS: min is a symbol for minutes in a time (displays: 3min)
-#: ajax/timer.php:77
+#: ajax/timer.php:90
 #, php-format
 msgid "%dmin"
 msgstr "%dmin"
 
 #. TRANS: s is a symbol for seconds in a time (displays: 3s)
-#: ajax/timer.php:81
+#: ajax/timer.php:94
 #, php-format
 msgid "%ds"
 msgstr "%ds"
 
-#: ajax/timer.php:92
+#: ajax/timer.php:105
 msgid "Timer started on"
 msgstr "Zamanlayıcının başlatıldığı zaman"
 
-#: inc/config.class.php:62
-msgid "ActualTime"
-msgstr "ActualTime"
-
-#: inc/config.class.php:95
-msgid "In Standard interface only (default)"
-msgstr "Yalnızca Standart arabirimde (varsayılan)"
-
-#: inc/config.class.php:96
-msgid "Both in Standard and Helpdesk interfaces"
-msgstr "Hem Standart hem de Yardım Masası arabirimlerinde"
-
-#: inc/dashboard.class.php:48
+#: src/Dashboard.php:53
 msgid "Top 20 Actualtime tasks per day"
 msgstr "Günde en iyi 20 Gerçek zamanlı görev"
 
-#: inc/dashboard.class.php:56
+#: src/Dashboard.php:61
 msgid "Bottom 20 Actualtime tasks per day"
 msgstr "Günde en alt 20 Gerçek zamanlı görevler"
 
-#: inc/dashboard.class.php:64
+#: src/Dashboard.php:69
 msgid "Top 20 Actualtime usage (hours)"
 msgstr "En İyi 20 Gerçek zamanlı kullanım (saat)"
 
-#: inc/dashboard.class.php:72
+#: src/Dashboard.php:77
 msgid "Bottom 20 Actualtime usage (hours)"
 msgstr "Alt 20 Gerçek zamanlı kullanım (saat)"
 
-#: inc/dashboard.class.php:80
+#: src/Dashboard.php:85
 msgid "Top 20 % Actualtime usage per day"
 msgstr "Günde en iyi 20  %Gerçek zamanlı kullanım"
 
-#: inc/dashboard.class.php:88
+#: src/Dashboard.php:93
 msgid "Bottom 20 % Actualtime usage per day"
 msgstr "Günde en alttaki %20 gerçek zamanlı kullanım"
 
-#: inc/profile.class.php:120 inc/running.class.php:68
-msgid "Running timers"
-msgstr "Çalışan zamanlayıcılar"
-
-#: inc/profile.class.php:136 inc/sourcetimer.class.php:174
-#: inc/sourcetimer.class.php:188 inc/task.class.php:458
-msgid "Modify timers"
-msgstr "Modify timers"
-
-#: inc/running.class.php:73
+#: src/Running.php:106
 msgid "Update every (s)"
 msgstr "Her (\"x\" saniye) de güncelle"
 
-#: inc/sourcetimer.class.php:53
-msgid "Modify tickets"
-msgstr "Modify tickets"
+#: src/Config.php:104
+msgid "In Standard interface only (default)"
+msgstr "Yalnızca Standart arabirimde (varsayılan)"
 
-#: inc/sourcetimer.class.php:54
-msgid "Modify changes"
-msgstr "Modify changes"
+#: src/Config.php:105
+msgid "Both in Standard and Helpdesk interfaces"
+msgstr "Hem Standart hem de Yardım Masası arabirimlerinde"
 
-#: inc/sourcetimer.class.php:55
-msgid "Modify projects"
-msgstr "Modify projects"
-
-#: inc/sourcetimer.class.php:56
-msgid "Modify problems"
-msgstr "Modify problems"
-
-#: inc/task.class.php:303 inc/task.class.php:464
-msgid "Actual Duration"
-msgstr "Gerçek Süre"
-
-#: inc/task.class.php:314 inc/task.class.php:475
-msgid "Partial actual duration"
-msgstr "Kısmi gerçek süre"
-
-#: inc/task.class.php:952
+#: src/Task.php:873
 msgid "Original end date"
 msgstr "Original end date"
 
-#: inc/task.class.php:953
+#: src/Task.php:874
 msgid "Original duration"
 msgstr "Original duration"
 
-#: inc/task.class.php:954
+#: src/Task.php:875
 #, php-format
 msgid "First modification by %s"
 msgstr "First modification by %s"
 
-#: inc/task.class.php:1346 inc/task.class.php:1352
+#: src/Task.php:1186 src/Task.php:1192
 #, php-format
-msgid "You cannot start a timer because the task was scheduled for %d."
-msgstr "Görev, %d için zamanlandığından zamanlayıcıyı başlatamazsınız."
+msgid "You cannot start a timer because the task was scheduled for %s."
+msgstr "Görev, %s için zamanlandığından zamanlayıcıyı başlatamazsınız."
 
-#: inc/task.class.php:1376
+#: src/Task.php:1216
 msgid "You cannot add a timer on a different day."
 msgstr "Farklı bir güne ait bir zamanlayıcı ekleyemezsiniz."
 
-#: inc/task.class.php:1419
+#: src/Task.php:1264
 msgid "Today is marked as absence you can not initialize the timer"
 msgstr "Bugün yok olarak işaretlendi, zamanlayıcıyı başlatamazsınız"
 
-#: inc/task.class.php:1425
-msgid "Timer has not been initialized"
-msgstr "Zamanlayıcı başlatılmadı"
-
-#: inc/task.class.php:1442
+#: src/Task.php:1288
 msgid "You are already doing a waypoint"
 msgstr "Zaten bir yol noktası yapıyorsun"
 
-#: inc/task.class.php:1479 inc/task.class.php:1484
+#: src/Task.php:1325 src/Task.php:1330
 msgid "Technician not in charge of the task"
 msgstr "Görevden sorumlu olmayan teknisyen"
 
-#: inc/task.class.php:1490
+#: src/Task.php:1336
 msgid "A user is already performing the task"
 msgstr "Bir kullanıcı zaten görevi gerçekleştiriyor"
 
-#: inc/task.class.php:1547
+#: src/Task.php:1388
 #, php-format
 msgid "You are already working on %s"
 msgstr "Zaten %s üzerinde çalışıyorsunuz."
 
-#: inc/task.class.php:1578
+#: src/Task.php:1415
 msgid "Timer started"
 msgstr "Zamanlayıcı başlatıldı"
 
-#: inc/task.class.php:1652 inc/task.class.php:1767 inc/task.class.php:1826
+#: src/Task.php:1519 src/Task.php:1646 src/Task.php:1710
 msgid "Timer completed"
 msgstr "Zamanlayıcı tamamlandı"
 
-#: inc/task.class.php:1690 inc/task.class.php:1804
+#: src/Task.php:1560 src/Task.php:1686
 msgid "Only the user who initiated the task can close it"
 msgstr "Sadece görevi başlatan kullanıcı görevi kapatabilir"
 
-#: inc/task.class.php:1693
+#: src/Task.php:1563
 msgid "The task had not been initialized"
 msgstr "Görev başlatılmamıştı"
+
+#: src/Sourcetimer.php:64
+msgid "Modify tickets"
+msgstr "Modify tickets"
+
+#: src/Sourcetimer.php:65
+msgid "Modify changes"
+msgstr "Modify changes"
+
+#: src/Sourcetimer.php:66
+msgid "Modify projects"
+msgstr "Modify projects"
+
+#: src/Sourcetimer.php:67
+msgid "Modify problems"
+msgstr "Modify problems"
+
+#: templates/forms/modify_timers.html.twig:24
+msgid "Task limit"
+msgstr ""
+
+#: templates/forms/config.html.twig:19
+msgid "Enable timer on tasks"
+msgstr ""
+
+#: templates/forms/config.html.twig:26
+msgid "Display pop-up window with current running timer"
+msgstr ""
+
+#: templates/forms/config.html.twig:33
+msgid "Display actual time in closed task box ('Processing ticket' list)"
+msgstr ""
+
+#: templates/forms/config.html.twig:40
+msgid "Automatically open task with timer running"
+msgstr ""
+
+#: templates/forms/config.html.twig:47
+#, fuzzy
+msgid "Automatically update the duration"
+msgstr "Kısmi gerçek süre"
+
+#: templates/forms/config.html.twig:54
+msgid "Enable Timer Only on Scheduled Task Day"
+msgstr ""
+
+#: templates/forms/config.html.twig:61
+msgid "Enable Timer Only on Task's Start Day"
+msgstr ""
+
+#: templates/forms/config.html.twig:68
+msgid "Task limit in hours for ActualTime"
+msgstr ""
+
+#: templates/timer/task_timer.html.twig:56
+msgid "Actual Duration"
+msgstr "Gerçek Süre"
+
+#: templates/timer/task_timer.html.twig:78
+msgid "Partial actual duration"
+msgstr "Kısmi gerçek süre"
+
+#: templates/timer/autostart.html.twig:35
+msgid "Autostart"
+msgstr ""
+
+#~ msgid "Timer has not been initialized"
+#~ msgstr "Zamanlayıcı başlatılmadı"

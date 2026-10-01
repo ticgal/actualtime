@@ -1,0 +1,1018 @@
+<?php
+
+/**
+ * -------------------------------------------------------------------------
+ * ActualTime plugin for GLPI
+ * Copyright (C) 2018-2026 by the TICGAL Team.
+ * https://www.tic.gal/
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of the ActualTime plugin.
+ * ActualTime plugin is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * ActualTime plugin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ * @package   ActualTime
+ * @author    the TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
+ * @license   AGPL License 3.0 or (at your option) any later version
+ *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ * @link      https://www.tic.gal/
+ * @since     2018
+ * -------------------------------------------------------------------------
+ */
+
+namespace GlpiPlugin\Actualtime;
+
+use DBConnection;
+use Glpi\Dashboard\Provider as DashboardProvider;
+use Glpi\DBAL\QueryExpression;
+use Planning;
+use Ticket;
+use TicketTask;
+use User;
+
+class Provider extends DashboardProvider
+{
+    /**
+     * moreActualtimeTasksByDay
+     *
+     * @param  array $params
+     * @return array
+     */
+    public static function moreActualtimeTasksByDay(array $params = []): array
+    {
+        $DB = DBConnection::getReadConnection();
+
+        $data = [
+            'labels' => [],
+            'series' => [],
+        ];
+
+        $year   = date("Y") - 15;
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
+        $end    = date("Y-m-d");
+        if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+            $begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+            $end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+            unset($params['apply_filters']['dates']);
+        }
+
+        $task_table = TicketTask::getTable();
+        $actualtime_table = Task::getTable();
+        $table = Ticket::getTable();
+        $user_table = User::getTable();
+
+        $sql = [
+            'SELECT' => [
+                "COUNT DISTINCT" => $task_table . ".id AS nb_task",
+                $task_table . ".users_id_tech",
+            ],
+            'FROM' => $task_table,
+            'INNER JOIN' => [
+                $actualtime_table => [
+                    'FKEY' => [
+                        $task_table => 'id',
+                        $actualtime_table => 'items_id',
+                        [
+                            'AND' => [
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
+                ],
+                $table => [
+                    'FKEY' => [
+                        $table => 'id',
+                        $task_table => 'tickets_id',
+                    ],
+                ],
+                $user_table => [
+                    'ON' => [
+                        $user_table => 'id',
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
+            ],
+            'WHERE' => [
+                $task_table . '.state' => Planning::DONE,
+                $actualtime_table . '.actual_begin' => ['>=', $begin],
+                $actualtime_table . '.actual_end' => ['<=', $end],
+                $user_table . '.is_active' => 1,
+                getEntitiesRestrictCriteria($table),
+            ],
+            'ORDER' => ["nb_task DESC"],
+            'GROUP' => ['users_id_tech'],
+            'LIMIT' => 20,
+        ];
+
+        $techs_id = [];
+        foreach ($DB->request($sql) as $result) {
+            $techs_id[] = $result['users_id_tech'];
+        }
+
+        if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
+            $query = [
+                'SELECT' => [
+                    new QueryExpression($period),
+                    "COUNT DISTINCT" => $task_table . ".id AS nb_task",
+                    $task_table . ".users_id_tech AS tech",
+                ],
+                'FROM' => $task_table,
+                'INNER JOIN' => [
+                    $actualtime_table => [
+                        'FKEY' => [
+                            $task_table => 'id',
+                            $actualtime_table => 'items_id',
+                            [
+                                'AND' => [
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
+                    ],
+                    $table => [
+                        'FKEY' => [
+                            $table => 'id',
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
+                ],
+                'WHERE' => [
+                    $task_table . '.state' => Planning::DONE,
+                    $actualtime_table . '.actual_begin' => ['>=', $begin],
+                    $actualtime_table . '.actual_end' => ['<=', $end],
+                    $task_table . ".users_id_tech" => $techs_id,
+                    getEntitiesRestrictCriteria($table),
+                ],
+                'ORDER' => ['period DESC', "nb_task DESC"],
+                'GROUP' => ['period', "tech"],
+            ];
+
+            $tmp = [];
+            foreach ($DB->request($query) as $result) {
+                if (!in_array($result['period'], $data['labels'])) {
+                    $data['labels'][] = $result['period'];
+                }
+                $tmp[$result['tech']][$result['period']] = $result['nb_task'];
+            }
+            sort($data['labels']);
+
+            foreach ($tmp as $key => $value) {
+                $aux = [];
+                $aux['name'] = getUserName($key);
+                foreach ($data['labels'] as $id => $period) {
+                    if (array_key_exists($period, $value)) {
+                        $aux['data'][] = [
+                            'value' => $value[$period],
+                        ];
+                    } else {
+                        $aux['data'][] = [
+                            'value' => 0,
+                        ];
+                    }
+                }
+                $data['series'][] = $aux;
+            }
+        }
+
+        return [
+            'data'  => $data,
+            'label' => $params['label'],
+            'icon'  => 'ti ti-stopwatch',
+        ];
+    }
+
+    /**
+     * lessActualtimeTasksByDay
+     *
+     * @param  array $params
+     * @return array
+     */
+    public static function lessActualtimeTasksByDay(array $params = []): array
+    {
+        $DB = DBConnection::getReadConnection();
+
+        $data = [
+            'labels' => [],
+            'series' => [],
+        ];
+
+        $year   = date("Y") - 15;
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
+        $end    = date("Y-m-d");
+
+        if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+            $begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+            $end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+            unset($params['apply_filters']['dates']);
+        }
+
+        $task_table = TicketTask::getTable();
+        $actualtime_table = Task::getTable();
+        $table = Ticket::getTable();
+        $user_table = User::getTable();
+
+        $sql = [
+            'SELECT' => [
+                "COUNT DISTINCT" => $task_table . ".id AS nb_task",
+                $task_table . ".users_id_tech",
+            ],
+            'FROM' => $task_table,
+            'INNER JOIN' => [
+                $actualtime_table => [
+                    'FKEY' => [
+                        $task_table => 'id',
+                        $actualtime_table => 'items_id',
+                        [
+                            'AND' => [
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
+                ],
+                $table => [
+                    'FKEY' => [
+                        $table => 'id',
+                        $task_table => 'tickets_id',
+                    ],
+                ],
+                $user_table => [
+                    'ON' => [
+                        $user_table => 'id',
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
+            ],
+            'WHERE' => [
+                $task_table . '.state' => Planning::DONE,
+                $actualtime_table . '.actual_begin' => ['>=', $begin],
+                $actualtime_table . '.actual_end' => ['<=', $end],
+                $user_table . '.is_active' => 1,
+                getEntitiesRestrictCriteria($table),
+            ],
+            'ORDER' => ["nb_task ASC"],
+            'GROUP' => ['users_id_tech'],
+            'HAVING' => [
+                'nb_task' => ['>', 0],
+            ],
+            'LIMIT' => 20,
+        ];
+
+        $techs_id = [];
+        foreach ($DB->request($sql) as $result) {
+            $techs_id[] = $result['users_id_tech'];
+        }
+
+        if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
+            $query = [
+                'SELECT' => [
+                    new QueryExpression($period),
+                    "COUNT DISTINCT" => $task_table . ".id AS nb_task",
+                    $task_table . ".users_id_tech AS tech",
+                ],
+                'FROM' => $task_table,
+                'INNER JOIN' => [
+                    $actualtime_table => [
+                        'FKEY' => [
+                            $task_table => 'id',
+                            $actualtime_table => 'items_id',
+                            [
+                                'AND' => [
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
+                    ],
+                    $table => [
+                        'FKEY' => [
+                            $table => 'id',
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
+                ],
+                'WHERE' => [
+                    $task_table . '.state' => Planning::DONE,
+                    $task_table . ".users_id_tech" => $techs_id,
+                    $actualtime_table . '.actual_begin' => ['>=', $begin],
+                    $actualtime_table . '.actual_end' => ['<=', $end],
+                    getEntitiesRestrictCriteria($table),
+                ],
+                'ORDER' => ['period DESC', "nb_task DESC"],
+                'GROUP' => ['period', "tech"],
+            ];
+
+            $tmp = [];
+            foreach ($DB->request($query) as $result) {
+                if (!in_array($result['period'], $data['labels'])) {
+                    $data['labels'][] = $result['period'];
+                }
+                $tmp[$result['tech']][$result['period']] = $result['nb_task'];
+            }
+            sort($data['labels']);
+
+            foreach ($tmp as $key => $value) {
+                $aux = [];
+                $aux['name'] = getUserName($key);
+                foreach ($data['labels'] as $id => $period) {
+                    if (array_key_exists($period, $value)) {
+                        $aux['data'][] = [
+                            'value' => $value[$period],
+                        ];
+                    } else {
+                        $aux['data'][] = [
+                            'value' => 0,
+                        ];
+                    }
+                }
+                $data['series'][] = $aux;
+            }
+        }
+
+        return [
+            'data'  => $data,
+            'label' => $params['label'],
+            'icon'  => 'ti ti-stopwatch',
+        ];
+    }
+
+    /**
+     * moreActualtimeUsageByDay
+     *
+     * @param  array $params
+     * @return array
+     */
+    public static function moreActualtimeUsageByDay(array $params = []): array
+    {
+        $DB = DBConnection::getReadConnection();
+
+        $data = [
+            'labels' => [],
+            'series' => [],
+        ];
+
+        $year   = date("Y") - 15;
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
+        $end    = date("Y-m-d");
+
+        if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+            $begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+            $end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+            unset($params['apply_filters']['dates']);
+        }
+
+        $task_table       = TicketTask::getTable();
+        $actualtime_table = Task::getTable();
+        $table            = Ticket::getTable();
+        $user_table       = User::getTable();
+        // override_begin (a modified or retroactive start) when set, actual_begin otherwise. A zero
+        // date also counts as unset, as with the former NULLIF(), but without the '0000-00-00'
+        // literal that MySQL rejects under NO_ZERO_DATE (error 1525).
+        $real_date_col = "CASE WHEN $actualtime_table.override_begin > '1970-01-02' THEN $actualtime_table.override_begin ELSE $actualtime_table.actual_begin END";
+
+        $query = [
+            'SELECT' => [
+                'SUM' => $actualtime_table . '.actual_actiontime AS total',
+                'users_id_tech',
+            ],
+            'FROM' => $actualtime_table,
+            'INNER JOIN' => [
+                $task_table => [
+                    'ON' => [
+                        $task_table => 'id',
+                        $actualtime_table => 'items_id',
+                        [
+                            'AND' => [
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
+                ],
+                $table => [
+                    'ON' => [
+                        $table => 'id',
+                        $task_table => 'tickets_id',
+                    ],
+                ],
+                $user_table => [
+                    'ON' => [
+                        $user_table => 'id',
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
+            ],
+            'WHERE' => [
+                $task_table . '.state' => Planning::DONE,
+                $user_table . '.is_active' => 1,
+                new QueryExpression("DATE($real_date_col) >= ?", values: [$begin]),
+                new QueryExpression("DATE($real_date_col) <= ?", values: [$end]),
+                getEntitiesRestrictCriteria($table),
+            ],
+            'ORDER' => ["total DESC"],
+            'GROUP' => ['users_id_tech'],
+            'LIMIT' => 20,
+        ];
+
+        $techs_id = [];
+        foreach ($DB->request($query) as $result) {
+            $techs_id[] = $result['users_id_tech'];
+        }
+
+        if (count($techs_id) > 0) {
+            $period_expr = "DATE($real_date_col) AS period";
+            $sql = [
+                'SELECT' => [
+                    new QueryExpression($period_expr),
+                    'SUM' => $actualtime_table . '.actual_actiontime AS total',
+                    'users_id_tech',
+                ],
+                'FROM' => $actualtime_table,
+                'INNER JOIN' => [
+                    $task_table => [
+                        'ON' => [
+                            $task_table => 'id',
+                            $actualtime_table => 'items_id',
+                            [
+                                'AND' => [
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
+                    ],
+                    $table => [
+                        'ON' => [
+                            $table => 'id',
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
+                ],
+                'WHERE' => [
+                    $task_table . '.state' => Planning::DONE,
+                    'users_id_tech' => $techs_id,
+                    new QueryExpression("DATE($real_date_col) >= ?", values: [$begin]),
+                    new QueryExpression("DATE($real_date_col) <= ?", values: [$end]),
+                    getEntitiesRestrictCriteria($table),
+                ],
+                'ORDER' => ['period DESC', "total DESC"],
+                'GROUP' => ['period', "users_id_tech"],
+            ];
+
+            $tmp = [];
+            foreach ($DB->request($sql) as $result) {
+                if (!in_array($result['period'], $data['labels'])) {
+                    $data['labels'][] = $result['period'];
+                }
+                $tmp[$result['users_id_tech']][$result['period']] = $result['total'];
+            }
+            sort($data['labels']);
+
+            foreach ($tmp as $key => $value) {
+                $aux = [];
+                $aux['name'] = getUserName($key);
+                foreach ($data['labels'] as $id => $period) {
+                    if (array_key_exists($period, $value)) {
+                        $aux['data'][] = [
+                            'value' => round($value[$period] / HOUR_TIMESTAMP, 2),
+                        ];
+                    } else {
+                        $aux['data'][] = [
+                            'value' => 0,
+                        ];
+                    }
+                }
+                $data['series'][] = $aux;
+            }
+        }
+
+        return [
+            'data'  => $data,
+            'label' => $params['label'],
+            'icon'  => 'ti ti-stopwatch',
+        ];
+    }
+
+    /**
+     * lessActualtimeUsageByDay
+     *
+     * @param  array $params
+     * @return array
+     */
+    public static function lessActualtimeUsageByDay(array $params = []): array
+    {
+        $DB = DBConnection::getReadConnection();
+
+        $data = [
+            'labels' => [],
+            'series' => [],
+        ];
+
+        $year   = date("Y") - 15;
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
+        $end    = date("Y-m-d");
+
+        if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+            $begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+            $end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+            unset($params['apply_filters']['dates']);
+        }
+
+        $task_table       = TicketTask::getTable();
+        $actualtime_table = Task::getTable();
+        $table            = Ticket::getTable();
+        $user_table       = User::getTable();
+
+        // override_begin (a modified or retroactive start) when set, actual_begin otherwise. A zero
+        // date also counts as unset, as with the former NULLIF(), but without the '0000-00-00'
+        // literal that MySQL rejects under NO_ZERO_DATE (error 1525).
+        $real_date_col = "CASE WHEN $actualtime_table.override_begin > '1970-01-02' THEN $actualtime_table.override_begin ELSE $actualtime_table.actual_begin END";
+
+        $query = [
+            'SELECT' => [
+                'SUM' => $actualtime_table . '.actual_actiontime AS total',
+                'users_id_tech',
+            ],
+            'FROM' => $actualtime_table,
+            'INNER JOIN' => [
+                $task_table => [
+                    'ON' => [
+                        $task_table => 'id',
+                        $actualtime_table => 'items_id',
+                        [
+                            'AND' => [
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
+                ],
+                $table => [
+                    'ON' => [
+                        $table => 'id',
+                        $task_table => 'tickets_id',
+                    ],
+                ],
+                $user_table => [
+                    'ON' => [
+                        $user_table => 'id',
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
+            ],
+            'WHERE' => [
+                $task_table . '.state' => Planning::DONE,
+                $user_table . '.is_active' => 1,
+                new QueryExpression("DATE($real_date_col) >= ?", values: [$begin]),
+                new QueryExpression("DATE($real_date_col) <= ?", values: [$end]),
+                getEntitiesRestrictCriteria($table),
+            ],
+            'ORDER' => ["total ASC"],
+            'GROUP' => ['users_id_tech'],
+            'LIMIT' => 20,
+        ];
+
+        $techs_id = [];
+        foreach ($DB->request($query) as $result) {
+            $techs_id[] = $result['users_id_tech'];
+        }
+
+        if (count($techs_id) > 0) {
+            $period_expr = "DATE($real_date_col) AS period";
+            $sql = [
+                'SELECT' => [
+                    new QueryExpression($period_expr),
+                    'SUM' => $actualtime_table . '.actual_actiontime AS total',
+                    'users_id_tech',
+                ],
+                'FROM' => $actualtime_table,
+                'INNER JOIN' => [
+                    $task_table => [
+                        'ON' => [
+                            $task_table => 'id',
+                            $actualtime_table => 'items_id',
+                            [
+                                'AND' => [
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
+                    ],
+                    $table => [
+                        'ON' => [
+                            $table => 'id',
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
+                ],
+                'WHERE' => [
+                    $task_table . '.state' => Planning::DONE,
+                    'users_id_tech' => $techs_id,
+                    new QueryExpression("DATE($real_date_col) >= ?", values: [$begin]),
+                    new QueryExpression("DATE($real_date_col) <= ?", values: [$end]),
+                    getEntitiesRestrictCriteria($table),
+                ],
+                'ORDER' => ['period DESC', "total DESC"],
+                'GROUP' => ['period', "users_id_tech"],
+            ];
+
+            $tmp = [];
+            foreach ($DB->request($sql) as $result) {
+                if (!in_array($result['period'], $data['labels'])) {
+                    $data['labels'][] = $result['period'];
+                }
+                $tmp[$result['users_id_tech']][$result['period']] = $result['total'];
+            }
+            sort($data['labels']);
+
+            foreach ($tmp as $key => $value) {
+                $aux = [];
+                $aux['name'] = getUserName($key);
+                foreach ($data['labels'] as $id => $period) {
+                    if (array_key_exists($period, $value)) {
+                        $aux['data'][] = [
+                            'value' => round($value[$period] / HOUR_TIMESTAMP, 2),
+                        ];
+                    } else {
+                        $aux['data'][] = [
+                            'value' => 0,
+                        ];
+                    }
+                }
+                $data['series'][] = $aux;
+            }
+        }
+
+        return [
+            'data'  => $data,
+            'label' => $params['label'],
+            'icon'  => 'ti ti-stopwatch',
+        ];
+    }
+
+    /**
+     * morePercentageActualtimeTasksByDay
+     *
+     * @param  array $params
+     * @return array
+     */
+    public static function morePercentageActualtimeTasksByDay(array $params = []): array
+    {
+        $DB = DBConnection::getReadConnection();
+
+        $data = [
+            'labels' => [],
+            'series' => [],
+        ];
+
+        $year   = date("Y") - 15;
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
+        $end    = date("Y-m-d");
+
+        if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+            $begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+            $end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+            unset($params['apply_filters']['dates']);
+        }
+
+        $task_table = TicketTask::getTable();
+        $actualtime_table = Task::getTable();
+        $table = Ticket::getTable();
+        $user_table = User::getTable();
+
+        $sql = [
+            'SELECT' => [
+                'SUM' => $actualtime_table . '.actual_actiontime AS total',
+                'users_id_tech',
+            ],
+            'FROM' => $actualtime_table,
+            'INNER JOIN' => [
+                $task_table => [
+                    'ON' => [
+                        $task_table => 'id',
+                        $actualtime_table => 'items_id',
+                        [
+                            'AND' => [
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
+                ],
+                $table => [
+                    'ON' => [
+                        $table => 'id',
+                        $task_table => 'tickets_id',
+                    ],
+                ],
+                $user_table => [
+                    'ON' => [
+                        $user_table => 'id',
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
+            ],
+            'WHERE' => [
+                $task_table . '.state' => Planning::DONE,
+                $task_table . '.date' => ['>=', $begin],
+                'AND' => [
+                    $task_table . '.date' => ['<=', $end],
+                ],
+                $user_table . '.is_active' => 1,
+                getEntitiesRestrictCriteria($table),
+            ],
+            'ORDER' => ["total DESC"],
+            'GROUP' => ['users_id_tech'],
+            'LIMIT' => 20,
+        ];
+
+        $techs_id = [];
+        foreach ($DB->request($sql) as $result) {
+            $techs_id[] = $result['users_id_tech'];
+        }
+
+        if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
+            $query = [
+                'SELECT' => [
+                    new QueryExpression($period),
+                    'SUM' => 'actual_actiontime AS total',
+                    'users_id_tech',
+                ],
+                'FROM' => $actualtime_table,
+                'INNER JOIN' => [
+                    $task_table => [
+                        'ON' => [
+                            $task_table => 'id',
+                            $actualtime_table => 'items_id',
+                            [
+                                'AND' => [
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
+                    ],
+                    $table => [
+                        'ON' => [
+                            $table => 'id',
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
+                ],
+                'WHERE' => [
+                    $task_table . '.state' => Planning::DONE,
+                    'users_id_tech' => $techs_id,
+                    $task_table . '.date' => ['>=', $begin],
+                    'AND' => [
+                        $task_table . '.date' => ['<=', $end],
+                    ],
+                    getEntitiesRestrictCriteria($table),
+                ],
+                'ORDER' => ['period DESC', "total DESC"],
+                'GROUP' => ['period', "users_id_tech"],
+            ];
+
+            $tmp = [];
+            foreach ($DB->request($query) as $result) {
+                if (!in_array($result['period'], $data['labels'])) {
+                    $data['labels'][] = $result['period'];
+                }
+                $tmp[$result['users_id_tech']][$result['period']] = $result['total'];
+            }
+            sort($data['labels']);
+
+            foreach ($tmp as $key => $value) {
+                $aux = [];
+                $aux['name'] = getUserName($key);
+                foreach ($data['labels'] as $id => $period) {
+                    $sqltotal = [
+                        'SELECT' => [
+                            "SUM" => $task_table . ".actiontime AS total",
+                        ],
+                        'FROM' => $task_table,
+                        'INNER JOIN' => [
+                            $table => [
+                                'ON' => [
+                                    $table => 'id',
+                                    $task_table => 'tickets_id',
+                                ],
+                            ],
+                        ],
+                        'WHERE' => [
+                            $task_table . '.state' => Planning::DONE,
+                            $task_table . ".users_id_tech" => $key,
+                            $task_table . ".date" => ['LIKE', $period . '%'],
+                            getEntitiesRestrictCriteria($table),
+                        ],
+                    ];
+                    $total = 0;
+                    $req = $DB->request($sqltotal);
+                    if ($row = $req->current()) {
+                        $total = $row['total'];
+                    }
+                    if (array_key_exists($period, $value) && $total > 0) {
+                        $aux['data'][] = [
+                            'value' => round(100 * ($total - $value[$period]) / $total, 2),
+                        ];
+                    } else {
+                        $aux['data'][] = [
+                            'value' => 0,
+                        ];
+                    }
+                }
+                $data['series'][] = $aux;
+            }
+        }
+
+        return [
+            'data'  => $data,
+            'label' => $params['label'],
+            'icon'  => 'ti ti-stopwatch',
+        ];
+    }
+
+    /**
+     * lessPercentageActualtimeTasksByDay
+     *
+     * @param  array $params
+     * @return array
+     */
+    public static function lessPercentageActualtimeTasksByDay(array $params = []): array
+    {
+        $DB = DBConnection::getReadConnection();
+
+        $data = [
+            'labels' => [],
+            'series' => [],
+        ];
+
+        $year   = date("Y") - 15;
+        $begin  = date("Y-m-d", mktime(1, 0, 0, (int) date("m"), (int) date("d"), $year));
+        $end    = date("Y-m-d");
+
+        if (isset($params['apply_filters']['dates']) && count($params['apply_filters']['dates']) == 2) {
+            $begin = date("Y-m-d", strtotime($params['apply_filters']['dates'][0]));
+            $end   = date("Y-m-d", strtotime($params['apply_filters']['dates'][1]));
+            unset($params['apply_filters']['dates']);
+        }
+
+        $task_table = TicketTask::getTable();
+        $actualtime_table = Task::getTable();
+        $table = Ticket::getTable();
+        $user_table = User::getTable();
+
+        $sql = [
+            'SELECT' => [
+                'SUM' => $actualtime_table . '.actual_actiontime AS total',
+                'users_id_tech',
+            ],
+            'FROM' => $actualtime_table,
+            'INNER JOIN' => [
+                $task_table => [
+                    'ON' => [
+                        $task_table => 'id',
+                        $actualtime_table => 'items_id',
+                        [
+                            'AND' => [
+                                $actualtime_table . '.itemtype' => TicketTask::getType(),
+                            ],
+                        ],
+                    ],
+                ],
+                $table => [
+                    'ON' => [
+                        $table => 'id',
+                        $task_table => 'tickets_id',
+                    ],
+                ],
+                $user_table => [
+                    'ON' => [
+                        $user_table => 'id',
+                        $task_table => 'users_id_tech',
+                    ],
+                ],
+            ],
+            'WHERE' => [
+                $task_table . '.state' => Planning::DONE,
+                $task_table . '.date' => ['>=', $begin],
+                'AND' => [
+                    $task_table . '.date' => ['<=', $end],
+                ],
+                $user_table . '.is_active' => 1,
+                getEntitiesRestrictCriteria($table),
+            ],
+            'ORDER' => ["total ASC"],
+            'GROUP' => ['users_id_tech'],
+            'LIMIT' => 20,
+        ];
+
+        $techs_id = [];
+        foreach ($DB->request($sql) as $result) {
+            $techs_id[] = $result['users_id_tech'];
+        }
+
+        if (count($techs_id) > 0) {
+            $period = "FROM_UNIXTIME(UNIX_TIMESTAMP(" . $DB->quoteName("$task_table.date") . "),'%Y-%m-%d') AS period";
+            $query = [
+                'SELECT' => [
+                    new QueryExpression($period),
+                    'SUM' => 'actual_actiontime AS total',
+                    'users_id_tech',
+                ],
+                'FROM' => $actualtime_table,
+                'INNER JOIN' => [
+                    $task_table => [
+                        'ON' => [
+                            $task_table => 'id',
+                            $actualtime_table => 'items_id',
+                            [
+                                'AND' => [
+                                    $actualtime_table . '.itemtype' => TicketTask::getType(),
+                                ],
+                            ],
+                        ],
+                    ],
+                    $table => [
+                        'ON' => [
+                            $table => 'id',
+                            $task_table => 'tickets_id',
+                        ],
+                    ],
+                ],
+                'WHERE' => [
+                    $task_table . '.state' => Planning::DONE,
+                    'users_id_tech' => $techs_id,
+                    $task_table . '.date' => ['>=', $begin],
+                    'AND' => [
+                        $task_table . '.date' => ['<=', $end],
+                    ],
+                    getEntitiesRestrictCriteria($table),
+                ],
+                'ORDER' => ['period DESC', "total DESC"],
+                'GROUP' => ['period', "users_id_tech"],
+            ];
+
+            $tmp = [];
+            foreach ($DB->request($query) as $result) {
+                if (!in_array($result['period'], $data['labels'])) {
+                    $data['labels'][] = $result['period'];
+                }
+                $tmp[$result['users_id_tech']][$result['period']] = $result['total'];
+            }
+            sort($data['labels']);
+
+            foreach ($tmp as $key => $value) {
+                $aux = [];
+                $aux['name'] = getUserName($key);
+                foreach ($data['labels'] as $id => $period) {
+                    $sqltotal = [
+                        'SELECT' => [
+                            "SUM" => $task_table . ".actiontime AS total",
+                        ],
+                        'FROM' => $task_table,
+                        'INNER JOIN' => [
+                            $table => [
+                                'ON' => [
+                                    $table => 'id',
+                                    $task_table => 'tickets_id',
+                                ],
+                            ],
+                        ],
+                        'WHERE' => [
+                            $task_table . '.state' => Planning::DONE,
+                            $task_table . ".users_id_tech" => $key,
+                            $task_table . ".date" => ['LIKE', $period . '%'],
+                            getEntitiesRestrictCriteria($table),
+                        ],
+                    ];
+                    $total = 0;
+                    $req = $DB->request($sqltotal);
+                    if ($row = $req->current()) {
+                        $total = $row['total'];
+                    }
+                    if (array_key_exists($period, $value) && $total > 0) {
+                        $aux['data'][] = [
+                            'value' => round(100 * ($total - $value[$period]) / $total, 2),
+                        ];
+                    } else {
+                        $aux['data'][] = [
+                            'value' => 0,
+                        ];
+                    }
+                }
+                $data['series'][] = $aux;
+            }
+        }
+
+        return [
+            'data'  => $data,
+            'label' => $params['label'],
+            'icon'  => 'ti ti-stopwatch',
+        ];
+    }
+}

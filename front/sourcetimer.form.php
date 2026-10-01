@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -29,19 +29,23 @@
  * -------------------------------------------------------------------------
  */
 
+use GlpiPlugin\Actualtime\Config;
+use GlpiPlugin\Actualtime\Sourcetimer;
+use GlpiPlugin\Actualtime\Task;
+
 if (!isset($_POST["itemtype"], $_POST["items_id"])) {
     Html::back();
 }
 if (
-    PluginActualtimeSourcetimer::checkItemtypeRight($_POST["itemtype"])
-    && PluginActualtimeSourcetimer::canModify($_POST["itemtype"], $_POST["items_id"])
+    Sourcetimer::checkItemtypeRight($_POST["itemtype"])
+    && Sourcetimer::canModify($_POST["itemtype"], $_POST["items_id"])
 ) {
     if (isset($_POST["update"]) && is_array($_POST['actual_end'] ?? null)) {
-        $config = new PluginActualtimeConfig();
+        $config = Config::getInstance();
         $itemtype = $_POST["itemtype"];
         $item_id = (int) $_POST["items_id"];
         // Only timers of the authorized task have limits: any other posted id is skipped
-        $task_limit = PluginActualtimeSourcetimer::getTaskLimits($itemtype, $item_id);
+        $task_limit = Sourcetimer::getTaskLimits($itemtype, $item_id);
         foreach ($_POST['actual_end'] as $key => $value) {
             if (empty($value) || !isset($task_limit[$key])) {
                 continue;
@@ -50,7 +54,7 @@ if (
             if ($date === false || $date->format('Y-m-d H:i:s') !== $value) {
                 continue;
             }
-            $actualtime = new PluginActualtimeTask();
+            $actualtime = new Task();
             if ($actualtime->getFromDB($key)) {
                 if (
                     $value != $actualtime->fields['actual_end']
@@ -66,7 +70,7 @@ if (
                         'is_modified'       => 1,
                     ];
                     if ($actualtime->fields['is_modified'] == 0) {
-                        $source = new PluginActualtimeSourcetimer();
+                        $source = new Sourcetimer();
                         $input_source = [
                             'plugin_actualtime_tasks_id' => $actualtime->fields['id'],
                             'users_id'          => Session::getLoginUserID(),
@@ -88,9 +92,9 @@ if (
                 'id' => $task_id,
             ];
 
-            /** @var array $CFG_GLPI */
+            /** @var \Glpi\Config\ConfigContainer $CFG_GLPI */
             global $CFG_GLPI;
-            $totaltime = PluginActualtimeTask::totalEndTime($task_id, $itemtype);
+            $totaltime = Task::totalEndTime($task_id, $itemtype);
             $step = $CFG_GLPI["time_step"];
             $ceil = ceil($totaltime / ($step * MINUTE_TIMESTAMP)) * ($step * MINUTE_TIMESTAMP);
             if (isset($task->fields['actiontime'])) {

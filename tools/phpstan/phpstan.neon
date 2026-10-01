@@ -1,23 +1,32 @@
+# Used by tools/phpstan.sh with the bundled phpstan.phar when vendor/ is not installed.
+# Keep in sync with ../../phpstan.neon
 parameters:
-    parallel:
-        maximumNumberOfProcesses: 2
     level: 5
     bootstrapFiles:
-        - '../../../../vendor/autoload.php'
+        - ../../../../vendor/autoload.php
+        - autoload.php
+    paths:
+        - ../../ajax
+        - ../../front
+        - ../../inc
+        - ../../report
+        - ../../src
+        - ../../hook.php
+        - ../../setup.php
     excludePaths:
         - '**/vendor/*'
         - '**/tests/*'
         - '**/tools/*'
-    paths:
-        - ..
-        - tools/phpstan/rules
-    stubFiles:
-        - './stubs/glpi_constants.php'
+    scanDirectories:
+        - ../../../../src
+        - rules
     ignoreErrors:
-        - '/Property CommonDBTM::\$input \(array\<mixed\>\) does not accept false/'
-        - '/Access to property \$fields on an unknown class Plugin\w+/'
-        - '/Access to constant \w+ on an unknown class Plugin\w+/'
-        - '/Call to static method \w+\(\) on an unknown class Plugin\w+/'
+        # Reports are built on top of the optional "reports" plugin (checked at runtime)
+        -
+            message: '#(Instantiated class|unknown class) PluginReports\w+#'
+            paths:
+                - ../../report/actualtimetotal/actualtimetotal.php
+                - ../../report/actualtimeuser/actualtimeuser.php
     reportUnmatchedIgnoredErrors: false
 services:
     -

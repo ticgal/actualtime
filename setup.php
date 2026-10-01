@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -30,6 +30,11 @@
  */
 
 use Glpi\Plugin\Hooks;
+use GlpiPlugin\Actualtime\Config as ActualtimeConfig;
+use GlpiPlugin\Actualtime\Dashboard;
+use GlpiPlugin\Actualtime\Profile as ActualtimeProfile;
+use GlpiPlugin\Actualtime\Running;
+use GlpiPlugin\Actualtime\Task;
 
 define('PLUGIN_ACTUALTIME_VERSION', '5.0.0-beta.2');
 
@@ -74,15 +79,15 @@ function plugin_init_actualtime(): void
 
     if (Plugin::isPluginActive('actualtime')) {
         // Classes
-        Plugin::registerClass(PluginActualtimeProfile::class, ['addtabon' => Profile::class]);
+        Plugin::registerClass(ActualtimeProfile::class, ['addtabon' => Profile::class]);
         // Add settings form as a tab on Setup - General page
-        Plugin::registerClass(PluginActualtimeConfig::class, ['addtabon' => Config::class]);
+        Plugin::registerClass(ActualtimeConfig::class, ['addtabon' => Config::class]);
 
-        Plugin::registerClass(PluginActualtimeTask::class, ['planning_types' => true]);
+        Plugin::registerClass(Task::class, ['planning_types' => true]);
 
         // Hooks
         $PLUGIN_HOOKS[Hooks::POST_ITEM_FORM]['actualtime'] = [
-            PluginActualtimeTask::class,
+            Task::class,
             'postForm',
         ];
 
@@ -126,32 +131,31 @@ function plugin_init_actualtime(): void
         $PLUGIN_HOOKS[Hooks::POST_SHOW_ITEM]['actualtime'] = 'plugin_actualtime_postshowitem';
 
         $PLUGIN_HOOKS[Hooks::DASHBOARD_CARDS]['actualtime'] = [
-            PluginActualtimeDashboard::class,
+            Dashboard::class,
             'dashboardCards',
         ];
 
-        $config = new PluginActualtimeConfig();
+        $config = ActualtimeConfig::getInstance();
         if ($config->showTimerPopup()) {
             // This hook is not needed if not showing popup
             $PLUGIN_HOOKS[Hooks::POST_SHOW_TAB]['actualtime'] = [
-                PluginActualtimeTask::class,
+                Task::class,
                 'postShowTab',
             ];
         }
 
-        $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = ['public/table.js'];
 
         if (Session::getLoginUserID() && isset($_SESSION['glpiactiveprofile'])) {
-            /** @var array $CFG_GLPI */
+            /** @var \Glpi\Config\ConfigContainer $CFG_GLPI */
             global $CFG_GLPI;
 
             $CFG_GLPI['javascript']['actualtime']['sourcetimer'] = ['fullcalendar'];
-            $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'][] = 'public/actualtime.js';
+            $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['actualtime'] = ['actualtime.js'];
         }
 
         if (Session::haveRight('plugin_actualtime_running', READ)) {
-            $PLUGIN_HOOKS['menu_toadd']['actualtime'] = [
-                'admin' => 'PluginActualtimeRunning',
+            $PLUGIN_HOOKS[Hooks::MENU_TOADD]['actualtime'] = [
+                'admin' => Running::class,
             ];
         }
 

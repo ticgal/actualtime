@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -30,6 +30,8 @@
  */
 
 use Glpi\Exception\Http\AccessDeniedHttpException;
+use GlpiPlugin\Actualtime\Sourcetimer;
+use GlpiPlugin\Actualtime\Task;
 
 header("Content-Type: text/html; charset=UTF-8");
 Html::header_nocache();
@@ -37,18 +39,18 @@ Html::header_nocache();
 Session::checkLoginUser();
 
 if (isset($_REQUEST["itemtype"]) && isset($_REQUEST["task_id"])) {
-    if (PluginActualtimeSourcetimer::checkItemtypeRight($_REQUEST["itemtype"])) {
-        if (PluginActualtimeTask::getAuthorizedTask($_REQUEST["itemtype"], $_REQUEST["task_id"], READ) === null) {
+    if (Sourcetimer::checkItemtypeRight($_REQUEST["itemtype"])) {
+        if (Task::getAuthorizedTask($_REQUEST["itemtype"], $_REQUEST["task_id"], READ) === null) {
             throw new AccessDeniedHttpException();
         }
         Html::popHeader(
-            PluginActualtimeSourcetimer::getTypeName(1),
-            $_SERVER['PHP_SELF'],
+            Sourcetimer::getTypeName(1),
+            Sourcetimer::getFormURL(),
             true,
             'actualtime',
             'sourcetimer',
         );
-        $source = new PluginActualtimeSourcetimer();
+        $source = new Sourcetimer();
         $source->modalForm($_REQUEST["itemtype"], (int) $_REQUEST["task_id"]);
         Html::popFooter();
     }

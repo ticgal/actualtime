@@ -28,12 +28,12 @@ rm -f $LOCALES/$POTFILE && touch $LOCALES/$POTFILE >/dev/null
 
 echo Searching PHP files...
 # Append locales from PHP
-xgettext $(find -type f -name "*.php") -o $LOCALES/$POTFILE -L PHP --add-comments=TRANS --from-code=UTF-8 --force-po --join-existing \
+xgettext $(find . -type f -name "*.php" -not -path "./vendor/*" -not -path "./tools/*" -not -path "./tests/*") -o $LOCALES/$POTFILE -L PHP --add-comments=TRANS --from-code=UTF-8 --force-po --join-existing \
     --keyword=__:1,2t -d $PLUGINNAME --copyright-holder "TICgal" >/dev/null 2>&1
 
 echo Searching JS files...
 # Append locales from JavaScript
-xgettext $(find -type f -name "*.js") -o $LOCALES/$POTFILE -L JavaScript --add-comments=TRANS --from-code=UTF-8 --force-po --join-existing \
+xgettext $(find . -type f -name "*.js" -not -path "./vendor/*" -not -path "./node_modules/*" -not -path "./tools/*") -o $LOCALES/$POTFILE -L JavaScript --add-comments=TRANS --from-code=UTF-8 --force-po --join-existing \
     --keyword=__:1,2t -d $PLUGINNAME --copyright-holder "TICgal" >/dev/null 2>&1
 
 echo Searching TWIG files...

@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -28,6 +28,13 @@
  * @since     2018
  * -------------------------------------------------------------------------
  */
+
+use Glpi\Exception\Http\NotFoundHttpException;
+
+// These reports are built on top of the "reports" plugin
+if (!Plugin::isPluginActive('reports') || !class_exists(PluginReportsAutoReport::class)) {
+    throw new NotFoundHttpException();
+}
 
 $report = new PluginReportsAutoReport(__('ActualTimeUser'));
 //Filtro fecha
@@ -44,7 +51,7 @@ $choices = [
 $filter_active = new PluginReportsArrayCriteria(
     $report,
     'glpi_tickets_users.type',
-    _('Group by'),
+    __('Group by'),
     $choices,
 );
 
@@ -68,14 +75,11 @@ $report->setColumns([
     ),
     new PluginReportsColumnTimestamp(
         'diff',
-        __(
-            "Duration Diff",
-            "actiontime",
-        ),
+        __("Duration Diff", "actualtime"),
     ),
     new PluginReportsColumn(
         'diffpercent',
-        __("Duration Diff", "actiontime") . " (%)",
+        __("Duration Diff", "actualtime") . " (%)",
     ),
 ]);
 if ($filter_active->getParameterValue() == 1) {
@@ -101,7 +105,9 @@ FROM glpi_plugin_actualtime_tasks
     INNER JOIN glpi_tickets_users ON glpi_tickets_users.tickets_id = glpi_tickets.id
 WHERE status = 6
 ";
-$query .= getEntitiesRestrictRequest(' AND ', 'glpi_tickets');
+// Raw SQL is required by PluginReportsAutoReport: restrict to the active entities (integers only)
+$entities = array_map('intval', Session::getActiveEntities());
+$query .= " AND glpi_tickets.entities_id IN (" . (count($entities) ? implode(',', $entities) : '-1') . ")";
 $query .= $report->addSqlCriteriasRestriction();
 $query .= $group;
 

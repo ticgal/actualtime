@@ -14,7 +14,6 @@
 
       <input type="hidden" name="itemtype" value="{{ itemtype }}">
       <input type="hidden" name="items_id" value="{{ items_id }}">
-      <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}" />
       <input type="hidden" name="_is_modal" value="1" />
 
       <table class="table">
@@ -57,25 +56,25 @@
         <div class="fw-bold">
           {{ __('End date') ~ ' (' ~ actualtime['stamp_actiontime'] ~ ')' }}
         </div>
-        {{ call('Html::showToolTip', [end_tooltip ~ '<br>' ~ limit_tooltip])|raw }}
+        {{ call('Html::showToolTip', [end_tooltip ~ '<br>' ~ limit_tooltip, {'display': false}])|raw }}
       </div>
 
       {{ fields.datetimeField(
         'actual_end[' ~ actualtime['id'] ~ ']',
         actualtime['actual_end'],
         '',
-        options|merge({'rand': actualtime['rand']})
+        options|merge({'rand': actualtime['rand'], 'id': 'actualtime_end_' ~ actualtime['id'] ~ '_' ~ actualtime['rand']})
       ) }}
 
       <script>
-        const intervalname{{ actualtime['rand'] }} = setInterval(() => {
-          var date_end_input = $("[id='actual-end-{{ actualtime['id'] }}_{{ actualtime['rand'] }}']")[0];
-          if (date_end_input && date_end_input._flatpickr) {
-            date_end_input._flatpickr.set('minDate', "{{ actualtime['min_date'] }}");
-            date_end_input._flatpickr.set('maxDate', "{{ actualtime['max_date'] }}");
-            clearInterval(intervalname{{ actualtime['rand'] }});
+        $(function() {
+          // flatpickr is initialised (wrap mode) on the container by the core datetime macro, just before this script
+          const picker = document.getElementById('actualtime_end_{{ actualtime['id'] }}_{{ actualtime['rand'] }}')?._flatpickr;
+          if (picker) {
+            picker.set('minDate', '{{ actualtime['min_date']|e('js') }}');
+            picker.set('maxDate', '{{ actualtime['max_date']|e('js') }}');
           }
-        }, 200);
+        });
       </script>
     </div>
   </div>
@@ -88,7 +87,7 @@
 
   <div class='card-body mx-n2 mb-4 border-top d-flex flex-row-reverse align-items-start flex-wrap'>
     <button class='btn btn-primary me-2' type='submit' name='update' value='1'>
-      <i class='far fa-save'></i>
+      <i class='ti ti-device-floppy'></i>
       <span>{{ _x('button', 'Save') }}</span>
     </button>
   </div>

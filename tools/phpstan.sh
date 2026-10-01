@@ -28,4 +28,4 @@ fi
 #./tools/phpstan/phpstan.phar clear-result-cache
 
 # Execute PHPStan
-$PHPSTAN_DIR analyse -c "$CONFIG_FILE" -a "$AUTOLOAD_FILE" $TOOL_DIR/..
+$PHPSTAN_DIR analyse -c "$CONFIG_FILE" --memory-limit=2G

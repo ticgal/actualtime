@@ -1,6 +1,6 @@
 /* global CFG_GLPI */
 window.actualTime = new function() {
-   this.ajax_url = CFG_GLPI.url_base + '/plugins/actualtime/ajax/timer.php';
+   this.ajax_url = CFG_GLPI.root_doc + '/plugins/actualtime/ajax/timer.php';
 
    var timer;
    var popup_div = '';
@@ -75,9 +75,10 @@ window.actualTime = new function() {
    this.showTimerPopup = function(id, link, name) {
       // only if enabled in settings
       if (popup_div && toast != null) {
-         popup_div = popup_div.replace(/%t/g, id);
-         popup_div = popup_div.replace(/%l/g, link);
-         popup_div = popup_div.replace(/%n/g, name);
+         const escape = (value) => String(value).replace(/[&<>"']/g, (c) => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+         popup_div = popup_div.replace(/%t/g, escape(id));
+         popup_div = popup_div.replace(/%l/g, escape(link));
+         popup_div = popup_div.replace(/%n/g, escape(name));
          $("#toast_body").html(popup_div);
          toast.show();
       }
@@ -116,7 +117,7 @@ window.actualTime = new function() {
                   $("[id^='actualtime_button_" + task + "_1_']").html('<span>' + text_pause + '</span>');
                   $("[id^='actualtime_button_" + task + "_2_']").attr('action', 'end').css('background-color', 'red').prop('disabled', false);
                   window.actualTime.showTimerPopup(result['parent_id'], result['link'], result['name']);
-                  $("[id^='actualtime_faclock_" + task + "_']").addClass('fa-clock').css('color', 'red');
+                  $("[id^='actualtime_faclock_" + task + "_']").addClass('ti ti-clock').css('color', 'red');
                   return;
                } else if ((val == 'end') || (val == 'pause')) {
                   window.actualTime.endCount();
@@ -131,7 +132,10 @@ window.actualTime = new function() {
                   if (val == 'end') {
                      // Update state fields also (as Done)
                      $("select[name='state']").attr('data-track-changes', '');
-                     $("span.state.state_1[onclick='change_task_state(" + task + ", this)']").attr('title', text_done).toggleClass('state_1 state_2');
+                     // Same visual change as the core change_task_state() of the timeline
+                     $("div[data-itemtype='" + itemtype + "'][data-items-id='" + task + "'] .todo-list-state .task-state-checkbox")
+                        .prop('checked', true).attr('title', text_done).attr('aria-label', text_done)
+                        .closest('.timeline-item').find('.read-only-content').addClass('done');
                      $("input[type='hidden'][name='id'][value='" + task + "']").closest("div[data-itemtype='"+itemtype+"'][data-items-id='"+task+"']").find("select[name='state']").val(2).trigger('change');
                      $("select[name='state']").removeAttr('data-track-changes');
                      $("[id^='actualtime_button_" + task + "_']").attr('action', '').css('background-color', 'gray').prop('disabled', true);
@@ -235,6 +239,6 @@ window.actualTime = new function() {
 }();
 
 $(document).ready(function(){
-   var url = CFG_GLPI.url_base+""+GLPI_PLUGINS_PATH.actualtime+"/ajax/timer.php";
+   var url = CFG_GLPI.root_doc + "/plugins/actualtime/ajax/timer.php";
    window.actualTime.init(url);
 });

@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -29,6 +29,12 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\Application\View\TemplateRenderer;
+use Glpi\Exception\Http\AccessDeniedHttpException;
+use Glpi\RichText\UserMention;
+use GlpiPlugin\Actualtime\Config;
+use GlpiPlugin\Actualtime\Task;
+
 header("Content-Type: text/html; charset=UTF-8");
 Html::header_nocache();
 
@@ -37,34 +43,34 @@ if (Session::getLoginUserID() === false || !isset($_SESSION['glpiactiveprofile']
     exit;
 }
 
-/** @var array $CFG_GLPI */
+/** @var \Glpi\Config\ConfigContainer $CFG_GLPI */
 global $CFG_GLPI;
 if (isset($_POST["action"])) {
     $task_id = (int) ($_POST["task_id"] ?? 0);
     $itemtype = $_POST["itemtype"] ?? '';
-    if ($task_id <= 0 || !PluginActualtimeTask::isAllowedItemtype($itemtype)) {
+    if ($task_id <= 0 || !Task::isAllowedItemtype($itemtype)) {
         http_response_code(400);
         exit;
     }
     switch ($_POST["action"]) {
         case 'start':
-            $result = PluginActualtimeTask::startTimer($task_id, $itemtype, PluginActualtimeTask::WEB);
+            $result = Task::startTimer($task_id, $itemtype, Task::WEB);
             echo json_encode($result);
             break;
         case 'end':
-            $result = PluginActualtimeTask::stopTimer($task_id, $itemtype, PluginActualtimeTask::WEB);
+            $result = Task::stopTimer($task_id, $itemtype, Task::WEB);
             echo json_encode($result);
             break;
         case 'pause':
-            $result = PluginActualtimeTask::pauseTimer($task_id, $itemtype, PluginActualtimeTask::WEB);
+            $result = Task::pauseTimer($task_id, $itemtype, Task::WEB);
             echo json_encode($result);
             break;
         case 'count':
-            if (PluginActualtimeTask::getAuthorizedTask($itemtype, $task_id, READ) === null) {
+            if (Task::getAuthorizedTask($itemtype, $task_id, READ) === null) {
                 http_response_code(403);
                 exit;
             }
-            echo abs(PluginActualtimeTask::totalEndTime($task_id, $itemtype));
+            echo abs(Task::totalEndTime($task_id, $itemtype));
             break;
     }
 } elseif (isset($_GET["footer"])) {
@@ -89,72 +95,71 @@ if (isset($_POST["action"])) {
     $result['symb_second']  = _n("%d second", "%d seconds", 1);
     $result['symb_seconds'] = _n("%d second", "%d seconds", 2);
     $result['text_warning'] = __('Warning');
-    $result['text_pause']   = "<i class='fa-solid fa-pause'></i>";
-    $result['text_restart'] = "<i class='fa-solid fa-forward'></i>";
+    $result['text_pause']   = "<i class='ti ti-player-pause'></i>";
+    $result['text_restart'] = "<i class='ti ti-player-track-next'></i>";
     $result['text_done']    = __('Done');
     // Current user active task. Data to timer popup
-    $config = new PluginActualtimeConfig();
+    $config = Config::getInstance();
     if ($config->showTimerPopup()) {
         // popup_div exists only if settings allow display pop-up timer
         $popup_div = "<div id='actualtime_popup'>" . __("Timer started on", 'actualtime');
         $popup_div .= " <a onclick='window.actualTime.showTaskForm(event)' href='%l'>%n #%t</a> -> <span></span></div>";
         $result['popup_div'] = $popup_div;
-        $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
+        $task_id = Task::getTask(Session::getLoginUserID());
         if ($task_id) {
             // Only if timer is active
             $result['task_id'] = $task_id;
-            $result['itemtype'] = PluginActualtimeTask::getItemtype(Session::getLoginUserID());
+            $result['itemtype'] = Task::getItemtype(Session::getLoginUserID());
             $task = getItemForItemtype($result['itemtype']);
-            if (is_a($task, CommonDBChild::class, true)) {
-                $parent = getItemForItemtype($task::$itemtype);
-            } else {
-                $parent = getItemForItemtype($task->getItilObjectItemType());
-            }
-            $result['parent_id'] = PluginActualtimeTask::getParent(Session::getLoginUserID());
+            $parent = Task::getParentItem($task);
+            $result['parent_id'] = Task::getParent(Session::getLoginUserID());
             $parent->getFromDB($result['parent_id']);
             $result['link'] = $parent->getLinkURL();
             $result['name'] = $parent->getTypeName(1);
-            $result['time'] = abs(PluginActualtimeTask::totalEndTime($task_id, $result['itemtype']));
+            $result['time'] = abs(Task::totalEndTime($task_id, $result['itemtype']));
         }
     }
     echo json_encode($result);
-} else {
+} elseif (isset($_GET['showform'])) {
     // For modal windows
-    $parts = parse_url($_SERVER['REQUEST_URI']);
-    $query = [];
-    if (isset($parts['query'])) {
-        parse_str($parts['query'], $query);
+    $task_id = Task::getTask(Session::getLoginUserID());
+    $itemtype = Task::getItemtype(Session::getLoginUserID());
+    if ($task_id == 0 || $itemtype == '') {
+        exit;
     }
-    if (isset($query['showform'])) {
-        $task_id = PluginActualtimeTask::getTask(Session::getLoginUserID());
-        $itemtype = PluginActualtimeTask::getItemtype(Session::getLoginUserID());
-        if ($task_id == 0 || $itemtype == '') {
-            exit;
-        }
-        $item = getItemForItemtype($itemtype);
-        $item->getFromDB($task_id);
-        $rand = mt_rand();
-        if (is_a($item, CommonDBChild::class, true)) {
-            $parent = getItemForItemtype($item::$itemtype);
-        } else {
-            $parent = getItemForItemtype($item->getItilObjectItemType());
-        }
-        $parent->getFromDB(PluginActualtimeTask::getParent(Session::getLoginUserID()));
-        $options['parent'] = $parent;
-        echo  "<div class='modal-header'>";
-        echo "<h4 class='modal-title'>" . __('Update of a task') . "</h4>";
-        echo "<button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='" . __("Close") . "'>";
-        echo "</button>";
-        echo "</div>";
-        echo "<div class='modal-body'>";
-        echo "<div class='center'>";
-        $redirect = strtolower($parent->getType());
-        $redirect .= "_" . PluginActualtimeTask::getParent(Session::getLoginUserID());
-        $url = $CFG_GLPI['url_base'] . "/index.php" . "?redirect=" . $redirect . "&noAUTO=1";
-        echo "<a class='btn btn-outline-secondary' href='" . urldecode($url) . "'>";
-        echo "<i class='ti ti-eye'></i><span>" . __s("View this item in its context") . "</span></a>";
-        echo "</div><hr>";
-        $item->showForm($task_id, $options);
-        echo "</div>";
+    $item = getItemForItemtype($itemtype);
+    if (!$item->can($task_id, READ)) {
+        throw new AccessDeniedHttpException();
     }
+    $parent = Task::getParentItem($item);
+    $parent_id = Task::getParent(Session::getLoginUserID());
+    if ($parent === null || !$parent->getFromDB($parent_id)) {
+        exit;
+    }
+    echo  "<div class='modal-header'>";
+    echo "<h4 class='modal-title'>" . __s('Update of a task') . "</h4>";
+    echo "<button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='" . __s("Close") . "'>";
+    echo "</button>";
+    echo "</div>";
+    echo "<div class='modal-body'>";
+    echo "<div class='center'>";
+    $redirect = strtolower($parent->getType()) . "_" . $parent_id;
+    $url = $CFG_GLPI['url_base'] . "/index.php" . "?redirect=" . $redirect . "&noAUTO=1";
+    echo "<a class='btn btn-outline-secondary' href='" . htmlescape($url) . "'>";
+    echo "<i class='ti ti-eye'></i><span>" . __s("View this item in its context") . "</span></a>";
+    echo "</div><hr>";
+    if ($item instanceof CommonITILTask && $parent instanceof CommonITILObject) {
+        // Same context as the core timeline (ajax/timeline.php), required by form_task.html.twig
+        TemplateRenderer::getInstance()->display('components/itilobject/timeline/form_task.html.twig', [
+            'item'               => $parent,
+            'subitem'            => $item,
+            'mention_options'    => UserMention::getMentionOptions($parent),
+            'has_pending_reason' => PendingReason_Item::getForItem($parent) !== false,
+            'params'             => ['parent' => $parent],
+        ]);
+    } else {
+        // Project task
+        $item->showForm($task_id, ['parent' => $parent]);
+    }
+    echo "</div>";
 }
