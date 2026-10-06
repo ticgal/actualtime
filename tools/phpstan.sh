@@ -8,8 +8,7 @@ AUTOLOAD_FILE="$TOOL_DIR/phpstan/autoload.php"
 # if exist  vendor/bin/phpstan, use it
 if [ -f "$TOOL_DIR/../vendor/bin/phpstan" ]; then
     cd "$TOOL_DIR/.."
-    vendor/bin/phpstan analyze --ansi --memory-limit=2G --no-interaction
-    exit 0
+    exec vendor/bin/phpstan analyze --ansi --memory-limit=2G --no-interaction
 fi
 
 # Verify folder
