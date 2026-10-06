@@ -1,6 +1,6 @@
 # Actualtime
 
-## [5.0.0-beta.2] - 2026/10/01
+## [5.0.0-beta.1] - 2026/10/01
 ### Security
 - Includes the security fixes from 4.1.4
 - Planning only shows timers of tasks the user can view

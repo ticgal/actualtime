@@ -36,7 +36,7 @@ use GlpiPlugin\Actualtime\Profile as ActualtimeProfile;
 use GlpiPlugin\Actualtime\Running;
 use GlpiPlugin\Actualtime\Task;
 
-define('PLUGIN_ACTUALTIME_VERSION', '5.0.0-beta.2');
+define('PLUGIN_ACTUALTIME_VERSION', '5.0.0-beta.1');
 
 // Minimal GLPI version, inclusive
 define("PLUGIN_ACTUALTIME_MIN_GLPI", "12.0.0");
