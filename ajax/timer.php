@@ -65,13 +65,10 @@ if (isset($_POST["action"])) {
             $result = Task::pauseTimer($task_id, $itemtype, Task::WEB);
             echo json_encode($result);
             break;
-        case 'count':
-            if (Task::getAuthorizedTask($itemtype, $task_id, READ) === null) {
-                http_response_code(403);
-                exit;
-            }
-            echo abs(Task::totalEndTime($task_id, $itemtype));
-            break;
+        default:
+            // SEC-09: the unused 'count' action was removed; unknown actions are rejected
+            http_response_code(400);
+            exit;
     }
 } elseif (isset($_GET["footer"])) {
     // Base function for all general stuff in javascript

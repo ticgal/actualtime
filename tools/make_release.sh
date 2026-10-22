@@ -139,6 +139,7 @@ FILES_TO_DELETE=(
     "ISSUE_TEMPLATE.md"
     "PULL_REQUEST_TEMPLATE.md"
     # development folders
+    "docs"
     "tools"
     "tests"
     "phpunit"
@@ -150,6 +151,7 @@ FILES_TO_DELETE=(
     "composer.lock"
     ".composer.hash"
     "phpunit.xml.dist"
+    "phpunit.xml"
     "locales/localazy*"
     "RoboFile.php"
     ".travis.yml"

@@ -31,16 +31,63 @@
 
 namespace GlpiPlugin\Actualtime;
 
+use CommonITILTask;
 use DBConnection;
 use Glpi\Dashboard\Provider as DashboardProvider;
 use Glpi\DBAL\QueryExpression;
+use Glpi\DBAL\QuerySubQuery;
 use Planning;
+use Session;
 use Ticket;
 use TicketTask;
 use User;
 
 class Provider extends DashboardProvider
 {
+    /**
+     * SEC-05: restrict the cards to what the reader could list themselves: tickets visible with their
+     * profile (Ticket::getCriteriaFromProfile(), as core's own ticket cards), not in the trash, and
+     * tasks they can see (private ones only with SEEPRIVATE, or their own/their group's).
+     * The profile restriction is a subquery instead of core's LEFT JOINs: those can return a timer
+     * row several times and inflate the summed times. Ticket READALL adds no profile restriction.
+     *
+     * @return array<mixed> WHERE criteria for a query joining glpi_tickets and glpi_tickettasks
+     */
+    private static function getVisibilityCriteria(): array
+    {
+        if (!Ticket::canView()) {
+            return [new QueryExpression('false')];
+        }
+
+        $ticket_table = Ticket::getTable();
+        $task_table   = TicketTask::getTable();
+        $criteria     = [$ticket_table . '.is_deleted' => 0];
+
+        $profile = Ticket::getCriteriaFromProfile();
+        if ($profile !== []) {
+            $criteria[$ticket_table . '.id'] = new QuerySubQuery([
+                'SELECT' => $ticket_table . '.id',
+                'FROM'   => $ticket_table,
+            ] + $profile);
+        }
+
+        if (!Session::haveRight(TicketTask::$rightname, CommonITILTask::SEEPRIVATE)) {
+            $visible = [
+                $task_table . '.users_id'      => Session::getLoginUserID(),
+                $task_table . '.users_id_tech' => Session::getLoginUserID(),
+            ];
+            if (Session::haveRight(TicketTask::$rightname, CommonITILTask::SEEPUBLIC)) {
+                $visible[] = [$task_table . '.is_private' => 0];
+            }
+            if (!empty($_SESSION['glpigroups'])) {
+                $visible[$task_table . '.groups_id_tech'] = $_SESSION['glpigroups'];
+            }
+            $criteria[] = ['OR' => $visible];
+        }
+
+        return $criteria;
+    }
+
     /**
      * moreActualtimeTasksByDay
      *
@@ -107,6 +154,7 @@ class Provider extends DashboardProvider
                 $actualtime_table . '.actual_end' => ['<=', $end],
                 $user_table . '.is_active' => 1,
                 getEntitiesRestrictCriteria($table),
+                self::getVisibilityCriteria(),
             ],
             'ORDER' => ["nb_task DESC"],
             'GROUP' => ['users_id_tech'],
@@ -152,6 +200,7 @@ class Provider extends DashboardProvider
                     $actualtime_table . '.actual_end' => ['<=', $end],
                     $task_table . ".users_id_tech" => $techs_id,
                     getEntitiesRestrictCriteria($table),
+                    self::getVisibilityCriteria(),
                 ],
                 'ORDER' => ['period DESC', "nb_task DESC"],
                 'GROUP' => ['period', "tech"],
@@ -258,6 +307,7 @@ class Provider extends DashboardProvider
                 $actualtime_table . '.actual_end' => ['<=', $end],
                 $user_table . '.is_active' => 1,
                 getEntitiesRestrictCriteria($table),
+                self::getVisibilityCriteria(),
             ],
             'ORDER' => ["nb_task ASC"],
             'GROUP' => ['users_id_tech'],
@@ -306,6 +356,7 @@ class Provider extends DashboardProvider
                     $actualtime_table . '.actual_begin' => ['>=', $begin],
                     $actualtime_table . '.actual_end' => ['<=', $end],
                     getEntitiesRestrictCriteria($table),
+                    self::getVisibilityCriteria(),
                 ],
                 'ORDER' => ['period DESC', "nb_task DESC"],
                 'GROUP' => ['period', "tech"],
@@ -416,6 +467,7 @@ class Provider extends DashboardProvider
                 new QueryExpression("DATE($real_date_col) >= ?", values: [$begin]),
                 new QueryExpression("DATE($real_date_col) <= ?", values: [$end]),
                 getEntitiesRestrictCriteria($table),
+                self::getVisibilityCriteria(),
             ],
             'ORDER' => ["total DESC"],
             'GROUP' => ['users_id_tech'],
@@ -461,6 +513,7 @@ class Provider extends DashboardProvider
                     new QueryExpression("DATE($real_date_col) >= ?", values: [$begin]),
                     new QueryExpression("DATE($real_date_col) <= ?", values: [$end]),
                     getEntitiesRestrictCriteria($table),
+                    self::getVisibilityCriteria(),
                 ],
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -572,6 +625,7 @@ class Provider extends DashboardProvider
                 new QueryExpression("DATE($real_date_col) >= ?", values: [$begin]),
                 new QueryExpression("DATE($real_date_col) <= ?", values: [$end]),
                 getEntitiesRestrictCriteria($table),
+                self::getVisibilityCriteria(),
             ],
             'ORDER' => ["total ASC"],
             'GROUP' => ['users_id_tech'],
@@ -617,6 +671,7 @@ class Provider extends DashboardProvider
                     new QueryExpression("DATE($real_date_col) >= ?", values: [$begin]),
                     new QueryExpression("DATE($real_date_col) <= ?", values: [$end]),
                     getEntitiesRestrictCriteria($table),
+                    self::getVisibilityCriteria(),
                 ],
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -725,6 +780,7 @@ class Provider extends DashboardProvider
                 ],
                 $user_table . '.is_active' => 1,
                 getEntitiesRestrictCriteria($table),
+                self::getVisibilityCriteria(),
             ],
             'ORDER' => ["total DESC"],
             'GROUP' => ['users_id_tech'],
@@ -772,6 +828,7 @@ class Provider extends DashboardProvider
                         $task_table . '.date' => ['<=', $end],
                     ],
                     getEntitiesRestrictCriteria($table),
+                    self::getVisibilityCriteria(),
                 ],
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -808,6 +865,7 @@ class Provider extends DashboardProvider
                             $task_table . ".users_id_tech" => $key,
                             $task_table . ".date" => ['LIKE', $period . '%'],
                             getEntitiesRestrictCriteria($table),
+                            self::getVisibilityCriteria(),
                         ],
                     ];
                     $total = 0;
@@ -905,6 +963,7 @@ class Provider extends DashboardProvider
                 ],
                 $user_table . '.is_active' => 1,
                 getEntitiesRestrictCriteria($table),
+                self::getVisibilityCriteria(),
             ],
             'ORDER' => ["total ASC"],
             'GROUP' => ['users_id_tech'],
@@ -952,6 +1011,7 @@ class Provider extends DashboardProvider
                         $task_table . '.date' => ['<=', $end],
                     ],
                     getEntitiesRestrictCriteria($table),
+                    self::getVisibilityCriteria(),
                 ],
                 'ORDER' => ['period DESC', "total DESC"],
                 'GROUP' => ['period', "users_id_tech"],
@@ -988,6 +1048,7 @@ class Provider extends DashboardProvider
                             $task_table . ".users_id_tech" => $key,
                             $task_table . ".date" => ['LIKE', $period . '%'],
                             getEntitiesRestrictCriteria($table),
+                            self::getVisibilityCriteria(),
                         ],
                     ];
                     $total = 0;

@@ -353,10 +353,12 @@ JAVASCRIPT;
                 } else {
                     continue;
                 }
-                // Entity is already restricted by the query: also hide items the user cannot see
+                // Entity is already restricted by the query: also hide items the user cannot see, and
+                // private tasks the user cannot see (SEC-02)
                 if (
                     !$parent->getFromDB($task->fields[$parent->getForeignKeyField()])
                     || !$parent->canViewItem()
+                    || !$task->canViewItem()
                 ) {
                     continue;
                 }

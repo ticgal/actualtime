@@ -1,5 +1,18 @@
 # Actualtime
 
+## [5.0.0-beta.2] - 2026/10/22
+### Security
+- Timer rows can no longer be created, modified, deleted or read across entities through GLPI's generic item routes (/plugins/actualtime/front/task.php), the planning actions or the search engine: the timer itemtype now denies every generic write, gates reads on the linked task, and its search returns no rows (SEC-01)
+- Private tasks are no longer revealed to users who cannot see them: running timers list, ticket statistics per technician and the timer data returned when closing a task (SEC-02, SEC-03, SEC-04)
+- Dashboard cards only aggregate tickets the user can list with their profile, skip tickets in the trash and private tasks the user cannot see (SEC-05)
+- The ActualTime rights tab is no longer shown on helpdesk profiles, where GLPI ignores those rights (SEC-06)
+- Timer methods called without an origin no longer skip the access check (SEC-07)
+- The modify-timers window checks access by itself (SEC-08)
+### Removed
+- Unused "count" action of ajax/timer.php (SEC-09)
+### Changed
+- Timer segments are not draggable in the planning any more: they are time records, edited from the task's "Modify timers" window
+
 ## [5.0.0-beta.1] - 2026/10/01
 ### Security
 - Includes the security fixes from 4.1.4

@@ -100,6 +100,43 @@ class Task extends CommonDBTM
     }
 
     /**
+     * SEC-01: timer rows are managed only by the plugin itself (startTimer()/stopTimer() with direct
+     * $DB writes, and segment editing through Sourcetimer::canModify(), which authorizes against the
+     * parent task). They declare core's `task` right and have no entities_id column, so the default
+     * can*() would let any technician write rows of any entity through core's generic routes
+     * (/plugins/actualtime/front/task.form.php) and the planning actions. Deny every write here and
+     * gate reads on READ of the linked task; the legitimate flows never call Task::can() to write.
+     */
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canUpdate(): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(): bool
+    {
+        return false;
+    }
+
+    public static function canPurge(): bool
+    {
+        return false;
+    }
+
+    public function canViewItem(): bool
+    {
+        return self::getAuthorizedTask(
+            $this->fields['itemtype'] ?? null,
+            (int) ($this->fields['items_id'] ?? 0),
+            READ,
+        ) !== null;
+    }
+
+    /**
      * Deny timer actions not triggered by GLPI itself (AUTO) when the current user cannot update the task
      *
      * @param  mixed $task_id
@@ -770,6 +807,12 @@ class Task extends CommonDBTM
             ];
             $list = [];
             foreach ($DB->request($query) as $id => $row) {
+                // SEC-04: the per-technician breakdown only counts tasks the reader can see (private
+                // tasks need SEEPRIVATE). The totals above stay as core already shows them
+                $task_item = getItemForItemtype($itemtype);
+                if (!$task_item->getFromDB($row['id']) || !$task_item->canViewItem()) {
+                    continue;
+                }
                 $list[$row['users_id_tech']]['name'] = htmlescape(getUserName($row['users_id_tech']));
                 if (isset($list[$row['users_id_tech']]['total'])) {
                     $list[$row['users_id_tech']]['total'] += $row['actiontime'];
@@ -1117,7 +1160,6 @@ JAVASCRIPT;
             if ($parent === null) {
                 continue;
             }
-            $canupdate = $task instanceof CommonITILTask ? $task->canUpdateITILItem() : $task->canUpdateItem();
             $url_id = $task->fields[$parent->getForeignKeyField()];
             if (!$options['genical']) {
                 $interv[$key]["url"] = $parent::getFormURLWithID($url_id);
@@ -1136,7 +1178,9 @@ JAVASCRIPT;
             $interv[$key]["begin"] = $row['actual_begin'];
             $interv[$key]["end"] = $row['actual_end'];
 
-            $interv[$key]["editable"] = $canupdate;
+            // SEC-01: timer rows are not editable from the planning (they are time records written
+            // by the plugin, not reschedulable events); the server also denies it via canUpdate()
+            $interv[$key]["editable"] = false;
         }
 
         return $interv;
@@ -1225,12 +1269,15 @@ JAVASCRIPT;
     /**
      * startTimer
      *
+     * The origin defaults to WEB (SEC-07), as in pauseTimer() and stopTimer(): AUTO skips the user's
+     * access check, so only GLPI's own hooks pass it, explicitly.
+     *
      * @param  mixed $task_id
      * @param  mixed $itemtype
      * @param  mixed $origin
      * @return array
      */
-    public static function startTimer($task_id, $itemtype, $origin = self::AUTO): array
+    public static function startTimer($task_id, $itemtype, $origin = self::WEB): array
     {
         /**
          * @var \DBmysql $DB
@@ -1445,7 +1492,7 @@ JAVASCRIPT;
      * @param  mixed $origin
      * @return array
      */
-    public static function pauseTimer($task_id, $itemtype, $origin = self::AUTO): array
+    public static function pauseTimer($task_id, $itemtype, $origin = self::WEB): array
     {
         /**
          * @var \DBmysql $DB
@@ -1573,7 +1620,7 @@ JAVASCRIPT;
      * @param  mixed $origin
      * @return array
      */
-    public static function stopTimer($task_id, $itemtype, $origin = self::AUTO): array
+    public static function stopTimer($task_id, $itemtype, $origin = self::WEB): array
     {
         /**
          * @var \DBmysql $DB
@@ -1709,11 +1756,17 @@ JAVASCRIPT;
             $result = [
                 'message'   => __("Timer completed", 'actualtime'),
                 'type'      => 'info',
-                'segment'   => Task::getSegment($task_id, $itemtype),
-                'time'      => abs(Task::totalEndTime($task_id, $itemtype)),
-                'task_time' => $task->getField('actiontime'),
                 'timer_id'  => 0,
             ];
+            // SEC-03: closing a task needs UPDATE, but its timer data is only returned to who can read
+            // it (UPDATEALL does not imply seeing a private task). GLPI's own calls (AUTO) display nothing
+            if ($origin == self::AUTO || self::getAuthorizedTask($itemtype, $task_id, READ) !== null) {
+                $result += [
+                    'segment'   => Task::getSegment($task_id, $itemtype),
+                    'time'      => abs(Task::totalEndTime($task_id, $itemtype)),
+                    'task_time' => $task->getField('actiontime'),
+                ];
+            }
         }
         return $result;
     }

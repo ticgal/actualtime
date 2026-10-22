@@ -211,6 +211,11 @@ class Sourcetimer extends CommonDBTM
      */
     public function modalForm(string $itemtype, int $items_id): void
     {
+        // SEC-08: public for other plugins, so it authorizes by itself (ajax/changetimer.php does too)
+        if (Task::getAuthorizedTask($itemtype, $items_id, READ) === null) {
+            return;
+        }
+
         $config = Config::getInstance();
         $actualtimes = [];
         $userdata = [];

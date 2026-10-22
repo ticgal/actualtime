@@ -48,10 +48,23 @@ class Profile extends CommonGLPI
     {
         switch ($item->getType()) {
             case 'Profile':
+                if (self::isHelpdeskProfile($item)) {
+                    return '';
+                }
                 return self::createTabEntry(PLUGIN_ACTUALTIME_NAME);
         }
 
         return '';
+    }
+
+    /**
+     * SEC-06: the plugin has no right for the simplified interface (GLPI drops them from helpdesk
+     * sessions, Profile::cleanProfile()), so helpdesk profiles get no ActualTime tab. Showing time in
+     * the helpdesk is a plugin setting, not a right.
+     */
+    private static function isHelpdeskProfile(CommonGLPI $item): bool
+    {
+        return $item instanceof \Profile && ($item->fields['interface'] ?? '') === 'helpdesk';
     }
 
     public static function getIcon(): string
@@ -67,6 +80,9 @@ class Profile extends CommonGLPI
         switch ($item->getType()) {
             case \Profile::class:
                 /** @var \Profile $item */
+                if (self::isHelpdeskProfile($item)) {
+                    return false;
+                }
                 $profile = new self();
                 return $profile->displayProfileForm($item);
         }

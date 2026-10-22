@@ -23,7 +23,8 @@
     "autoload-dev": {
         "psr-4": {
             "CustomPHPStanRules\\": "tools/phpstan/rules/",
-            "Glpi\\Tools\\": "../../tools/src/"
+            "Glpi\\Tools\\": "../../tools/src/",
+            "GlpiPlugin\\Actualtime\\Tests\\": "tests/"
         }
     }
 }

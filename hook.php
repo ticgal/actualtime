@@ -29,6 +29,7 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\DBAL\QueryExpression;
 use GlpiPlugin\Actualtime\Config;
 use GlpiPlugin\Actualtime\Dashboard;
 use GlpiPlugin\Actualtime\Profile as ActualtimeProfile;
@@ -362,6 +363,24 @@ function plugin_actualtime_project_delete(Project $project): void
             ],
         );
     }
+}
+
+/**
+ * SEC-01: GLPI's search engine lists timer rows (/plugins/actualtime/front/task.php, ajax/search.php)
+ * after checking only the static Task::canView(), which must stay true for the planning, and timer
+ * rows have no entity of their own. No plugin feature searches timer rows (the ActualTime columns of
+ * the ticket and task lists search those itemtypes), so a search of timer rows returns nothing.
+ *
+ * @param  string $itemtype
+ * @return array
+ */
+function plugin_actualtime_addDefaultWhere($itemtype): array
+{
+    if ($itemtype === Task::class) {
+        return [new QueryExpression('false')];
+    }
+
+    return [];
 }
 
 /**
