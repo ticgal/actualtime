@@ -147,6 +147,7 @@ FILES_TO_DELETE=(
     ".php-cs-fixer.php"
     ".phpcs.xml"
     ".twig_cs.dist.php"
+    ".gitleaks.toml"
     "phpstan.neon"
     "composer.lock"
     ".composer.hash"

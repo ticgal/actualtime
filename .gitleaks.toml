@@ -1,0 +1,11 @@
+# Gitleaks configuration, read by the TICGAL-Dev secrets-scan workflow and the local CI preflight.
+# Default rules, plus a path allowlist for the bundled PHPStan PHAR: its PHP stubs contain function
+# names (sodium_crypto_*_keygen...) that the generic-api-key rule mistakes for secrets.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Bundled PHPStan PHAR (third-party binary, PHP stub names)"
+paths = [
+    '''(^|/)tools/phpstan/phpstan\.phar$''',
+]
