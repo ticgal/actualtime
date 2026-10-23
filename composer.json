@@ -6,7 +6,7 @@
     },
     "config": {
         "optimize-autoloader": true,
-        "autoloader-suffix": "Actualtime",
+        "autoloader-suffix": "PluginActualtime",
         "platform": {
             "php": "8.3.0"
         },
