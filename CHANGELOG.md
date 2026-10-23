@@ -1,40 +1,49 @@
 # Actualtime
 
-## [5.0.0-beta.2] - 2026/10/22
-### Security
-- Timer rows can no longer be created, modified, deleted or read across entities through GLPI's generic item routes (/plugins/actualtime/front/task.php), the planning actions or the search engine: the timer itemtype now denies every generic write, gates reads on the linked task, and its search returns no rows (SEC-01)
-- Private tasks are no longer revealed to users who cannot see them: running timers list, ticket statistics per technician and the timer data returned when closing a task (SEC-02, SEC-03, SEC-04)
-- Dashboard cards only aggregate tickets the user can list with their profile, skip tickets in the trash and private tasks the user cannot see (SEC-05)
-- The ActualTime rights tab is no longer shown on helpdesk profiles, where GLPI ignores those rights (SEC-06)
-- Timer methods called without an origin no longer skip the access check (SEC-07)
-- The modify-timers window checks access by itself (SEC-08)
-### Removed
-- Unused "count" action of ajax/timer.php (SEC-09)
-### Changed
-- Timer segments are not draggable in the planning any more: they are time records, edited from the task's "Modify timers" window
+## [5.0.0] - 2026/10/23
+First stable release for GLPI 12. Includes all the changes of 5.0.0-beta.1 and 5.0.0-beta.2.
 
-## [5.0.0-beta.1] - 2026/10/01
+### Added
+- GLPI 12 support
+- PHPUnit test suite covering rights, entity isolation, output escaping, GLPI hooks and the 4.x data migration
+
 ### Security
 - Includes the security fixes from 4.1.4
-- Planning only shows timers of tasks the user can view
+- Timer data can no longer be created, modified, deleted or listed across entities through GLPI's generic item pages, the planning or the search engine
+- Private tasks are no longer revealed to users who cannot see them in the running timers list, the ticket statistics per technician or the timer data returned when closing a task
+- Dashboard cards only aggregate tickets the user can list with their profile, and skip tickets in the trash and private tasks the user cannot see
 - Dashboard cards and running timers could lose the entity restriction when the user had no active entity
+- Planning only shows timers of tasks the user can view
 - Saving the plugin settings requires re-authentication, like GLPI setup
 - Escape item link and name in the running timer pop-up
+- The ActualTime rights tab is no longer shown on helpdesk profiles, where GLPI ignores those rights
+- Timer methods called without an origin no longer skip the access check
+- The modify-timers window checks access by itself
+
 ### Changed
-- Removed CSRF token fields, GLPI 12 validates CSRF with request headers
-- JavaScript files registered without the deprecated /public prefix
-- Reports restrict entities without the deprecated getEntitiesRestrictRequest()
-- Dashboard date filters use bound query values
-- TAM, Waypoint and GappExtended integrations support their PSR-4 class names
+- Requires GLPI 12.0
 - Classes moved to src/ with the GlpiPlugin\Actualtime namespace. The PluginActualtime* class names remain as deprecated aliases for other plugins
+- TAM, Waypoint and GappExtended integrations support their PSR-4 class names
 - Planning filters saved for the old class name keep their color and visibility
 - Fixed the key of the "Top 20 % Actualtime usage per day" dashboard card, saved dashboards are updated
+- Timer segments are not draggable in the planning any more: they are time records, edited from the task's "Modify timers" window
 - Task timers, "Assign to me" button and autostart switch rendered with Twig templates
 - Tabler icons instead of Font Awesome
 - Settings are loaded once per request
-- Removed table.js, GLPI 12 already shows the statistics dates block on changes and problems
-- PHPStan configuration works both locally and in CI. Removed the obsolete atoum tests and Travis configuration
+- JavaScript files registered without the deprecated /public prefix
+- Typed $rightname properties and Glpi\DBAL query classes, required by GLPI 12
+- Replaced Html::displayNotFoundError(), removed in GLPI 12
+- Reports restrict entities without the deprecated getEntitiesRestrictRequest()
+- Dashboard date filters use bound query values
 - Unique Composer autoloader suffix: GLPI 12 does not load a plugin whose autoloader class collides with another plugin's
+- PHPStan and CI run against GLPI 12, and the PHPStan configuration works both locally and in CI
+
+### Removed
+- CSRF token fields: GLPI 12 validates CSRF with request headers
+- table.js: GLPI 12 already shows the statistics dates block on changes and problems
+- Obsolete atoum tests and Travis configuration
+- Unused "count" action of the timer AJAX endpoint
+
 ### Fixed
 - Settings tab failed to render the form buttons
 - Task form in the running timer pop-up failed to render
@@ -48,16 +57,6 @@
 - Stopping a timer did not mark the task as done in the timeline
 - Scheduled task message only showed the year of the date
 - "Duration Diff" and settings labels were never translated
-
-## [5.0.0-beta.1] - 2026/09/18
-### Added
-- GLPI 12 support
-### Changed
-- Requires GLPI 12.0
-- Typed $rightname properties and Glpi\DBAL query classes, required by GLPI 12
-- Replaced Html::displayNotFoundError(), removed in GLPI 12
-- PHPStan and CI run against GLPI 12
-### Fixed
 - getActualBegin() returned null against its string return type when no timer was running
 - stopTimer() returned no type when called by another user, and failed with a time step of 0
 - getSegment() on a modified segment without its source timer
