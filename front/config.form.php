@@ -17,7 +17,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * You should have received a copy of the GNU General Public License
- * along withOneTimeSecret. If not, see <http://www.gnu.org/licenses/>.
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
  * -------------------------------------------------------------------------
  * @package   ActualTime
  * @author    the TICGAL team
@@ -29,15 +29,20 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\Exception\Http\NotFoundHttpException;
+use GlpiPlugin\Actualtime\Config;
+
 // Check if plugin is activated...
+
 $plugin = new Plugin();
 if (!$plugin->isInstalled('actualtime') || !$plugin->isActivated('actualtime')) {
-    Html::displayNotFoundError();
+    throw new NotFoundHttpException();
 }
 
 Session::checkRight('config', UPDATE);
+Config::checkReAuthenticationOrRedirect();
 
-$config = new PluginActualtimeConfig();
+$config = new Config();
 
 if (isset($_POST["update"])) {
     $config->check($_POST['id'], UPDATE);
@@ -45,9 +50,9 @@ if (isset($_POST["update"])) {
     Html::back();
 }
 
-/** @var array $CFG_GLPI */
+/** @var \Glpi\Config\ConfigContainer $CFG_GLPI */
 global $CFG_GLPI;
 
 $redirect = $CFG_GLPI["root_doc"] . "/front/config.form.php";
-$redirect .= "?forcetab=" . urlencode('PluginActualtimeConfig$1');
+$redirect .= "?forcetab=" . urlencode(Config::class . '$1');
 Html::redirect($redirect);

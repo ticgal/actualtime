@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ActualTime — QA testing</title>
+<style>
+  body { font-family: sans-serif; font-size: 14px; color: #1f2933; background: #fff; margin: 16px; }
+  h1 { font-size: 22px; } h2 { font-size: 17px; margin-top: 28px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border: 1px solid #c5cdd6; padding: 6px 8px; vertical-align: top; text-align: left; }
+  th { background: #eef2f6; }
+  td:first-child { white-space: nowrap; }
+  td:nth-child(5), td:nth-child(6) { min-width: 80px; }
+  .note { background: #f6f8fa; border-left: 4px solid #8a99a8; padding: 8px 12px; }
+</style>
+</head>
+<body>
+<!-- qa-testing-format: 1 -->
+<h1>ActualTime 5.0.0 — QA testing</h1>
+
+<div class="note">
+  <p><strong>Target:</strong> GLPI 12.0.x. Run once on a <strong>clean install</strong> and once on an
+  <strong>upgrade</strong> from ActualTime 4.x with existing timers.</p>
+  <p><strong>Result</strong>: write <code>OK</code> or <code>KO</code> only. <strong>Comments</strong>: for a KO, the error
+  message, a screenshot reference or what went wrong.</p>
+  <p><strong>Users needed:</strong> a Super-Admin; two technicians (Technician profile), <em>Tech A</em> in the root entity
+  (recursive) and <em>Tech B</em> in a child entity <em>Entity B</em> only; a Self-Service user. Give the Technician profile the
+  ActualTime rights (Administration › Profiles › Technician › ActualTime tab: running timers + all four task types).</p>
+  <p><strong>Markers:</strong> the plugin only writes into GLPI's own database. Ordinary rows change test data
+  (timers, tasks); rows in the last section are <code>[destructive]</code> and must be run deliberately, last.
+  Sections marked <em>(optional)</em> apply only if that plugin is installed; skip them as a whole otherwise.</p>
+</div>
+
+<h2>1. Installation and settings</h2>
+<table>
+<tr><th>#</th><th>Check</th><th>Steps</th><th>Expected</th><th>Result</th><th>Comments</th></tr>
+<tr><td>1.1</td><td>Install and enable</td><td>Setup › Plugins: install, then enable ActualTime.</td><td>Both succeed with no error message. Status "Enabled".</td><td></td><td></td></tr>
+<tr><td>1.2</td><td>Upgrade keeps data</td><td>Upgrade case only: before upgrading, note the timers of a 4.x task. Upgrade, enable, open the task.</td><td>The same segments and total time are shown.</td><td></td><td></td></tr>
+<tr><td>1.3</td><td>Upgrade keeps dashboard cards</td><td>Upgrade case only: a dashboard that had ActualTime cards in 4.x.</td><td>The cards still render (no "unknown card").</td><td></td><td></td></tr>
+<tr><td>1.4</td><td>Upgrade keeps planning filter</td><td>Upgrade case only: a user who had the ActualTime planning filter hidden or recoloured. Open Assistance › Planning.</td><td>The filter keeps its colour and visibility.</td><td></td><td></td></tr>
+<tr><td>1.5</td><td>Settings ask for the password</td><td>As Super-Admin, Setup › General › ActualTime tab, change a value, Save.</td><td>GLPI asks to re-enter the password before saving; after it, the value is kept.</td><td></td><td></td></tr>
+<tr><td>1.6</td><td>Settings need config rights</td><td>As Tech A, try to open Setup › General.</td><td>No access to the ActualTime settings.</td><td></td><td></td></tr>
+</table>
+
+<h2>2. Timer on tasks</h2>
+<table>
+<tr><th>#</th><th>Check</th><th>Steps</th><th>Expected</th><th>Result</th><th>Comments</th></tr>
+<tr><td>2.1</td><td>Start</td><td>As Tech A, open a ticket with a "To do" task assigned to Tech A. Click the timer's start button.</td><td>The counter starts. A green "Timer started" style message appears.</td><td></td><td></td></tr>
+<tr><td>2.2</td><td>Pause and restart</td><td>Pause after ~1 minute, then start again.</td><td>Counter stops, then continues from the accumulated time. A new segment is listed.</td><td></td><td></td></tr>
+<tr><td>2.3</td><td>Stop</td><td>Click stop.</td><td>Timer stops, the task becomes "Done", segments and total are shown.</td><td></td><td></td></tr>
+<tr><td>2.4</td><td>One timer at a time</td><td>Start a timer on task 1, then try to start one on another task of Tech A.</td><td>Refused with a message naming the running task.</td><td></td><td></td></tr>
+<tr><td>2.5</td><td>Only the assigned technician</td><td>As Tech A, open a task assigned to someone else.</td><td>No start button (an "associate myself" button instead). After associating, the timer can start.</td><td></td><td></td></tr>
+<tr><td>2.6</td><td>Done task cannot start</td><td>Open a "Done" task.</td><td>The timer cannot be started.</td><td></td><td></td></tr>
+<tr><td>2.7</td><td>Pop-up of the running timer</td><td>Setting "Display pop-up window with current running timer" = Yes. Start a timer and browse to another page.</td><td>A small pop-up shows the running task and time, with a link to it. With No, no pop-up.</td><td></td><td></td></tr>
+<tr><td>2.8</td><td>Automatic duration</td><td>Setting "Automatically update the duration" = Yes. Run a timer ~2 minutes, stop.</td><td>The task duration is updated, rounded to GLPI's time step.</td><td></td><td></td></tr>
+<tr><td>2.9</td><td>Open task with running timer</td><td>Setting "Automatically open task with timer running" = Yes. Open the ticket of a running timer.</td><td>The task with the running timer is expanded.</td><td></td><td></td></tr>
+<tr><td>2.10</td><td>Scheduled-day restriction</td><td>Setting "Enable Timer Only on Scheduled Task Day" = Yes. Task planned for tomorrow.</td><td>Start is refused with an explanation. Same with "Task's Start Day".</td><td></td><td></td></tr>
+<tr><td>2.11</td><td>Task limit</td><td>Set "Task limit in hours" to a low value and exceed it.</td><td>The timer stops/refuses as described by the setting's message.</td><td></td><td></td></tr>
+<tr><td>2.12</td><td>Closed task box</td><td>Setting "Display actual time in closed task box" = Yes. Ticket timeline, a done task with timers.</td><td>The actual time is shown in the task box.</td><td></td><td></td></tr>
+<tr><td>2.13</td><td>Change, Problem, Project task</td><td>Repeat 2.1–2.3 on a Change task, a Problem task and a Project task.</td><td>Same behaviour. The project task "effective duration" is updated.</td><td></td><td></td></tr>
+</table>
+
+<h2>3. Automatic stops (GLPI events)</h2>
+<table>
+<tr><th>#</th><th>Check</th><th>Steps</th><th>Expected</th><th>Result</th><th>Comments</th></tr>
+<tr><td>3.1</td><td>Mark task done</td><td>With a running timer, edit the task and set it to "Done".</td><td>The timer stops.</td><td></td><td></td></tr>
+<tr><td>3.2</td><td>Reassign task</td><td>With a running timer, change the task's technician.</td><td>The timer is paused.</td><td></td><td></td></tr>
+<tr><td>3.3</td><td>Solve ticket</td><td>With a running timer, add a solution to the ticket.</td><td>The timer stops.</td><td></td><td></td></tr>
+<tr><td>3.4</td><td>Delete ticket</td><td>With a running timer, put the ticket in the trash.</td><td>The timer stops; it no longer appears as running.</td><td></td><td></td></tr>
+<tr><td>3.5</td><td>Autostart</td><td>Create a new task assigned to yourself with the plugin's autostart option.</td><td>The timer starts on creation.</td><td></td><td></td></tr>
+</table>
+
+<h2>4. Views</h2>
+<table>
+<tr><th>#</th><th>Check</th><th>Steps</th><th>Expected</th><th>Result</th><th>Comments</th></tr>
+<tr><td>4.1</td><td>Running timers</td><td>As Tech A, Administration › Running timers (or the plugin menu entry) with a timer running.</td><td>The running timer is listed with user, item, task and elapsed time; the list refreshes.</td><td></td><td></td></tr>
+<tr><td>4.2</td><td>Modify segments</td><td>On a task with closed segments, open "Modify timers", change a segment's end, save.</td><td>The new value is kept and the segment shows it was modified, by whom.</td><td></td><td></td></tr>
+<tr><td>4.3</td><td>Ticket statistics</td><td>Ticket › Statistics tab.</td><td>Per-technician actual time vs duration is shown.</td><td></td><td></td></tr>
+<tr><td>4.4</td><td>Planning</td><td>Assistance › Planning, ActualTime filter on, period with segments.</td><td>Segments appear as events with a tooltip; clicking opens the ticket. Timer events cannot be dragged or resized (by design: they are edited from "Modify timers").</td><td></td><td></td></tr>
+<tr><td>4.5</td><td>Dashboard cards</td><td>Edit a dashboard, add the six ActualTime cards, set a date filter.</td><td>All six render data; no error.</td><td></td><td></td></tr>
+<tr><td>4.6</td><td>Helpdesk display setting</td><td>Setting "Enable timer on tasks" = "Both in Standard and Helpdesk". As Self-Service, open own ticket with a task that has timers.</td><td>The time is displayed (read-only). With "Standard interface only", nothing is shown.</td><td></td><td></td></tr>
+</table>
+
+<h2>5. Security regressions</h2>
+<table>
+<tr><th>#</th><th>Check</th><th>Steps</th><th>Expected</th><th>Result</th><th>Comments</th></tr>
+<tr><td>5.1</td><td>Other entity cannot drive a timer</td><td>Tech A runs a timer on a root-entity ticket. As Tech B, try to open that ticket and its timers (direct link).</td><td>Access denied; Tech A's timer unchanged.</td><td></td><td></td></tr>
+<tr><td>5.2</td><td>Other entity hidden in views</td><td>As Tech B: Running timers, Planning (also after adding Tech A to Tech B's planning filters), dashboard cards.</td><td>Nothing from Tech A's root-entity tickets appears.</td><td></td><td></td></tr>
+<tr><td>5.3</td><td>Names are not interpreted</td><td>Set Tech A's surname to <code>&lt;b&gt;Bold&lt;/b&gt;</code> and a ticket title to <code>&lt;i&gt;Italic&lt;/i&gt;</code>. Run a timer, modify a segment. Look at 4.1–4.5 and the timer pop-up.</td><td>The text appears literally with the angle brackets, never as bold/italic.</td><td></td><td></td></tr>
+<tr><td>5.4</td><td>Self-Service has no access</td><td>As Self-Service, open the Running timers address and the modify-timers window of a task by direct link.</td><td>Access denied or empty, no data.</td><td></td><td></td></tr>
+<tr><td>5.5</td><td>Closed ticket is read-only</td><td>Close a ticket with timers. As Tech A, open "Modify timers".</td><td>Segments cannot be saved.</td><td></td><td></td></tr>
+<tr><td>5.6</td><td>Timer rows by direct address</td><td>As Tech B, open <code>/plugins/actualtime/front/task.php</code> and <code>/plugins/actualtime/front/task.form.php?id=1</code>. Then, in Assistance › Planning with Tech A added to the filters, try to drag or delete one of Tech A's timer events.</td><td>The form shows access denied; the list shows no items; planning events cannot be moved or deleted. Tech A's timers are unchanged.</td><td></td><td></td></tr>
+<tr><td>5.7</td><td>Private tasks stay private</td><td>On the Technician profile, untick "See private tasks" (Tasks right). Tech A runs and stops a timer on a <strong>private</strong> task. Another technician of the same entity opens Running timers, the ticket's Statistics tab and the dashboard cards.</td><td>The other technician sees nothing of that private task; Tech A still sees it in all three places. Public tasks are visible to both. Restore the right afterwards.</td><td></td><td></td></tr>
+<tr><td>5.8</td><td>No rights tab on helpdesk profiles</td><td>Administration › Profiles: open Self-Service, then Technician.</td><td>Self-Service has no ActualTime tab; Technician has it and its rights can be saved.</td><td></td><td></td></tr>
+<tr><td>5.9</td><td>Cards ignore the trash</td><td>Note a technician's value on an ActualTime dashboard card, put one of their tickets with timers in the trash, refresh the card.</td><td>The card no longer counts that ticket; restoring it brings the value back.</td><td></td><td></td></tr>
+</table>
+
+<h2>6. GappExtended (optional)</h2>
+<table>
+<tr><th>#</th><th>Check</th><th>Steps</th><th>Expected</th><th>Result</th><th>Comments</th></tr>
+<tr><td>6.1</td><td>Timer from the mobile app</td><td>Start and stop a task timer from the GappExtended app.</td><td>The web task shows the same segment; the origin is the app.</td><td></td><td></td></tr>
+<tr><td>6.2</td><td>Map of running timers</td><td>GappExtended map with a running ActualTime timer.</td><td>The timer is shown. <em>May fail: GappExtended 5.0.0-beta.1 still uses the 4.x class name.</em></td><td></td><td></td></tr>
+</table>
+
+<h2>7. TAM / Waypoint (optional)</h2>
+<table>
+<tr><th>#</th><th>Check</th><th>Steps</th><th>Expected</th><th>Result</th><th>Comments</th></tr>
+<tr><td>7.1</td><td>Start/stop recorded by the integration</td><td>With TAM or Waypoint enabled, start and stop a timer.</td><td>The integration records the start/stop as it did with 4.x.</td><td></td><td></td></tr>
+</table>
+
+<h2>8. Destructive — run last</h2>
+<table>
+<tr><th>#</th><th>Check</th><th>Steps</th><th>Expected</th><th>Result</th><th>Comments</th></tr>
+<tr><td>8.1</td><td>[destructive] Uninstall</td><td>Setup › Plugins: disable, then uninstall ActualTime.</td><td>No error. All timers and ActualTime rights are removed; tickets and tasks remain.</td><td></td><td></td></tr>
+<tr><td>8.2</td><td>[destructive] Reinstall</td><td>Install and enable again.</td><td>Works; settings back to defaults; no old timers.</td><td></td><td></td></tr>
+</table>
+
+<h2>Known limitations</h2>
+<ul>
+  <li>Timer events in the planning are not draggable: a timer segment is a time record, corrected from the task's
+  "Modify timers" window (since 5.0.0).</li>
+  <li>The generic list <code>/plugins/actualtime/front/task.php</code> is always empty: it is not a plugin feature and is
+  closed for security; the ActualTime columns of the ticket and task lists keep working.</li>
+  <li>Hiding private tasks (5.7) depends on the "See private tasks" right: the stock Technician and Super-Admin profiles of
+  GLPI 12 have it, so for them nothing changes.</li>
+  <li>Reports (actualtime totals per user) need the Reports plugin; without it those pages return "not found".</li>
+</ul>
+</body>
+</html>

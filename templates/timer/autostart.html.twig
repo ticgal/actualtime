@@ -1,0 +1,52 @@
+{#
+ # -------------------------------------------------------------------------
+ # ActualTime plugin for GLPI
+ # Copyright (C) 2018-2026 by the TICGAL Team.
+ # https://www.tic.gal/
+ # -------------------------------------------------------------------------
+ # LICENSE
+ # This file is part of the ActualTime plugin.
+ # ActualTime plugin is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 3 of the License, or
+ # (at your option) any later version.
+ # ActualTime plugin is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ # You should have received a copy of the GNU General Public License
+ # along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
+ # -------------------------------------------------------------------------
+ # @package   ActualTime
+ # @author    the TICGAL team
+ # @copyright Copyright (c) 2018-2026 TICGAL team
+ # @license   AGPL License 3.0 or (at your option) any later version
+ #            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ # @link      https://www.tic.gal/
+ # @since     2018
+ # -------------------------------------------------------------------------
+ #}
+
+{# Autostart switch of the new task form #}
+
+{% set field %}
+    <div id="actualtime_autostart" class="form-field row col-12 mb-2">
+        <label class="col-form-label col-2 text-xxl-end" for="autostart">
+            <i class="ti ti-stopwatch me-1" title="{{ __('Autostart', 'actualtime') }}"></i>
+        </label>
+        <div class="col-10 field-container">
+            <label class="form-check form-switch mt-2">
+                <input type="hidden" name="autostart" value="0">
+                <input type="checkbox" id="autostart" name="autostart" value="1" class="form-check-input">
+            </label>
+        </div>
+    </div>
+{% endset %}
+
+<script>
+    $(function() {
+        if ($('#actualtime_autostart').length == 0) {
+            $("#new-{{ itemtype|e('js') }}-block div.itiltask form > div.row div.row").first().append({{ field|json_encode|raw }});
+        }
+    });
+</script>

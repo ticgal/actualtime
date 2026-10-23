@@ -1,5 +1,67 @@
 # Actualtime
 
+## [5.0.0] - 2026/10/23
+First stable release for GLPI 12. Includes all the changes of 5.0.0-beta.1 and 5.0.0-beta.2.
+
+### Added
+- GLPI 12 support
+- PHPUnit test suite covering rights, entity isolation, output escaping, GLPI hooks and the 4.x data migration
+
+### Security
+- Includes the security fixes from 4.1.4
+- Timer data can no longer be created, modified, deleted or listed across entities through GLPI's generic item pages, the planning or the search engine
+- Private tasks are no longer revealed to users who cannot see them in the running timers list, the ticket statistics per technician or the timer data returned when closing a task
+- Dashboard cards only aggregate tickets the user can list with their profile, and skip tickets in the trash and private tasks the user cannot see
+- Dashboard cards and running timers could lose the entity restriction when the user had no active entity
+- Planning only shows timers of tasks the user can view
+- Saving the plugin settings requires re-authentication, like GLPI setup
+- Escape item link and name in the running timer pop-up
+- The ActualTime rights tab is no longer shown on helpdesk profiles, where GLPI ignores those rights
+- Timer methods called without an origin no longer skip the access check
+- The modify-timers window checks access by itself
+
+### Changed
+- Requires GLPI 12.0
+- Classes moved to src/ with the GlpiPlugin\Actualtime namespace. The PluginActualtime* class names remain as deprecated aliases for other plugins
+- TAM, Waypoint and GappExtended integrations support their PSR-4 class names
+- Planning filters saved for the old class name keep their color and visibility
+- Fixed the key of the "Top 20 % Actualtime usage per day" dashboard card, saved dashboards are updated
+- Timer segments are not draggable in the planning any more: they are time records, edited from the task's "Modify timers" window
+- Task timers, "Assign to me" button and autostart switch rendered with Twig templates
+- Tabler icons instead of Font Awesome
+- Settings are loaded once per request
+- JavaScript files registered without the deprecated /public prefix
+- Typed $rightname properties and Glpi\DBAL query classes, required by GLPI 12
+- Replaced Html::displayNotFoundError(), removed in GLPI 12
+- Reports restrict entities without the deprecated getEntitiesRestrictRequest()
+- Dashboard date filters use bound query values
+- Unique Composer autoloader suffix: GLPI 12 does not load a plugin whose autoloader class collides with another plugin's
+- PHPStan and CI run against GLPI 12, and the PHPStan configuration works both locally and in CI
+
+### Removed
+- CSRF token fields: GLPI 12 validates CSRF with request headers
+- table.js: GLPI 12 already shows the statistics dates block on changes and problems
+- Obsolete atoum tests and Travis configuration
+- Unused "count" action of the timer AJAX endpoint
+
+### Fixed
+- Settings tab failed to render the form buttons
+- Task form in the running timer pop-up failed to render
+- Minimum and maximum end dates were never applied when modifying timer segments
+- Reports failed when the Reports plugin is not active
+- "Assign to me" task button form was malformed and ignored the GLPI base URL
+- Starting a timer replaced the main database connection with the read replica
+- Starting, pausing or stopping a timer failed when TAM, Waypoint or GappExtended classes were missing
+- Settings getters failed when the settings row was missing
+- Automatically opening the task with a running timer did not open its form
+- Stopping a timer did not mark the task as done in the timeline
+- Scheduled task message only showed the year of the date
+- "Duration Diff" and settings labels were never translated
+- getActualBegin() returned null against its string return type when no timer was running
+- stopTimer() returned no type when called by another user, and failed with a time step of 0
+- getSegment() on a modified segment without its source timer
+- Usage by day cards failed on MySQL with NO_ZERO_DATE
+
 ## [4.1.4] - 2026/09/30
 ### Security
 - Check task rights and entity access on timer start, pause, stop and duration queries

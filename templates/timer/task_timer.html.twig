@@ -1,0 +1,92 @@
+{#
+ # -------------------------------------------------------------------------
+ # ActualTime plugin for GLPI
+ # Copyright (C) 2018-2026 by the TICGAL Team.
+ # https://www.tic.gal/
+ # -------------------------------------------------------------------------
+ # LICENSE
+ # This file is part of the ActualTime plugin.
+ # ActualTime plugin is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 3 of the License, or
+ # (at your option) any later version.
+ # ActualTime plugin is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ # You should have received a copy of the GNU General Public License
+ # along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
+ # -------------------------------------------------------------------------
+ # @package   ActualTime
+ # @author    the TICGAL team
+ # @copyright Copyright (c) 2018-2026 TICGAL team
+ # @license   AGPL License 3.0 or (at your option) any later version
+ #            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ # @link      https://www.tic.gal/
+ # @since     2018
+ # -------------------------------------------------------------------------
+ #}
+
+{# Timer of a task form: ITIL tasks and project tasks #}
+
+{% if not runnable %}
+    {% set start = {action: '', color: 'gray', icon: 'ti ti-player-play', disabled: true} %}
+    {% set stop = {action: '', color: 'gray', disabled: true} %}
+{% elseif active %}
+    {% set start = {action: 'pause', color: 'orange', icon: 'ti ti-player-pause', disabled: false} %}
+    {% set stop = {action: 'end', color: 'red', disabled: false} %}
+{% elseif time > 0 %}
+    {% set start = {action: 'start', color: 'green', icon: 'ti ti-player-track-next', disabled: false} %}
+    {% set stop = {action: 'end', color: 'red', disabled: false} %}
+{% else %}
+    {% set start = {action: 'start', color: 'green', icon: 'ti ti-player-play', disabled: false} %}
+    {% set stop = {action: '', color: 'gray', disabled: true} %}
+{% endif %}
+
+{% if show_modify_link %}
+    <div class="dropdown ms-2">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#add_time_{{ task_id }}">
+            <span class="ti ti-calendar-plus control_item" title="{{ __('Modify timers', 'actualtime') }}"></span>
+        </a>
+    </div>
+{% endif %}
+
+<div class="row center">
+    <div class="col-12 col-md-7">
+        <div class="b">{{ __('Actual Duration', 'actualtime') }}</div>
+        <div id="actualtime_timer_{{ task_id }}_{{ rand }}" style="color: {{ active ? 'red' : 'black' }}"></div>
+    </div>
+    <div class="col-12 col-md-5">
+        <div class="btn-group">
+            {% if can_run %}
+                <button type="button" class="btn btn-primary m-2" id="actualtime_button_{{ task_id }}_1_{{ rand }}"
+                        action="{{ start.action }}" style="background-color: {{ start.color }}; color: white" {{ start.disabled ? 'disabled' : '' }}>
+                    <span class="d-none d-md-block"><i class="{{ start.icon }}"></i></span>
+                </button>
+                <button type="button" class="btn btn-primary m-2" id="actualtime_button_{{ task_id }}_2_{{ rand }}"
+                        action="{{ stop.action }}" style="background-color: {{ stop.color }}; color: white" {{ stop.disabled ? 'disabled' : '' }}>
+                    <span class="d-none d-md-block"><i class="ti ti-player-stop"></i></span>
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if with_segments %}
+    <div class="row center b">
+        <div class="col-12 col-md-7">{{ __('Start date') }}</div>
+        <div class="col-12 col-md-5">{{ __('Partial actual duration', 'actualtime') }}</div>
+    </div>
+    <div id="actualtime_segment_{{ task_id }}_{{ rand }}">{{ segments|raw }}</div>
+{% endif %}
+
+<script>
+    $(function() {
+        {% if can_run %}
+            $('#actualtime_button_{{ task_id }}_1_{{ rand }}, #actualtime_button_{{ task_id }}_2_{{ rand }}').on('click', function() {
+                window.actualTime.pressedButton({{ task_id }}, '{{ itemtype|e('js') }}', $(this).attr('action'));
+            });
+        {% endif %}
+        window.actualTime.fillCurrentTime({{ task_id }}, {{ time }});
+    });
+</script>

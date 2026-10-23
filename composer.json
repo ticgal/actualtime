@@ -1,14 +1,14 @@
 {
-	"require": {
-	},
-	"require-dev": {
+    "require": {},
+    "require-dev": {
         "glpi-project/tools": "^0.7.5",
         "squizlabs/php_codesniffer": "^3.7"
     },
     "config": {
         "optimize-autoloader": true,
+        "autoloader-suffix": "PluginActualtime",
         "platform": {
-            "php": "8.1.0"
+            "php": "8.3.0"
         },
         "sort-packages": true,
         "allow-plugins": {
@@ -17,12 +17,14 @@
     },
     "autoload": {
         "psr-4": {
-            "CustomPHPStanRules\\": "tools/phpstan/rules/"
+            "GlpiPlugin\\Actualtime\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Glpi\\Tools\\": "../../tools/src/"
+            "CustomPHPStanRules\\": "tools/phpstan/rules/",
+            "Glpi\\Tools\\": "../../tools/src/",
+            "GlpiPlugin\\Actualtime\\Tests\\": "tests/"
         }
     }
 }

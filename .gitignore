@@ -1,3 +1,8 @@
 composer.lock
 vendor
-/docs/plans
+docs/*
+!docs/testing/
+docs/testing/*
+!docs/testing/TESTING-dev.md
+!docs/testing/QA-TESTING.html
+.phpunit.cache

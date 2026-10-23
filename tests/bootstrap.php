@@ -1,36 +1,91 @@
 <?php
 
-// fix empty CFG_GLPI on boostrap; see https://github.com/sebastianbergmann/phpunit/issues/325
-global $CFG_GLPI;
+/**
+ * -------------------------------------------------------------------------
+ * ActualTime plugin for GLPI
+ * Copyright (C) 2018-2026 by the TICGAL Team.
+ * https://www.tic.gal/
+ * -------------------------------------------------------------------------
+ * LICENSE
+ * This file is part of the ActualTime plugin.
+ * ActualTime plugin is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ * ActualTime plugin is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with ActualTime. If not, see <http://www.gnu.org/licenses/>.
+ * -------------------------------------------------------------------------
+ * @package   ActualTime
+ * @author    the TICGAL team
+ * @copyright Copyright (c) 2018-2026 TICGAL team
+ * @license   AGPL License 3.0 or (at your option) any later version
+ *            http://www.gnu.org/licenses/agpl-3.0-standalone.html
+ * @link      https://www.tic.gal/
+ * @since     2018
+ * -------------------------------------------------------------------------
+ */
 
-//define plugin paths
-define("PLUGINACTUALTIME_DOC_DIR", __DIR__ . "/generated_test_data");
+/**
+ * PHPUnit bootstrap.
+ *
+ * Runs against an installed GLPI 12 (config/config_db.php), the way the shared plugin CI does it:
+ * GLPI installed with `database:install`, the plugin installed and activated, then
+ * `vendor/bin/phpunit` from the plugin directory. GLPI core's own tests/bootstrap.php is not
+ * usable here: it needs the "testing" environment and its dataset.
+ */
 
-define('GLPI_ROOT', dirname(__DIR__, 3));
-define("GLPI_CONFIG_DIR", GLPI_ROOT . "/tests");
-include GLPI_ROOT . "/inc/includes.php";
-include_once GLPI_ROOT . '/tests/GLPITestCase.php';
-include_once GLPI_ROOT . '/tests/DbTestCase.php';
+use Composer\Autoload\ClassLoader;
+use Glpi\Kernel\Kernel;
 
-require_once Plugin::getPhpDir('actualtime') . '/setup.php';
+$glpi_root = getenv('GLPI_ROOT') ?: dirname(__DIR__, 3);
+if (!is_file($glpi_root . '/vendor/autoload.php')) {
+    echo "GLPI root not found, set GLPI_ROOT.\n";
+    exit(1);
+}
+chdir($glpi_root);
 
-//install plugin
-$plugin = new \Plugin();
-//Glpi 9.4 does not initialize plugin table, so new plugins will not show
-//until you navigate to Plugins menu (let's force it, then)
-$plugin->checkStates(true);
-$plugin->getFromDBbyDir('actualtime');
+// Only GLPI's autoloader: the plugin's own vendor/ holds dev tools (symfony/console...) that would
+// redeclare core classes. GLPI registers the plugin's src/ itself, as it does in production.
+require_once $glpi_root . '/vendor/autoload.php';
+$tests_autoloader = new ClassLoader();
+$tests_autoloader->addPsr4('GlpiPlugin\\Actualtime\\Tests\\', __DIR__ . '/');
+$tests_autoloader->register();
 
-//check from prerequisites as Plugin::install() does not!
-if (!plugin_actualtime_check_prerequisites()) {
-    echo "\nPrerequisites are not met!";
-    die(1);
+// PHPUnit includes this file from inside a method: make the kernel the global that core reads
+// (TemplateRenderer::getInstance())
+global $kernel;
+$kernel = new Kernel();
+$kernel->boot();
+
+// Log in as the super-admin the way core's tests do (Session::init(), no password check)
+$auth = new Auth();
+$auth->user = new User();
+if (!$auth->user->getFromDBbyName('glpi')) {
+    echo "User 'glpi' not found.\n";
+    exit(1);
+}
+$auth->auth_succeded = true;
+$auth->setAuthType((int) $auth->user->fields['authtype']);
+Session::init($auth);
+
+// Install and activate the plugin when the runner did not do it (local runs)
+$plugin = new Plugin();
+if (!Plugin::isPluginActive('actualtime')) {
+    $plugin->checkPluginState('actualtime');
+    $plugin->getFromDBByCrit(['directory' => 'actualtime']);
+    $plugin->install($plugin->fields['id']);
+    $plugin->activate($plugin->fields['id']);
+    // activate() only updates the DB row: refresh the in-memory state loaded at boot
+    $plugin->bootPlugins();
+    $plugin->init();
+    Session::init($auth);
 }
 
-if (!$plugin->isInstalled('actualtime')) {
-    call_user_func([$plugin, 'install'], $plugin->getID());
-}
-
-if (!$plugin->isActivated('actualtime')) {
-    call_user_func([$plugin, 'activate'], $plugin->getID());
+if (!Plugin::isPluginActive('actualtime')) {
+    echo "ActualTime plugin could not be activated.\n";
+    exit(1);
 }

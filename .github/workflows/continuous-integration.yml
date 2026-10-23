@@ -26,7 +26,7 @@ jobs:
           MATRIX='
             {
               "include": [
-                {"glpi-version": "10.0.x", "php-version": "8.4", "db-image": "mariadb:11.4"}
+                {"glpi-version": "12.0.x", "php-version": "8.4", "db-image": "mariadb:11.4"}
               ]
             }
           '
